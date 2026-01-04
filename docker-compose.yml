@@ -1,0 +1,189 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs
+      - ./qr:/qr:ro
+    depends_on:
+      ui:
+        condition: service_started
+      api:
+        condition: service_started
+    restart: on-failure
+  api:
+    build:
+      context: ./api
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      API_KEYS: ${API_KEYS}
+      API_KEY_ENCRYPTION_KEY: ${API_KEY_ENCRYPTION_KEY}
+      COINGECKO_API_KEY: ${COINGECKO_API_KEY}
+      FOUNDER_PAYMENT_ADDRESS: ${FOUNDER_PAYMENT_ADDRESS}
+      FOUNDER_VIEW_KEY: ${FOUNDER_VIEW_KEY}
+      DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
+      QR_STORAGE_DIR: ${QR_STORAGE_DIR:-/qr}
+      MONERO_WALLET_RPC_URLS: ${MONERO_WALLET_RPC_URLS:-http://wallet-rpc-reconciler-1:18083,http://wallet-rpc-reconciler-2:18083,http://wallet-rpc-reconciler-3:18083}
+      MONERO_WALLET_RPC_USER: ${MONERO_WALLET_RPC_USER}
+      MONERO_WALLET_RPC_PASSWORD: ${MONERO_WALLET_RPC_PASSWORD}
+      MONERO_WALLET_RPC_WALLET_PASSWORD: ${MONERO_WALLET_RPC_WALLET_PASSWORD}
+      MONERO_WALLET_RPC_WALLET_DIR: ${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}
+      MONERO_DAEMON_URL: ${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}
+      GUNICORN_WORKERS: ${GUNICORN_WORKERS:-5}
+    volumes:
+      - ./qr:/qr
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+  reconciler:
+    build:
+      context: ./api
+    command: ["python", "-m", "app.reconciler"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      API_KEYS: ${API_KEYS}
+      API_KEY_ENCRYPTION_KEY: ${API_KEY_ENCRYPTION_KEY}
+      INVOICE_RECONCILE_INTERVAL_SECONDS: ${INVOICE_RECONCILE_INTERVAL_SECONDS}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      MONERO_WALLET_RPC_URLS: ${MONERO_WALLET_RPC_URLS:-http://wallet-rpc-reconciler-1:18083,http://wallet-rpc-reconciler-2:18083,http://wallet-rpc-reconciler-3:18083}
+      MONERO_WALLET_RPC_USER: ${MONERO_WALLET_RPC_USER}
+      MONERO_WALLET_RPC_PASSWORD: ${MONERO_WALLET_RPC_PASSWORD}
+      MONERO_WALLET_RPC_WALLET_PASSWORD: ${MONERO_WALLET_RPC_WALLET_PASSWORD}
+      MONERO_WALLET_RPC_WALLET_DIR: ${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}
+      MONERO_DAEMON_URL: ${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}
+    depends_on:
+      api:
+        condition: service_started
+      db:
+        condition: service_healthy
+    restart: on-failure
+  wallet-rpc-reconciler-1:
+    build:
+      context: ./docker/monero
+      args:
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
+    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+    command:
+      [
+        "monero-wallet-rpc",
+        "--non-interactive",
+        "--rpc-bind-ip",
+        "0.0.0.0",
+        "--rpc-bind-port",
+        "18083",
+        "--confirm-external-bind",
+        "--daemon-address",
+        "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "--rpc-login",
+        "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
+        "--wallet-dir",
+        "${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}",
+        "--password",
+        "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
+        "--log-level",
+        "3"
+      ]
+    ports:
+      - "18084:18083"
+    volumes:
+      - ./wallets/reconciler:/wallets
+    restart: on-failure
+  wallet-rpc-reconciler-2:
+    build:
+      context: ./docker/monero
+      args:
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
+    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+    command:
+      [
+        "monero-wallet-rpc",
+        "--non-interactive",
+        "--rpc-bind-ip",
+        "0.0.0.0",
+        "--rpc-bind-port",
+        "18083",
+        "--confirm-external-bind",
+        "--daemon-address",
+        "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "--rpc-login",
+        "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
+        "--wallet-dir",
+        "${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}",
+        "--password",
+        "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
+        "--log-level",
+        "3"
+      ]
+    ports:
+      - "18085:18083"
+    volumes:
+      - ./wallets/reconciler:/wallets
+    restart: on-failure
+  wallet-rpc-reconciler-3:
+    build:
+      context: ./docker/monero
+      args:
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
+    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+    command:
+      [
+        "monero-wallet-rpc",
+        "--non-interactive",
+        "--rpc-bind-ip",
+        "0.0.0.0",
+        "--rpc-bind-port",
+        "18083",
+        "--confirm-external-bind",
+        "--daemon-address",
+        "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "--rpc-login",
+        "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
+        "--wallet-dir",
+        "${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}",
+        "--password",
+        "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
+        "--log-level",
+        "3"
+      ]
+    ports:
+      - "18086:18083"
+    volumes:
+      - ./wallets/reconciler:/wallets
+    restart: on-failure
+  ui:
+    build:
+      context: ./ui
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://nginx/api}
+      NEXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost}
+      NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+    restart: on-failure
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  postgres_data:

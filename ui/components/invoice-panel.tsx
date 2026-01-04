@@ -1,0 +1,935 @@
+"use client";
+
+import Link from "next/link";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useFormState } from "react-dom";
+import { useRouter } from "next/navigation";
+import { formatRelativeTime } from "./relative-time";
+import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
+import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
+
+import {
+  createInvoiceAction,
+  archiveInvoiceAction,
+  type ArchiveInvoiceState,
+  type InvoiceState,
+} from "../app/(app)/dashboard/actions";
+
+type InvoiceItem = {
+  id: string;
+  address: string;
+  subaddress_index?: number | null;
+  amount_xmr: string;
+  status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
+  confirmation_target: number;
+  paid_after_expiry?: boolean;
+  paid_after_expiry_at?: string | null;
+  metadata?: Record<string, string> | null;
+  created_at: string;
+  archived_at: string | null;
+  detected_at: string | null;
+  confirmed_at: string | null;
+  expires_at: string | null;
+};
+
+type InvoicePanelProps = {
+  activeInvoices: InvoiceItem[];
+  includeArchived: boolean;
+  searchQuery: string;
+  sort: string;
+  order: string;
+  defaultConfirmationTarget: number;
+};
+
+const initialState: InvoiceState = {
+  error: null,
+  invoiceId: null,
+  address: null,
+  amount: null,
+  recipientName: null,
+  description: null,
+  subaddressIndex: null,
+  warnings: null,
+};
+
+const initialArchiveState: ArchiveInvoiceState = {
+  error: null,
+  success: null,
+  archivedId: null,
+};
+
+const formatStatus = (status: InvoiceItem["status"]) => {
+  if (status === "payment_detected") {
+    return "Payment detected";
+  }
+  if (status === "pending") {
+    return "Awaiting funds";
+  }
+  if (status === "confirmed") {
+    return "Confirmed";
+  }
+  if (status === "invalid") {
+    return "Invalid";
+  }
+  return "Expired";
+};
+
+const formatTimestamp = (value: string | null) => {
+  if (!value) {
+    return "-";
+  }
+  return new Date(value).toLocaleString();
+};
+
+export default function InvoicePanel({
+  activeInvoices,
+  includeArchived,
+  searchQuery,
+  sort,
+  order,
+  defaultConfirmationTarget,
+}: InvoicePanelProps) {
+  const router = useRouter();
+  const [state, formAction] = useFormState(createInvoiceAction, initialState);
+  const [archiveState, archiveAction] = useFormState(
+    archiveInvoiceAction,
+    initialArchiveState
+  );
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null);
+  const [createStep, setCreateStep] = useState<1 | 2 | 3>(1);
+  const [formKey, setFormKey] = useState(0);
+  const [amount, setAmount] = useState("");
+  const [confirmationTarget, setConfirmationTarget] = useState(
+    String(defaultConfirmationTarget ?? 10)
+  );
+  const [expiresDate, setExpiresDate] = useState("");
+  const [expiresTime, setExpiresTime] = useState("");
+  const [recipientName, setRecipientName] = useState("");
+  const [description, setDescription] = useState("");
+  const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState(searchQuery ?? "");
+  const [qrLogoMode, setQrLogoMode] = useState<
+    "account_default" | "monero" | "none" | "custom"
+  >("account_default");
+  const [qrLogoDataUrl, setQrLogoDataUrl] = useState<string | null>(null);
+  const [createInvoiceOrigin, setCreateInvoiceOrigin] = useState<string | null>(
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null
+  );
+  const { rate: usdRate } = useXmrUsdRate();
+
+  const activeList = activeInvoices;
+  const archivedToggleHref = includeArchived
+    ? "/dashboard?tab=invoices"
+    : "/dashboard?tab=invoices&archived=1";
+
+  useEffect(() => {
+    setSearchInput(searchQuery ?? "");
+  }, [searchQuery]);
+
+  const buildInvoicesHref = (next: {
+    q?: string;
+    sort?: string;
+    order?: string;
+    includeArchived?: boolean;
+  }) => {
+    const params = new URLSearchParams();
+    params.set("tab", "invoices");
+    const nextArchived = next.includeArchived ?? includeArchived;
+    if (nextArchived) {
+      params.set("archived", "1");
+    }
+    const nextQuery = (next.q ?? searchQuery ?? "").trim();
+    if (nextQuery) {
+      params.set("q", nextQuery);
+    }
+    const nextSort = next.sort ?? sort;
+    if (nextSort) {
+      params.set("sort", nextSort);
+    }
+    const nextOrder = next.order ?? order;
+    if (nextOrder) {
+      params.set("order", nextOrder);
+    }
+    return `/dashboard?${params.toString()}`;
+  };
+
+  const csvExportHref = (() => {
+    const params = new URLSearchParams();
+    if (includeArchived) {
+      params.set("include_archived", "true");
+    }
+    const trimmed = (searchQuery ?? "").trim();
+    if (trimmed) {
+      params.set("q", trimmed);
+    }
+    if (sort) {
+      params.set("sort", sort);
+    }
+    if (order) {
+      params.set("order", order);
+    }
+    const suffix = params.toString();
+    return suffix ? `/dashboard/invoices.csv?${suffix}` : "/dashboard/invoices.csv";
+  })();
+
+  useEffect(() => {
+    if (createInvoiceOrigin) {
+      return;
+    }
+    setCreateInvoiceOrigin(window.location.origin);
+  }, [createInvoiceOrigin]);
+
+  useEffect(() => {
+    if (state.invoiceId) {
+      setCreateStep(3);
+      router.refresh();
+    }
+  }, [state.invoiceId, router]);
+
+  const publicInvoiceUrl = state.invoiceId
+    ? createInvoiceOrigin
+      ? new URL(`/invoice/${state.invoiceId}`, createInvoiceOrigin).toString()
+      : `/invoice/${state.invoiceId}`
+    : null;
+  const formattedDraftAmount = amount ? formatXmrAmount(amount) : "";
+  const draftAmountValue = useMemo(() => {
+    const parsed = Number.parseFloat(amount);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [amount]);
+  const draftUsdEstimate = useMemo(() => {
+    if (!usdRate || draftAmountValue === null || draftAmountValue <= 0) {
+      return null;
+    }
+    return formatUsdAmount(usdRate * draftAmountValue);
+  }, [usdRate, draftAmountValue]);
+  const expiryTimeValue = expiresTime || "00:00";
+  const expiryValue = expiresDate ? `${expiresDate}T${expiryTimeValue}` : "";
+  const expiryIsValid = (!expiresDate && !expiresTime) || !!expiresDate;
+
+  const openCreate = () => {
+    setIsCreateOpen(true);
+    setCreateStep(1);
+    setFormKey((prev) => prev + 1);
+    setAmount("");
+    setConfirmationTarget(String(defaultConfirmationTarget ?? 10));
+    setExpiresDate("");
+    setExpiresTime("");
+    setRecipientName("");
+    setDescription("");
+    setQrLogoMode("account_default");
+    setQrLogoDataUrl(null);
+  };
+
+  const closeCreate = () => {
+    setIsCreateOpen(false);
+    setCreateStep(1);
+    setFormKey((prev) => prev + 1);
+  };
+
+  const handleQrLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setQrLogoDataUrl(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        setQrLogoDataUrl(result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const toggleInvoice = (invoiceId: string) => {
+    setExpandedInvoiceId((prev) => (prev === invoiceId ? null : invoiceId));
+  };
+
+  const openArchiveModal = (invoiceId: string) => {
+    setArchiveModalInvoiceId(invoiceId);
+  };
+
+  const closeArchiveModal = () => {
+    setArchiveModalInvoiceId(null);
+  };
+
+  useEffect(() => {
+    if (archiveState.archivedId && expandedInvoiceId === archiveState.archivedId) {
+      setExpandedInvoiceId(null);
+      setArchiveModalInvoiceId(null);
+      router.refresh();
+    }
+  }, [archiveState.archivedId, expandedInvoiceId, router]);
+
+  const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
+  const inputClass =
+    "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
+  const primaryButton =
+    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+  const secondaryButton =
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+  const smallSecondaryButton =
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+
+  const sortHref = (key: string) => {
+    const nextOrder = sort === key && order === "asc" ? "desc" : "asc";
+    return buildInvoicesHref({ sort: key, order: nextOrder });
+  };
+
+  const applySearch = () => {
+    router.push(buildInvoicesHref({ q: searchInput }));
+  };
+
+  return (
+    <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-serif text-3xl">Invoices</h1>
+          <p className="mt-2 text-ink-soft">
+            Search, sort, and expand invoices for details.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link className={secondaryButton} href={archivedToggleHref}>
+            {includeArchived ? "Hide archived" : "Show archived"}
+          </Link>
+          <a className={secondaryButton} href={csvExportHref}>
+            Export CSV
+          </a>
+          <button className={primaryButton} type="button" onClick={openCreate}>
+            Create invoice
+          </button>
+        </div>
+      </div>
+      <div className="mt-6 grid gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <form
+            className="flex w-full flex-1 flex-wrap items-end gap-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              applySearch();
+            }}
+          >
+            <div className="grid w-full gap-2 sm:max-w-lg">
+              <label className={labelClass} htmlFor="invoice_search">
+                Search
+              </label>
+              <input
+                className={inputClass}
+                id="invoice_search"
+                type="search"
+                value={searchInput}
+                placeholder="Invoice id, subaddress, or metadata"
+                onChange={(event) => setSearchInput(event.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button className={smallSecondaryButton} type="submit">
+                Apply
+              </button>
+              {searchQuery ? (
+                <Link className={smallSecondaryButton} href={buildInvoicesHref({ q: "" })}>
+                  Clear
+                </Link>
+              ) : null}
+            </div>
+          </form>
+        </div>
+
+        {activeList.length === 0 ? (
+          <p className="text-sm font-semibold text-ink-soft">
+            No invoices match your filters.
+          </p>
+        ) : (
+          <div className="overflow-x-auto rounded-2xl border border-stroke bg-white/70 shadow-soft">
+            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+              <thead className="bg-white/60">
+                <tr className="border-b border-stroke">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Invoice
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("amount_xmr")}>
+                      Amount
+                    </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("status")}>
+                      Status
+                    </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("created_at")}>
+                      Created
+                    </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("expires_at")}>
+                      Expires
+                    </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeList.map((invoice) => {
+                  const isExpanded = expandedInvoiceId === invoice.id;
+                  const showPaidAfterExpiry = Boolean(invoice.paid_after_expiry);
+                  const isArchivable =
+                    !invoice.archived_at &&
+                    (invoice.status === "pending" ||
+                      invoice.status === "expired" ||
+                      invoice.status === "invalid");
+                  return (
+                    <Fragment key={invoice.id}>
+                      <tr
+                        className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
+                      >
+                        <td className="px-4 py-3 align-top">
+                          <button
+                            className="grid gap-1 text-left"
+                            type="button"
+                            onClick={() => toggleInvoice(invoice.id)}
+                          >
+                            <span className="font-mono text-xs text-ink">{invoice.id}</span>
+                            <span className="text-xs text-ink-soft">
+                              {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
+                            </span>
+                          </button>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {invoice.archived_at ? (
+                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                                Archived
+                              </span>
+                            ) : null}
+                            {showPaidAfterExpiry ? (
+                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                                Paid after expiry
+                              </span>
+                            ) : null}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 align-top font-semibold text-ink">
+                          {formatXmrAmount(invoice.amount_xmr)} XMR
+                        </td>
+                        <td className="px-4 py-3 align-top">
+                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                            {formatStatus(invoice.status)}
+                          </span>
+                        </td>
+                        <td
+                          className="px-4 py-3 align-top text-ink"
+                          title={formatRelativeTime(invoice.created_at) ?? undefined}
+                        >
+                          {formatTimestamp(invoice.created_at)}
+                        </td>
+                        <td
+                          className="px-4 py-3 align-top text-ink"
+                          title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                        >
+                          {formatTimestamp(invoice.expires_at)}
+                        </td>
+                        <td className="px-4 py-3 align-top">
+                          <div className="flex flex-wrap gap-2">
+                            <Link
+                              className={smallSecondaryButton}
+                              href={`/invoice/${invoice.id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Open
+                            </Link>
+                            <button
+                              className={smallSecondaryButton}
+                              type="button"
+                              onClick={() => toggleInvoice(invoice.id)}
+                            >
+                              {isExpanded ? "Hide" : "Details"}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      {isExpanded ? (
+                        <tr className="border-b border-stroke">
+                          <td className="px-4 py-4" colSpan={6}>
+                            <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="grid gap-2">
+                                  <p className={labelClass}>Created at</p>
+                                  <p
+                                    className="text-sm font-semibold text-ink"
+                                    title={formatRelativeTime(invoice.created_at) ?? undefined}
+                                  >
+                                    {formatTimestamp(invoice.created_at)}
+                                  </p>
+                                </div>
+                                <div className="grid gap-2">
+                                  <p className={labelClass}>Detected at</p>
+                                  <p
+                                    className="text-sm font-semibold text-ink"
+                                    title={formatRelativeTime(invoice.detected_at) ?? undefined}
+                                  >
+                                    {formatTimestamp(invoice.detected_at)}
+                                  </p>
+                                </div>
+                                <div className="grid gap-2">
+                                  <p className={labelClass}>Confirmed at</p>
+                                  <p
+                                    className="text-sm font-semibold text-ink"
+                                    title={formatRelativeTime(invoice.confirmed_at) ?? undefined}
+                                  >
+                                    {formatTimestamp(invoice.confirmed_at)}
+                                  </p>
+                                </div>
+                                <div className="grid gap-2">
+                                  <p className={labelClass}>Expires at</p>
+                                  <p
+                                    className="text-sm font-semibold text-ink"
+                                    title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                                  >
+                                    {formatTimestamp(invoice.expires_at)}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                <div className="grid gap-2">
+                                  <p className={labelClass}>Confirmation target</p>
+                                  <p className="text-sm font-semibold text-ink">
+                                    {invoice.confirmation_target}
+                                  </p>
+                                </div>
+                                <div className="grid gap-2">
+                                  <p className={labelClass}>Subaddress index</p>
+                                  <p className="text-sm font-semibold text-ink">
+                                    {invoice.subaddress_index ?? "-"}
+                                  </p>
+                                </div>
+                                {invoice.archived_at ? (
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>Archived at</p>
+                                    <p
+                                      className="text-sm font-semibold text-ink"
+                                      title={formatRelativeTime(invoice.archived_at) ?? undefined}
+                                    >
+                                      {formatTimestamp(invoice.archived_at)}
+                                    </p>
+                                  </div>
+                                ) : null}
+                                {invoice.paid_after_expiry_at ? (
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>Paid after expiry at</p>
+                                    <p
+                                      className="text-sm font-semibold text-ink"
+                                      title={
+                                        formatRelativeTime(invoice.paid_after_expiry_at) ??
+                                        undefined
+                                      }
+                                    >
+                                      {formatTimestamp(invoice.paid_after_expiry_at)}
+                                    </p>
+                                  </div>
+                                ) : null}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-3">
+                                {isArchivable ? (
+                                  <button
+                                    className={secondaryButton}
+                                    type="button"
+                                    onClick={() => openArchiveModal(invoice.id)}
+                                  >
+                                    Archive invoice
+                                  </button>
+                                ) : (
+                                  <p className="text-sm text-ink-soft">
+                                    Invoice actions are unavailable for this status.
+                                  </p>
+                                )}
+                                {archiveState.error && archiveModalInvoiceId === invoice.id ? (
+                                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                                    {archiveState.error}
+                                  </p>
+                                ) : null}
+                                {archiveState.success &&
+                                archiveState.archivedId === invoice.id ? (
+                                  <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
+                                    {archiveState.success}
+                                  </p>
+                                ) : null}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : null}
+                    </Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      <div className="mt-6 rounded-2xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">
+        We never hold funds. All payments move from the customer to your wallet.
+      </div>
+
+      {isCreateOpen ? (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
+          <div className="w-full max-w-3xl rounded-3xl border border-stroke bg-white p-8 shadow-deep">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  Create invoice
+                </p>
+                <h2 className="mt-2 font-serif text-2xl">Create a new invoice</h2>
+              </div>
+              <button className={secondaryButton} type="button" onClick={closeCreate}>
+                Close
+              </button>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {[
+                { id: 1, label: "1. Details" },
+                { id: 2, label: "2. Review" },
+                { id: 3, label: "3. Confirmation" },
+              ].map((step) => (
+                <span
+                  key={step.id}
+                  className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${
+                    createStep === step.id
+                      ? "border-ink bg-ink text-cream"
+                      : "border-stroke bg-white/70 text-ink-soft"
+                  }`}
+                >
+                  {step.label}
+                </span>
+              ))}
+            </div>
+            <form className="mt-6 grid gap-6" action={formAction} key={formKey}>
+              {createStep === 1 ? (
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_amount">
+                      Amount (XMR)
+                    </label>
+                    <input
+                      className={inputClass}
+                      id="wizard_amount"
+                      name="amount_xmr"
+                      type="number"
+                      step="0.000001"
+                      min="0"
+                      placeholder="0.10"
+                      value={amount}
+                      onChange={(event) => setAmount(event.target.value)}
+                      required
+                    />
+                    {draftUsdEstimate ? (
+                      <>
+                        <p className="text-sm text-ink-soft">
+                          Approx. USD reference: ~{draftUsdEstimate}
+                        </p>
+                        <details className="w-fit text-xs text-ink-soft">
+                          <summary className="cursor-pointer select-none underline underline-offset-4">
+                            About this estimate
+                          </summary>
+                          <p className="mt-2 max-w-[46ch] leading-relaxed">
+                            Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                          </p>
+                        </details>
+                      </>
+                    ) : null}
+                  </div>
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_confirmation_target">
+                      Confirmation target
+                    </label>
+                    <input
+                      className={inputClass}
+                      id="wizard_confirmation_target"
+                      name="confirmation_target"
+                      type="number"
+                      min="0"
+                      max="10"
+                      step="1"
+                      value={confirmationTarget}
+                      onChange={(event) => setConfirmationTarget(event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_expires_date">
+                      Expiry date
+                    </label>
+                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_160px]">
+                      <input
+                        className={inputClass}
+                        id="wizard_expires_date"
+                        name="expires_date"
+                        type="date"
+                        value={expiresDate}
+                        onChange={(event) => setExpiresDate(event.target.value)}
+                      />
+                      <input
+                        className={inputClass}
+                        id="wizard_expires_time"
+                        name="expires_time"
+                        type="time"
+                        value={expiresTime}
+                        onChange={(event) => setExpiresTime(event.target.value)}
+                      />
+                    </div>
+                    <p className="text-sm text-ink-soft">
+                      Leave blank to keep the default 24-hour expiry.
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_recipient">
+                      Recipient name
+                    </label>
+                    <input
+                      className={inputClass}
+                      id="wizard_recipient"
+                      name="recipient_name"
+                      type="text"
+                      placeholder="Your store"
+                      value={recipientName}
+                      onChange={(event) => setRecipientName(event.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_description">
+                      Description
+                    </label>
+                    <input
+                      className={inputClass}
+                      id="wizard_description"
+                      name="description"
+                      type="text"
+                      placeholder="Order 1042"
+                      value={description}
+                      onChange={(event) => setDescription(event.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_qr_logo_mode">
+                      QR logo
+                    </label>
+                    <select
+                      className={inputClass}
+                      id="wizard_qr_logo_mode"
+                      name="qr_logo_mode"
+                      value={qrLogoMode}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (
+                          value === "account_default" ||
+                          value === "monero" ||
+                          value === "none" ||
+                          value === "custom"
+                        ) {
+                          setQrLogoMode(value);
+                        }
+                        if (value !== "custom") {
+                          setQrLogoDataUrl(null);
+                        }
+                      }}
+                    >
+                      <option value="account_default">Account default</option>
+                      <option value="monero">Monero logo</option>
+                      <option value="none">No logo</option>
+                      <option value="custom">Custom image</option>
+                    </select>
+                    <p className="text-sm text-ink-soft">
+                      The logo overlays the QR center. Custom images are stored on the invoice as a
+                      data URL.
+                    </p>
+                    {qrLogoMode === "custom" ? (
+                      <input
+                        className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink"
+                        id="wizard_qr_logo_file"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleQrLogoFileChange}
+                      />
+                    ) : null}
+                    {qrLogoMode === "custom" && qrLogoDataUrl ? (
+                      <button
+                        className={secondaryButton}
+                        type="button"
+                        onClick={() => setQrLogoDataUrl(null)}
+                      >
+                        Remove custom image
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
+
+              {createStep === 2 ? (
+                <div className="grid gap-4">
+                  <input type="hidden" name="amount_xmr" value={amount} />
+                  <input
+                    type="hidden"
+                    name="confirmation_target"
+                    value={confirmationTarget}
+                  />
+                  <input type="hidden" name="expires_at" value={expiryValue} />
+                  <input type="hidden" name="recipient_name" value={recipientName} />
+                  <input type="hidden" name="description" value={description} />
+                  <input type="hidden" name="qr_logo_mode" value={qrLogoMode} />
+                  <input
+                    type="hidden"
+                    name="qr_logo_data_url"
+                    value={qrLogoMode === "custom" ? qrLogoDataUrl ?? "" : ""}
+                  />
+                  <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                      Review details
+                    </p>
+                    <p className="mt-3 text-sm text-ink">
+                      Amount:{" "}
+                      <strong>{formattedDraftAmount || "-"} XMR</strong>
+                    </p>
+                    <p className="mt-2 text-sm text-ink">
+                      Confirmations:{" "}
+                      <strong>{confirmationTarget || "-"}</strong>
+                    </p>
+                    <p className="mt-2 text-sm text-ink">
+                      Expiry:{" "}
+                      <strong>
+                        {expiryValue
+                          ? new Date(
+                              expiryValue
+                            ).toLocaleString()
+                          : "Default (24 hours)"}
+                      </strong>
+                    </p>
+                    <p className="mt-2 text-sm text-ink">
+                      QR logo: <strong>{qrLogoMode.replace("_", " ")}</strong>
+                    </p>
+                    <p className="mt-2 text-sm text-ink">
+                      Recipient: <strong>{recipientName || "-"}</strong>
+                    </p>
+                    <p className="mt-2 text-sm text-ink">
+                      Description: <strong>{description || "-"}</strong>
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+
+              {createStep === 3 ? (
+                <div className="grid gap-4">
+                  {state.error ? (
+                    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                      {state.error}
+                    </p>
+                  ) : null}
+                  {publicInvoiceUrl ? (
+                    <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                        Invoice created
+                      </p>
+                      <p className="mt-3 text-sm text-ink">
+                        Your invoice has been created. You can view and share the invoice
+                        link with your customer here:
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-ink">
+                        <Link
+                          className="underline underline-offset-4"
+                          href={publicInvoiceUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {publicInvoiceUrl}
+                        </Link>
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {state.error && createStep !== 3 ? (
+                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                  {state.error}
+                </p>
+              ) : null}
+
+              <div className="flex flex-wrap justify-end gap-3">
+                {createStep === 1 ? (
+                  <button
+                    className={secondaryButton}
+                    type="button"
+                    onClick={() => setCreateStep(2)}
+                    disabled={
+                      !amount ||
+                      !confirmationTarget ||
+                      !expiryIsValid ||
+                      (qrLogoMode === "custom" && !qrLogoDataUrl)
+                    }
+                  >
+                    Continue
+                  </button>
+                ) : null}
+                {createStep === 2 ? (
+                  <>
+                    <button
+                      className={secondaryButton}
+                      type="button"
+                      onClick={() => setCreateStep(1)}
+                    >
+                      Back
+                    </button>
+                    <button className={primaryButton} type="submit">
+                      Create invoice
+                    </button>
+                  </>
+                ) : null}
+                {createStep === 3 ? (
+                  <button className={secondaryButton} type="button" onClick={closeCreate}>
+                    Done
+                  </button>
+                ) : null}
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
+
+      {archiveModalInvoiceId ? (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
+          <div className="w-full max-w-lg rounded-3xl border border-stroke bg-white p-8 shadow-deep">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  Archive invoice
+                </p>
+                <h2 className="mt-2 font-serif text-2xl">Archive this invoice?</h2>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Archived invoices stay available in the archive list.
+                </p>
+              </div>
+              <button className={secondaryButton} type="button" onClick={closeArchiveModal}>
+                Close
+              </button>
+            </div>
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <button className={secondaryButton} type="button" onClick={closeArchiveModal}>
+                Cancel
+              </button>
+              <form action={archiveAction}>
+                <input type="hidden" name="invoice_id" value={archiveModalInvoiceId} />
+                <button className={primaryButton} type="submit">
+                  Archive invoice
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}

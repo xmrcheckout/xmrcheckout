@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Monero">
+  <defs>
+    <clipPath id="monero-circle">
+      <circle cx="50" cy="50" r="48" />
+    </clipPath>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="#f26822" />
+  <rect x="0" y="50" width="100" height="50" fill="#4a4a4a" clip-path="url(#monero-circle)" />
+  <path
+    fill="#ffffff"
+    d="M 23 70 L 23 35 L 36 35 L 50 58 L 64 35 L 77 35 L 77 70 L 66 70 L 66 45 L 50 66 L 34 45 L 34 70 Z"
+  />
+</svg>

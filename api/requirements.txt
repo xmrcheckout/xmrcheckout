@@ -1,0 +1,13 @@
+fastapi==0.115.0
+gunicorn==23.0.0
+uvicorn[standard]==0.30.6
+SQLAlchemy==2.0.36
+psycopg2-binary==2.9.9
+pydantic==2.9.2
+passlib[bcrypt]==1.7.4
+itsdangerous==2.2.0
+cryptography==42.0.8
+email-validator==2.2.0
+monero==1.1.1
+qrcode==7.4.2
+Pillow==11.1.0

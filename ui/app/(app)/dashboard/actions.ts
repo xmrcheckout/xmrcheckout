@@ -73,6 +73,8 @@ export async function createInvoiceAction(
   _prevState: InvoiceState,
   formData: FormData
 ): Promise<InvoiceState> {
+  const amountMode = String(formData.get("amount_mode") ?? "xmr").trim();
+  const isFiat = amountMode === "fiat";
   const instantConfirmation = formData.get("instant_confirmation") === "1";
   const confirmationRaw = String(formData.get("confirmation_target") ?? "").trim();
   const confirmationTarget = instantConfirmation ? 0 : Number(confirmationRaw);
@@ -92,10 +94,13 @@ export async function createInvoiceAction(
       warnings: null,
     };
   }
-  const amount = Number(formData.get("amount_xmr"));
+  const amountRaw = String(
+    formData.get(isFiat ? "amount_fiat" : "amount_xmr") ?? ""
+  ).trim();
+  const amount = Number(amountRaw);
   if (Number.isNaN(amount) || amount <= 0) {
     return {
-      error: "Enter a valid XMR amount.",
+      error: isFiat ? "Enter a valid fiat amount." : "Enter a valid XMR amount.",
       invoiceId: null,
       address: null,
       amount: null,
@@ -105,7 +110,19 @@ export async function createInvoiceAction(
       warnings: null,
     };
   }
-  const amountRaw = String(formData.get("amount_xmr") ?? "");
+  const currency = String(formData.get("currency") ?? "").trim().toUpperCase();
+  if (isFiat && !currency) {
+    return {
+      error: "Currency is required when using a fiat amount.",
+      invoiceId: null,
+      address: null,
+      amount: null,
+      recipientName: null,
+      description: null,
+      subaddressIndex: null,
+      warnings: null,
+    };
+  }
   const recipientName = String(formData.get("recipient_name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const expiresAtRaw = String(formData.get("expires_at") ?? "").trim();
@@ -194,7 +211,9 @@ export async function createInvoiceAction(
       Authorization: `ApiKey ${apiKey}`,
     },
     body: JSON.stringify({
-      amount_xmr: amount,
+      amount_xmr: isFiat ? null : amountRaw,
+      amount_fiat: isFiat ? amountRaw : null,
+      currency: isFiat ? currency : null,
       confirmation_target: confirmationTarget,
       expires_at: expiresAt,
       metadata:
@@ -227,13 +246,14 @@ export async function createInvoiceAction(
     id: string;
     address: string;
     subaddress_index?: number | null;
+    amount_xmr: string;
     warnings?: string[] | null;
   };
   return {
     error: null,
     invoiceId: data.id,
     address: data.address,
-    amount: amountRaw,
+    amount: data.amount_xmr,
     recipientName: recipientName || null,
     description: description || null,
     subaddressIndex: data.subaddress_index ?? null,

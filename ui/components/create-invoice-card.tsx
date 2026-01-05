@@ -10,8 +10,13 @@ import {
   createInvoiceAction,
   type InvoiceState,
 } from "../app/(app)/dashboard/actions";
-import { formatUsdAmount } from "../lib/formatting";
+import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
+import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
+import {
+  FIAT_CURRENCY_SUGGESTIONS,
+  getCurrencyFlag,
+} from "../lib/fiat-currencies";
 
 const initialState: InvoiceState = {
   error: null,
@@ -45,8 +50,13 @@ export default function CreateInvoiceCard() {
   const [qrColor, setQrColor] = useState("#1b1b1a");
   const [qrLogo, setQrLogo] = useState<string | null>(null);
   const [origin, setOrigin] = useState<string | null>(null);
+  const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
   const [amountInput, setAmountInput] = useState("");
+  const [fiatCurrency, setFiatCurrency] = useState("USD");
   const { rate: usdRate } = useXmrUsdRate();
+  const { rate: fiatRate, status: fiatRateStatus } = useXmrFiatRate(
+    amountMode === "fiat" ? fiatCurrency : null
+  );
   const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
   const inputClass =
     "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
@@ -69,16 +79,41 @@ export default function CreateInvoiceCard() {
 
   const uri = useMemo(() => buildMoneroUri(state), [state]);
   const amountValue = useMemo(() => {
+    if (amountMode !== "xmr") {
+      return null;
+    }
     const raw = amountInput || state.amount || "";
     const parsed = Number.parseFloat(raw);
     return Number.isFinite(parsed) ? parsed : null;
-  }, [amountInput, state.amount]);
+  }, [amountInput, amountMode, state.amount]);
   const usdEstimate = useMemo(() => {
     if (!usdRate || amountValue === null || amountValue <= 0) {
       return null;
     }
     return formatUsdAmount(usdRate * amountValue);
   }, [usdRate, amountValue]);
+  const fiatAmountValue = useMemo(() => {
+    if (amountMode !== "fiat") {
+      return null;
+    }
+    const parsed = Number.parseFloat(amountInput);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [amountInput, amountMode]);
+  const xmrEstimate = useMemo(() => {
+    if (!fiatRate || fiatAmountValue === null || fiatAmountValue <= 0) {
+      return null;
+    }
+    const estimate = fiatAmountValue / fiatRate;
+    return formatXmrAmount(estimate.toFixed(12));
+  }, [fiatAmountValue, fiatRate]);
+  const showFiatEstimate =
+    amountMode === "fiat" && fiatAmountValue !== null && fiatAmountValue > 0;
+  const fiatEstimateLabel = xmrEstimate
+    ? `~${xmrEstimate} XMR`
+    : fiatRateStatus === "loading"
+      ? "Fetching estimate..."
+      : "Estimate unavailable";
+  const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
 
   useEffect(() => {
     let active = true;
@@ -149,36 +184,123 @@ export default function CreateInvoiceCard() {
           />
         </div>
         <div className="grid gap-2">
-          <label className={labelClass} htmlFor="amount_xmr">
-            Amount (XMR)
+          <label className={labelClass} htmlFor="amount_mode">
+            Amount type
           </label>
-          <input
+          <select
             className={inputClass}
-            id="amount_xmr"
-            name="amount_xmr"
-            type="number"
-            step="0.000001"
-            min="0"
-            placeholder="0.10"
-            required
-            onChange={(event) => setAmountInput(event.target.value)}
-          />
-          {usdEstimate ? (
-            <>
-              <p className="text-sm text-ink-soft">
-                Approx. USD reference: ~{usdEstimate}
-              </p>
-              <details className="w-fit text-xs text-ink-soft">
-                <summary className="cursor-pointer select-none underline underline-offset-4">
-                  About this estimate
-                </summary>
-                <p className="mt-2 max-w-[46ch] leading-relaxed">
-                  Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
-                </p>
-              </details>
-            </>
-          ) : null}
+            id="amount_mode"
+            name="amount_mode"
+            value={amountMode}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (value === "xmr" || value === "fiat") {
+                setAmountMode(value);
+              }
+            }}
+          >
+            <option value="xmr">XMR</option>
+            <option value="fiat">Fiat</option>
+          </select>
         </div>
+        {amountMode === "xmr" ? (
+          <div className="grid gap-2">
+            <label className={labelClass} htmlFor="amount_xmr">
+              Amount (XMR)
+            </label>
+            <input
+              className={inputClass}
+              id="amount_xmr"
+              name="amount_xmr"
+              type="number"
+              step="0.000001"
+              min="0"
+              placeholder="0.10"
+              required
+              onChange={(event) => setAmountInput(event.target.value)}
+            />
+            {usdEstimate ? (
+              <>
+                <p className="text-sm text-ink-soft">
+                  Approx. USD reference: ~{usdEstimate}
+                </p>
+                <details className="w-fit text-xs text-ink-soft">
+                  <summary className="cursor-pointer select-none underline underline-offset-4">
+                    About this estimate
+                  </summary>
+                  <p className="mt-2 max-w-[46ch] leading-relaxed">
+                    Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                  </p>
+                </details>
+              </>
+            ) : null}
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
+            <div className="grid gap-2">
+              <label className={labelClass} htmlFor="amount_fiat">
+                Amount (fiat)
+              </label>
+              <input
+                className={inputClass}
+                id="amount_fiat"
+                name="amount_fiat"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="100.00"
+                required
+                onChange={(event) => setAmountInput(event.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label className={labelClass} htmlFor="currency">
+                Currency
+              </label>
+              <input
+                className={inputClass}
+                id="currency"
+                name="currency"
+                type="text"
+                placeholder="USD"
+                list="fiat-currency-options"
+                value={fiatCurrency}
+                onChange={(event) => setFiatCurrency(event.target.value.toUpperCase())}
+                required
+              />
+            </div>
+            <datalist id="fiat-currency-options">
+              {FIAT_CURRENCY_SUGGESTIONS.map((code) => (
+                <option
+                  key={code}
+                  value={code}
+                  label={`${getCurrencyFlag(code) ?? ""} ${code}`.trim()}
+                />
+              ))}
+            </datalist>
+            <p className="text-sm text-ink-soft sm:col-span-2">
+              Fiat inputs create an XMR invoice using a non-binding rate at request time.
+            </p>
+            {showFiatEstimate ? (
+              <div className="sm:col-span-2">
+                <p className="text-sm text-ink-soft">
+                  Approx. XMR value: {fiatEstimateLabel}
+                  {fiatCurrencyFlag ? ` · ${fiatCurrencyFlag} ${fiatCurrency}` : ""}
+                </p>
+                {xmrEstimate ? (
+                  <details className="w-fit text-xs text-ink-soft">
+                    <summary className="cursor-pointer select-none underline underline-offset-4">
+                      About this estimate
+                    </summary>
+                    <p className="mt-2 max-w-[46ch] leading-relaxed">
+                      Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                    </p>
+                  </details>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        )}
         <div className="grid gap-2">
           <label className={labelClass} htmlFor="confirmation_target">
             Confirmation target

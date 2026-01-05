@@ -7,6 +7,11 @@ import { useRouter } from "next/navigation";
 import { formatRelativeTime } from "./relative-time";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
+import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
+import {
+  FIAT_CURRENCY_SUGGESTIONS,
+  getCurrencyFlag,
+} from "../lib/fiat-currencies";
 
 import {
   createInvoiceAction,
@@ -100,6 +105,8 @@ export default function InvoicePanel({
   const [createStep, setCreateStep] = useState<1 | 2 | 3>(1);
   const [formKey, setFormKey] = useState(0);
   const [amount, setAmount] = useState("");
+  const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
+  const [fiatCurrency, setFiatCurrency] = useState("USD");
   const [confirmationTarget, setConfirmationTarget] = useState(
     String(defaultConfirmationTarget ?? 10)
   );
@@ -117,6 +124,9 @@ export default function InvoicePanel({
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null
   );
   const { rate: usdRate } = useXmrUsdRate();
+  const { rate: fiatRate, status: fiatRateStatus } = useXmrFiatRate(
+    amountMode === "fiat" ? fiatCurrency : null
+  );
 
   const activeList = activeInvoices;
   const archivedToggleHref = includeArchived
@@ -192,26 +202,59 @@ export default function InvoicePanel({
       ? new URL(`/invoice/${state.invoiceId}`, createInvoiceOrigin).toString()
       : `/invoice/${state.invoiceId}`
     : null;
-  const formattedDraftAmount = amount ? formatXmrAmount(amount) : "";
+  const formattedDraftAmount =
+    amountMode === "xmr" && amount ? formatXmrAmount(amount) : amount;
   const draftAmountValue = useMemo(() => {
+    if (amountMode !== "xmr") {
+      return null;
+    }
     const parsed = Number.parseFloat(amount);
     return Number.isFinite(parsed) ? parsed : null;
-  }, [amount]);
+  }, [amount, amountMode]);
   const draftUsdEstimate = useMemo(() => {
     if (!usdRate || draftAmountValue === null || draftAmountValue <= 0) {
       return null;
     }
     return formatUsdAmount(usdRate * draftAmountValue);
   }, [usdRate, draftAmountValue]);
+  const fiatAmountValue = useMemo(() => {
+    if (amountMode !== "fiat") {
+      return null;
+    }
+    const parsed = Number.parseFloat(amount);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [amount, amountMode]);
+  const draftXmrEstimate = useMemo(() => {
+    if (!fiatRate || fiatAmountValue === null || fiatAmountValue <= 0) {
+      return null;
+    }
+    const estimate = fiatAmountValue / fiatRate;
+    return formatXmrAmount(estimate.toFixed(12));
+  }, [fiatAmountValue, fiatRate]);
+  const showFiatEstimate =
+    amountMode === "fiat" && fiatAmountValue !== null && fiatAmountValue > 0;
+  const draftXmrEstimateLabel = draftXmrEstimate
+    ? `~${draftXmrEstimate} XMR`
+    : fiatRateStatus === "loading"
+      ? "Fetching estimate..."
+      : "Estimate unavailable";
+  const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
+  const fiatCurrencyLabel = fiatCurrencyFlag
+    ? `${fiatCurrencyFlag} ${fiatCurrency}`
+    : fiatCurrency;
   const expiryTimeValue = expiresTime || "00:00";
   const expiryValue = expiresDate ? `${expiresDate}T${expiryTimeValue}` : "";
   const expiryIsValid = (!expiresDate && !expiresTime) || !!expiresDate;
+  const isFiatCurrencyValid =
+    amountMode !== "fiat" || Boolean(fiatCurrency.trim());
 
   const openCreate = () => {
     setIsCreateOpen(true);
     setCreateStep(1);
     setFormKey((prev) => prev + 1);
     setAmount("");
+    setAmountMode("xmr");
+    setFiatCurrency("USD");
     setConfirmationTarget(String(defaultConfirmationTarget ?? 10));
     setExpiresDate("");
     setExpiresTime("");
@@ -612,37 +655,129 @@ export default function InvoicePanel({
               {createStep === 1 ? (
                 <div className="grid gap-4">
                   <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_amount">
-                      Amount (XMR)
+                    <label className={labelClass} htmlFor="wizard_amount_mode">
+                      Amount type
                     </label>
-                    <input
+                    <select
                       className={inputClass}
-                      id="wizard_amount"
-                      name="amount_xmr"
-                      type="number"
-                      step="0.000001"
-                      min="0"
-                      placeholder="0.10"
-                      value={amount}
-                      onChange={(event) => setAmount(event.target.value)}
-                      required
-                    />
-                    {draftUsdEstimate ? (
-                      <>
-                        <p className="text-sm text-ink-soft">
-                          Approx. USD reference: ~{draftUsdEstimate}
-                        </p>
-                        <details className="w-fit text-xs text-ink-soft">
-                          <summary className="cursor-pointer select-none underline underline-offset-4">
-                            About this estimate
-                          </summary>
-                          <p className="mt-2 max-w-[46ch] leading-relaxed">
-                            Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
-                          </p>
-                        </details>
-                      </>
-                    ) : null}
+                      id="wizard_amount_mode"
+                      name="amount_mode"
+                      value={amountMode}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        if (value === "xmr" || value === "fiat") {
+                          setAmountMode(value);
+                        }
+                      }}
+                    >
+                      <option value="xmr">XMR</option>
+                      <option value="fiat">Fiat</option>
+                    </select>
                   </div>
+                  {amountMode === "xmr" ? (
+                    <div className="grid gap-2">
+                      <label className={labelClass} htmlFor="wizard_amount_xmr">
+                        Amount (XMR)
+                      </label>
+                      <input
+                        className={inputClass}
+                        id="wizard_amount_xmr"
+                        name="amount_xmr"
+                        type="number"
+                        step="0.000001"
+                        min="0"
+                        placeholder="0.10"
+                        value={amount}
+                        onChange={(event) => setAmount(event.target.value)}
+                        required
+                      />
+                      {draftUsdEstimate ? (
+                        <>
+                          <p className="text-sm text-ink-soft">
+                            Approx. USD reference: ~{draftUsdEstimate}
+                          </p>
+                          <details className="w-fit text-xs text-ink-soft">
+                            <summary className="cursor-pointer select-none underline underline-offset-4">
+                              About this estimate
+                            </summary>
+                            <p className="mt-2 max-w-[46ch] leading-relaxed">
+                              Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                            </p>
+                          </details>
+                        </>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
+                      <div className="grid gap-2">
+                        <label className={labelClass} htmlFor="wizard_amount_fiat">
+                          Amount (fiat)
+                        </label>
+                        <input
+                          className={inputClass}
+                          id="wizard_amount_fiat"
+                          name="amount_fiat"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          placeholder="100.00"
+                          value={amount}
+                          onChange={(event) => setAmount(event.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <label className={labelClass} htmlFor="wizard_currency">
+                          Currency
+                        </label>
+                        <input
+                          className={inputClass}
+                          id="wizard_currency"
+                          name="currency"
+                          type="text"
+                          placeholder="USD"
+                          list="wizard-fiat-currency-options"
+                          value={fiatCurrency}
+                          onChange={(event) =>
+                            setFiatCurrency(event.target.value.toUpperCase())
+                          }
+                          required
+                        />
+                      </div>
+                      <p className="text-sm text-ink-soft sm:col-span-2">
+                        Fiat inputs create an XMR invoice using a non-binding rate at request time.
+                      </p>
+                      {showFiatEstimate ? (
+                        <div className="sm:col-span-2">
+                          <p className="text-sm text-ink-soft">
+                            Approx. XMR value: {draftXmrEstimateLabel}
+                            {fiatCurrencyFlag ? ` · ${fiatCurrencyLabel}` : ""}
+                          </p>
+                          {draftXmrEstimate ? (
+                            <details className="w-fit text-xs text-ink-soft">
+                              <summary className="cursor-pointer select-none underline underline-offset-4">
+                                About this estimate
+                              </summary>
+                              <p className="mt-2 max-w-[46ch] leading-relaxed">
+                                Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                              </p>
+                            </details>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
+                  {amountMode === "fiat" ? (
+                    <datalist id="wizard-fiat-currency-options">
+                      {FIAT_CURRENCY_SUGGESTIONS.map((code) => (
+                        <option
+                          key={code}
+                          value={code}
+                          label={`${getCurrencyFlag(code) ?? ""} ${code}`.trim()}
+                        />
+                      ))}
+                    </datalist>
+                  ) : null}
                   <div className="grid gap-2">
                     <label className={labelClass} htmlFor="wizard_confirmation_target">
                       Confirmation target
@@ -771,7 +906,15 @@ export default function InvoicePanel({
 
               {createStep === 2 ? (
                 <div className="grid gap-4">
-                  <input type="hidden" name="amount_xmr" value={amount} />
+                  <input type="hidden" name="amount_mode" value={amountMode} />
+                  {amountMode === "xmr" ? (
+                    <input type="hidden" name="amount_xmr" value={amount} />
+                  ) : (
+                    <>
+                      <input type="hidden" name="amount_fiat" value={amount} />
+                      <input type="hidden" name="currency" value={fiatCurrency} />
+                    </>
+                  )}
                   <input
                     type="hidden"
                     name="confirmation_target"
@@ -791,9 +934,31 @@ export default function InvoicePanel({
                       Review details
                     </p>
                     <p className="mt-3 text-sm text-ink">
-                      Amount:{" "}
-                      <strong>{formattedDraftAmount || "-"} XMR</strong>
+                      {amountMode === "xmr" ? "Amount:" : "Fiat amount:"}{" "}
+                      <strong>
+                        {formattedDraftAmount || "-"}{" "}
+                        {amountMode === "xmr" ? "XMR" : fiatCurrencyLabel}
+                      </strong>
                     </p>
+                    {amountMode === "fiat" ? (
+                      <p className="mt-2 text-sm text-ink">
+                        Estimated XMR:{" "}
+                        <strong>{draftXmrEstimateLabel}</strong>
+                      </p>
+                    ) : null}
+                    {amountMode === "fiat" && !isFiatCurrencyValid ? (
+                      <p className="mt-2 text-sm font-semibold text-red-700">
+                        Currency is required to create a fiat-denominated invoice.
+                      </p>
+                    ) : null}
+                    {amountMode === "fiat" &&
+                    fiatRateStatus === "error" &&
+                    isFiatCurrencyValid ? (
+                      <p className="mt-2 text-sm text-amber-800">
+                        Estimate unavailable for {fiatCurrencyLabel}. We will validate the
+                        currency when the invoice is created.
+                      </p>
+                    ) : null}
                     <p className="mt-2 text-sm text-ink">
                       Confirmations:{" "}
                       <strong>{confirmationTarget || "-"}</strong>
@@ -866,6 +1031,7 @@ export default function InvoicePanel({
                     onClick={() => setCreateStep(2)}
                     disabled={
                       !amount ||
+                      (amountMode === "fiat" && !fiatCurrency) ||
                       !confirmationTarget ||
                       !expiryIsValid ||
                       (qrLogoMode === "custom" && !qrLogoDataUrl)
@@ -883,7 +1049,11 @@ export default function InvoicePanel({
                     >
                       Back
                     </button>
-                    <button className={primaryButton} type="submit">
+                    <button
+                      className={primaryButton}
+                      type="submit"
+                      disabled={!isFiatCurrencyValid}
+                    >
                       Create invoice
                     </button>
                   </>

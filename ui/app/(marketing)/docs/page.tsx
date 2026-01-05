@@ -641,7 +641,6 @@ Content-Type: application/json
             <li>Subaddress index shown on each invoice</li>
             <li>Wallet lookahead controls discovery</li>
             <li>Subaddresses cycle through indices 1 to 100</li>
-            <li>Set a start index to shift the range to start + 1 through 100</li>
             <li>Wallets may require adding the index to view funds</li>
           </ul>
         </div>

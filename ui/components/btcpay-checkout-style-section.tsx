@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { useRouter } from "next/navigation";
 
 import {
   updateBtcpayCheckoutStyleAction,
@@ -25,23 +26,30 @@ const initialState = (
 export default function BtcpayCheckoutStyleSection({
   initialStyle,
 }: BtcpayCheckoutStyleSectionProps) {
+  const router = useRouter();
   const [state, formAction] = useFormState(
     updateBtcpayCheckoutStyleAction,
     initialState(initialStyle)
   );
-  const [style, setStyle] = useState<BtcpayCheckoutStyle>(state.style);
+  const [style, setStyle] = useState<BtcpayCheckoutStyle>(initialStyle);
 
   useEffect(() => {
-    setStyle(state.style);
-  }, [state.style]);
+    if (state.success) {
+      router.refresh();
+    }
+  }, [router, state.success]);
+
+  useEffect(() => {
+    setStyle(initialStyle);
+  }, [initialStyle]);
 
   return (
     <form action={formAction} className="grid gap-4">
       <div>
         <h3 className="font-serif text-2xl">BTCPay checkout layout</h3>
         <p className="mt-2 text-sm text-ink-soft">
-          Choose the hosted invoice layout shown to payers when you use the BTCPay
-          compatibility endpoints.
+          This setting only applies to BTCPay checkouts (invoices created via the
+          BTCPay compatibility endpoints).
         </p>
       </div>
       <label className="grid gap-2 text-sm font-semibold text-ink">

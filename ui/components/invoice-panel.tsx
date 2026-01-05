@@ -386,8 +386,200 @@ export default function InvoicePanel({
             No invoices match your filters.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-stroke bg-white/70 shadow-soft">
-            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+          <>
+            <div className="grid gap-4 lg:hidden">
+              {activeList.map((invoice) => {
+                const isExpanded = expandedInvoiceId === invoice.id;
+                const showPaidAfterExpiry = Boolean(invoice.paid_after_expiry);
+                const isArchivable =
+                  !invoice.archived_at &&
+                  (invoice.status === "pending" ||
+                    invoice.status === "expired" ||
+                    invoice.status === "invalid");
+                return (
+                  <div
+                    key={invoice.id}
+                    className={`rounded-2xl border border-stroke bg-white/70 p-4 shadow-soft ${
+                      invoice.archived_at ? "bg-ink/5" : ""
+                    }`}
+                  >
+                    <button
+                      className="grid gap-1 text-left"
+                      type="button"
+                      onClick={() => toggleInvoice(invoice.id)}
+                    >
+                      <span className="font-mono text-xs text-ink">{invoice.id}</span>
+                      <span className="text-xs text-ink-soft">
+                        {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
+                      </span>
+                    </button>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {invoice.archived_at ? (
+                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                          Archived
+                        </span>
+                      ) : null}
+                      {showPaidAfterExpiry ? (
+                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                          Paid after expiry
+                        </span>
+                      ) : null}
+                      <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                        {formatStatus(invoice.status)}
+                      </span>
+                    </div>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div className="grid gap-1">
+                        <p className={labelClass}>Amount</p>
+                        <p className="text-sm font-semibold text-ink">
+                          {formatXmrAmount(invoice.amount_xmr)} XMR
+                        </p>
+                      </div>
+                      <div className="grid gap-1">
+                        <p className={labelClass}>Created</p>
+                        <p
+                          className="text-sm text-ink"
+                          title={formatRelativeTime(invoice.created_at) ?? undefined}
+                        >
+                          {formatTimestamp(invoice.created_at)}
+                        </p>
+                      </div>
+                      <div className="grid gap-1">
+                        <p className={labelClass}>Expires</p>
+                        <p
+                          className="text-sm text-ink"
+                          title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                        >
+                          {formatTimestamp(invoice.expires_at)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <Link
+                        className={smallSecondaryButton}
+                        href={`/invoice/${invoice.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open
+                      </Link>
+                      <button
+                        className={smallSecondaryButton}
+                        type="button"
+                        onClick={() => toggleInvoice(invoice.id)}
+                      >
+                        {isExpanded ? "Hide" : "Details"}
+                      </button>
+                    </div>
+                    {isExpanded ? (
+                      <div className="mt-4 grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="grid gap-2">
+                            <p className={labelClass}>Created at</p>
+                            <p
+                              className="text-sm font-semibold text-ink"
+                              title={formatRelativeTime(invoice.created_at) ?? undefined}
+                            >
+                              {formatTimestamp(invoice.created_at)}
+                            </p>
+                          </div>
+                          <div className="grid gap-2">
+                            <p className={labelClass}>Detected at</p>
+                            <p
+                              className="text-sm font-semibold text-ink"
+                              title={formatRelativeTime(invoice.detected_at) ?? undefined}
+                            >
+                              {formatTimestamp(invoice.detected_at)}
+                            </p>
+                          </div>
+                          <div className="grid gap-2">
+                            <p className={labelClass}>Confirmed at</p>
+                            <p
+                              className="text-sm font-semibold text-ink"
+                              title={formatRelativeTime(invoice.confirmed_at) ?? undefined}
+                            >
+                              {formatTimestamp(invoice.confirmed_at)}
+                            </p>
+                          </div>
+                          <div className="grid gap-2">
+                            <p className={labelClass}>Expires at</p>
+                            <p
+                              className="text-sm font-semibold text-ink"
+                              title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                            >
+                              {formatTimestamp(invoice.expires_at)}
+                            </p>
+                          </div>
+                          <div className="grid gap-2">
+                            <p className={labelClass}>Confirmation target</p>
+                            <p className="text-sm font-semibold text-ink">
+                              {invoice.confirmation_target}
+                            </p>
+                          </div>
+                          <div className="grid gap-2">
+                            <p className={labelClass}>Subaddress index</p>
+                            <p className="text-sm font-semibold text-ink">
+                              {invoice.subaddress_index ?? "-"}
+                            </p>
+                          </div>
+                          {invoice.archived_at ? (
+                            <div className="grid gap-2">
+                              <p className={labelClass}>Archived at</p>
+                              <p
+                                className="text-sm font-semibold text-ink"
+                                title={formatRelativeTime(invoice.archived_at) ?? undefined}
+                              >
+                                {formatTimestamp(invoice.archived_at)}
+                              </p>
+                            </div>
+                          ) : null}
+                          {invoice.paid_after_expiry_at ? (
+                            <div className="grid gap-2">
+                              <p className={labelClass}>Paid after expiry at</p>
+                              <p
+                                className="text-sm font-semibold text-ink"
+                                title={
+                                  formatRelativeTime(invoice.paid_after_expiry_at) ?? undefined
+                                }
+                              >
+                                {formatTimestamp(invoice.paid_after_expiry_at)}
+                              </p>
+                            </div>
+                          ) : null}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {isArchivable ? (
+                            <button
+                              className={smallSecondaryButton}
+                              type="button"
+                              onClick={() => openArchiveModal(invoice.id)}
+                            >
+                              Archive invoice
+                            </button>
+                          ) : (
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
+                              Invoice actions are unavailable for this status.
+                            </p>
+                          )}
+                          {archiveState.error && archiveModalInvoiceId === invoice.id ? (
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-clay">
+                              {archiveState.error}
+                            </p>
+                          ) : null}
+                          {archiveState.archivedId === invoice.id ? (
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sage">
+                              Invoice archived.
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="hidden overflow-x-auto rounded-2xl border border-stroke bg-white/70 shadow-soft lg:block">
+              <table className="w-full border-collapse text-left text-sm">
               <thead className="bg-white/60">
                 <tr className="border-b border-stroke">
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
@@ -432,14 +624,16 @@ export default function InvoicePanel({
                       <tr
                         className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
                       >
-                        <td className="px-4 py-3 align-top">
+                        <td className="max-w-[320px] px-4 py-3 align-top">
                           <button
                             className="grid gap-1 text-left"
                             type="button"
                             onClick={() => toggleInvoice(invoice.id)}
                           >
-                            <span className="font-mono text-xs text-ink">{invoice.id}</span>
-                            <span className="text-xs text-ink-soft">
+                            <span className="break-words font-mono text-xs text-ink">
+                              {invoice.id}
+                            </span>
+                            <span className="break-words text-xs text-ink-soft">
                               {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
                             </span>
                           </button>
@@ -456,22 +650,22 @@ export default function InvoicePanel({
                             ) : null}
                           </div>
                         </td>
-                        <td className="px-4 py-3 align-top font-semibold text-ink">
+                        <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
                           {formatXmrAmount(invoice.amount_xmr)} XMR
                         </td>
-                        <td className="px-4 py-3 align-top">
-                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                        <td className="px-4 py-3 align-top whitespace-nowrap">
+                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink whitespace-nowrap">
                             {formatStatus(invoice.status)}
                           </span>
                         </td>
                         <td
-                          className="px-4 py-3 align-top text-ink"
+                          className="px-4 py-3 align-top text-ink whitespace-nowrap"
                           title={formatRelativeTime(invoice.created_at) ?? undefined}
                         >
                           {formatTimestamp(invoice.created_at)}
                         </td>
                         <td
-                          className="px-4 py-3 align-top text-ink"
+                          className="px-4 py-3 align-top text-ink whitespace-nowrap"
                           title={formatRelativeTime(invoice.expires_at) ?? undefined}
                         >
                           {formatTimestamp(invoice.expires_at)}
@@ -611,8 +805,9 @@ export default function InvoicePanel({
                   );
                 })}
               </tbody>
-            </table>
-          </div>
+              </table>
+            </div>
+          </>
         )}
       </div>
       <div className="mt-6 rounded-2xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">

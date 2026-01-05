@@ -29,7 +29,7 @@ class InvoiceCreate(BaseModel):
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
-        description="Defaults to 24 hours from creation if omitted.",
+        description="Defaults to 60 minutes from creation if omitted.",
     )
 
     @field_validator("currency")
@@ -93,7 +93,7 @@ class InvoiceCreateUser(BaseModel):
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
-        description="Defaults to 24 hours from creation if omitted.",
+        description="Defaults to 60 minutes from creation if omitted.",
     )
 
     @field_validator("currency")

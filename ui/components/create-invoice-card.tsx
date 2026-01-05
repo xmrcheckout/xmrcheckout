@@ -316,7 +316,7 @@ export default function CreateInvoiceCard() {
             defaultValue={10}
             required
           />
-          <p className="text-sm text-ink-soft">Expiry defaults to 24 hours.</p>
+          <p className="text-sm text-ink-soft">Expiry defaults to 60 minutes.</p>
         </div>
         <div className="grid gap-2">
           <label className={labelClass} htmlFor="expires_date">
@@ -337,7 +337,7 @@ export default function CreateInvoiceCard() {
             />
           </div>
           <p className="text-sm text-ink-soft">
-            Leave blank to keep the default 24-hour expiry.
+            Leave blank to keep the default 60-minute expiry.
           </p>
         </div>
         <div className="flex items-center gap-3 rounded-xl border border-stroke bg-white/60 px-4 py-3 text-sm font-semibold text-ink">

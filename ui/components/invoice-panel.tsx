@@ -1013,7 +1013,7 @@ export default function InvoicePanel({
                       />
                     </div>
                     <p className="text-sm text-ink-soft">
-                      Leave blank to keep the default 24-hour expiry.
+                      Leave blank to keep the default 60-minute expiry.
                     </p>
                   </div>
                   <div className="grid gap-2">
@@ -1165,7 +1165,7 @@ export default function InvoicePanel({
                           ? new Date(
                               expiryValue
                             ).toLocaleString()
-                          : "Default (24 hours)"}
+                          : "Default (60 minutes)"}
                       </strong>
                     </p>
                     <p className="mt-2 text-sm text-ink">

@@ -207,7 +207,7 @@ curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
   -H "Content-Type: application/json" \\
   -d '{
     "amount_xmr": "0.15",
-    "confirmation_target": 10,
+    "confirmation_target": 2,
     "metadata": { "order_id": "ORDER-1234" }
   }'`}</code>
           </pre>
@@ -220,7 +220,7 @@ curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
   -d '{
     "amount_fiat": "100.00",
     "currency": "USD",
-    "confirmation_target": 10,
+    "confirmation_target": 2,
     "metadata": { "order_id": "ORDER-1234" }
   }'`}</code>
           </pre>
@@ -397,7 +397,7 @@ response = requests.post(
     headers={"Authorization": f"ApiKey {api_key}"},
     json={
         "amount_xmr": "0.15",
-        "confirmation_target": 10,
+        "confirmation_target": 2,
         "metadata": {"order_id": "ORDER-1234"},
     },
     timeout=10,
@@ -470,7 +470,7 @@ func main() {
 
   payload := map[string]any{
     "amount_xmr":          "0.15",
-    "confirmation_target": 10,
+    "confirmation_target": 2,
     "metadata": map[string]any{
       "order_id": "ORDER-1234",
     },

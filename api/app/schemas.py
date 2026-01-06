@@ -25,7 +25,7 @@ class InvoiceCreate(BaseModel):
     amount_xmr: Decimal | None = Field(default=None, gt=0)
     amount_fiat: Decimal | None = Field(default=None, gt=0)
     currency: str | None = None
-    confirmation_target: conint(ge=0, le=10) = 10
+    confirmation_target: conint(ge=0, le=10) = 2
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
@@ -52,7 +52,7 @@ class InvoiceCreate(BaseModel):
 
 class DonationCreate(BaseModel):
     amount_xmr: Decimal = Field(gt=0)
-    confirmation_target: conint(ge=0, le=10) = 10
+    confirmation_target: conint(ge=0, le=10) = 2
 
 
 class InvoiceResponse(BaseModel):
@@ -89,7 +89,7 @@ class InvoiceCreateUser(BaseModel):
     amount_xmr: Decimal | None = Field(default=None, gt=0)
     amount_fiat: Decimal | None = Field(default=None, gt=0)
     currency: str | None = None
-    confirmation_target: conint(ge=0, le=10) = 10
+    confirmation_target: conint(ge=0, le=10) = 2
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
@@ -153,7 +153,7 @@ class ProfileResponse(BaseModel):
 
     id: UUID
     payment_address: str
-    default_confirmation_target: conint(ge=0, le=10) = 10
+    default_confirmation_target: conint(ge=0, le=10) = 2
     default_qr_logo: QrLogoMode = "monero"
     default_qr_logo_data_url: str | None = None
     btcpay_checkout_style: BtcpayCheckoutStyle = "standard"

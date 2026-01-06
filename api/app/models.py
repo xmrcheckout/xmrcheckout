@@ -125,7 +125,7 @@ class User(Base):
     webhook_secret_encrypted = Column(String, nullable=True)
     next_subaddress_index = Column(Integer, nullable=False, server_default="1")
     subaddress_start_index = Column(Integer, nullable=False, server_default="0")
-    default_confirmation_target = Column(Integer, nullable=False, server_default="10")
+    default_confirmation_target = Column(Integer, nullable=False, server_default="2")
     default_qr_logo = Column(String, nullable=False, server_default="monero")
     default_qr_logo_data_url = Column(String, nullable=True)
     btcpay_checkout_style = Column(String, nullable=False, server_default="standard")

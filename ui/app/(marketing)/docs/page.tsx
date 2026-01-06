@@ -351,7 +351,7 @@ const endpointRequirements = [
     auth: "API key",
     required: ["amount_xmr or amount_fiat + currency"],
     optional: [
-      "confirmation_target (default 10, 0-10)",
+      "confirmation_target (default 2, 0-10)",
       "metadata",
       "expires_at (ISO 8601)",
     ],
@@ -613,7 +613,7 @@ Content-Type: application/json
 {
   "amount_fiat": "100.00",
   "currency": "USD",
-  "confirmation_target": 10,
+  "confirmation_target": 2,
   "metadata": { "order_id": "ORDER-1234" }
 }`}</code>
         </pre>

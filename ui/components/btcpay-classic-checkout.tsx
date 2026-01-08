@@ -289,9 +289,16 @@ export default function BtcpayClassicCheckout({
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft">
           Payment request
         </p>
-        <p className="mt-3 text-[1.9rem] font-semibold text-ink">
-          {formattedAmount} XMR
-        </p>
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+          <p className="text-[1.9rem] font-semibold text-ink">{formattedAmount} XMR</p>
+          <button
+            className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+            type="button"
+            onClick={() => handleCopy(formattedAmount, "amount")}
+          >
+            {copiedField === "amount" ? "Copied" : "Copy"}
+          </button>
+        </div>
         <p className="mt-2 text-sm text-sage">{statusMessage(status, confirmationTarget)}</p>
       </div>
 
@@ -319,7 +326,16 @@ export default function BtcpayClassicCheckout({
           </div>
           <div className="flex items-center justify-between gap-4">
             <dt className="text-ink-soft">Amount due</dt>
-            <dd className="font-semibold">{formattedAmount} XMR</dd>
+            <dd className="flex items-center gap-2 font-semibold">
+              <span>{formattedAmount} XMR</span>
+              <button
+                className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                type="button"
+                onClick={() => handleCopy(formattedAmount, "amount")}
+              >
+                {copiedField === "amount" ? "Copied" : "Copy"}
+              </button>
+            </dd>
           </div>
         </dl>
       </details>

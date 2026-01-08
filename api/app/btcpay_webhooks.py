@@ -6,6 +6,7 @@ import json
 import logging
 import time
 from datetime import datetime, timezone
+from urllib.parse import urljoin
 
 import requests
 from requests import RequestException
@@ -15,6 +16,8 @@ from .models import BtcpayWebhook, Invoice
 from .security import decrypt_secret
 
 logger = logging.getLogger(__name__)
+
+_REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 
 
 def dispatch_btcpay_webhooks(
@@ -51,8 +54,25 @@ def dispatch_btcpay_webhooks(
             headers = {
                 "BTCPay-Sig": f"sha256={signature}",
                 "Content-Type": "application/json",
+                "User-Agent": "xmrcheckout-btcpay-webhook/1.0",
             }
-            requests.post(hook.url, data=body, headers=headers, timeout=5)
+            response = _post_with_redirects(
+                hook.url,
+                data=body,
+                headers=headers,
+                timeout=5,
+            )
+            if response is None:
+                continue
+            if response.status_code >= 400:
+                logger.warning(
+                    "BTCPay webhook delivered non-success status",
+                    extra={
+                        "webhook_id": str(hook.id),
+                        "event": event_type,
+                        "http_status": response.status_code,
+                    },
+                )
         except RequestException as exc:
             logger.warning(
                 "BTCPay webhook delivery failed",
@@ -109,3 +129,29 @@ def _after_expiration(invoice: Invoice) -> bool:
 
 def _sign_payload(body: bytes, secret: str) -> str:
     return hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest()
+
+
+def _post_with_redirects(
+    url: str,
+    *,
+    data: bytes,
+    headers: dict[str, str],
+    timeout: int,
+    max_redirects: int = 3,
+) -> requests.Response | None:
+    current_url = url
+    for _ in range(max_redirects + 1):
+        response = requests.post(
+            current_url,
+            data=data,
+            headers=headers,
+            timeout=timeout,
+            allow_redirects=False,
+        )
+        if response.status_code not in _REDIRECT_STATUSES:
+            return response
+        location = response.headers.get("Location")
+        if not location:
+            return response
+        current_url = urljoin(current_url, location)
+    return None

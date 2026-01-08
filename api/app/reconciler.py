@@ -178,6 +178,7 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
                     dispatch_btcpay_webhooks(
                         db, str(user.id), "InvoiceReceivedPayment", invoice
                     )
+                    dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaidInFull", invoice)
                     dispatch_btcpay_webhooks(
                         db, str(user.id), "InvoiceProcessing", invoice
                     )

@@ -37,7 +37,9 @@ router = APIRouter()
 BTCPAY_PAYMENT_METHOD = "XMR-CHAIN"
 BTCPAY_PAYMENT_METHOD_ALIASES = {BTCPAY_PAYMENT_METHOD, "XMR", "XMR_CHAIN"}
 BTCPAY_WEBHOOK_EVENTS = {
+    "InvoiceCreated",
     "InvoiceReceivedPayment",
+    "InvoicePaidInFull",
     "InvoicePaymentSettled",
     "InvoiceProcessing",
     "InvoiceExpired",
@@ -323,6 +325,7 @@ def create_invoice(
     except HTTPException:
         pass
     dispatch_webhooks(db, str(user.id), "invoice.created", invoice)
+    dispatch_btcpay_webhooks(db, str(user.id), "InvoiceCreated", invoice)
     status_name, additional_status = _btcpay_status(invoice)
     amount, currency, _ = _btcpay_amount_currency(invoice)
     expiration_time = _epoch_seconds(invoice.expires_at)

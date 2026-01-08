@@ -359,7 +359,7 @@ export default async function DashboardPage({
               searchQuery={invoiceSearchQuery}
               sort={invoiceSort}
               order={invoiceOrder}
-              defaultConfirmationTarget={profileData?.default_confirmation_target ?? 2}
+              defaultConfirmationTarget={profileData?.default_confirmation_target ?? 1}
             />
           ) : null}
           {activeTab === "profile" ? (
@@ -417,7 +417,7 @@ export default async function DashboardPage({
                     </div>
                     <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft">
                       <DefaultConfirmationTargetSection
-                        initialValue={profileData?.default_confirmation_target ?? 2}
+                        initialValue={profileData?.default_confirmation_target ?? 1}
                       />
                     </div>
                     <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft">

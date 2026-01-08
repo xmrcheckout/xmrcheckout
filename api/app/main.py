@@ -181,9 +181,15 @@ def startup():
                 )
             )
             connection.execute(
+                    text(
+                        "ALTER TABLE users "
+                        "ADD COLUMN IF NOT EXISTS default_confirmation_target INTEGER DEFAULT 1"
+                    )
+                )
+            connection.execute(
                 text(
                     "ALTER TABLE users "
-                    "ADD COLUMN IF NOT EXISTS default_confirmation_target INTEGER DEFAULT 2"
+                    "ALTER COLUMN default_confirmation_target SET DEFAULT 1"
                 )
             )
             connection.execute(
@@ -235,7 +241,7 @@ def startup():
             )
             connection.execute(
                 text(
-                    "UPDATE users SET default_confirmation_target = 2 "
+                    "UPDATE users SET default_confirmation_target = 1 "
                     "WHERE default_confirmation_target IS NULL"
                 )
             )

@@ -43,7 +43,10 @@ export default function MarketingHomePage() {
               Non-custodial · view-only access · merchant-owned funds
             </p>
             <p className="text-sm font-semibold text-ink-soft">
-              Zero service fees. We are not a payment processor, we are a payment enabler.
+              We are not a payment processor, we are a payment <i>enabler</i>.
+            </p>
+            <p className="text-sm font-semibold text-ink-soft">
+              Zero service fees.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link

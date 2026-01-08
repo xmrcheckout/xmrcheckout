@@ -77,22 +77,24 @@ export async function createInvoiceAction(
   const isFiat = amountMode === "fiat";
   const instantConfirmation = formData.get("instant_confirmation") === "1";
   const confirmationRaw = String(formData.get("confirmation_target") ?? "").trim();
-  const confirmationTarget = instantConfirmation ? 0 : Number(confirmationRaw);
-  if (
-    Number.isNaN(confirmationTarget) ||
-    confirmationTarget < 0 ||
-    confirmationTarget > 10
-  ) {
-    return {
-      error: "Confirmation target must be between 0 and 10.",
-      invoiceId: null,
-      address: null,
-      amount: null,
-      recipientName: null,
-      description: null,
-      subaddressIndex: null,
-      warnings: null,
-    };
+  let confirmationTarget: number | null = null;
+  if (instantConfirmation) {
+    confirmationTarget = 0;
+  } else if (confirmationRaw) {
+    const parsed = Number(confirmationRaw);
+    if (Number.isNaN(parsed) || parsed < 0 || parsed > 10) {
+      return {
+        error: "Confirmation target must be between 0 and 10.",
+        invoiceId: null,
+        address: null,
+        amount: null,
+        recipientName: null,
+        description: null,
+        subaddressIndex: null,
+        warnings: null,
+      };
+    }
+    confirmationTarget = parsed;
   }
   const amountRaw = String(
     formData.get(isFiat ? "amount_fiat" : "amount_xmr") ?? ""
@@ -245,7 +247,7 @@ export async function createInvoiceAction(
       amount_xmr: isFiat ? null : amountRaw,
       amount_fiat: isFiat ? amountRaw : null,
       currency: isFiat ? currency : null,
-      confirmation_target: confirmationTarget,
+      ...(confirmationTarget !== null ? { confirmation_target: confirmationTarget } : {}),
       expires_at: expiresAt,
       checkout_continue_url: checkoutContinueUrlRaw || null,
       metadata:

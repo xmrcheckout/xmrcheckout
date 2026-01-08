@@ -86,37 +86,29 @@ const formatTimestamp = (value: string | null) => {
   return new Date(value).toLocaleString();
 };
 
-export default function InvoicePanel({
-  activeInvoices,
-  includeArchived,
-  searchQuery,
-  sort,
-  order,
-  defaultConfirmationTarget,
-}: InvoicePanelProps) {
+type CreateInvoiceModalProps = {
+  defaultConfirmationTarget: number;
+  onClose: () => void;
+};
+
+function CreateInvoiceModal({ defaultConfirmationTarget, onClose }: CreateInvoiceModalProps) {
   const router = useRouter();
   const [state, formAction] = useFormState(createInvoiceAction, initialState);
-  const [archiveState, archiveAction] = useFormState(
-    archiveInvoiceAction,
-    initialArchiveState
-  );
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null);
-  const [createStep, setCreateStep] = useState<1 | 2 | 3>(1);
-  const [formKey, setFormKey] = useState(0);
   const [amount, setAmount] = useState("");
   const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
   const [fiatCurrency, setFiatCurrency] = useState("USD");
+  const [confirmationMode, setConfirmationMode] = useState<"account_default" | "custom">(
+    "account_default"
+  );
   const [confirmationTarget, setConfirmationTarget] = useState(
     String(defaultConfirmationTarget ?? 10)
   );
+  const [expiryMode, setExpiryMode] = useState<"default" | "custom">("default");
   const [expiresDate, setExpiresDate] = useState("");
   const [expiresTime, setExpiresTime] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [description, setDescription] = useState("");
   const [checkoutContinueUrl, setCheckoutContinueUrl] = useState("");
-  const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<string | null>(null);
-  const [searchInput, setSearchInput] = useState(searchQuery ?? "");
   const [qrLogoMode, setQrLogoMode] = useState<
     "account_default" | "monero" | "none" | "custom"
   >("account_default");
@@ -128,6 +120,567 @@ export default function InvoicePanel({
   const { rate: fiatRate, status: fiatRateStatus } = useXmrFiatRate(
     amountMode === "fiat" ? fiatCurrency : null
   );
+
+  useEffect(() => {
+    if (createInvoiceOrigin) {
+      return;
+    }
+    setCreateInvoiceOrigin(window.location.origin);
+  }, [createInvoiceOrigin]);
+
+  useEffect(() => {
+    if (!state.invoiceId) {
+      return;
+    }
+    router.refresh();
+  }, [router, state.invoiceId]);
+
+  const publicInvoiceUrl = state.invoiceId
+    ? createInvoiceOrigin
+      ? new URL(`/invoice/${state.invoiceId}`, createInvoiceOrigin).toString()
+      : `/invoice/${state.invoiceId}`
+    : null;
+
+  const formattedDraftAmount =
+    amountMode === "xmr" && amount ? formatXmrAmount(amount) : amount;
+
+  const draftAmountValue = useMemo(() => {
+    if (amountMode !== "xmr") {
+      return null;
+    }
+    const parsed = Number.parseFloat(amount);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [amount, amountMode]);
+
+  const draftUsdEstimate = useMemo(() => {
+    if (!usdRate || draftAmountValue === null || draftAmountValue <= 0) {
+      return null;
+    }
+    return formatUsdAmount(usdRate * draftAmountValue);
+  }, [usdRate, draftAmountValue]);
+
+  const fiatAmountValue = useMemo(() => {
+    if (amountMode !== "fiat") {
+      return null;
+    }
+    const parsed = Number.parseFloat(amount);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [amount, amountMode]);
+
+  const draftXmrEstimate = useMemo(() => {
+    if (!fiatRate || fiatAmountValue === null || fiatAmountValue <= 0) {
+      return null;
+    }
+    const estimate = fiatAmountValue / fiatRate;
+    return formatXmrAmount(estimate.toFixed(12));
+  }, [fiatAmountValue, fiatRate]);
+
+  const showFiatEstimate =
+    amountMode === "fiat" && fiatAmountValue !== null && fiatAmountValue > 0;
+  const draftXmrEstimateLabel = draftXmrEstimate
+    ? `~${draftXmrEstimate} XMR`
+    : fiatRateStatus === "loading"
+      ? "Fetching estimate..."
+      : "Estimate unavailable";
+  const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
+  const fiatCurrencyLabel = fiatCurrencyFlag
+    ? `${fiatCurrencyFlag} ${fiatCurrency}`
+    : fiatCurrency;
+
+  const expiryTimeValue = expiresTime || "00:00";
+  const expiryValue = expiresDate ? `${expiresDate}T${expiryTimeValue}` : "";
+  const expiryIsValid =
+    expiryMode !== "custom" || (!expiresTime && !expiresDate) || !!expiresDate;
+  const isFiatCurrencyValid = amountMode !== "fiat" || Boolean(fiatCurrency.trim());
+
+  const handleQrLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setQrLogoDataUrl(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        setQrLogoDataUrl(result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
+  const inputClass =
+    "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
+  const primaryButton =
+    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+  const secondaryButton =
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+  const smallSecondaryButton =
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+
+  const createDisabled =
+    !amount ||
+    !isFiatCurrencyValid ||
+    (confirmationMode === "custom" && !confirmationTarget) ||
+    !expiryIsValid ||
+    (qrLogoMode === "custom" && !qrLogoDataUrl);
+
+  return (
+    <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
+      <div className="flex max-h-[85vh] w-full max-w-3xl flex-col rounded-3xl border border-stroke bg-white shadow-deep">
+        <div className="flex flex-wrap items-start justify-between gap-4 p-8 pb-0">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              Create invoice
+            </p>
+            <h2 className="mt-2 font-serif text-2xl">Create a new invoice</h2>
+          </div>
+          <button className={secondaryButton} type="button" onClick={onClose}>
+            Close
+          </button>
+        </div>
+
+        <form
+          className="flex min-h-0 flex-1 flex-col gap-6 px-8 pb-8 pt-6"
+          action={formAction}
+        >
+          {state.invoiceId ? (
+            <div className="grid gap-4">
+              {publicInvoiceUrl ? (
+                <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Invoice created
+                  </p>
+                  <p className="mt-3 text-sm text-ink">
+                    Share this invoice link with your customer:
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-ink">
+                    <Link
+                      className="underline underline-offset-4"
+                      href={publicInvoiceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {publicInvoiceUrl}
+                    </Link>
+                  </p>
+                  {state.warnings && state.warnings.length > 0 ? (
+                    <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                      {state.warnings.map((warning) => (
+                        <p key={warning}>{warning}</p>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {state.error ? (
+                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                  {state.error}
+                </p>
+              ) : null}
+
+              <div className="flex flex-wrap justify-end gap-3">
+                <button className={secondaryButton} type="button" onClick={onClose}>
+                  Done
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+                <div className="grid gap-6">
+                  <div className="grid gap-4">
+                    <div className="grid gap-2">
+                      <label className={labelClass} htmlFor="wizard_amount_mode">
+                        Amount type
+                      </label>
+                      <select
+                        className={inputClass}
+                        id="wizard_amount_mode"
+                        name="amount_mode"
+                        value={amountMode}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          if (value === "xmr" || value === "fiat") {
+                            setAmountMode(value);
+                            setAmount("");
+                          }
+                        }}
+                      >
+                        <option value="xmr">XMR</option>
+                        <option value="fiat">Fiat reference</option>
+                      </select>
+                    </div>
+
+                    {amountMode === "xmr" ? (
+                      <div className="grid gap-2">
+                        <label className={labelClass} htmlFor="wizard_amount_xmr">
+                          Amount (XMR)
+                        </label>
+                        <input
+                          className={inputClass}
+                          id="wizard_amount_xmr"
+                          name="amount_xmr"
+                          type="number"
+                          step="0.000001"
+                          min="0"
+                          placeholder="0.10"
+                          value={amount}
+                          onChange={(event) => setAmount(event.target.value)}
+                          required
+                        />
+                        {draftUsdEstimate ? (
+                          <details className="w-fit text-xs text-ink-soft">
+                            <summary className="cursor-pointer select-none underline underline-offset-4">
+                              Approx. USD reference: ~{draftUsdEstimate}
+                            </summary>
+                            <p className="mt-2 max-w-[46ch] leading-relaxed">
+                              Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                            </p>
+                          </details>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
+                        <div className="grid gap-2">
+                          <label className={labelClass} htmlFor="wizard_amount_fiat">
+                            Amount (fiat)
+                          </label>
+                          <input
+                            className={inputClass}
+                            id="wizard_amount_fiat"
+                            name="amount_fiat"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="100.00"
+                            value={amount}
+                            onChange={(event) => setAmount(event.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <label className={labelClass} htmlFor="wizard_currency">
+                            Currency
+                          </label>
+                          <input
+                            className={inputClass}
+                            id="wizard_currency"
+                            name="currency"
+                            type="text"
+                            placeholder="USD"
+                            list="wizard-fiat-currency-options"
+                            value={fiatCurrency}
+                            onChange={(event) =>
+                              setFiatCurrency(event.target.value.toUpperCase())
+                            }
+                            required
+                          />
+                        </div>
+                        <datalist id="wizard-fiat-currency-options">
+                          {FIAT_CURRENCY_SUGGESTIONS.map((code) => (
+                            <option
+                              key={code}
+                              value={code}
+                              label={`${getCurrencyFlag(code) ?? ""} ${code}`.trim()}
+                            />
+                          ))}
+                        </datalist>
+                        <p className="text-sm text-ink-soft sm:col-span-2">
+                          Fiat inputs create an XMR invoice using a non-binding rate at request
+                          time.
+                        </p>
+                        {showFiatEstimate ? (
+                          <details className="w-fit text-xs text-ink-soft sm:col-span-2">
+                            <summary className="cursor-pointer select-none underline underline-offset-4">
+                              Approx. XMR value: {draftXmrEstimateLabel}
+                              {fiatCurrencyFlag ? ` · ${fiatCurrencyLabel}` : ""}
+                            </summary>
+                            <p className="mt-2 max-w-[46ch] leading-relaxed">
+                              Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                            </p>
+                          </details>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+
+                  <details className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                    <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
+                      Optional details
+                    </summary>
+                    <div className="mt-4 grid gap-5">
+                      <div className="grid gap-3">
+                        <p className={labelClass}>Confirmations</p>
+                        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_200px]">
+                          <div className="grid gap-2">
+                            <label className={labelClass} htmlFor="wizard_confirmation_mode">
+                              Mode
+                            </label>
+                            <select
+                              className={inputClass}
+                              id="wizard_confirmation_mode"
+                              value={confirmationMode}
+                              onChange={(event) => {
+                                const value = event.target.value;
+                                if (value === "account_default" || value === "custom") {
+                                  setConfirmationMode(value);
+                                }
+                              }}
+                            >
+                              <option value="account_default">
+                                Account default ({defaultConfirmationTarget})
+                              </option>
+                              <option value="custom">Custom</option>
+                            </select>
+                          </div>
+                          {confirmationMode === "custom" ? (
+                            <div className="grid gap-2">
+                              <label className={labelClass} htmlFor="wizard_confirmation_target">
+                                Target
+                              </label>
+                              <input
+                                className={inputClass}
+                                id="wizard_confirmation_target"
+                                name="confirmation_target"
+                                type="number"
+                                min="0"
+                                max="10"
+                                step="1"
+                                value={confirmationTarget}
+                                onChange={(event) => setConfirmationTarget(event.target.value)}
+                                required
+                              />
+                            </div>
+                          ) : null}
+                        </div>
+                        {confirmationMode === "custom" ? (
+                          <div className="flex flex-wrap items-center gap-3">
+                            <button
+                              className={smallSecondaryButton}
+                              type="button"
+                              onClick={() => setConfirmationTarget("0")}
+                            >
+                              0 confirmations
+                            </button>
+                            <p className="text-sm text-ink-soft">
+                              Create the invoice with a custom confirmation target.
+                            </p>
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <div className="grid gap-3">
+                        <p className={labelClass}>Expiry</p>
+                        <div className="grid gap-2">
+                          <label className={labelClass} htmlFor="wizard_expiry_mode">
+                            Mode
+                          </label>
+                          <select
+                            className={inputClass}
+                            id="wizard_expiry_mode"
+                            value={expiryMode}
+                            onChange={(event) => {
+                              const value = event.target.value;
+                              if (value === "default" || value === "custom") {
+                                setExpiryMode(value);
+                                if (value === "default") {
+                                  setExpiresDate("");
+                                  setExpiresTime("");
+                                }
+                              }
+                            }}
+                          >
+                            <option value="default">Default (60 minutes)</option>
+                            <option value="custom">Custom</option>
+                          </select>
+                        </div>
+
+                        {expiryMode === "custom" ? (
+                          <div className="grid gap-2">
+                            <label className={labelClass} htmlFor="wizard_expires_date">
+                              Expiry date
+                            </label>
+                            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_160px]">
+                              <input
+                                className={inputClass}
+                                id="wizard_expires_date"
+                                name="expires_date"
+                                type="date"
+                                value={expiresDate}
+                                onChange={(event) => setExpiresDate(event.target.value)}
+                              />
+                              <input
+                                className={inputClass}
+                                id="wizard_expires_time"
+                                name="expires_time"
+                                type="time"
+                                value={expiresTime}
+                                onChange={(event) => setExpiresTime(event.target.value)}
+                              />
+                            </div>
+                            <input type="hidden" name="expires_at" value={expiryValue} />
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="grid gap-2">
+                          <label className={labelClass} htmlFor="wizard_recipient">
+                            Recipient name
+                          </label>
+                          <input
+                            className={inputClass}
+                            id="wizard_recipient"
+                            name="recipient_name"
+                            type="text"
+                            placeholder="Your store"
+                            value={recipientName}
+                            onChange={(event) => setRecipientName(event.target.value)}
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <label className={labelClass} htmlFor="wizard_description">
+                            Description
+                          </label>
+                          <input
+                            className={inputClass}
+                            id="wizard_description"
+                            name="description"
+                            type="text"
+                            placeholder="Order 1042"
+                            value={description}
+                            onChange={(event) => setDescription(event.target.value)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label className={labelClass} htmlFor="wizard_checkout_continue_url">
+                          Continue URL
+                        </label>
+                        <input
+                          className={inputClass}
+                          id="wizard_checkout_continue_url"
+                          name="checkout_continue_url"
+                          type="url"
+                          placeholder="https://merchant.example/thanks"
+                          value={checkoutContinueUrl}
+                          onChange={(event) => setCheckoutContinueUrl(event.target.value)}
+                        />
+                        <p className="text-sm text-ink-soft">
+                          After confirmation, the hosted invoice page can show a Continue button.
+                        </p>
+                      </div>
+
+                      <div className="grid gap-2">
+                        <label className={labelClass} htmlFor="wizard_qr_logo_mode">
+                          QR logo
+                        </label>
+                        <select
+                          className={inputClass}
+                          id="wizard_qr_logo_mode"
+                          name="qr_logo_mode"
+                          value={qrLogoMode}
+                          onChange={(event) => {
+                            const value = event.target.value;
+                            if (
+                              value === "account_default" ||
+                              value === "monero" ||
+                              value === "none" ||
+                              value === "custom"
+                            ) {
+                              setQrLogoMode(value);
+                            }
+                            if (value !== "custom") {
+                              setQrLogoDataUrl(null);
+                            }
+                          }}
+                        >
+                          <option value="account_default">Account default</option>
+                          <option value="monero">Monero logo</option>
+                          <option value="none">No logo</option>
+                          <option value="custom">Custom image</option>
+                        </select>
+                        <input
+                          type="hidden"
+                          name="qr_logo_data_url"
+                          value={qrLogoMode === "custom" ? qrLogoDataUrl ?? "" : ""}
+                        />
+                        {qrLogoMode === "custom" ? (
+                          <input
+                            className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink"
+                            id="wizard_qr_logo_file"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleQrLogoFileChange}
+                          />
+                        ) : null}
+                        {qrLogoMode === "custom" && qrLogoDataUrl ? (
+                          <button
+                            className={secondaryButton}
+                            type="button"
+                            onClick={() => setQrLogoDataUrl(null)}
+                          >
+                            Remove custom image
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
+                  </details>
+
+                  <div className="rounded-2xl border border-stroke bg-white/70 p-5 text-sm text-ink shadow-soft">
+                    <p className={labelClass}>Summary</p>
+                    <p className="mt-2">
+                      Amount: <strong>{formattedDraftAmount || "-"}</strong>{" "}
+                      {amountMode === "xmr" ? "XMR" : fiatCurrencyLabel}
+                    </p>
+                  </div>
+
+                  {state.error ? (
+                    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                      {state.error}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap justify-end gap-3 border-t border-stroke pt-4">
+                <button className={secondaryButton} type="button" onClick={onClose}>
+                  Cancel
+                </button>
+                <button className={primaryButton} type="submit" disabled={createDisabled}>
+                  Create invoice
+                </button>
+              </div>
+            </>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default function InvoicePanel({
+  activeInvoices,
+  includeArchived,
+  searchQuery,
+  sort,
+  order,
+  defaultConfirmationTarget,
+}: InvoicePanelProps) {
+  const router = useRouter();
+  const [archiveState, archiveAction] = useFormState(
+    archiveInvoiceAction,
+    initialArchiveState
+  );
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [createModalKey, setCreateModalKey] = useState(0);
+  const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null);
+  const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState(searchQuery ?? "");
 
   const activeList = activeInvoices;
   const archivedToggleHref = includeArchived
@@ -184,108 +737,13 @@ export default function InvoicePanel({
     return suffix ? `/dashboard/invoices.csv?${suffix}` : "/dashboard/invoices.csv";
   })();
 
-  useEffect(() => {
-    if (createInvoiceOrigin) {
-      return;
-    }
-    setCreateInvoiceOrigin(window.location.origin);
-  }, [createInvoiceOrigin]);
-
-  useEffect(() => {
-    if (state.invoiceId) {
-      setCreateStep(3);
-      router.refresh();
-    }
-  }, [state.invoiceId, router]);
-
-  const publicInvoiceUrl = state.invoiceId
-    ? createInvoiceOrigin
-      ? new URL(`/invoice/${state.invoiceId}`, createInvoiceOrigin).toString()
-      : `/invoice/${state.invoiceId}`
-    : null;
-  const formattedDraftAmount =
-    amountMode === "xmr" && amount ? formatXmrAmount(amount) : amount;
-  const draftAmountValue = useMemo(() => {
-    if (amountMode !== "xmr") {
-      return null;
-    }
-    const parsed = Number.parseFloat(amount);
-    return Number.isFinite(parsed) ? parsed : null;
-  }, [amount, amountMode]);
-  const draftUsdEstimate = useMemo(() => {
-    if (!usdRate || draftAmountValue === null || draftAmountValue <= 0) {
-      return null;
-    }
-    return formatUsdAmount(usdRate * draftAmountValue);
-  }, [usdRate, draftAmountValue]);
-  const fiatAmountValue = useMemo(() => {
-    if (amountMode !== "fiat") {
-      return null;
-    }
-    const parsed = Number.parseFloat(amount);
-    return Number.isFinite(parsed) ? parsed : null;
-  }, [amount, amountMode]);
-  const draftXmrEstimate = useMemo(() => {
-    if (!fiatRate || fiatAmountValue === null || fiatAmountValue <= 0) {
-      return null;
-    }
-    const estimate = fiatAmountValue / fiatRate;
-    return formatXmrAmount(estimate.toFixed(12));
-  }, [fiatAmountValue, fiatRate]);
-  const showFiatEstimate =
-    amountMode === "fiat" && fiatAmountValue !== null && fiatAmountValue > 0;
-  const draftXmrEstimateLabel = draftXmrEstimate
-    ? `~${draftXmrEstimate} XMR`
-    : fiatRateStatus === "loading"
-      ? "Fetching estimate..."
-      : "Estimate unavailable";
-  const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
-  const fiatCurrencyLabel = fiatCurrencyFlag
-    ? `${fiatCurrencyFlag} ${fiatCurrency}`
-    : fiatCurrency;
-  const expiryTimeValue = expiresTime || "00:00";
-  const expiryValue = expiresDate ? `${expiresDate}T${expiryTimeValue}` : "";
-  const expiryIsValid = (!expiresDate && !expiresTime) || !!expiresDate;
-  const isFiatCurrencyValid =
-    amountMode !== "fiat" || Boolean(fiatCurrency.trim());
-
   const openCreate = () => {
     setIsCreateOpen(true);
-    setCreateStep(1);
-    setFormKey((prev) => prev + 1);
-    setAmount("");
-    setAmountMode("xmr");
-    setFiatCurrency("USD");
-    setConfirmationTarget(String(defaultConfirmationTarget ?? 10));
-    setExpiresDate("");
-    setExpiresTime("");
-    setRecipientName("");
-    setDescription("");
-    setCheckoutContinueUrl("");
-    setQrLogoMode("account_default");
-    setQrLogoDataUrl(null);
+    setCreateModalKey((prev) => prev + 1);
   };
 
   const closeCreate = () => {
     setIsCreateOpen(false);
-    setCreateStep(1);
-    setFormKey((prev) => prev + 1);
-  };
-
-  const handleQrLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      setQrLogoDataUrl(null);
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === "string") {
-        setQrLogoDataUrl(result);
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const toggleInvoice = (invoiceId: string) => {
@@ -817,478 +1275,14 @@ export default function InvoicePanel({
       </div>
 
       {isCreateOpen ? (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
-          <div className="w-full max-w-3xl rounded-3xl border border-stroke bg-white p-8 shadow-deep">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Create invoice
-                </p>
-                <h2 className="mt-2 font-serif text-2xl">Create a new invoice</h2>
-              </div>
-              <button className={secondaryButton} type="button" onClick={closeCreate}>
-                Close
-              </button>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {[
-                { id: 1, label: "1. Details" },
-                { id: 2, label: "2. Review" },
-                { id: 3, label: "3. Confirmation" },
-              ].map((step) => (
-                <span
-                  key={step.id}
-                  className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${
-                    createStep === step.id
-                      ? "border-ink bg-ink text-cream"
-                      : "border-stroke bg-white/70 text-ink-soft"
-                  }`}
-                >
-                  {step.label}
-                </span>
-              ))}
-            </div>
-            <form className="mt-6 grid gap-6" action={formAction} key={formKey}>
-              {createStep === 1 ? (
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_amount_mode">
-                      Amount type
-                    </label>
-                    <select
-                      className={inputClass}
-                      id="wizard_amount_mode"
-                      name="amount_mode"
-                      value={amountMode}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        if (value === "xmr" || value === "fiat") {
-                          setAmountMode(value);
-                        }
-                      }}
-                    >
-                      <option value="xmr">XMR</option>
-                      <option value="fiat">Fiat</option>
-                    </select>
-                  </div>
-                  {amountMode === "xmr" ? (
-                    <div className="grid gap-2">
-                      <label className={labelClass} htmlFor="wizard_amount_xmr">
-                        Amount (XMR)
-                      </label>
-                      <input
-                        className={inputClass}
-                        id="wizard_amount_xmr"
-                        name="amount_xmr"
-                        type="number"
-                        step="0.000001"
-                        min="0"
-                        placeholder="0.10"
-                        value={amount}
-                        onChange={(event) => setAmount(event.target.value)}
-                        required
-                      />
-                      {draftUsdEstimate ? (
-                        <>
-                          <p className="text-sm text-ink-soft">
-                            Approx. USD reference: ~{draftUsdEstimate}
-                          </p>
-                          <details className="w-fit text-xs text-ink-soft">
-                            <summary className="cursor-pointer select-none underline underline-offset-4">
-                              About this estimate
-                            </summary>
-                            <p className="mt-2 max-w-[46ch] leading-relaxed">
-                              Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
-                            </p>
-                          </details>
-                        </>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
-                      <div className="grid gap-2">
-                        <label className={labelClass} htmlFor="wizard_amount_fiat">
-                          Amount (fiat)
-                        </label>
-                        <input
-                          className={inputClass}
-                          id="wizard_amount_fiat"
-                          name="amount_fiat"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          placeholder="100.00"
-                          value={amount}
-                          onChange={(event) => setAmount(event.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <label className={labelClass} htmlFor="wizard_currency">
-                          Currency
-                        </label>
-                        <input
-                          className={inputClass}
-                          id="wizard_currency"
-                          name="currency"
-                          type="text"
-                          placeholder="USD"
-                          list="wizard-fiat-currency-options"
-                          value={fiatCurrency}
-                          onChange={(event) =>
-                            setFiatCurrency(event.target.value.toUpperCase())
-                          }
-                          required
-                        />
-                      </div>
-                      <p className="text-sm text-ink-soft sm:col-span-2">
-                        Fiat inputs create an XMR invoice using a non-binding rate at request time.
-                      </p>
-                      {showFiatEstimate ? (
-                        <div className="sm:col-span-2">
-                          <p className="text-sm text-ink-soft">
-                            Approx. XMR value: {draftXmrEstimateLabel}
-                            {fiatCurrencyFlag ? ` · ${fiatCurrencyLabel}` : ""}
-                          </p>
-                          {draftXmrEstimate ? (
-                            <details className="w-fit text-xs text-ink-soft">
-                              <summary className="cursor-pointer select-none underline underline-offset-4">
-                                About this estimate
-                              </summary>
-                              <p className="mt-2 max-w-[46ch] leading-relaxed">
-                                Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
-                              </p>
-                            </details>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
-                  {amountMode === "fiat" ? (
-                    <datalist id="wizard-fiat-currency-options">
-                      {FIAT_CURRENCY_SUGGESTIONS.map((code) => (
-                        <option
-                          key={code}
-                          value={code}
-                          label={`${getCurrencyFlag(code) ?? ""} ${code}`.trim()}
-                        />
-                      ))}
-                    </datalist>
-                  ) : null}
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_confirmation_target">
-                      Confirmation target
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="wizard_confirmation_target"
-                      name="confirmation_target"
-                      type="number"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={confirmationTarget}
-                      onChange={(event) => setConfirmationTarget(event.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_expires_date">
-                      Expiry date
-                    </label>
-                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_160px]">
-                      <input
-                        className={inputClass}
-                        id="wizard_expires_date"
-                        name="expires_date"
-                        type="date"
-                        value={expiresDate}
-                        onChange={(event) => setExpiresDate(event.target.value)}
-                      />
-                      <input
-                        className={inputClass}
-                        id="wizard_expires_time"
-                        name="expires_time"
-                        type="time"
-                        value={expiresTime}
-                        onChange={(event) => setExpiresTime(event.target.value)}
-                      />
-                    </div>
-                    <p className="text-sm text-ink-soft">
-                      Leave blank to keep the default 60-minute expiry.
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_recipient">
-                      Recipient name
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="wizard_recipient"
-                      name="recipient_name"
-                      type="text"
-                      placeholder="Your store"
-                      value={recipientName}
-                      onChange={(event) => setRecipientName(event.target.value)}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_description">
-                      Description
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="wizard_description"
-                      name="description"
-                      type="text"
-                      placeholder="Order 1042"
-                      value={description}
-                      onChange={(event) => setDescription(event.target.value)}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_checkout_continue_url">
-                      Continue URL (optional)
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="wizard_checkout_continue_url"
-                      name="checkout_continue_url"
-                      type="url"
-                      placeholder="https://merchant.example/thanks"
-                      value={checkoutContinueUrl}
-                      onChange={(event) => setCheckoutContinueUrl(event.target.value)}
-                    />
-                    <p className="text-sm text-ink-soft">
-                      After confirmation, the hosted invoice page can show a Continue button.
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <label className={labelClass} htmlFor="wizard_qr_logo_mode">
-                      QR logo
-                    </label>
-                    <select
-                      className={inputClass}
-                      id="wizard_qr_logo_mode"
-                      name="qr_logo_mode"
-                      value={qrLogoMode}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        if (
-                          value === "account_default" ||
-                          value === "monero" ||
-                          value === "none" ||
-                          value === "custom"
-                        ) {
-                          setQrLogoMode(value);
-                        }
-                        if (value !== "custom") {
-                          setQrLogoDataUrl(null);
-                        }
-                      }}
-                    >
-                      <option value="account_default">Account default</option>
-                      <option value="monero">Monero logo</option>
-                      <option value="none">No logo</option>
-                      <option value="custom">Custom image</option>
-                    </select>
-                    <p className="text-sm text-ink-soft">
-                      The logo overlays the QR center. Custom images are stored on the invoice as a
-                      data URL.
-                    </p>
-                    {qrLogoMode === "custom" ? (
-                      <input
-                        className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink"
-                        id="wizard_qr_logo_file"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleQrLogoFileChange}
-                      />
-                    ) : null}
-                    {qrLogoMode === "custom" && qrLogoDataUrl ? (
-                      <button
-                        className={secondaryButton}
-                        type="button"
-                        onClick={() => setQrLogoDataUrl(null)}
-                      >
-                        Remove custom image
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
-              ) : null}
-
-              {createStep === 2 ? (
-                <div className="grid gap-4">
-                  <input type="hidden" name="amount_mode" value={amountMode} />
-                  {amountMode === "xmr" ? (
-                    <input type="hidden" name="amount_xmr" value={amount} />
-                  ) : (
-                    <>
-                      <input type="hidden" name="amount_fiat" value={amount} />
-                      <input type="hidden" name="currency" value={fiatCurrency} />
-                    </>
-                  )}
-                  <input
-                    type="hidden"
-                    name="confirmation_target"
-                    value={confirmationTarget}
-                  />
-                  <input type="hidden" name="expires_at" value={expiryValue} />
-                  <input type="hidden" name="recipient_name" value={recipientName} />
-                  <input type="hidden" name="description" value={description} />
-                  <input
-                    type="hidden"
-                    name="checkout_continue_url"
-                    value={checkoutContinueUrl}
-                  />
-                  <input type="hidden" name="qr_logo_mode" value={qrLogoMode} />
-                  <input
-                    type="hidden"
-                    name="qr_logo_data_url"
-                    value={qrLogoMode === "custom" ? qrLogoDataUrl ?? "" : ""}
-                  />
-                  <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                      Review details
-                    </p>
-                    <p className="mt-3 text-sm text-ink">
-                      {amountMode === "xmr" ? "Amount:" : "Fiat amount:"}{" "}
-                      <strong>
-                        {formattedDraftAmount || "-"}{" "}
-                        {amountMode === "xmr" ? "XMR" : fiatCurrencyLabel}
-                      </strong>
-                    </p>
-                    {amountMode === "fiat" ? (
-                      <p className="mt-2 text-sm text-ink">
-                        Estimated XMR:{" "}
-                        <strong>{draftXmrEstimateLabel}</strong>
-                      </p>
-                    ) : null}
-                    {amountMode === "fiat" && !isFiatCurrencyValid ? (
-                      <p className="mt-2 text-sm font-semibold text-red-700">
-                        Currency is required to create a fiat-denominated invoice.
-                      </p>
-                    ) : null}
-                    {amountMode === "fiat" &&
-                    fiatRateStatus === "error" &&
-                    isFiatCurrencyValid ? (
-                      <p className="mt-2 text-sm text-amber-800">
-                        Estimate unavailable for {fiatCurrencyLabel}. We will validate the
-                        currency when the invoice is created.
-                      </p>
-                    ) : null}
-                    <p className="mt-2 text-sm text-ink">
-                      Confirmations:{" "}
-                      <strong>{confirmationTarget || "-"}</strong>
-                    </p>
-                    <p className="mt-2 text-sm text-ink">
-                      Expiry:{" "}
-                      <strong>
-                        {expiryValue
-                          ? new Date(
-                              expiryValue
-                            ).toLocaleString()
-                          : "Default (60 minutes)"}
-                      </strong>
-                    </p>
-                    <p className="mt-2 text-sm text-ink">
-                      QR logo: <strong>{qrLogoMode.replace("_", " ")}</strong>
-                    </p>
-                    <p className="mt-2 text-sm text-ink">
-                      Recipient: <strong>{recipientName || "-"}</strong>
-                    </p>
-                    <p className="mt-2 text-sm text-ink">
-                      Description: <strong>{description || "-"}</strong>
-                    </p>
-                    <p className="mt-2 text-sm text-ink">
-                      Continue URL: <strong>{checkoutContinueUrl || "-"}</strong>
-                    </p>
-                  </div>
-                </div>
-              ) : null}
-
-              {createStep === 3 ? (
-                <div className="grid gap-4">
-                  {state.error ? (
-                    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                      {state.error}
-                    </p>
-                  ) : null}
-                  {publicInvoiceUrl ? (
-                    <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                        Invoice created
-                      </p>
-                      <p className="mt-3 text-sm text-ink">
-                        Your invoice has been created. You can view and share the invoice
-                        link with your customer here:
-                      </p>
-                      <p className="mt-2 text-sm font-semibold text-ink">
-                        <Link
-                          className="underline underline-offset-4"
-                          href={publicInvoiceUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {publicInvoiceUrl}
-                        </Link>
-                      </p>
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-
-              {state.error && createStep !== 3 ? (
-                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                  {state.error}
-                </p>
-              ) : null}
-
-              <div className="flex flex-wrap justify-end gap-3">
-                {createStep === 1 ? (
-                  <button
-                    className={secondaryButton}
-                    type="button"
-                    onClick={() => setCreateStep(2)}
-                    disabled={
-                      !amount ||
-                      (amountMode === "fiat" && !fiatCurrency) ||
-                      !confirmationTarget ||
-                      !expiryIsValid ||
-                      (qrLogoMode === "custom" && !qrLogoDataUrl)
-                    }
-                  >
-                    Continue
-                  </button>
-                ) : null}
-                {createStep === 2 ? (
-                  <>
-                    <button
-                      className={secondaryButton}
-                      type="button"
-                      onClick={() => setCreateStep(1)}
-                    >
-                      Back
-                    </button>
-                    <button
-                      className={primaryButton}
-                      type="submit"
-                      disabled={!isFiatCurrencyValid}
-                    >
-                      Create invoice
-                    </button>
-                  </>
-                ) : null}
-                {createStep === 3 ? (
-                  <button className={secondaryButton} type="button" onClick={closeCreate}>
-                    Done
-                  </button>
-                ) : null}
-              </div>
-            </form>
-          </div>
-        </div>
+        <>
+          <CreateInvoiceModal
+            key={createModalKey}
+            defaultConfirmationTarget={defaultConfirmationTarget}
+            onClose={closeCreate}
+          />
+          
+        </>
       ) : null}
 
       {archiveModalInvoiceId ? (

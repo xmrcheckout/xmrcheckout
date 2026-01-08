@@ -43,6 +43,11 @@ const endpointGroups = [
         path: "/api/core/public/invoice/{invoice_id}",
         description: "Read invoice status and payment details without auth.",
       },
+      {
+        method: "GET",
+        path: "/api/core/public/invoice/{invoice_id}/continue",
+        description: "After confirmation, redirect to the merchant-provided Continue URL (if configured).",
+      },
     ],
   },
   {
@@ -243,6 +248,17 @@ const endpointRequirements = [
   },
   {
     method: "GET",
+    path: "/api/core/public/invoice/{invoice_id}/continue",
+    auth: "None",
+    required: ["invoice_id (path)"],
+    optional: [],
+    notes: [
+      "Only available after an invoice is confirmed.",
+      "Returns a 302 redirect to the merchant-provided checkout_continue_url (if configured).",
+    ],
+  },
+  {
+    method: "GET",
     path: "/api/core/invoices",
     auth: "API key",
     required: [],
@@ -352,6 +368,7 @@ const endpointRequirements = [
     required: ["amount_xmr or amount_fiat + currency"],
     optional: [
       "confirmation_target (default 2, 0-10)",
+      "checkout_continue_url (https URL, optional post-confirmation Continue button)",
       "metadata",
       "expires_at (ISO 8601)",
     ],
@@ -614,6 +631,7 @@ Content-Type: application/json
   "amount_fiat": "100.00",
   "currency": "USD",
   "confirmation_target": 2,
+  "checkout_continue_url": "https://merchant.example/thanks",
   "metadata": { "order_id": "ORDER-1234" }
 }`}</code>
         </pre>

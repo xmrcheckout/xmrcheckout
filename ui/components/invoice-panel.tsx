@@ -114,6 +114,7 @@ export default function InvoicePanel({
   const [expiresTime, setExpiresTime] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [description, setDescription] = useState("");
+  const [checkoutContinueUrl, setCheckoutContinueUrl] = useState("");
   const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState(searchQuery ?? "");
   const [qrLogoMode, setQrLogoMode] = useState<
@@ -260,6 +261,7 @@ export default function InvoicePanel({
     setExpiresTime("");
     setRecipientName("");
     setDescription("");
+    setCheckoutContinueUrl("");
     setQrLogoMode("account_default");
     setQrLogoDataUrl(null);
   };
@@ -1045,6 +1047,23 @@ export default function InvoicePanel({
                     />
                   </div>
                   <div className="grid gap-2">
+                    <label className={labelClass} htmlFor="wizard_checkout_continue_url">
+                      Continue URL (optional)
+                    </label>
+                    <input
+                      className={inputClass}
+                      id="wizard_checkout_continue_url"
+                      name="checkout_continue_url"
+                      type="url"
+                      placeholder="https://merchant.example/thanks"
+                      value={checkoutContinueUrl}
+                      onChange={(event) => setCheckoutContinueUrl(event.target.value)}
+                    />
+                    <p className="text-sm text-ink-soft">
+                      After confirmation, the hosted invoice page can show a Continue button.
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
                     <label className={labelClass} htmlFor="wizard_qr_logo_mode">
                       QR logo
                     </label>
@@ -1118,6 +1137,11 @@ export default function InvoicePanel({
                   <input type="hidden" name="expires_at" value={expiryValue} />
                   <input type="hidden" name="recipient_name" value={recipientName} />
                   <input type="hidden" name="description" value={description} />
+                  <input
+                    type="hidden"
+                    name="checkout_continue_url"
+                    value={checkoutContinueUrl}
+                  />
                   <input type="hidden" name="qr_logo_mode" value={qrLogoMode} />
                   <input
                     type="hidden"
@@ -1176,6 +1200,9 @@ export default function InvoicePanel({
                     </p>
                     <p className="mt-2 text-sm text-ink">
                       Description: <strong>{description || "-"}</strong>
+                    </p>
+                    <p className="mt-2 text-sm text-ink">
+                      Continue URL: <strong>{checkoutContinueUrl || "-"}</strong>
                     </p>
                   </div>
                 </div>

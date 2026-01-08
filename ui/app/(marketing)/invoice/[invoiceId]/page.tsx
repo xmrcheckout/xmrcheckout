@@ -29,6 +29,7 @@ type InvoiceStatusResponse = {
   status: InvoiceStatus;
   confirmation_target: number;
   confirmations: number;
+  checkout_continue_available?: boolean;
   qr_logo?: "monero" | "none" | "custom" | null;
   qr_logo_data_url?: string | null;
   created_at: string;
@@ -162,6 +163,8 @@ export default async function InvoiceStatusDetailPage({
   const isInvalid = invoice.status === "invalid";
   const hasDetectedPayment =
     invoice.status === "payment_detected" || invoice.status === "confirmed";
+  const checkoutContinueAvailable =
+    invoice.status === "confirmed" && Boolean(invoice.checkout_continue_available);
   const timelineItems: {
     label: string;
     timestamp: ReturnType<typeof formatTimestamp>;
@@ -326,6 +329,15 @@ export default async function InvoiceStatusDetailPage({
       </section>
 
       <section className="mt-6 grid gap-4">
+        {checkoutContinueAvailable ? (
+          <a
+            className="inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
+            rel="noreferrer"
+          >
+            Continue to merchant
+          </a>
+        ) : null}
         <InvoiceStatusActions />
       </section>
     </main>

@@ -73,6 +73,11 @@ export default function IntegrationsPage() {
 	              Create an invoice via{" "}
 	              <span className="font-mono text-ink">POST /api/core/invoices</span>.
 	            </li>
+              <li>
+                Optional: include{" "}
+                <span className="font-mono text-ink">checkout_continue_url</span> to show a
+                customer-facing Continue button after confirmation.
+              </li>
 	            <li>
 	              Redirect the customer to <span className="font-mono text-ink">invoice_url</span>.
 	            </li>

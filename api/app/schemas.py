@@ -26,6 +26,10 @@ class InvoiceCreate(BaseModel):
     amount_fiat: Decimal | None = Field(default=None, gt=0)
     currency: str | None = None
     confirmation_target: conint(ge=0, le=10) = 2
+    checkout_continue_url: AnyUrl | None = Field(
+        default=None,
+        description="Optional: after the invoice is confirmed, the hosted invoice page can offer a Continue button that navigates to this merchant URL.",
+    )
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
@@ -48,6 +52,17 @@ class InvoiceCreate(BaseModel):
         if self.amount_fiat is not None and not self.currency:
             raise ValueError("currency is required when amount_fiat is provided")
         return self
+
+    @field_validator("checkout_continue_url")
+    @classmethod
+    def _validate_checkout_continue_url(cls, value: AnyUrl | None) -> AnyUrl | None:
+        if value is None:
+            return None
+        if value.scheme == "https":
+            return value
+        if value.scheme == "http" and value.host in ("localhost", "127.0.0.1"):
+            return value
+        raise ValueError("checkout_continue_url must use https (http is allowed for localhost)")
 
 
 class DonationCreate(BaseModel):
@@ -90,6 +105,10 @@ class InvoiceCreateUser(BaseModel):
     amount_fiat: Decimal | None = Field(default=None, gt=0)
     currency: str | None = None
     confirmation_target: conint(ge=0, le=10) = 2
+    checkout_continue_url: AnyUrl | None = Field(
+        default=None,
+        description="Optional: after the invoice is confirmed, the hosted invoice page can offer a Continue button that navigates to this merchant URL.",
+    )
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
@@ -112,6 +131,17 @@ class InvoiceCreateUser(BaseModel):
         if self.amount_fiat is not None and not self.currency:
             raise ValueError("currency is required when amount_fiat is provided")
         return self
+
+    @field_validator("checkout_continue_url")
+    @classmethod
+    def _validate_checkout_continue_url(cls, value: AnyUrl | None) -> AnyUrl | None:
+        if value is None:
+            return None
+        if value.scheme == "https":
+            return value
+        if value.scheme == "http" and value.host in ("localhost", "127.0.0.1"):
+            return value
+        raise ValueError("checkout_continue_url must use https (http is allowed for localhost)")
 
 
 class InvoiceListResponse(BaseModel):
@@ -145,6 +175,7 @@ class InvoiceStatusResponse(BaseModel):
     btcpay_redirect_automatically: bool | None = None
     btcpay_order_id: str | None = None
     btcpay_order_number: str | None = None
+    checkout_continue_available: bool = False
     quote: dict[str, Any] | None = None
     qr_url: str | None = None
 

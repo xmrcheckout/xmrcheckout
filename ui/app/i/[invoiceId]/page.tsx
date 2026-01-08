@@ -30,6 +30,7 @@ type InvoiceStatusResponse = {
   status: InvoiceStatus;
   confirmation_target: number;
   confirmations: number;
+  checkout_continue_available?: boolean;
   created_at: string;
   expires_at: string | null;
   detected_at: string | null;
@@ -149,6 +150,10 @@ export default async function BtcpayModalInvoicePage({
   const useClassicCheckout =
     isBtcpayInvoice && invoice.btcpay_checkout_style === "btcpay_classic";
   const shouldShowBtcpayActions = isBtcpayInvoice && invoice.status === "confirmed";
+  const checkoutContinueAvailable =
+    !isBtcpayInvoice &&
+    invoice.status === "confirmed" &&
+    Boolean(invoice.checkout_continue_available);
 
   return (
     <main className="min-h-screen bg-cream px-6 py-6 text-ink">
@@ -241,6 +246,15 @@ export default async function BtcpayModalInvoicePage({
                 </p>
               </div>
             </div>
+            {checkoutContinueAvailable ? (
+              <a
+                className="mt-5 inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+                href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
+                rel="noreferrer"
+              >
+                Continue to merchant
+              </a>
+            ) : null}
           </div>
 
           <div className="mt-5">

@@ -7,7 +7,7 @@ import io
 import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
-from fastapi.responses import StreamingResponse
+from fastapi.responses import RedirectResponse, StreamingResponse
 import requests
 from requests import RequestException
 from sqlalchemy import func, or_
@@ -129,6 +129,20 @@ def _donation_invoice_expiry() -> datetime:
 def _is_donation_invoice(invoice: Invoice) -> bool:
     metadata = invoice.metadata_json or {}
     return isinstance(metadata, dict) and metadata.get("origin") == "donation"
+
+
+def _get_checkout_continue_url(invoice: Invoice) -> str | None:
+    metadata = invoice.metadata_json or {}
+    if not isinstance(metadata, dict):
+        return None
+    checkout = metadata.get("checkout")
+    if not isinstance(checkout, dict):
+        return None
+    value = checkout.get("continue_url")
+    if not isinstance(value, str):
+        return None
+    trimmed = value.strip()
+    return trimmed or None
 
 
 def _ensure_webhook_secret(db: Session, user: User) -> str:
@@ -288,6 +302,10 @@ def _public_invoice_status_response(
             update["qr_logo"] = logo
             if logo == "custom" and isinstance(logo_data_url, str):
                 update["qr_logo_data_url"] = logo_data_url
+    continue_url = _get_checkout_continue_url(invoice)
+    update["checkout_continue_available"] = bool(
+        invoice.status == "confirmed" and continue_url
+    )
     update["qr_url"] = _qr_url(invoice, request)
     return response.model_copy(update=update)
 
@@ -453,6 +471,36 @@ def get_invoice_status(
     except HTTPException:
         pass
     return _public_invoice_status_response(db, invoice, request)
+
+
+@router.get(
+    "/api/core/public/invoice/{invoice_id}/continue",
+    response_class=RedirectResponse,
+)
+def continue_invoice_after_confirmation(
+    invoice_id: uuid.UUID,
+    db: Session = Depends(get_db),
+):
+    invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
+    if invoice is None or _is_donation_invoice(invoice):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invoice not found",
+        )
+    if invoice.status != "confirmed":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Continue link not available",
+        )
+    continue_url = _get_checkout_continue_url(invoice)
+    if not continue_url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Continue link not available",
+        )
+    response = RedirectResponse(url=continue_url, status_code=status.HTTP_302_FOUND)
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 @router.get(
@@ -933,6 +981,12 @@ def create_invoice_for_user(
         metadata = {"qr": {"logo": user.default_qr_logo}}
         if user.default_qr_logo == "custom" and user.default_qr_logo_data_url:
             metadata["qr"]["logo_data_url"] = user.default_qr_logo_data_url
+    if payload.checkout_continue_url is not None:
+        checkout = metadata.get("checkout") if isinstance(metadata, dict) else None
+        if not isinstance(checkout, dict):
+            checkout = {}
+        checkout = {**checkout, "continue_url": str(payload.checkout_continue_url)}
+        metadata = {**(metadata if isinstance(metadata, dict) else {}), "checkout": checkout}
     address, subaddress_index = create_subaddress_for_user(db, user=user)
     invoice = Invoice(
         user_id=user.id,

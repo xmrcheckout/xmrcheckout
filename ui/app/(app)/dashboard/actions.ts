@@ -125,6 +125,37 @@ export async function createInvoiceAction(
   }
   const recipientName = String(formData.get("recipient_name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
+  const checkoutContinueUrlRaw = String(formData.get("checkout_continue_url") ?? "").trim();
+  if (checkoutContinueUrlRaw) {
+    try {
+      const parsed = new URL(checkoutContinueUrlRaw);
+      const isLocalhost =
+        parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+      if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && isLocalhost)) {
+        return {
+          error: "Continue URL must use https (http is allowed for localhost).",
+          invoiceId: null,
+          address: null,
+          amount: null,
+          recipientName: null,
+          description: null,
+          subaddressIndex: null,
+          warnings: null,
+        };
+      }
+    } catch {
+      return {
+        error: "Continue URL must be a valid URL.",
+        invoiceId: null,
+        address: null,
+        amount: null,
+        recipientName: null,
+        description: null,
+        subaddressIndex: null,
+        warnings: null,
+      };
+    }
+  }
   const expiresAtRaw = String(formData.get("expires_at") ?? "").trim();
   const expiresDate = String(formData.get("expires_date") ?? "").trim();
   const expiresTime = String(formData.get("expires_time") ?? "").trim();
@@ -216,6 +247,7 @@ export async function createInvoiceAction(
       currency: isFiat ? currency : null,
       confirmation_target: confirmationTarget,
       expires_at: expiresAt,
+      checkout_continue_url: checkoutContinueUrlRaw || null,
       metadata:
         Object.keys(metadata).length > 0 || qrPayload
           ? {

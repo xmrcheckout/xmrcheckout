@@ -377,6 +377,22 @@ export default function CreateInvoiceCard() {
           />
         </div>
         <div className="grid gap-2">
+          <label className={labelClass} htmlFor="checkout_continue_url">
+            Continue URL (optional)
+          </label>
+          <input
+            className={inputClass}
+            id="checkout_continue_url"
+            name="checkout_continue_url"
+            type="url"
+            placeholder="https://merchant.example/thanks"
+          />
+          <p className="text-sm text-ink-soft">
+            After confirmation, the hosted invoice page shows a &quot;Continue&quot; button
+            that navigates to this URL.
+          </p>
+        </div>
+        <div className="grid gap-2">
           <label className={labelClass} htmlFor="qr_color">
             QR accent color
           </label>

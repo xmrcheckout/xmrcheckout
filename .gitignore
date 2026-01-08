@@ -1,0 +1,10 @@
+.env
+ui/.env
+
+ui/.next/
+ui/node_modules/
+
+**/__pycache__/
+*.py[cod]
+
+nginx/certs/

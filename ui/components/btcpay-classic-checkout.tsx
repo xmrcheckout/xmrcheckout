@@ -22,13 +22,19 @@ type QuotePayload = {
 };
 
 type BtcpayClassicCheckoutProps = {
+  invoiceId: string;
   address: string;
   amountXmr: string;
+  amountPaidXmr: string | null;
   btcpayAmount: string | null;
   btcpayCurrency: string | null;
   quote: QuotePayload | null;
   status: InvoiceStatus;
   confirmationTarget: number;
+  redirectUrl: string | null;
+  redirectAutomatically: boolean | null;
+  orderId: string | null;
+  orderNumber: string | null;
   qrLogoMode?: "monero" | "none" | "custom" | null;
   qrLogoDataUrl?: string | null;
 };
@@ -56,6 +62,15 @@ const formatFiatAmount = (value: string, currency: string) => {
   }
 };
 
+const formatReturnLabel = (redirectUrl: string) => {
+  try {
+    const parsed = new URL(redirectUrl);
+    return parsed.hostname ? `Return to ${parsed.hostname}` : "Return to store";
+  } catch {
+    return "Return to store";
+  }
+};
+
 const statusMessage = (
   status: InvoiceStatus,
   confirmationTarget: number
@@ -76,19 +91,31 @@ const statusMessage = (
 };
 
 export default function BtcpayClassicCheckout({
+  invoiceId,
   address,
   amountXmr,
+  amountPaidXmr,
   btcpayAmount,
   btcpayCurrency,
   quote,
   status,
   confirmationTarget,
+  redirectUrl,
+  redirectAutomatically,
+  orderId,
+  orderNumber,
   qrLogoMode,
   qrLogoDataUrl,
 }: BtcpayClassicCheckoutProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const formattedAmount = useMemo(() => formatXmrAmount(amountXmr), [amountXmr]);
+  const formattedPaidAmount = useMemo(() => {
+    if (!amountPaidXmr) {
+      return formattedAmount;
+    }
+    return formatXmrAmount(amountPaidXmr);
+  }, [amountPaidXmr, formattedAmount]);
   const uri = useMemo(
     () => buildMoneroUri(address, formattedAmount),
     [address, formattedAmount]
@@ -101,6 +128,22 @@ export default function BtcpayClassicCheckout({
     quote?.rate && quote.fiat_currency
       ? `1 XMR = ${formatFiatAmount(quote.rate, quote.fiat_currency)}`
       : null;
+
+  useEffect(() => {
+    if (status !== "confirmed" || !redirectUrl || !redirectAutomatically) {
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      try {
+        window.top?.location.assign(redirectUrl);
+      } catch {
+        window.location.assign(redirectUrl);
+      }
+    }, 3000);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [redirectAutomatically, redirectUrl, status]);
 
   const handleCopy = async (value: string, field: string) => {
     try {
@@ -161,6 +204,84 @@ export default function BtcpayClassicCheckout({
       : resolvedQrLogoMode === "monero"
         ? "/monero-logo.svg"
         : null;
+
+  if (status === "confirmed") {
+    return (
+      <div className="rounded-[28px] border border-stroke bg-white px-6 py-8 shadow-card">
+        <div className="text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sage/15 text-sage">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-9 w-9"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </div>
+          <p className="mt-4 text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft">
+            Invoice paid
+          </p>
+        </div>
+
+        <dl className="mt-6 grid gap-3 text-sm text-ink">
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-ink-soft">Invoice id</dt>
+            <dd className="max-w-[60%] truncate text-right font-semibold">{invoiceId}</dd>
+          </div>
+          {orderNumber || orderId ? (
+            <div className="flex items-center justify-between gap-4">
+              <dt className="text-ink-soft">Order id</dt>
+              <dd className="font-semibold">{orderNumber ?? orderId}</dd>
+            </div>
+          ) : null}
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-ink-soft">Total price</dt>
+            <dd className="font-semibold">{formattedAmount} XMR</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-ink-soft">Total fiat</dt>
+            <dd className="font-semibold">{totalFiat ?? "-"}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-ink-soft">Exchange rate</dt>
+            <dd className="font-semibold">{exchangeRate ?? "-"}</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-ink-soft">Network cost</dt>
+            <dd className="font-semibold">Added by wallet</dd>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <dt className="text-ink-soft">Amount paid</dt>
+            <dd className="font-semibold">{formattedPaidAmount} XMR</dd>
+          </div>
+        </dl>
+
+        <div className="mt-8 grid gap-3">
+          <a
+            className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_14px_22px_rgba(93,122,106,0.25)] transition hover:-translate-y-0.5"
+            href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
+          >
+            View receipt
+          </a>
+          {redirectUrl ? (
+            <a
+              className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-sage transition hover:bg-cream"
+              href={redirectUrl}
+              target="_top"
+              rel="noreferrer"
+            >
+              {formatReturnLabel(redirectUrl)}
+            </a>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-[28px] border border-stroke bg-white px-6 py-8 shadow-card">

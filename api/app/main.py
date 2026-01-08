@@ -201,7 +201,13 @@ def startup():
             connection.execute(
                 text(
                     "ALTER TABLE users "
-                    "ADD COLUMN IF NOT EXISTS btcpay_checkout_style VARCHAR DEFAULT 'standard'"
+                    "ADD COLUMN IF NOT EXISTS btcpay_checkout_style VARCHAR DEFAULT 'btcpay_classic'"
+                )
+            )
+            connection.execute(
+                text(
+                    "ALTER TABLE users "
+                    "ALTER COLUMN btcpay_checkout_style SET DEFAULT 'btcpay_classic'"
                 )
             )
             connection.execute(
@@ -212,8 +218,19 @@ def startup():
             )
             connection.execute(
                 text(
-                    "UPDATE users SET btcpay_checkout_style = 'standard' "
+                    "UPDATE users SET btcpay_checkout_style = 'btcpay_classic' "
                     "WHERE btcpay_checkout_style IS NULL"
+                )
+            )
+            connection.execute(
+                text(
+                    "UPDATE users "
+                    "SET btcpay_checkout_style = 'btcpay_classic' "
+                    "WHERE btcpay_checkout_style = 'standard' "
+                    "AND NOT EXISTS ("
+                    "  SELECT 1 FROM profile_history ph "
+                    "  WHERE ph.user_id = users.id AND ph.field_name = 'btcpay_checkout_style'"
+                    ")"
                 )
             )
             connection.execute(

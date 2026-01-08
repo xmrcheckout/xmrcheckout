@@ -37,12 +37,24 @@ def ensure_invoice_qr_png(
             detail="QR storage is not configured",
         )
     os.makedirs(storage_dir, exist_ok=True)
+    try:
+        os.chmod(storage_dir, 0o755)
+    except Exception:
+        pass
     filename = f"{invoice.id}.png"
     path = os.path.join(storage_dir, filename)
     if os.path.exists(path):
+        try:
+            os.chmod(path, 0o644)
+        except Exception:
+            pass
         return path
     png_bytes = build_invoice_qr_png_bytes(invoice=invoice, settings=settings)
     _atomic_write(path, png_bytes)
+    try:
+        os.chmod(path, 0o644)
+    except Exception:
+        pass
     return path
 
 

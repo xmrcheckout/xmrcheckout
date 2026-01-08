@@ -411,7 +411,7 @@ export default async function DashboardPage({
                         initialStyle={
                           profileData?.btcpay_checkout_style === "btcpay_classic"
                             ? "btcpay_classic"
-                            : "standard"
+                            : "btcpay_classic"
                         }
                       />
                     </div>

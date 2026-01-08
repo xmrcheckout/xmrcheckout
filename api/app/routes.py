@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_DOWN
 import csv
 import io
+import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import StreamingResponse
@@ -239,6 +240,11 @@ def _public_invoice_status_response(
     response = InvoiceStatusResponse.model_validate(invoice)
     metadata = invoice.metadata_json or {}
     update: dict[str, Any] = {}
+    if invoice.total_paid_atomic is not None:
+        total_paid = (Decimal(invoice.total_paid_atomic) / Decimal("1000000000000")).quantize(
+            Decimal("0.000000000001"), rounding=ROUND_DOWN
+        )
+        update["amount_paid_xmr"] = format_xmr_amount(total_paid)
     btcpay_data = metadata.get("btcpay") if isinstance(metadata, dict) else None
     if isinstance(btcpay_data, dict):
         amount = btcpay_data.get("amount")
@@ -250,8 +256,30 @@ def _public_invoice_status_response(
                 user = db.query(User).filter(User.id == invoice.user_id).first()
                 if user and user.btcpay_checkout_style:
                     update["btcpay_checkout_style"] = user.btcpay_checkout_style
+        checkout = btcpay_data.get("checkout")
+        if isinstance(checkout, dict):
+            redirect_url = checkout.get("redirectURL")
+            if isinstance(redirect_url, str) and redirect_url.strip():
+                update["btcpay_redirect_url"] = redirect_url.strip()
+            redirect_auto = checkout.get("redirectAutomatically")
+            if isinstance(redirect_auto, bool):
+                update["btcpay_redirect_automatically"] = redirect_auto
     if isinstance(metadata, dict) and isinstance(metadata.get("quote"), dict):
         update["quote"] = metadata.get("quote")
+    if isinstance(metadata, dict) and isinstance(metadata.get("posData"), str):
+        try:
+            pos_data = json.loads(metadata.get("posData", ""))
+        except (TypeError, ValueError, json.JSONDecodeError):
+            pos_data = None
+        if isinstance(pos_data, dict):
+            woo = pos_data.get("WooCommerce")
+            if isinstance(woo, dict):
+                order_id = woo.get("Order ID")
+                order_number = woo.get("Order Number")
+                if order_id is not None:
+                    update["btcpay_order_id"] = str(order_id)
+                if order_number is not None:
+                    update["btcpay_order_number"] = str(order_number)
     qr = metadata.get("qr") if isinstance(metadata, dict) else None
     if isinstance(qr, dict):
         logo = qr.get("logo")

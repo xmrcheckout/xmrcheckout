@@ -128,7 +128,7 @@ class User(Base):
     default_confirmation_target = Column(Integer, nullable=False, server_default="2")
     default_qr_logo = Column(String, nullable=False, server_default="monero")
     default_qr_logo_data_url = Column(String, nullable=True)
-    btcpay_checkout_style = Column(String, nullable=False, server_default="standard")
+    btcpay_checkout_style = Column(String, nullable=False, server_default="btcpay_classic")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

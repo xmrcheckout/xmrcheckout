@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import BtcpayModalBridge from "../../../components/btcpay-modal-bridge";
-import BtcpayModalCloseButton from "../../../components/btcpay-modal-close-button";
 import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
 import InvoicePaymentDetails from "../../../components/invoice-payment-details";
 import InvoiceStatusAutoRefresh from "../../../components/invoice-status-auto-refresh";
@@ -27,6 +26,7 @@ type InvoiceStatusResponse = {
   address: string;
   subaddress_index: number | null;
   amount_xmr: string;
+  amount_paid_xmr?: string | null;
   status: InvoiceStatus;
   confirmation_target: number;
   confirmations: number;
@@ -37,6 +37,10 @@ type InvoiceStatusResponse = {
   btcpay_amount?: string | null;
   btcpay_currency?: string | null;
   btcpay_checkout_style?: "standard" | "btcpay_classic" | null;
+  btcpay_redirect_url?: string | null;
+  btcpay_redirect_automatically?: boolean | null;
+  btcpay_order_id?: string | null;
+  btcpay_order_number?: string | null;
   qr_logo?: "monero" | "none" | "custom" | null;
   qr_logo_data_url?: string | null;
   quote?: {
@@ -104,7 +108,6 @@ export default async function BtcpayModalInvoicePage({
             </p>
             <h1 className="mt-2 font-serif text-2xl">Invoice not found</h1>
           </div>
-          <BtcpayModalCloseButton />
         </div>
         <p className="mt-3 text-sm text-ink-soft">
           The invoice id does not match a known invoice. Check the id and try
@@ -125,7 +128,6 @@ export default async function BtcpayModalInvoicePage({
             </p>
             <h1 className="mt-2 font-serif text-2xl">Status unavailable</h1>
           </div>
-          <BtcpayModalCloseButton />
         </div>
         <p className="mt-3 text-sm text-ink-soft">
           We could not load this invoice status. Refresh the page or try again
@@ -146,6 +148,7 @@ export default async function BtcpayModalInvoicePage({
   const isBtcpayInvoice = Boolean(invoice.btcpay_amount && invoice.btcpay_currency);
   const useClassicCheckout =
     isBtcpayInvoice && invoice.btcpay_checkout_style === "btcpay_classic";
+  const shouldShowBtcpayActions = isBtcpayInvoice && invoice.status === "confirmed";
 
   return (
     <main className="min-h-screen bg-cream px-6 py-6 text-ink">
@@ -161,17 +164,22 @@ export default async function BtcpayModalInvoicePage({
             </div>
             <div className="flex items-center gap-2">
               <StatusRefreshButton label="Refresh" className="text-xs" />
-              <BtcpayModalCloseButton />
             </div>
           </div>
           <BtcpayClassicCheckout
+            invoiceId={invoiceId}
             address={invoice.address}
             amountXmr={invoice.amount_xmr}
+            amountPaidXmr={invoice.amount_paid_xmr ?? null}
             btcpayAmount={invoice.btcpay_amount ?? null}
             btcpayCurrency={invoice.btcpay_currency ?? null}
             quote={invoice.quote ?? null}
             status={invoice.status}
             confirmationTarget={confirmationTarget}
+            redirectUrl={invoice.btcpay_redirect_url ?? null}
+            redirectAutomatically={invoice.btcpay_redirect_automatically ?? null}
+            orderId={invoice.btcpay_order_id ?? null}
+            orderNumber={invoice.btcpay_order_number ?? null}
             qrLogoMode={invoice.qr_logo ?? "monero"}
             qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
           />
@@ -187,7 +195,6 @@ export default async function BtcpayModalInvoicePage({
             </div>
             <div className="flex items-center gap-2">
               <StatusRefreshButton label="Refresh" className="text-xs" />
-              <BtcpayModalCloseButton />
             </div>
           </div>
 
@@ -247,6 +254,26 @@ export default async function BtcpayModalInvoicePage({
               qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
             />
           </div>
+          {shouldShowBtcpayActions ? (
+            <div className="mt-6 grid gap-3">
+              <a
+                className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_14px_22px_rgba(93,122,106,0.25)] transition hover:-translate-y-0.5"
+                href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
+              >
+                View receipt
+              </a>
+              {invoice.btcpay_redirect_url ? (
+                <a
+                  className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-sage transition hover:bg-cream"
+                  href={invoice.btcpay_redirect_url}
+                  target="_top"
+                  rel="noreferrer"
+                >
+                  Return to store
+                </a>
+              ) : null}
+            </div>
+          ) : null}
         </>
       )}
     </main>

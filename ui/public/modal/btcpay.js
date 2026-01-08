@@ -119,7 +119,7 @@
     }
     state.handlers.forEach(function (handler) {
       try {
-        handler(event.data);
+        handler(event);
       } catch (error) {
         return;
       }

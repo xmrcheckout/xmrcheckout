@@ -126,6 +126,7 @@ class InvoiceStatusResponse(BaseModel):
     address: str
     subaddress_index: int | None = None
     amount_xmr: Decimal
+    amount_paid_xmr: str | None = None
     status: InvoiceStatus
     confirmation_target: int
     confirmations: int = 0
@@ -140,6 +141,10 @@ class InvoiceStatusResponse(BaseModel):
     btcpay_amount: str | None = None
     btcpay_currency: str | None = None
     btcpay_checkout_style: BtcpayCheckoutStyle | None = None
+    btcpay_redirect_url: str | None = None
+    btcpay_redirect_automatically: bool | None = None
+    btcpay_order_id: str | None = None
+    btcpay_order_number: str | None = None
     quote: dict[str, Any] | None = None
     qr_url: str | None = None
 
@@ -156,7 +161,7 @@ class ProfileResponse(BaseModel):
     default_confirmation_target: conint(ge=0, le=10) = 2
     default_qr_logo: QrLogoMode = "monero"
     default_qr_logo_data_url: str | None = None
-    btcpay_checkout_style: BtcpayCheckoutStyle = "standard"
+    btcpay_checkout_style: BtcpayCheckoutStyle = "btcpay_classic"
     created_at: datetime
 
 

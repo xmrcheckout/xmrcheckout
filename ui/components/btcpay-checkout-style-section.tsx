@@ -63,7 +63,7 @@ export default function BtcpayCheckoutStyleSection({
           }
         >
           <option value="standard">Standard XMR Checkout</option>
-          <option value="btcpay_classic">BTCPay classic</option>
+          <option value="btcpay_classic">BTCPay Classic</option>
         </select>
       </label>
       <p className="text-xs text-ink-soft">

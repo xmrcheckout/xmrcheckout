@@ -14,7 +14,7 @@ services:
         condition: service_started
       api:
         condition: service_started
-    restart: on-failure
+    restart: unless-stopped
   api:
     build:
       context: ./api
@@ -39,7 +39,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    restart: on-failure
+    restart: unless-stopped
   reconciler:
     build:
       context: ./api
@@ -61,7 +61,7 @@ services:
         condition: service_started
       db:
         condition: service_healthy
-    restart: on-failure
+    restart: unless-stopped
   monerod:
     build:
       context: ./docker/monero
@@ -91,7 +91,7 @@ services:
       timeout: 5s
       retries: 10
       start_period: 60s
-    restart: on-failure
+    restart: unless-stopped
     profiles: ["local-daemon"]
   wallet-rpc-reconciler-1:
     build:
@@ -121,7 +121,7 @@ services:
       ]
     volumes:
       - ./wallets/reconciler:/wallets
-    restart: on-failure
+    restart: unless-stopped
   wallet-rpc-reconciler-2:
     build:
       context: ./docker/monero
@@ -150,7 +150,7 @@ services:
       ]
     volumes:
       - ./wallets/reconciler:/wallets
-    restart: on-failure
+    restart: unless-stopped
   wallet-rpc-reconciler-3:
     build:
       context: ./docker/monero
@@ -179,7 +179,7 @@ services:
       ]
     volumes:
       - ./wallets/reconciler:/wallets
-    restart: on-failure
+    restart: unless-stopped
   ui:
     build:
       context: ./ui
@@ -190,7 +190,7 @@ services:
     depends_on:
       api:
         condition: service_started
-    restart: on-failure
+    restart: unless-stopped
   db:
     image: postgres:16-alpine
     environment:
@@ -199,6 +199,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -218,7 +219,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    restart: on-failure
+    restart: unless-stopped
     profiles: ["db-backup"]
 volumes:
   postgres_data:

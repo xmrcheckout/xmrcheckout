@@ -1,7 +1,7 @@
 import uuid
 from typing import Any
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, ROUND_DOWN
+from decimal import Decimal, ROUND_DOWN, InvalidOperation
 import csv
 import io
 import json
@@ -1048,9 +1048,15 @@ def list_invoices_for_user(
                 invoice_uuid = uuid.UUID(needle)
             except ValueError:
                 invoice_uuid = None
+            try:
+                amount_xmr = Decimal(needle)
+            except (InvalidOperation, ValueError):
+                amount_xmr = None
             matchers = []
             if invoice_uuid is not None:
                 matchers.append(Invoice.id == invoice_uuid)
+            if amount_xmr is not None:
+                matchers.append(Invoice.amount_xmr == amount_xmr)
             matchers.append(Invoice.address.ilike(f"%{needle}%"))
             matchers.append(cast(Invoice.metadata_json, SqlString).ilike(f"%{needle}%"))
             query = query.filter(or_(*matchers))
@@ -1090,9 +1096,15 @@ def list_invoices_for_user(
                 invoice_uuid = uuid.UUID(needle)
             except ValueError:
                 invoice_uuid = None
+            try:
+                amount_xmr = Decimal(needle)
+            except (InvalidOperation, ValueError):
+                amount_xmr = None
             matchers = []
             if invoice_uuid is not None:
                 matchers.append(Invoice.id == invoice_uuid)
+            if amount_xmr is not None:
+                matchers.append(Invoice.amount_xmr == amount_xmr)
             matchers.append(Invoice.address.ilike(f"%{needle}%"))
             matchers.append(cast(Invoice.metadata_json, SqlString).ilike(f"%{needle}%"))
             total_query = total_query.filter(or_(*matchers))

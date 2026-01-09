@@ -824,7 +824,7 @@ export default function InvoicePanel({
                 id="invoice_search"
                 type="search"
                 value={searchInput}
-                placeholder="Invoice id, subaddress, or metadata"
+                placeholder="Invoice id, amount (XMR), subaddress, or metadata"
                 onChange={(event) => setSearchInput(event.target.value)}
               />
             </div>
@@ -1006,9 +1006,11 @@ export default function InvoicePanel({
                               Archive invoice
                             </button>
                           ) : (
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
-                              Invoice actions are unavailable for this status.
-                            </p>
+                            !invoice.archived_at ? (
+                              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
+                                {formatStatus(invoice.status)} invoices cannot be archived.
+                              </p>
+                            ) : null
                           )}
                           {archiveState.error && archiveModalInvoiceId === invoice.id ? (
                             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-clay">
@@ -1199,9 +1201,11 @@ export default function InvoicePanel({
                                     Archive invoice
                                   </button>
                                 ) : (
-                                  <p className="text-sm text-ink-soft">
-                                    Invoice actions are unavailable for this status.
-                                  </p>
+                                  !invoice.archived_at ? (
+                                    <p className="text-sm text-ink-soft">
+                                      {formatStatus(invoice.status)} invoices cannot be archived.
+                                    </p>
+                                  ) : null
                                 )}
                                 {archiveState.error && archiveModalInvoiceId === invoice.id ? (
                                   <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">

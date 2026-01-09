@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import InvoiceStatusLookup from "../../../components/invoice-status-lookup";
 
@@ -20,8 +19,7 @@ export default function InvoiceStatusPage() {
               Check a Monero invoice status.
             </h1>
             <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-              Paste the invoice id to see detection and confirmation state. This
-              view is read-only and never touches funds.
+              Paste the invoice id to see detection and confirmation state.
             </p>
           </div>
           <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
@@ -61,23 +59,8 @@ export default function InvoiceStatusPage() {
                 <span>Target reached</span>
               </div>
             </div>
-            <p className="mt-4 text-sm text-ink-soft">
-              This view is read-only and never touches funds.
-            </p>
           </div>
         </div>
-      </section>
-
-      <section className="mt-8 grid gap-4">
-        <p className="text-ink-soft">
-          Funds always move from the customer to the merchant wallet.
-        </p>
-        <Link
-          className="inline-flex w-fit items-center justify-center rounded-full border border-stroke bg-white/40 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
-          href="/docs"
-        >
-          View API docs
-        </Link>
       </section>
     </main>
   );

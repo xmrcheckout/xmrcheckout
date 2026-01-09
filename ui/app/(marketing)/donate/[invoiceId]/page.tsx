@@ -211,10 +211,10 @@ export default async function DonateStatusDetailPage({
         <InvoiceStatusAutoRefresh intervalMs={30000} />
         <div className="grid gap-4">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
-            Donation request
+            Make a donation
           </p>
           <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-            Donation request
+            Make a donation
           </h1>
           <p className="text-[1.05rem] leading-relaxed text-ink-soft">
             {isInvalid

@@ -8,3 +8,5 @@ ui/node_modules/
 *.py[cod]
 
 nginx/certs/
+
+backups/

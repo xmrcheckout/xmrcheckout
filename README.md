@@ -105,6 +105,19 @@ If you’re running the bundled `monerod` service:
 docker compose --profile local-daemon up --build -d
 ```
 
+### Optional: Postgres backups (disabled by default)
+
+This repository includes an optional `db-backup` service that runs `pg_dump` hourly and writes backups to `./backups/postgres` on the host.
+
+Enable it by starting Compose with the `db-backup` profile:
+
+```
+docker compose --profile db-backup up --build -d
+```
+
+Retention defaults to 7 days. To override:
+- Set `BACKUP_RETENTION_DAYS` in `.env`
+
 ### Optional: donations (disabled by default)
 
 Donation endpoints and UI are off by default for self-hosted deployments.

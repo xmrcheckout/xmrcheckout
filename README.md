@@ -76,19 +76,33 @@ cp .env.example .env
 - `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
 - `API_KEYS`, `API_KEY_ENCRYPTION_KEY`
 - `SITE_URL` (public URL for the UI)
-- Monero view-only wallet settings (`MONERO_WALLET_RPC_*`) and daemon URL
-- `MONERO_DAEMON_URL` if you use your own daemon
+- Monero view-only wallet settings (`MONERO_WALLET_RPC_*`)
+- `MONERO_DAEMON_URL` (choose one of the options below)
 
-3. Choose a wallet-rpc target and provision view-only wallets:
+3. Choose a Monero daemon source:
+- **Use a third-party daemon (default):**
+  - Leave `MONERO_DAEMON_URL` as-is (the default points at a public Monero daemon).
+- **Run your own daemon via Docker Compose:**
+  - Set `MONERO_DAEMON_URL=http://monerod:18081`
+  - Start the stack with the `local-daemon` profile (see step 5)
+  - Note: initial sync can take a long time and uses significant disk; payment detection won’t be reliable until the daemon is synced.
+
+4. Choose a wallet-rpc target and provision view-only wallets:
 - Use the bundled wallet-rpc containers:
   - Set `MONERO_WALLET_RPC_URLS=http://wallet-rpc-reconciler-1:18083,http://wallet-rpc-reconciler-2:18083,http://wallet-rpc-reconciler-3:18083`
 - Or point to an external wallet-rpc service:
   - Set `MONERO_WALLET_RPC_URLS`, `MONERO_WALLET_RPC_USER`, `MONERO_WALLET_RPC_PASSWORD`, and `MONERO_WALLET_RPC_WALLET_PASSWORD`
 
-4. Start the stack:
+5. Start the stack:
 
 ```
 docker compose up --build -d
+```
+
+If you’re running the bundled `monerod` service:
+
+```
+docker compose --profile local-daemon up --build -d
 ```
 
 ### Optional: donations (disabled by default)

@@ -64,6 +64,37 @@ services:
       db:
         condition: service_healthy
     restart: on-failure
+  monerod:
+    build:
+      context: ./docker/monero
+      args:
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
+    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+    entrypoint: ["monerod"]
+    command:
+      [
+        "--non-interactive",
+        "--rpc-bind-ip",
+        "0.0.0.0",
+        "--rpc-bind-port",
+        "18081",
+        "--confirm-external-bind",
+        "--prune-blockchain",
+        "--data-dir",
+        "/data",
+        "--log-level",
+        "0"
+      ]
+    volumes:
+      - monerod_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:18081/get_height >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    restart: on-failure
+    profiles: ["local-daemon"]
   wallet-rpc-reconciler-1:
     build:
       context: ./docker/monero
@@ -187,3 +218,4 @@ services:
       retries: 10
 volumes:
   postgres_data:
+  monerod_data:

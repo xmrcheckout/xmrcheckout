@@ -863,16 +863,31 @@ export default function InvoicePanel({
                       invoice.archived_at ? "bg-ink/5" : ""
                     }`}
                   >
-                    <button
-                      className="grid gap-1 text-left"
-                      type="button"
+                    <div
+                      className="grid cursor-pointer gap-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15 focus-visible:ring-offset-2 focus-visible:ring-offset-white/60"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => toggleInvoice(invoice.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          toggleInvoice(invoice.id);
+                        }
+                      }}
                     >
-                      <span className="font-mono text-xs text-ink">{invoice.id}</span>
+                      <Link
+                        className="w-fit font-mono text-xs text-ink underline underline-offset-4"
+                        href={`/invoice/${invoice.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {invoice.id}
+                      </Link>
                       <span className="text-xs text-ink-soft">
                         {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
                       </span>
-                    </button>
+                    </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {invoice.archived_at ? (
                         <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
@@ -895,34 +910,8 @@ export default function InvoicePanel({
                           {formatXmrAmount(invoice.amount_xmr)} XMR
                         </p>
                       </div>
-                      <div className="grid gap-1">
-                        <p className={labelClass}>Created</p>
-                        <p
-                          className="text-sm text-ink"
-                          title={formatRelativeTime(invoice.created_at) ?? undefined}
-                        >
-                          {formatTimestamp(invoice.created_at)}
-                        </p>
-                      </div>
-                      <div className="grid gap-1">
-                        <p className={labelClass}>Expires</p>
-                        <p
-                          className="text-sm text-ink"
-                          title={formatRelativeTime(invoice.expires_at) ?? undefined}
-                        >
-                          {formatTimestamp(invoice.expires_at)}
-                        </p>
-                      </div>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <Link
-                        className={smallSecondaryButton}
-                        href={`/invoice/${invoice.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Open
-                      </Link>
                       <button
                         className={smallSecondaryButton}
                         type="button"
@@ -1055,19 +1044,6 @@ export default function InvoicePanel({
                       Status
                     </Link>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("created_at")}>
-                      Created
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("expires_at")}>
-                      Expires
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                    Actions
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1085,18 +1061,31 @@ export default function InvoicePanel({
                         className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
                       >
                         <td className="max-w-[320px] px-4 py-3 align-top">
-                          <button
-                            className="grid gap-1 text-left"
-                            type="button"
+                          <div
+                            className="grid cursor-pointer gap-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15 focus-visible:ring-offset-2 focus-visible:ring-offset-white/60"
+                            role="button"
+                            tabIndex={0}
                             onClick={() => toggleInvoice(invoice.id)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                toggleInvoice(invoice.id);
+                              }
+                            }}
                           >
-                            <span className="break-words font-mono text-xs text-ink">
+                            <Link
+                              className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
+                              href={`/invoice/${invoice.id}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              onClick={(event) => event.stopPropagation()}
+                            >
                               {invoice.id}
-                            </span>
+                            </Link>
                             <span className="break-words text-xs text-ink-soft">
                               {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
                             </span>
-                          </button>
+                          </div>
                           <div className="mt-2 flex flex-wrap gap-2">
                             {invoice.archived_at ? (
                               <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
@@ -1118,41 +1107,10 @@ export default function InvoicePanel({
                             {formatStatus(invoice.status)}
                           </span>
                         </td>
-                        <td
-                          className="px-4 py-3 align-top text-ink whitespace-nowrap"
-                          title={formatRelativeTime(invoice.created_at) ?? undefined}
-                        >
-                          {formatTimestamp(invoice.created_at)}
-                        </td>
-                        <td
-                          className="px-4 py-3 align-top text-ink whitespace-nowrap"
-                          title={formatRelativeTime(invoice.expires_at) ?? undefined}
-                        >
-                          {formatTimestamp(invoice.expires_at)}
-                        </td>
-                        <td className="px-4 py-3 align-top">
-                          <div className="flex flex-wrap gap-2">
-                            <Link
-                              className={smallSecondaryButton}
-                              href={`/invoice/${invoice.id}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              Open
-                            </Link>
-                            <button
-                              className={smallSecondaryButton}
-                              type="button"
-                              onClick={() => toggleInvoice(invoice.id)}
-                            >
-                              {isExpanded ? "Hide" : "Details"}
-                            </button>
-                          </div>
-                        </td>
                       </tr>
                       {isExpanded ? (
                         <tr className="border-b border-stroke">
-                          <td className="px-4 py-4" colSpan={6}>
+                          <td className="px-4 py-4" colSpan={3}>
                             <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                               <div className="grid gap-3 sm:grid-cols-2">
                                 <div className="grid gap-2">

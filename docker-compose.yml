@@ -36,8 +36,6 @@ services:
       GUNICORN_WORKERS: ${GUNICORN_WORKERS:-5}
     volumes:
       - ./qr:/qr
-    ports:
-      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -121,8 +119,6 @@ services:
         "--log-level",
         "3"
       ]
-    ports:
-      - "18084:18083"
     volumes:
       - ./wallets/reconciler:/wallets
     restart: on-failure
@@ -152,8 +148,6 @@ services:
         "--log-level",
         "3"
       ]
-    ports:
-      - "18085:18083"
     volumes:
       - ./wallets/reconciler:/wallets
     restart: on-failure
@@ -183,8 +177,6 @@ services:
         "--log-level",
         "3"
       ]
-    ports:
-      - "18086:18083"
     volumes:
       - ./wallets/reconciler:/wallets
     restart: on-failure
@@ -195,8 +187,6 @@ services:
       API_BASE_URL: ${API_BASE_URL:-http://nginx/api}
       NEXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost}
       NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
-    ports:
-      - "3000:3000"
     depends_on:
       api:
         condition: service_started
@@ -207,8 +197,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

@@ -62,7 +62,7 @@ docker compose up --build
 ```
 
 Open `https://localhost` for the UI (HTTP redirects to HTTPS).
-The API runs on `http://127.0.0.1:8000` and Postgres on port `5432`.
+In the default Compose configuration, only `nginx` is published to the host. The API, Postgres, and wallet-rpc services are reachable only inside the Docker network.
 
 ## Self-hosted deployment (Docker Compose)
 

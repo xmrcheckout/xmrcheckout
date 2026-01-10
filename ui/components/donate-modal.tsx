@@ -112,7 +112,7 @@ export default function DonateModal() {
                   Support xmrcheckout.com
                 </p>
                 <h3 id="donate-title" className="mt-2 font-serif text-xl">
-                  Send a quick donation.
+                  If xmrcheckout.com has been helpful, a donation is appreciated.
                 </h3>
               </div>
               <button
@@ -125,7 +125,7 @@ export default function DonateModal() {
               </button>
             </div>
             <p className="mt-3 text-ink-soft">
-              Choose an amount and we will open a read-only invoice page.
+              Choose an amount and we will open an invoice page with payment details and status.
             </p>
             <form className="mt-4 grid gap-4" action={formAction} ref={formRef}>
               <label

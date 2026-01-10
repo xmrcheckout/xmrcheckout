@@ -14,12 +14,11 @@ export default function MarketingHomePage() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="grid max-w-[38rem] gap-6 animate-[rise_0.9s_ease_both]">
             <h1 className="font-serif text-[clamp(2.6rem,2.2rem+2.3vw,4.3rem)] leading-[1.02]">
-              Hosted Monero checkout that keeps custody and personal data with you.
+              Monero checkout software with view-only detection and merchant-owned custody.
             </h1>
             <p className="text-[1.08rem] leading-relaxed text-ink-soft">
-              Create invoices, detect on-chain payments with view-only access,
-              and relay status to your systems - all without ever holding or
-              moving funds.
+              Create invoices, detect on-chain payments using your primary address and secret view key,
+              and relay status to your systems - without ever holding or moving funds.
             </p>
             <ul className="grid gap-3 text-sm text-ink-soft">
               <li className="flex items-start gap-3">
@@ -31,35 +30,40 @@ export default function MarketingHomePage() {
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-2 w-2 rounded-full bg-monero"></span>
                 <span>
-                  No identifying information required - your primary address is the identifier.
+                  No account or email required - your primary address is the identifier.
                 </span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-2 w-2 rounded-full bg-monero"></span>
-                <span>BTCPay Server compatibility for existing integrations.</span>
+                <span>BTCPay-compatible invoice endpoints for existing integrations.</span>
               </li>
             </ul>
             <p className="inline-flex w-fit items-center rounded-full bg-monero px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink shadow-[0_12px_24px_rgba(242,104,34,0.25)]">
               Non-custodial · view-only access · merchant-owned funds
             </p>
             <p className="text-sm font-semibold text-ink-soft">
-              We are not a payment processor, we are a payment <i>enabler</i>.
-            </p>
-            <p className="text-sm font-semibold text-ink-soft">
-              Zero service fees.
+              Open source. Self-hostable.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 className="inline-flex w-full items-center justify-center rounded-full bg-ink px-8 py-4 text-base font-semibold text-cream shadow-[0_18px_34px_rgba(16,18,23,0.2)] transition hover:-translate-y-0.5 sm:w-auto"
                 href="/login"
               >
-                Start accepting Monero
+                Log in
               </Link>
               <Link
                 className="inline-flex w-full items-center justify-center rounded-full border border-stroke bg-white/60 px-6 py-3 text-sm font-semibold text-ink transition hover:-translate-y-0.5 sm:w-auto"
                 href="/docs"
               >
                 View documentation
+              </Link>
+              <Link
+                className="inline-flex w-full items-center justify-center rounded-full border border-stroke bg-white/60 px-6 py-3 text-sm font-semibold text-ink transition hover:-translate-y-0.5 sm:w-auto"
+                href="https://github.com/xmrcheckout/xmrcheckout#self-hosted-deployment-docker-compose"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Self-host
               </Link>
             </div>
           </div>
@@ -127,10 +131,10 @@ export default function MarketingHomePage() {
                   Relay
                 </p>
                 <h3 className="mt-2 font-serif text-base sm:text-xl">
-                  Status updates in real time.
+                  Status updates via API + webhooks.
                 </h3>
                 <p className="mt-2 text-xs text-ink-soft sm:text-sm">
-                  Keep your stack updated without handing over control.
+                  Keep your systems updated without handing over control.
                 </p>
               </div>
             </div>
@@ -247,11 +251,10 @@ export default function MarketingHomePage() {
             <div className="absolute bottom-[-120px] left-[-40px] h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(93,122,106,0.4),transparent_70%)] blur-2xl"></div>
           </div>
           <h2 className="font-serif text-3xl">
-            Start accepting Monero without custody.
+            Use Monero without giving up custody.
           </h2>
           <p className="text-cream/80">
-            Use the hosted checkout. Create invoices, query status. Control
-            stays with you.
+            Hosted invoice pages, API, and webhooks for status updates. View-only access, no fund movement.
           </p>
           <div className="flex flex-wrap gap-3">
             <LoginTrigger

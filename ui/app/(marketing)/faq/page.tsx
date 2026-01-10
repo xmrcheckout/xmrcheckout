@@ -62,18 +62,18 @@ const faqItems: FaqItem[] = [
       </>
     ),
   },
-	  {
-	    question: "How easy is setup?",
-	    answer: (
-	      <>
-	        <p className="text-ink-soft">
-	          Setup is simple and explicit: provide your primary address and secret
-	          view key, then create invoices via the dashboard or API. We never
-	          request spend keys or signing access.
-	        </p>
-	      </>
-	    ),
-	  },
+		  {
+		    question: "What does setup require?",
+		    answer: (
+		      <>
+		        <p className="text-ink-soft">
+		          Setup is explicit: provide your primary address and secret
+		          view key, then create invoices via the dashboard or API. We never
+		          request spend keys or signing access.
+		        </p>
+		      </>
+		    ),
+		  },
   {
     question: "Do you require email or personal information?",
     answer: (
@@ -85,27 +85,26 @@ const faqItems: FaqItem[] = [
       </>
     ),
   },
-  {
-    question: "Why is XMR Checkout free?",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          We want to give back to the Monero community and help improve
-          adoption. XMR Checkout is intentionally offered as free checkout
-          software.
-        </p>
-        {donationsEnabled ? (
-          <p className="text-ink-soft">
-            If you find XMR Checkout useful, we happily accept{" "}
-            <Link className="underline underline-offset-4" href="/donate">
-              donations
-            </Link>
-            .
-          </p>
-        ) : null}
-      </>
-    ),
-  },
+	  {
+	    question: "What does XMR Checkout cost?",
+	    answer: (
+	      <>
+	        <p className="text-ink-soft">
+	          Currently, xmrcheckout.com does not charge a service fee. You can also self-host the open source
+	          stack if you prefer.
+	        </p>
+	        {donationsEnabled ? (
+	          <p className="text-ink-soft">
+	            If you find XMR Checkout useful, you can support development with{" "}
+	            <Link className="underline underline-offset-4" href="/donate">
+	              donations
+	            </Link>
+	            .
+	          </p>
+	        ) : null}
+	      </>
+	    ),
+	  },
   {
     question: "Can XMR Checkout move funds, issue refunds, or reverse payments?",
     answer: (
@@ -131,30 +130,26 @@ const faqItems: FaqItem[] = [
       </>
     ),
   },
-  {
-    question: "Why choose XMR Checkout instead of hosted services (e.g. NOWPayments)?",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          The main differences are scope and data collection: XMR Checkout is
-          Monero-only, has no fees, and does not collect personal information.
-        </p>
-        <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
-          <li>
-            <span className="font-semibold text-ink">Monero-only:</span> a focused
-            product without a multi-asset stack.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">No fees:</span> free to use.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">No personal info:</span>{" "}
-            your address is the identifier.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">No custody:</span> payments
-            go directly to your wallet.
-          </li>
+	  {
+	    question: "How does XMR Checkout differ from hosted services (e.g. NOWPayments)?",
+	    answer: (
+	      <>
+	        <p className="text-ink-soft">
+	          The main differences are scope, custody model, and data collection: XMR Checkout is Monero-only,
+	          does not require an account or email, and uses view-only access for payment detection.
+	        </p>
+	        <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
+	          <li>
+	            <span className="font-semibold text-ink">Monero-only:</span> a focused
+	            product without a multi-asset stack.
+	          </li>
+	          <li>
+	            <span className="font-semibold text-ink">No account/email:</span> your primary address is the identifier.
+	          </li>
+	          <li>
+	            <span className="font-semibold text-ink">No custody:</span> payments
+	            go directly to your wallet.
+	          </li>
           <li>
             <span className="font-semibold text-ink">View-only by design:</span>{" "}
             we never ask for spend keys.
@@ -164,33 +159,27 @@ const faqItems: FaqItem[] = [
             downtime can delay status updates, but it does not affect on-chain
             validity of payments.
           </li>
-        </ul>
-        <p className="mt-4 text-ink-soft">
-          If you prefer a third-party hosted flow for convenience, compare
-          providers carefully and choose what matches your risk tolerance and
-          operational needs.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "Why choose XMR Checkout instead of BTCPay Server?",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          BTCPay Server is a strong self-hosted option, with a primary focus on
-          Bitcoin (including the Lightning Network) and optional integrations
-          for other assets (including Monero via a plugin). XMR Checkout is
-          intentionally focused on Monero checkout with a view-only trust
-          boundary and a minimal, deterministic core.
-        </p>
-        <p className="text-ink-soft">
-          BTCPay Server configuration can be difficult, and while hosted
-          BTCPay options exist, they are often not configured with the Monero
-          plugin. For that reason we provide a basic (greenfield) integration
-          layer so teams can accept Monero without the requirement of
-          self-hosting.
-        </p>
+	        </ul>
+	        <p className="mt-4 text-ink-soft">
+	          If you use a third-party service, review what keys and data it requires, and whether it ever takes custody
+	          or intermediates funds.
+	        </p>
+	      </>
+	    ),
+	  },
+	  {
+	    question: "How does XMR Checkout differ from BTCPay Server?",
+	    answer: (
+	      <>
+	        <p className="text-ink-soft">
+	          BTCPay Server is a general-purpose, self-hosted payment server with a primary focus on Bitcoin
+	          and optional integrations for other assets (including Monero via a plugin). XMR Checkout is intentionally
+	          focused on Monero checkout with a view-only trust boundary and a minimal, deterministic core.
+	        </p>
+	        <p className="text-ink-soft">
+	          Some hosted BTCPay deployments may not include the Monero plugin by default. XMR Checkout provides a
+	          small compatibility layer so teams can integrate without running a full BTCPay deployment.
+	        </p>
         <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
           <li>
             <span className="font-semibold text-ink">Monero-first UX:</span>{" "}

@@ -536,7 +536,7 @@ export default function DocsPage() {
         </h1>
         <p className="text-[1.05rem] leading-relaxed text-ink-soft">
           xmrcheckout.com generates invoices, detects Monero payments using view-only access,
-          and relays status events. Setup is simple: bring your primary address and secret
+          and relays status events. Setup is explicit: bring your primary address and secret
           view key - never spend keys, never custody.
         </p>
         <div className="flex flex-wrap gap-2">

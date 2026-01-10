@@ -67,8 +67,7 @@ export default async function MarketingLayout({
       <footer className="site-footer">
         <div className="site-footer-copy">
           <p>
-            xmrcheckout.com - Non-custodial Monero checkout software. Zero
-            service fees.
+            xmrcheckout.com - Non-custodial Monero checkout software. Open source. Self-hostable.
           </p>
           <p>
             <Link

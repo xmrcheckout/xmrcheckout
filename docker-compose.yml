@@ -66,8 +66,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
-    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.5}
+    image: monero-local:${MONERO_VERSION:-0.18.4.5}
     entrypoint: ["monerod"]
     command:
       [
@@ -97,8 +97,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
-    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.5}
+    image: monero-local:${MONERO_VERSION:-0.18.4.5}
     command:
       [
         "monero-wallet-rpc",
@@ -126,8 +126,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
-    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.5}
+    image: monero-local:${MONERO_VERSION:-0.18.4.5}
     command:
       [
         "monero-wallet-rpc",
@@ -155,8 +155,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.4}
-    image: monero-local:${MONERO_VERSION:-0.18.4.4}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.4.5}
+    image: monero-local:${MONERO_VERSION:-0.18.4.5}
     command:
       [
         "monero-wallet-rpc",

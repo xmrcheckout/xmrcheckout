@@ -1,8 +1,14 @@
+<p align="center">
+  <img src="ui/public/logo.png" width="120" alt="XMR Checkout logo" />
+</p>
+
 # xmrcheckout.com
 
 Non-custodial Monero checkout software for merchants. Payments go directly from the customer to the merchant wallet.
 
-This project is intentionally conservative by design:
+xmrcheckout is open source and self-hostable. It creates invoices, shows payment instructions, and watches the chain for incoming payments using view-only wallet access (address + secret view key). It can also notify your systems via API and webhooks.
+
+Hard rules:
 - It never requests or stores private spend keys.
 - It never signs transactions.
 - It never moves funds on behalf of users.
@@ -10,6 +16,7 @@ This project is intentionally conservative by design:
 
 ## Contents
 
+- [Who it's for](#who-its-for)
 - [What it does](#what-it-does)
 - [Trust model](#trust-model)
 - [Repository layout](#repository-layout)
@@ -19,24 +26,33 @@ This project is intentionally conservative by design:
 - [Self-hosted deployment (no Docker)](#self-hosted-deployment-no-docker)
 - [Development (API)](#development-api-python)
 
+## Who it's for
+
+If you want Monero payments to go straight to your own wallet, this is for you.
+
+Common fits:
+- A merchant who wants a clean hosted checkout UI (self-hosted by you).
+- A team that wants API + webhooks to plug into an existing order flow.
+- Anyone who prefers a conservative trust model (view-only access for detection).
+
 ## What it does
 
-At a high level:
+Typical flow:
 1. Your integration creates an invoice (defined in XMR).
 2. The UI shows payment instructions (address + amount).
 3. The system observes the chain using view-only wallet access to detect payments and update invoice status.
 4. Optional integrations (for example webhooks) can be used to trigger your internal order flow.
 
-What it does not do:
+Not included (by design):
 - It does not provide custody, refunds, or any fund-moving automation.
 - It does not act as a financial intermediary.
 - It does not touch fiat rails in the core system.
 
 ## Trust model
 
-- Funds always move from the customer to the merchant wallet; xmrcheckout only observes the chain to detect payments.
-- The maximum permission level is view-only wallet access (wallet address + private view key).
-- If any configuration or integration implies spend authority, treat it as a misconfiguration.
+- Funds always move from the customer to the merchant wallet; xmrcheckout only observes the chain and reports status.
+- You keep spend authority. The maximum permission level xmrcheckout uses is view-only wallet access (wallet address + private view key).
+- If any configuration or integration implies spend authority, treat it as a misconfiguration and stop.
 
 ## Repository layout
 
@@ -44,6 +60,30 @@ What it does not do:
 - `api/`: API service (Python)
 - `docker-compose.yml`: local stack and self-hosted deployment
 - `nginx/`: optional reverse proxy / TLS termination (used by Docker Compose)
+
+## Screenshots
+
+Post-login UI:
+
+### Dashboard
+
+![Dashboard overview](screenshots/ui_dashboard.png)
+
+### Invoices
+
+![Invoice list and status](screenshots/ui_invoices.png)
+
+### Create invoice
+
+![Create invoice dialog (XMR amount)](screenshots/create_invoice_xmr.png)
+
+![Create invoice dialog (fiat-denominated input, informational estimate)](screenshots/create_invoice_fiat.png)
+
+![Create invoice dialog (summary)](screenshots/create_invoice_summary.png)
+
+### Public invoice page
+
+![Public invoice page awaiting on-chain payment](screenshots/public_invoice_pending_payment.png)
 
 ## Quick start
 

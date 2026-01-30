@@ -15,7 +15,9 @@ import {
 
 import {
   createInvoiceAction,
+  createInvoiceTourAction,
   archiveInvoiceAction,
+  archiveInvoiceTourAction,
   type ArchiveInvoiceState,
   type InvoiceState,
 } from "../app/(app)/dashboard/actions";
@@ -38,6 +40,8 @@ type InvoiceItem = {
 };
 
 type InvoicePanelProps = {
+  mode?: "live" | "tour";
+  basePath?: string;
   activeInvoices: InvoiceItem[];
   includeArchived: boolean;
   searchQuery: string;
@@ -87,13 +91,25 @@ const formatTimestamp = (value: string | null) => {
 };
 
 type CreateInvoiceModalProps = {
+  mode: "live" | "tour";
   defaultConfirmationTarget: number;
   onClose: () => void;
 };
 
-function CreateInvoiceModal({ defaultConfirmationTarget, onClose }: CreateInvoiceModalProps) {
+type CreateInvoiceAction = (
+  prevState: InvoiceState,
+  formData: FormData
+) => Promise<InvoiceState>;
+
+function CreateInvoiceModal({
+  mode,
+  defaultConfirmationTarget,
+  onClose,
+}: CreateInvoiceModalProps) {
   const router = useRouter();
-  const [state, formAction] = useFormState(createInvoiceAction, initialState);
+  const action: CreateInvoiceAction =
+    mode === "tour" ? createInvoiceTourAction : createInvoiceAction;
+  const [state, formAction] = useFormState(action, initialState);
   const [amount, setAmount] = useState("");
   const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
   const [fiatCurrency, setFiatCurrency] = useState("USD");
@@ -235,6 +251,11 @@ function CreateInvoiceModal({ defaultConfirmationTarget, onClose }: CreateInvoic
               Create invoice
             </p>
             <h2 className="mt-2 font-serif text-2xl">Create a new invoice</h2>
+            {mode === "tour" ? (
+              <p className="mt-2 text-sm font-semibold text-ink-soft">
+                Tour mode: submissions are simulated. No invoice is created.
+              </p>
+            ) : null}
           </div>
           <button className={secondaryButton} type="button" onClick={onClose}>
             Close
@@ -664,6 +685,8 @@ function CreateInvoiceModal({ defaultConfirmationTarget, onClose }: CreateInvoic
 }
 
 export default function InvoicePanel({
+  mode = "live",
+  basePath = "/dashboard",
   activeInvoices,
   includeArchived,
   searchQuery,
@@ -672,8 +695,9 @@ export default function InvoicePanel({
   defaultConfirmationTarget,
 }: InvoicePanelProps) {
   const router = useRouter();
+  const normalizedBasePath = basePath.replace(/\/+$/, "") || "/";
   const [archiveState, archiveAction] = useFormState(
-    archiveInvoiceAction,
+    mode === "tour" ? archiveInvoiceTourAction : archiveInvoiceAction,
     initialArchiveState
   );
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -682,10 +706,69 @@ export default function InvoicePanel({
   const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState(searchQuery ?? "");
 
-  const activeList = activeInvoices;
+  const activeList = useMemo(() => {
+    if (mode !== "tour") {
+      return activeInvoices;
+    }
+    const normalizedQuery = (searchQuery ?? "").trim().toLowerCase();
+    let list = [...activeInvoices];
+    if (normalizedQuery) {
+      list = list.filter((invoice) => {
+        const metadataValues = invoice.metadata
+          ? Object.entries(invoice.metadata).flatMap(([key, value]) => [
+              key,
+              value,
+              `${key}:${value}`,
+            ])
+          : [];
+        const haystack = [
+          invoice.id,
+          invoice.address,
+          invoice.amount_xmr,
+          invoice.status,
+          String(invoice.subaddress_index ?? ""),
+          ...metadataValues,
+        ]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(normalizedQuery);
+      });
+    }
+
+    const statusRank: Record<InvoiceItem["status"], number> = {
+      pending: 0,
+      payment_detected: 1,
+      confirmed: 2,
+      expired: 3,
+      invalid: 4,
+    };
+
+    const compare = (a: InvoiceItem, b: InvoiceItem) => {
+      if (sort === "amount_xmr") {
+        const left = Number.parseFloat(a.amount_xmr);
+        const right = Number.parseFloat(b.amount_xmr);
+        const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
+        return diff || a.id.localeCompare(b.id);
+      }
+      if (sort === "status") {
+        const diff = statusRank[a.status] - statusRank[b.status];
+        return diff || a.id.localeCompare(b.id);
+      }
+      const left = new Date(a.created_at).getTime();
+      const right = new Date(b.created_at).getTime();
+      const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
+      return diff || a.id.localeCompare(b.id);
+    };
+
+    list.sort(compare);
+    if (order === "desc") {
+      list.reverse();
+    }
+    return list;
+  }, [activeInvoices, mode, order, searchQuery, sort]);
   const archivedToggleHref = includeArchived
-    ? "/dashboard?tab=invoices"
-    : "/dashboard?tab=invoices&archived=1";
+    ? `${normalizedBasePath}?tab=invoices`
+    : `${normalizedBasePath}?tab=invoices&archived=1`;
 
   useEffect(() => {
     setSearchInput(searchQuery ?? "");
@@ -715,10 +798,13 @@ export default function InvoicePanel({
     if (nextOrder) {
       params.set("order", nextOrder);
     }
-    return `/dashboard?${params.toString()}`;
+    return `${normalizedBasePath}?${params.toString()}`;
   };
 
   const csvExportHref = (() => {
+    if (mode === "tour") {
+      return null;
+    }
     const params = new URLSearchParams();
     if (includeArchived) {
       params.set("include_archived", "true");
@@ -734,7 +820,9 @@ export default function InvoicePanel({
       params.set("order", order);
     }
     const suffix = params.toString();
-    return suffix ? `/dashboard/invoices.csv?${suffix}` : "/dashboard/invoices.csv";
+    return suffix
+      ? `${normalizedBasePath}/invoices.csv?${suffix}`
+      : `${normalizedBasePath}/invoices.csv`;
   })();
 
   const openCreate = () => {
@@ -762,9 +850,11 @@ export default function InvoicePanel({
     if (archiveState.archivedId && expandedInvoiceId === archiveState.archivedId) {
       setExpandedInvoiceId(null);
       setArchiveModalInvoiceId(null);
-      router.refresh();
+      if (mode !== "tour") {
+        router.refresh();
+      }
     }
-  }, [archiveState.archivedId, expandedInvoiceId, router]);
+  }, [archiveState.archivedId, expandedInvoiceId, mode, router]);
 
   const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
   const inputClass =
@@ -798,9 +888,15 @@ export default function InvoicePanel({
           <Link className={secondaryButton} href={archivedToggleHref}>
             {includeArchived ? "Hide archived" : "Show archived"}
           </Link>
-          <a className={secondaryButton} href={csvExportHref}>
-            Export CSV
-          </a>
+          {csvExportHref ? (
+            <a className={secondaryButton} href={csvExportHref}>
+              Export CSV
+            </a>
+          ) : (
+            <button className={secondaryButton} type="button" disabled title="Tour mode only">
+              Export CSV
+            </button>
+          )}
           <button className={primaryButton} type="button" onClick={openCreate}>
             Create invoice
           </button>
@@ -875,15 +971,24 @@ export default function InvoicePanel({
                         }
                       }}
                     >
-                      <Link
-                        className="w-fit font-mono text-xs text-ink underline underline-offset-4"
-                        href={`/invoice/${invoice.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        {invoice.id}
-                      </Link>
+                      {mode === "tour" ? (
+                        <span
+                          className="w-fit font-mono text-xs text-ink underline underline-offset-4"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {invoice.id}
+                        </span>
+                      ) : (
+                        <Link
+                          className="w-fit font-mono text-xs text-ink underline underline-offset-4"
+                          href={`/invoice/${invoice.id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {invoice.id}
+                        </Link>
+                      )}
                       <span className="text-xs text-ink-soft">
                         {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
                       </span>
@@ -1075,15 +1180,24 @@ export default function InvoicePanel({
                               }
                             }}
                           >
-                            <Link
-                              className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
-                              href={`/invoice/${invoice.id}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              onClick={(event) => event.stopPropagation()}
-                            >
-                              {invoice.id}
-                            </Link>
+                            {mode === "tour" ? (
+                              <span
+                                className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
+                                onClick={(event) => event.stopPropagation()}
+                              >
+                                {invoice.id}
+                              </span>
+                            ) : (
+                              <Link
+                                className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
+                                href={`/invoice/${invoice.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={(event) => event.stopPropagation()}
+                              >
+                                {invoice.id}
+                              </Link>
+                            )}
                             <span className="break-words text-xs text-ink-soft">
                               {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
                             </span>
@@ -1240,10 +1354,10 @@ export default function InvoicePanel({
         <>
           <CreateInvoiceModal
             key={createModalKey}
+            mode={mode}
             defaultConfirmationTarget={defaultConfirmationTarget}
             onClose={closeCreate}
           />
-          
         </>
       ) : null}
 
@@ -1259,6 +1373,11 @@ export default function InvoicePanel({
                 <p className="mt-2 text-sm text-ink-soft">
                   Archived invoices stay available in the archive list.
                 </p>
+                {mode === "tour" ? (
+                  <p className="mt-2 text-sm font-semibold text-ink-soft">
+                    Tour mode: no changes are saved.
+                  </p>
+                ) : null}
               </div>
               <button className={secondaryButton} type="button" onClick={closeArchiveModal}>
                 Close

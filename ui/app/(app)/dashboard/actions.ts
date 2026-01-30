@@ -62,6 +62,57 @@ export type WebhookRedeliverState = {
   success: string | null;
 };
 
+const tourNoopMessage = "Tour mode only: no changes are saved.";
+
+export async function createInvoiceTourAction(
+  _prevState: InvoiceState,
+  _formData: FormData
+): Promise<InvoiceState> {
+  return {
+    error: tourNoopMessage,
+    invoiceId: null,
+    address: null,
+    amount: null,
+    recipientName: null,
+    description: null,
+    subaddressIndex: null,
+    warnings: null,
+  };
+}
+
+export async function archiveInvoiceTourAction(
+  _prevState: ArchiveInvoiceState,
+  formData: FormData
+): Promise<ArchiveInvoiceState> {
+  const archivedId = String(formData.get("invoice_id") ?? "").trim() || null;
+  return {
+    error: null,
+    success: tourNoopMessage,
+    archivedId,
+  };
+}
+
+export async function createWebhookTourAction(
+  _prevState: WebhookFormState,
+  _formData: FormData
+): Promise<WebhookFormState> {
+  return { error: null, success: tourNoopMessage };
+}
+
+export async function deleteWebhookTourAction(
+  _prevState: WebhookFormState,
+  _formData: FormData
+): Promise<WebhookFormState> {
+  return { error: null, success: tourNoopMessage };
+}
+
+export async function redeliverWebhookDeliveryTourAction(
+  _prevState: WebhookRedeliverState,
+  _formData: FormData
+): Promise<WebhookRedeliverState> {
+  return { error: null, success: tourNoopMessage };
+}
+
 const webhookEventKeys = [
   { event: "invoice.created", key: "invoice_created" },
   { event: "invoice.payment_detected", key: "invoice_payment_detected" },

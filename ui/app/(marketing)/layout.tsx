@@ -43,6 +43,7 @@ export default async function MarketingLayout({
         </div>
         <nav className="nav">
           <Link href="/invoice">Check Invoice</Link>
+          <Link href="/tour">Tour</Link>
           <Link href="/docs">Documentation</Link>
           <Link href="/faq">FAQ</Link>
           {isAuthenticated ? (

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import {
   redeliverWebhookDeliveryAction,
+  redeliverWebhookDeliveryTourAction,
   type WebhookRedeliverState,
 } from "../app/(app)/dashboard/actions";
 
@@ -33,18 +34,23 @@ type WebhookDeliverySummary = {
 const initialState: WebhookRedeliverState = { error: null, success: null };
 
 export default function WebhookHistoryPanel({
+  mode = "live",
   deliveries,
 }: {
+  mode?: "live" | "tour";
   deliveries: WebhookDeliverySummary[];
 }) {
   const router = useRouter();
-  const [state, formAction] = useFormState(redeliverWebhookDeliveryAction, initialState);
+  const [state, formAction] = useFormState(
+    mode === "tour" ? redeliverWebhookDeliveryTourAction : redeliverWebhookDeliveryAction,
+    initialState
+  );
 
   useEffect(() => {
-    if (state.success) {
+    if (state.success && mode !== "tour") {
       router.refresh();
     }
-  }, [router, state.success]);
+  }, [mode, router, state.success]);
 
   const formatTimestamp = (value: string) => new Date(value).toLocaleString();
 
@@ -181,4 +187,3 @@ export default function WebhookHistoryPanel({
     </div>
   );
 }
-

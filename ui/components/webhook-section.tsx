@@ -4,7 +4,9 @@ import { useFormState } from "react-dom";
 
 import {
   createWebhookAction,
+  createWebhookTourAction,
   deleteWebhookAction,
+  deleteWebhookTourAction,
   type WebhookFormState,
 } from "../app/(app)/dashboard/actions";
 
@@ -31,15 +33,27 @@ const webhookEvents = [
 ];
 
 type WebhookSectionProps = {
+  mode?: "live" | "tour";
   webhooks: WebhookSummary[];
 };
 
-export default function WebhookSection({ webhooks }: WebhookSectionProps) {
-  const [createState, createAction] = useFormState(createWebhookAction, initialState);
-  const [deleteState, deleteAction] = useFormState(deleteWebhookAction, initialState);
+export default function WebhookSection({ mode = "live", webhooks }: WebhookSectionProps) {
+  const [createState, createAction] = useFormState(
+    mode === "tour" ? createWebhookTourAction : createWebhookAction,
+    initialState
+  );
+  const [deleteState, deleteAction] = useFormState(
+    mode === "tour" ? deleteWebhookTourAction : deleteWebhookAction,
+    initialState
+  );
 
   return (
     <div className="grid gap-8">
+      {mode === "tour" ? (
+        <div className="rounded-2xl border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
+          Tour mode: webhook changes are simulated. No endpoints are saved.
+        </div>
+      ) : null}
       <form className="grid gap-6" action={createAction}>
         <div className="grid gap-2">
           <label

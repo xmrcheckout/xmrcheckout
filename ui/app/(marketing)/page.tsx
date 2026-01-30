@@ -66,6 +66,13 @@ export default function MarketingHomePage() {
                 Self-host
               </Link>
             </div>
+            <p className="text-sm text-ink-soft">
+              Prefer to look around first?{" "}
+              <Link className="font-semibold text-ink underline underline-offset-4" href="/tour">
+                Take the tour
+              </Link>{" "}
+              (simulated, no login).
+            </p>
           </div>
           <div className="relative grid gap-4">
             <div className="absolute -left-6 top-4 hidden h-[calc(100%-2rem)] w-px bg-gradient-to-b from-monero/0 via-monero/60 to-monero/0 lg:block"></div>
@@ -269,6 +276,13 @@ export default function MarketingHomePage() {
               Read the docs
             </Link>
           </div>
+          <p className="text-sm text-cream/70">
+            Want to preview the dashboard first?{" "}
+            <Link className="font-semibold text-cream underline underline-offset-4" href="/tour">
+              Take the tour
+            </Link>{" "}
+            (simulated).
+          </p>
         </div>
       </section>
     </main>

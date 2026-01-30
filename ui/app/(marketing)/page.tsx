@@ -14,23 +14,23 @@ export default function MarketingHomePage() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="grid max-w-[38rem] gap-6 animate-[rise_0.9s_ease_both]">
             <h1 className="font-serif text-[clamp(2.6rem,2.2rem+2.3vw,4.3rem)] leading-[1.02]">
-              Monero checkout software with view-only detection and merchant-owned custody.
+              Accept Monero payments. Funds go straight to your wallet.
             </h1>
             <p className="text-[1.08rem] leading-relaxed text-ink-soft">
-              Create invoices, detect on-chain payments using your primary address and secret view key,
-              and relay status to your systems - without ever holding or moving funds.
+              Create invoices and detect on-chain payments using your primary address + secret view key.
+              Get a clear status as payments are seen and confirmed.
             </p>
             <ul className="grid gap-3 text-sm text-ink-soft">
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-2 w-2 rounded-full bg-monero"></span>
                 <span>
-                  View-only detection using your primary address and secret view key.
+                  View-only access: we can only detect incoming payments.
                 </span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="mt-1.5 h-2 w-2 rounded-full bg-monero"></span>
                 <span>
-                  No account or email required - your primary address is the identifier.
+                  No account or email: your primary address is the identifier.
                 </span>
               </li>
               <li className="flex items-start gap-3">
@@ -38,9 +38,14 @@ export default function MarketingHomePage() {
                 <span>BTCPay-compatible invoice endpoints for existing integrations.</span>
               </li>
             </ul>
-            <p className="inline-flex w-fit items-center rounded-full bg-monero px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink shadow-[0_12px_24px_rgba(242,104,34,0.25)]">
-              Non-custodial · view-only access · merchant-owned funds
-            </p>
+            <div className="grid gap-2">
+              <p className="inline-flex w-fit items-center rounded-full bg-monero px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink shadow-[0_12px_24px_rgba(242,104,34,0.25)]">
+                Non-custodial · view-only access
+              </p>
+              <p className="text-sm text-ink-soft">
+                We can’t spend from your wallet. Payments go straight to your wallet.
+              </p>
+            </div>
             <p className="text-sm font-semibold text-ink-soft">
               Open source. Self-hostable.
             </p>
@@ -117,7 +122,7 @@ export default function MarketingHomePage() {
                   </div>
                 </div>
                 <p className="text-sm text-ink-soft">
-                  We observe confirmations without touching funds or keys.
+                  First seen on-chain, then confirmed when it reaches your target.
                 </p>
               </div>
             </div>
@@ -127,10 +132,10 @@ export default function MarketingHomePage() {
                   View-only
                 </p>
                 <h3 className="mt-2 font-serif text-base sm:text-xl">
-                  Access ends at detection.
+                  Watch-only by design.
                 </h3>
                 <p className="mt-2 text-xs text-ink-soft sm:text-sm">
-                  We never request spend keys or signing access.
+                  View key access lets us detect payments - nothing more.
                 </p>
               </div>
               <div className="rounded-2xl border border-stroke bg-white/70 p-4 shadow-soft backdrop-blur animate-[rise_0.9s_ease_both] [animation-delay:320ms] sm:p-5">
@@ -152,13 +157,13 @@ export default function MarketingHomePage() {
       <section id="how" className="px-[6vw] py-16">
         <div className="mb-10 grid gap-3">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-monero">
-            How it works
+            When someone pays
           </p>
           <h2 className="font-serif text-3xl">
-            A simple, non-custodial flow.
+            What happens, step by step.
           </h2>
           <p className="text-ink-soft">
-            Four steps. View-only access. No custody.
+            You stay in control of the wallet. This just detects and reports what is on-chain.
           </p>
         </div>
         <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
@@ -167,10 +172,10 @@ export default function MarketingHomePage() {
               01
             </span>
             <h3 className="mb-2 font-serif text-xl">
-              Log in with view-only access
+              Connect with a view key
             </h3>
             <p className="text-ink-soft">
-              Use your primary address and secret view key to sign in.
+              Use your primary address and secret view key. No spend keys.
             </p>
           </div>
           <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur animate-[rise_0.9s_ease_both] [animation-delay:100ms]">
@@ -179,25 +184,25 @@ export default function MarketingHomePage() {
             </span>
             <h3 className="mb-2 font-serif text-xl">Create an invoice</h3>
             <p className="text-ink-soft">
-              A subaddress for each invoice is generated automatically.
+              A unique subaddress is generated per invoice.
             </p>
           </div>
           <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur animate-[rise_0.9s_ease_both] [animation-delay:200ms]">
             <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-monero/15 text-sm font-semibold text-monero">
               03
             </span>
-            <h3 className="mb-2 font-serif text-xl">Await payment</h3>
+            <h3 className="mb-2 font-serif text-xl">Wait for payment</h3>
             <p className="text-ink-soft">
-              A view-only wallet scans the blockchain for incoming funds.
+              We watch the chain (view-only) for incoming payments.
             </p>
           </div>
           <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur animate-[rise_0.9s_ease_both] [animation-delay:300ms]">
             <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-monero/15 text-sm font-semibold text-monero">
               04
             </span>
-            <h3 className="mb-2 font-serif text-xl">Relay status</h3>
+            <h3 className="mb-2 font-serif text-xl">Send status updates</h3>
             <p className="text-ink-soft">
-              Webhook events deliver status updates to your systems.
+              Webhooks fire when a payment is detected and when it reaches your confirmation target.
             </p>
           </div>
         </div>
@@ -206,10 +211,10 @@ export default function MarketingHomePage() {
       <section id="trust" className="px-[6vw] py-16">
         <div className="mb-10 grid gap-3">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-monero">
-            Trust &amp; security
+            Trust
           </p>
           <h2 className="font-serif text-3xl">
-            Built for clear trust boundaries.
+            What we can (and can’t) do.
           </h2>
         </div>
         <div className="grid gap-7 lg:grid-cols-3">
@@ -218,9 +223,9 @@ export default function MarketingHomePage() {
               <div>
                 <h3 className="mb-2 font-serif text-xl">What we do</h3>
                 <ul className="grid gap-2 text-sm text-ink-soft">
+                  <li>Create invoices and generate subaddresses.</li>
                   <li>Detect on-chain payments with view-only keys.</li>
-                  <li>Create invoices and subaddresses automatically.</li>
-                  <li>Relay status via API and webhooks.</li>
+                  <li>Send status updates via API and webhooks.</li>
                 </ul>
               </div>
               <div>
@@ -237,8 +242,7 @@ export default function MarketingHomePage() {
             <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur animate-[rise_0.9s_ease_both] [animation-delay:100ms]">
               <h3 className="mb-2 font-serif text-xl">View-only boundary</h3>
               <p className="text-ink-soft">
-                View-only access is the only permission we request, and it stops at
-                detection.
+                We only ask for a secret view key. That lets us detect payments - nothing more.
               </p>
             </div>
             <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur animate-[rise_0.9s_ease_both] [animation-delay:200ms]">
@@ -258,10 +262,10 @@ export default function MarketingHomePage() {
             <div className="absolute bottom-[-120px] left-[-40px] h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(93,122,106,0.4),transparent_70%)] blur-2xl"></div>
           </div>
           <h2 className="font-serif text-3xl">
-            Use Monero without giving up custody.
+            Ready to try it?
           </h2>
           <p className="text-cream/80">
-            Hosted invoice pages, API, and webhooks for status updates. View-only access, no fund movement.
+            Log in to create an invoice, or read the docs to integrate via API and webhooks.
           </p>
           <div className="flex flex-wrap gap-3">
             <LoginTrigger

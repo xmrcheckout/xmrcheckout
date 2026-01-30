@@ -266,6 +266,24 @@ a {
   opacity: 1;
 }
 
+.nav a[aria-current="page"] {
+  opacity: 1;
+  font-weight: 600;
+  position: relative;
+}
+
+.nav a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: -0.15rem;
+  right: -0.15rem;
+  bottom: -0.35rem;
+  height: 0.2rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--clay), var(--sage));
+  opacity: 0.65;
+}
+
 .hero {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

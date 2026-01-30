@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import "./marketing.css";
 import DonateModal from "../../components/donate-modal";
 import LoginModal, { LoginTrigger } from "../../components/login-modal";
+import NavLink from "../../components/nav-link";
 import { logoutAction } from "../(app)/dashboard/actions";
 
 export default async function MarketingLayout({
@@ -42,13 +43,13 @@ export default async function MarketingLayout({
           </Link>
         </div>
         <nav className="nav">
-          <Link href="/invoice">Check Invoice</Link>
-          <Link href="/tour">Tour</Link>
-          <Link href="/docs">Documentation</Link>
-          <Link href="/faq">FAQ</Link>
+          <NavLink href="/invoice">Check Invoice</NavLink>
+          <NavLink href="/tour">Tour</NavLink>
+          <NavLink href="/docs">Documentation</NavLink>
+          <NavLink href="/faq">FAQ</NavLink>
           {isAuthenticated ? (
             <>
-              <Link href="/dashboard">Dashboard</Link>
+              <NavLink href="/dashboard">Dashboard</NavLink>
               <form action={logoutAction}>
                 <button type="submit">Log out</button>
               </form>

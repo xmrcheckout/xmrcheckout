@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import "../(marketing)/marketing.css";
 import DonateModal from "../../components/donate-modal";
+import NavLink from "../../components/nav-link";
 import { logoutAction } from "./dashboard/actions";
 
 export default function AppLayout({
@@ -30,10 +31,10 @@ export default function AppLayout({
           </Link>
         </div>
         <nav className="nav">
-          <Link href="/invoice">Check Invoice</Link>
-          <Link href="/docs">Documentation</Link>
-          <Link href="/faq">FAQ</Link>
-          <Link href="/dashboard">Dashboard</Link>
+          <NavLink href="/invoice">Check Invoice</NavLink>
+          <NavLink href="/docs">Documentation</NavLink>
+          <NavLink href="/faq">FAQ</NavLink>
+          <NavLink href="/dashboard">Dashboard</NavLink>
           <form action={logoutAction}>
             <button type="submit">Log out</button>
           </form>

@@ -56,33 +56,49 @@ def dispatch_btcpay_webhooks(
                 "Content-Type": "application/json",
                 "User-Agent": "xmrcheckout-btcpay-webhook/1.0",
             }
-            response = _post_with_redirects(
-                hook.url,
-                data=body,
-                headers=headers,
-                timeout=5,
-            )
-            if response is None:
+            # Retry up to 3 times with backoff on transient failures
+            last_response = None
+            for attempt in range(3):
+                try:
+                    last_response = _post_with_redirects(
+                        hook.url,
+                        data=body,
+                        headers=headers,
+                        timeout=10,
+                    )
+                    if last_response is not None and last_response.status_code < 500:
+                        break
+                except RequestException:
+                    if attempt == 2:
+                        raise
+                if attempt < 2:
+                    time.sleep(1.0 * (attempt + 1))
+            if last_response is None:
+                logger.warning(
+                    "BTCPay webhook delivery failed after retries (redirect loop)",
+                    extra={"webhook_id": str(hook.id), "event": event_type, "url": hook.url},
+                )
                 continue
-            if response.status_code >= 400:
+            if last_response.status_code >= 400:
                 logger.warning(
                     "BTCPay webhook delivered non-success status",
                     extra={
                         "webhook_id": str(hook.id),
                         "event": event_type,
-                        "http_status": response.status_code,
+                        "http_status": last_response.status_code,
                     },
                 )
         except RequestException as exc:
-            logger.warning(
-                "BTCPay webhook delivery failed",
-                extra={"webhook_id": str(hook.id), "event": event_type},
+            logger.error(
+                "BTCPay webhook delivery failed after 3 attempts: %s",
+                exc,
+                extra={"webhook_id": str(hook.id), "event": event_type, "url": hook.url},
             )
-            logger.debug("BTCPay webhook delivery error: %s", exc)
         except Exception as exc:
-            logger.warning(
-                "BTCPay webhook dispatch failed",
-                extra={"webhook_id": str(hook.id), "event": event_type, "error": str(exc)},
+            logger.error(
+                "BTCPay webhook dispatch failed: %s",
+                exc,
+                extra={"webhook_id": str(hook.id), "event": event_type},
             )
 
 

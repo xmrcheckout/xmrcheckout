@@ -116,11 +116,11 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
                         address=invoice.address,
                     )
                 except Exception as exc:
-                    logger.warning(
-                        "Skipping invoice reconcile due to wallet RPC error",
+                    logger.error(
+                        "Skipping invoice reconcile due to wallet RPC error: %s",
+                        exc,
                         extra={"invoice_id": str(invoice.id), "user_id": str(user.id)},
                     )
-                    logger.debug("Wallet RPC error: %s", exc)
                     continue
                 total_atomic = 0
                 max_confirmations = 0

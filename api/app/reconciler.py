@@ -271,10 +271,13 @@ def _sync_invoice_transfers(
             stored.timestamp = transfer.timestamp
             stored.address = transfer.address
             changed = True
-    for stored in existing:
-        if stored.txid not in seen_txids:
-            db.delete(stored)
-            changed = True
+    # Only prune transfers if we actually got data back from wallet-rpc.
+    # An empty response (transient RPC glitch) should not wipe confirmed records.
+    if transfers:
+        for stored in existing:
+            if stored.txid not in seen_txids:
+                db.delete(stored)
+                changed = True
     return changed
 
 

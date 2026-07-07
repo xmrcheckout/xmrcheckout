@@ -1189,8 +1189,7 @@ a {
 
 .home-process,
 .home-trust,
-.home-integration,
-.home-final-cta {
+.home-integration {
   display: grid;
   gap: 1.6rem;
 }
@@ -1216,15 +1215,10 @@ a {
 
 .home-process h2,
 .home-trust h2,
-.home-integration h2,
-.home-final-cta h2 {
+.home-integration h2 {
   font-size: clamp(1.9rem, 1.7rem + 0.8vw, 2.6rem);
   line-height: 1.08;
   max-width: 18ch;
-}
-
-.home-final-cta h2 {
-  max-width: 22ch;
 }
 
 .home-process ol {
@@ -1273,8 +1267,7 @@ a {
 
 .home-process p,
 .home-trust p,
-.home-integration p,
-.home-final-cta p {
+.home-integration p {
   color: var(--ink-soft);
 }
 
@@ -1336,37 +1329,6 @@ a {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   overflow-wrap: anywhere;
   padding: 0.7rem 0.85rem;
-}
-
-.home-final-cta {
-  margin-inline: -6vw;
-  border-block: 1px solid rgba(248, 242, 233, 0.12);
-  background:
-    linear-gradient(135deg, rgba(242, 104, 34, 0.16), transparent 34%, rgba(93, 122, 106, 0.16)),
-    var(--ink);
-  box-shadow: 0 -18px 44px rgba(16, 18, 23, 0.1);
-  color: var(--cream);
-  padding: clamp(2.2rem, 5vw, 4rem) 6vw;
-}
-
-.home-final-cta p {
-  color: rgba(248, 242, 233, 0.76);
-}
-
-.home-final-cta .home-button-primary {
-  border-color: var(--cream);
-  background: var(--cream);
-  color: var(--ink);
-}
-
-.home-final-cta .home-button-secondary {
-  border-color: rgba(248, 242, 233, 0.34);
-  background: rgba(248, 242, 233, 0.08);
-  color: var(--cream);
-}
-
-.home-final-cta .home-doc-link {
-  color: var(--cream);
 }
 
 .home-page ~ .site-footer {
@@ -2187,8 +2149,7 @@ a {
     grid-template-columns: 2.6rem minmax(0, 1fr);
   }
 
-  .home-integration,
-  .home-final-cta {
+  .home-integration {
     padding: 2rem 6vw;
   }
 

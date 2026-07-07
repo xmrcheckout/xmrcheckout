@@ -173,22 +173,6 @@ export default function MarketingHomePage() {
           <code>invoice.confirmed</code>
         </div>
       </section>
-
-      <section className="home-final-cta" aria-labelledby="home-final-title">
-        <h2 id="home-final-title">Try the flow with simulated data.</h2>
-        <p>No wallet connection is needed for the tour.</p>
-        <div className="home-actions">
-          <Link className="home-button home-button-primary" href="/tour">
-            Try the tour
-          </Link>
-          <LoginTrigger className="home-button home-button-secondary">
-            Connect view-only wallet
-          </LoginTrigger>
-          <Link className="home-doc-link" href="/docs">
-            Read docs
-          </Link>
-        </div>
-      </section>
     </main>
   );
 }

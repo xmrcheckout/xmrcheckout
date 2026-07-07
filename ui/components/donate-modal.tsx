@@ -106,7 +106,7 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
         >
           <div className="absolute inset-0 bg-ink/60 backdrop-blur" onClick={closeModal} />
           <div
-            className="relative w-[min(420px,92vw)] rounded-3xl border border-stroke bg-card p-7 shadow-deep"
+            className="relative w-[min(420px,92vw)] rounded-3xl border border-stroke bg-card p-7 text-ink shadow-deep"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-4">

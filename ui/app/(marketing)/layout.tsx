@@ -1,13 +1,11 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 
 import "./marketing.css";
 import DonateModal from "../../components/donate-modal";
-import LoginModal, { LoginTrigger } from "../../components/login-modal";
-import NavLink from "../../components/nav-link";
-import { logoutAction } from "../(app)/dashboard/actions";
+import LoginModal from "../../components/login-modal";
+import SiteHeader from "../../components/site-header";
 
 export default async function MarketingLayout({
   children,
@@ -26,39 +24,7 @@ export default async function MarketingLayout({
         <span className="ambient-grid"></span>
       </div>
 
-      <header className="site-header">
-        <div className="brand">
-          <Link href="/" aria-label="XMR Checkout home">
-            <Image
-              className="brand-logo"
-              src="/logo.png"
-              alt="XMR Checkout logo"
-              width={128}
-              height={128}
-              priority
-            />
-          </Link>
-          <Link className="name" href="/">
-            XMR Checkout
-          </Link>
-        </div>
-        <nav className="nav">
-          <NavLink href="/invoice">Check Invoice</NavLink>
-          <NavLink href="/tour">Tour</NavLink>
-          <NavLink href="/docs">Documentation</NavLink>
-          <NavLink href="/faq">FAQ</NavLink>
-          {isAuthenticated ? (
-            <>
-              <NavLink href="/dashboard">Dashboard</NavLink>
-              <form action={logoutAction}>
-                <button type="submit">Log out</button>
-              </form>
-            </>
-          ) : (
-            <LoginTrigger className="nav-primary">Log in</LoginTrigger>
-          )}
-        </nav>
-      </header>
+      <SiteHeader isAuthenticated={isAuthenticated} includeTour />
 
       {children}
 

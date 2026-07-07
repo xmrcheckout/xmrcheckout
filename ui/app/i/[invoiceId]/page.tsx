@@ -264,6 +264,18 @@ export default async function BtcpayModalInvoicePage({
             </div>
           </div>
 
+          <div className="mt-4">
+            <InvoicePaymentDetails
+              address={invoice.address}
+              amount={invoice.amount_xmr}
+              hasDetectedPayment={hasDetectedPayment}
+              status={invoice.status}
+              confirmationTarget={confirmationTarget}
+              qrLogoMode={invoice.qr_logo ?? "monero"}
+              qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
+            />
+          </div>
+
           <div className="mt-4 rounded-2xl border border-stroke bg-card p-5 shadow-card backdrop-blur">
             <div className="flex items-center justify-between gap-3">
               <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
@@ -371,17 +383,6 @@ export default async function BtcpayModalInvoicePage({
             ) : null}
           </div>
 
-          <div className="mt-5">
-            <InvoicePaymentDetails
-              address={invoice.address}
-              amount={invoice.amount_xmr}
-              hasDetectedPayment={hasDetectedPayment}
-              status={invoice.status}
-              confirmationTarget={confirmationTarget}
-              qrLogoMode={invoice.qr_logo ?? "monero"}
-              qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
-            />
-          </div>
           {shouldShowBtcpayActions ? (
             <div className="mt-6 grid gap-3">
               <a

@@ -579,7 +579,20 @@ export default function DocsPage() {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
+      <nav className="docs-jump-nav" aria-label="Documentation sections">
+        {[
+          { href: "#start", label: "Start" },
+          { href: "#fiat-inputs", label: "Fiat inputs" },
+          { href: "#concepts", label: "Concepts" },
+          { href: "#api-reference", label: "API reference" },
+        ].map((item) => (
+          <a key={item.href} href={item.href}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <section id="start" className="mt-10 scroll-mt-24 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
           Start here
         </p>
@@ -631,7 +644,7 @@ export default function DocsPage() {
         </div>
       </section>
 
-      <section className="mt-10 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
+      <section id="fiat-inputs" className="mt-10 scroll-mt-24 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
         <h2 className="font-serif text-2xl">Fiat inputs (optional)</h2>
         <p className="mt-2 text-ink-soft">
           You can request an invoice using a fiat amount. The backend converts the
@@ -653,7 +666,7 @@ Content-Type: application/json
         </pre>
       </section>
 
-      <section className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <section id="concepts" className="mt-10 grid scroll-mt-24 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
           <h3 className="mb-2 font-serif text-xl">Core principles</h3>
           <p className="text-ink-soft">
@@ -755,7 +768,7 @@ Content-Type: application/json
         </div>
       </section>
 
-      <section className="mt-12 grid gap-6">
+      <section id="api-reference" className="mt-12 grid scroll-mt-24 gap-6">
         <div className="grid max-w-[52rem] gap-2">
           <h2 className="font-serif text-2xl">API reference</h2>
           <p className="text-ink-soft">
@@ -775,8 +788,12 @@ Content-Type: application/json
                 {needsDivider ? (
                   <div className="h-px w-full bg-monero/70 lg:col-span-2" aria-hidden="true"></div>
                 ) : null}
-                <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
+                <details
+                  className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur"
+                  open
+                >
+                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <h3 className="font-serif text-xl">{group.title}</h3>
                       <p className="text-sm font-semibold text-sage">
@@ -786,7 +803,8 @@ Content-Type: application/json
                     <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
                       {group.items.length} endpoints
                     </span>
-                  </div>
+                    </div>
+                  </summary>
                   <div className="mt-5 grid gap-3">
                     {group.items.map((endpoint) => {
                       const requirements =
@@ -850,7 +868,7 @@ Content-Type: application/json
                       );
                     })}
                   </div>
-                </div>
+                </details>
               </Fragment>
             );
           })}

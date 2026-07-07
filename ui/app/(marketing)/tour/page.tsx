@@ -11,8 +11,10 @@ export const metadata: Metadata = {
 
 const tabs = ["overview", "invoices", "webhooks"] as const;
 const webhookTabs = ["settings", "history"] as const;
+const invoiceStatuses = ["pending", "payment_detected", "confirmed", "expired", "invalid"] as const;
 type TourTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
+type InvoiceStatus = (typeof invoiceStatuses)[number];
 
 type TourSearchParams = Record<string, string | string[] | undefined>;
 
@@ -21,8 +23,9 @@ type InvoiceSummary = {
   address: string;
   subaddress_index?: number | null;
   amount_xmr: string;
-  status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
+  status: InvoiceStatus;
   confirmation_target: number;
+  confirmations?: number | null;
   paid_after_expiry?: boolean;
   paid_after_expiry_at?: string | null;
   metadata?: Record<string, string> | null;
@@ -77,6 +80,7 @@ const buildNowFixture = () => {
       amount_xmr: "0.125",
       status: "pending",
       confirmation_target: 2,
+      confirmations: 0,
       created_at: iso(-35 * 60 * 1000),
       archived_at: null,
       detected_at: null,
@@ -91,6 +95,7 @@ const buildNowFixture = () => {
       amount_xmr: "0.420",
       status: "payment_detected",
       confirmation_target: 2,
+      confirmations: 1,
       created_at: iso(-2 * 60 * 60 * 1000),
       archived_at: null,
       detected_at: iso(-18 * 60 * 1000),
@@ -105,6 +110,7 @@ const buildNowFixture = () => {
       amount_xmr: "1.000",
       status: "confirmed",
       confirmation_target: 1,
+      confirmations: 1,
       created_at: iso(-26 * 60 * 60 * 1000),
       archived_at: null,
       detected_at: iso(-25.5 * 60 * 60 * 1000),
@@ -119,6 +125,7 @@ const buildNowFixture = () => {
       amount_xmr: "0.050",
       status: "expired",
       confirmation_target: 2,
+      confirmations: 0,
       created_at: iso(-5 * 24 * 60 * 60 * 1000),
       archived_at: iso(-4.5 * 24 * 60 * 60 * 1000),
       detected_at: null,
@@ -209,6 +216,12 @@ export default async function TourPage({
   const qParam = resolvedSearchParams?.q;
   const queryValue = Array.isArray(qParam) ? qParam[0] : qParam;
   const invoiceSearchQuery = activeTab === "invoices" ? (queryValue ?? "") : "";
+  const statusParam = resolvedSearchParams?.status;
+  const statusValue = Array.isArray(statusParam) ? statusParam[0] : statusParam;
+  const invoiceStatusFilter: InvoiceStatus | "all" =
+    activeTab === "invoices" && invoiceStatuses.includes(statusValue as InvoiceStatus)
+      ? (statusValue as InvoiceStatus)
+      : "all";
 
   const sortParam = resolvedSearchParams?.sort;
   const sortValue = Array.isArray(sortParam) ? sortParam[0] : sortParam;
@@ -369,6 +382,7 @@ export default async function TourPage({
               activeInvoices={invoices}
               includeArchived={includeArchived}
               searchQuery={invoiceSearchQuery}
+              statusFilter={invoiceStatusFilter}
               sort={invoiceSort}
               order={invoiceOrder}
               defaultConfirmationTarget={fixture.defaultConfirmationTarget}
@@ -415,4 +429,3 @@ export default async function TourPage({
     </main>
   );
 }
-

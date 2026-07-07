@@ -300,6 +300,15 @@ export default async function InvoiceStatusDetailPage({
               </p>
             </div>
           </details>
+          <InvoicePaymentDetails
+            address={invoice.address}
+            amount={invoice.amount_xmr}
+            hasDetectedPayment={hasDetectedPayment}
+            status={invoice.status}
+            confirmationTarget={confirmationTarget}
+            qrLogoMode={invoice.qr_logo ?? "monero"}
+            qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
+          />
         </div>
         <div className="relative overflow-hidden rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
           {showConfirmedStamp ? (
@@ -323,59 +332,55 @@ export default async function InvoiceStatusDetailPage({
               <StatusRefreshButton label="Refresh" />
             </div>
           </div>
-          <div className="mt-4 rounded-xl border border-stroke bg-white/70 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                Monero node
-              </p>
+          <details className="mt-4 rounded-xl border border-stroke bg-white/70 p-4">
+            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.18em] text-ink">
+              Detection health
+            </summary>
+            <div className="mt-3 grid gap-3">
               <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em]">
-                <span
-                  className={`rounded-full px-3 py-1 ${walletStatusBadge.className}`}
-                >
+                <span className={`rounded-full px-3 py-1 ${walletStatusBadge.className}`}>
                   {walletStatusBadge.label}
                 </span>
-                <span
-                  className={`rounded-full px-3 py-1 ${daemonStatusBadge.className}`}
-                >
+                <span className={`rounded-full px-3 py-1 ${daemonStatusBadge.className}`}>
                   {daemonStatusBadge.label}
                 </span>
               </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Current block height
+                  </p>
+                  <p className="mt-1 text-sm font-semibold">
+                    {systemStatus?.daemon_height?.toLocaleString() ?? "Unavailable"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Detection poll
+                  </p>
+                  <p className="mt-1 text-sm font-semibold">
+                    {systemStatus?.invoice_reconcile_interval_seconds ?? 30}s
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Last successful scan
+                  </p>
+                  <p
+                    className="mt-1 text-sm font-semibold"
+                    title={lastReconcileCompleted.relative ?? undefined}
+                  >
+                    {lastReconcileCompleted.label}
+                  </p>
+                </div>
+              </div>
+              {systemStatus?.last_reconcile_error ? (
+                <p className="rounded-xl bg-red-100 px-3 py-2 text-sm text-red-700">
+                  Reconciler error: {systemStatus.last_reconcile_error}
+                </p>
+              ) : null}
             </div>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Current block height
-                </p>
-                <p className="mt-1 text-sm font-semibold">
-                  {systemStatus?.daemon_height?.toLocaleString() ?? "Unavailable"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Detection poll
-                </p>
-                <p className="mt-1 text-sm font-semibold">
-                  {systemStatus?.invoice_reconcile_interval_seconds ?? 30}s
-                </p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Last successful scan
-                </p>
-                <p
-                  className="mt-1 text-sm font-semibold"
-                  title={lastReconcileCompleted.relative ?? undefined}
-                >
-                  {lastReconcileCompleted.label}
-                </p>
-              </div>
-            </div>
-            {systemStatus?.last_reconcile_error ? (
-              <p className="mt-3 rounded-xl bg-red-100 px-3 py-2 text-sm text-red-700">
-                Reconciler error: {systemStatus.last_reconcile_error}
-              </p>
-            ) : null}
-          </div>
+          </details>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
@@ -410,16 +415,6 @@ export default async function InvoiceStatusDetailPage({
           </div>
         </div>
       </section>
-
-      <InvoicePaymentDetails
-        address={invoice.address}
-        amount={invoice.amount_xmr}
-        hasDetectedPayment={hasDetectedPayment}
-        status={invoice.status}
-        confirmationTarget={confirmationTarget}
-        qrLogoMode={invoice.qr_logo ?? "monero"}
-        qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
-      />
 
       <section className="mt-8 rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
         <h2 className="font-serif text-2xl">Timeline</h2>

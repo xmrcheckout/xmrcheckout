@@ -40,7 +40,7 @@ export default function IntegrationsPage() {
           </Link>
         </div>
         <nav
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-stroke bg-white/60 px-5 py-4 text-sm text-ink-soft shadow-soft backdrop-blur"
+          className="docs-jump-nav"
           aria-label="Recipe languages"
         >
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">

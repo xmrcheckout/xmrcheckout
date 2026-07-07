@@ -20,8 +20,10 @@ export const metadata: Metadata = {
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 const tabs = ["overview", "invoices", "webhooks", "profile"] as const;
 const webhookTabs = ["settings", "history"] as const;
+const invoiceStatuses = ["pending", "payment_detected", "confirmed", "expired", "invalid"] as const;
 type DashboardTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
+type InvoiceStatus = (typeof invoiceStatuses)[number];
 
 type DashboardSearchParams = Record<string, string | string[] | undefined>;
 type InvoiceSummary = {
@@ -29,8 +31,9 @@ type InvoiceSummary = {
   address: string;
   subaddress_index?: number | null;
   amount_xmr: string;
-  status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
+  status: InvoiceStatus;
   confirmation_target: number;
+  confirmations?: number | null;
   paid_after_expiry?: boolean;
   paid_after_expiry_at?: string | null;
   created_at: string;
@@ -163,6 +166,12 @@ export default async function DashboardPage({
   const qParam = resolvedSearchParams?.q;
   const queryValue = Array.isArray(qParam) ? qParam[0] : qParam;
   const invoiceSearchQuery = activeTab === "invoices" ? (queryValue ?? "") : "";
+  const statusParam = resolvedSearchParams?.status;
+  const statusValue = Array.isArray(statusParam) ? statusParam[0] : statusParam;
+  const invoiceStatusFilter: InvoiceStatus | "all" =
+    activeTab === "invoices" && invoiceStatuses.includes(statusValue as InvoiceStatus)
+      ? (statusValue as InvoiceStatus)
+      : "all";
   const sortParam = resolvedSearchParams?.sort;
   const sortValue = Array.isArray(sortParam) ? sortParam[0] : sortParam;
   const invoiceSort =
@@ -195,6 +204,9 @@ export default async function DashboardPage({
     }
     if (invoiceSearchQuery) {
       invoiceUrl.searchParams.set("q", invoiceSearchQuery);
+    }
+    if (invoiceStatusFilter !== "all") {
+      invoiceUrl.searchParams.set("status", invoiceStatusFilter);
     }
     if (invoiceSort) {
       invoiceUrl.searchParams.set("sort", invoiceSort);
@@ -490,6 +502,7 @@ export default async function DashboardPage({
               activeInvoices={allInvoices}
               includeArchived={includeArchived}
               searchQuery={invoiceSearchQuery}
+              statusFilter={invoiceStatusFilter}
               sort={invoiceSort}
               order={invoiceOrder}
               defaultConfirmationTarget={profileData?.default_confirmation_target ?? 1}

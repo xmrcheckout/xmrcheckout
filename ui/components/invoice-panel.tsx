@@ -29,6 +29,7 @@ type InvoiceItem = {
   amount_xmr: string;
   status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
   confirmation_target: number;
+  confirmations?: number | null;
   paid_after_expiry?: boolean;
   paid_after_expiry_at?: string | null;
   metadata?: Record<string, string> | null;
@@ -45,6 +46,7 @@ type InvoicePanelProps = {
   activeInvoices: InvoiceItem[];
   includeArchived: boolean;
   searchQuery: string;
+  statusFilter: InvoiceItem["status"] | "all";
   sort: string;
   order: string;
   defaultConfirmationTarget: number;
@@ -90,6 +92,15 @@ const formatTimestamp = (value: string | null) => {
   return new Date(value).toLocaleString();
 };
 
+const invoiceStatusOptions: { value: InvoiceItem["status"] | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "pending", label: "Awaiting funds" },
+  { value: "payment_detected", label: "Detected" },
+  { value: "confirmed", label: "Confirmed" },
+  { value: "expired", label: "Expired" },
+  { value: "invalid", label: "Invalid" },
+];
+
 type CreateInvoiceModalProps = {
   mode: "live" | "tour";
   defaultConfirmationTarget: number;
@@ -132,10 +143,14 @@ function CreateInvoiceModal({
   const [createInvoiceOrigin, setCreateInvoiceOrigin] = useState<string | null>(
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null
   );
-  const { rate: usdRate } = useXmrUsdRate();
-  const { rate: fiatRate, status: fiatRateStatus } = useXmrFiatRate(
-    amountMode === "fiat" ? fiatCurrency : null
-  );
+  const { rate: usdRate, updatedAt: usdRateUpdatedAt, source: usdRateSource } =
+    useXmrUsdRate();
+  const {
+    rate: fiatRate,
+    updatedAt: fiatRateUpdatedAt,
+    status: fiatRateStatus,
+    source: fiatRateSource,
+  } = useXmrFiatRate(amountMode === "fiat" ? fiatCurrency : null);
 
   useEffect(() => {
     if (createInvoiceOrigin) {
@@ -187,17 +202,30 @@ function CreateInvoiceModal({
     if (!fiatRate || fiatAmountValue === null || fiatAmountValue <= 0) {
       return null;
     }
-    const estimate = fiatAmountValue / fiatRate;
-    return formatXmrAmount(estimate.toFixed(12));
+    return fiatAmountValue / fiatRate;
   }, [fiatAmountValue, fiatRate]);
 
   const showFiatEstimate =
     amountMode === "fiat" && fiatAmountValue !== null && fiatAmountValue > 0;
+  const draftXmrEstimateDisplay =
+    draftXmrEstimate !== null
+      ? formatXmrAmount(draftXmrEstimate.toFixed(draftXmrEstimate >= 1 ? 6 : 8))
+      : null;
   const draftXmrEstimateLabel = draftXmrEstimate
-    ? `~${draftXmrEstimate} XMR`
+    ? `~${draftXmrEstimateDisplay} XMR`
     : fiatRateStatus === "loading"
       ? "Fetching estimate..."
       : "Estimate unavailable";
+  const usdEstimateMeta =
+    usdRateSource === "coingecko" ? "CoinGecko spot rate" : "external spot rate";
+  const usdEstimateTime = usdRateUpdatedAt
+    ? new Date(usdRateUpdatedAt).toLocaleString()
+    : null;
+  const fiatEstimateMeta =
+    fiatRateSource === "coingecko" ? "CoinGecko spot rate" : "external spot rate";
+  const fiatEstimateTime = fiatRateUpdatedAt
+    ? new Date(fiatRateUpdatedAt).toLocaleString()
+    : null;
   const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
   const fiatCurrencyLabel = fiatCurrencyFlag
     ? `${fiatCurrencyFlag} ${fiatCurrency}`
@@ -276,6 +304,18 @@ function CreateInvoiceModal({
                   <p className="mt-3 text-sm text-ink">
                     Share this invoice link with your customer:
                   </p>
+                  {state.amount ? (
+                    <div className="mt-4 rounded-xl border border-stroke bg-ink/5 px-4 py-3">
+                      <p className={labelClass}>Invoice amount</p>
+                      <p className="mt-1 font-mono text-lg font-semibold text-ink">
+                        {formatXmrAmount(state.amount)} XMR
+                      </p>
+                      <p className="mt-1 text-sm text-ink-soft">
+                        The invoice is defined in XMR. Any fiat input was used only
+                        to estimate this amount at creation time.
+                      </p>
+                    </div>
+                  ) : null}
                   <p className="mt-2 text-sm font-semibold text-ink">
                     <Link
                       className="underline underline-offset-4"
@@ -358,7 +398,9 @@ function CreateInvoiceModal({
                               Approx. USD reference: ~{draftUsdEstimate}
                             </summary>
                             <p className="mt-2 max-w-[46ch] leading-relaxed">
-                              Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                              Reference only, uses {usdEstimateMeta}
+                              {usdEstimateTime ? ` from ${usdEstimateTime}` : ""}. Not a quote or
+                              guarantee.
                             </p>
                           </details>
                         ) : null}
@@ -410,8 +452,8 @@ function CreateInvoiceModal({
                           ))}
                         </datalist>
                         <p className="text-sm text-ink-soft sm:col-span-2">
-                          Fiat inputs create an XMR invoice using a non-binding rate at request
-                          time.
+                          Fiat inputs create an XMR invoice using an informational rate at
+                          request time. The invoice is stored and checked in XMR.
                         </p>
                         {showFiatEstimate ? (
                           <details className="w-fit text-xs text-ink-soft sm:col-span-2">
@@ -420,7 +462,9 @@ function CreateInvoiceModal({
                               {fiatCurrencyFlag ? ` · ${fiatCurrencyLabel}` : ""}
                             </summary>
                             <p className="mt-2 max-w-[46ch] leading-relaxed">
-                              Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                              Reference only, uses {fiatEstimateMeta}
+                              {fiatEstimateTime ? ` from ${fiatEstimateTime}` : ""}. Not a quote or
+                              guarantee.
                             </p>
                           </details>
                         ) : null}
@@ -658,6 +702,11 @@ function CreateInvoiceModal({
                       Amount: <strong>{formattedDraftAmount || "-"}</strong>{" "}
                       {amountMode === "xmr" ? "XMR" : fiatCurrencyLabel}
                     </p>
+                    {amountMode === "fiat" ? (
+                      <p className="mt-2 text-sm text-ink-soft">
+                        XMR invoice estimate: <strong>{draftXmrEstimateLabel}</strong>
+                      </p>
+                    ) : null}
                   </div>
 
                   {state.error ? (
@@ -690,6 +739,7 @@ export default function InvoicePanel({
   activeInvoices,
   includeArchived,
   searchQuery,
+  statusFilter,
   sort,
   order,
   defaultConfirmationTarget,
@@ -734,6 +784,9 @@ export default function InvoicePanel({
         return haystack.includes(normalizedQuery);
       });
     }
+    if (statusFilter !== "all") {
+      list = list.filter((invoice) => invoice.status === statusFilter);
+    }
 
     const statusRank: Record<InvoiceItem["status"], number> = {
       pending: 0,
@@ -754,6 +807,20 @@ export default function InvoicePanel({
         const diff = statusRank[a.status] - statusRank[b.status];
         return diff || a.id.localeCompare(b.id);
       }
+      if (sort === "confirmations") {
+        const diff = (a.confirmations ?? 0) - (b.confirmations ?? 0);
+        return diff || a.id.localeCompare(b.id);
+      }
+      if (sort === "confirmation_target") {
+        const diff = a.confirmation_target - b.confirmation_target;
+        return diff || a.id.localeCompare(b.id);
+      }
+      if (sort === "expires_at") {
+        const left = a.expires_at ? new Date(a.expires_at).getTime() : 0;
+        const right = b.expires_at ? new Date(b.expires_at).getTime() : 0;
+        const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
+        return diff || a.id.localeCompare(b.id);
+      }
       const left = new Date(a.created_at).getTime();
       const right = new Date(b.created_at).getTime();
       const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
@@ -765,10 +832,7 @@ export default function InvoicePanel({
       list.reverse();
     }
     return list;
-  }, [activeInvoices, mode, order, searchQuery, sort]);
-  const archivedToggleHref = includeArchived
-    ? `${normalizedBasePath}?tab=invoices`
-    : `${normalizedBasePath}?tab=invoices&archived=1`;
+  }, [activeInvoices, mode, order, searchQuery, sort, statusFilter]);
 
   useEffect(() => {
     setSearchInput(searchQuery ?? "");
@@ -779,6 +843,7 @@ export default function InvoicePanel({
     sort?: string;
     order?: string;
     includeArchived?: boolean;
+    status?: InvoiceItem["status"] | "all";
   }) => {
     const params = new URLSearchParams();
     params.set("tab", "invoices");
@@ -790,6 +855,10 @@ export default function InvoicePanel({
     if (nextQuery) {
       params.set("q", nextQuery);
     }
+    const nextStatus = next.status ?? statusFilter;
+    if (nextStatus && nextStatus !== "all") {
+      params.set("status", nextStatus);
+    }
     const nextSort = next.sort ?? sort;
     if (nextSort) {
       params.set("sort", nextSort);
@@ -800,6 +869,7 @@ export default function InvoicePanel({
     }
     return `${normalizedBasePath}?${params.toString()}`;
   };
+  const archivedToggleHref = buildInvoicesHref({ includeArchived: !includeArchived });
 
   const csvExportHref = (() => {
     if (mode === "tour") {
@@ -812,6 +882,9 @@ export default function InvoicePanel({
     const trimmed = (searchQuery ?? "").trim();
     if (trimmed) {
       params.set("q", trimmed);
+    }
+    if (statusFilter !== "all") {
+      params.set("status", statusFilter);
     }
     if (sort) {
       params.set("sort", sort);
@@ -936,6 +1009,21 @@ export default function InvoicePanel({
             </div>
           </form>
         </div>
+        <div className="flex flex-wrap gap-2" aria-label="Invoice status filters">
+          {invoiceStatusOptions.map((option) => (
+            <Link
+              key={option.value}
+              className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition hover:-translate-y-0.5 ${
+                statusFilter === option.value
+                  ? "border-ink bg-ink text-cream shadow-[0_10px_18px_rgba(16,18,23,0.16)]"
+                  : "border-stroke bg-white/60 text-ink"
+              }`}
+              href={buildInvoicesHref({ status: option.value })}
+            >
+              {option.label}
+            </Link>
+          ))}
+        </div>
 
         {activeList.length === 0 ? (
           <p className="text-sm font-semibold text-ink-soft">
@@ -1013,6 +1101,30 @@ export default function InvoicePanel({
                         <p className={labelClass}>Amount</p>
                         <p className="text-sm font-semibold text-ink">
                           {formatXmrAmount(invoice.amount_xmr)} XMR
+                        </p>
+                      </div>
+                      <div className="grid gap-1">
+                        <p className={labelClass}>Confirmations</p>
+                        <p className="text-sm font-semibold text-ink">
+                          {invoice.confirmations ?? 0}/{invoice.confirmation_target}
+                        </p>
+                      </div>
+                      <div className="grid gap-1">
+                        <p className={labelClass}>Created</p>
+                        <p
+                          className="text-sm font-semibold text-ink"
+                          title={formatRelativeTime(invoice.created_at) ?? undefined}
+                        >
+                          {formatTimestamp(invoice.created_at)}
+                        </p>
+                      </div>
+                      <div className="grid gap-1">
+                        <p className={labelClass}>Expires</p>
+                        <p
+                          className="text-sm font-semibold text-ink"
+                          title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                        >
+                          {formatTimestamp(invoice.expires_at)}
                         </p>
                       </div>
                     </div>
@@ -1151,6 +1263,21 @@ export default function InvoicePanel({
                       Status
                     </Link>
                   </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("confirmations")}>
+                      Confirmations
+                    </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("created_at")}>
+                      Created
+                    </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <Link className="underline underline-offset-4" href={sortHref("expires_at")}>
+                      Expires
+                    </Link>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -1223,10 +1350,23 @@ export default function InvoicePanel({
                             {formatStatus(invoice.status)}
                           </span>
                         </td>
+                        <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
+                          {invoice.confirmations ?? 0}/{invoice.confirmation_target}
+                        </td>
+                        <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
+                          <span title={formatRelativeTime(invoice.created_at) ?? undefined}>
+                            {formatTimestamp(invoice.created_at)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
+                          <span title={formatRelativeTime(invoice.expires_at) ?? undefined}>
+                            {formatTimestamp(invoice.expires_at)}
+                          </span>
+                        </td>
                       </tr>
                       {isExpanded ? (
                         <tr className="border-b border-stroke">
-                          <td className="px-4 py-4" colSpan={3}>
+                          <td className="px-4 py-4" colSpan={6}>
                             <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                               <div className="grid gap-3 sm:grid-cols-2">
                                 <div className="grid gap-2">

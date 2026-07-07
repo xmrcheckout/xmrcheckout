@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import LoginForm from "../app/(app)/login/login-form";
@@ -44,6 +44,8 @@ export default function LoginModal() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isOpen = searchParams.get(loginParam) === "1";
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const closeModal = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -56,9 +58,44 @@ export default function LoginModal() {
     if (!isOpen) {
       return;
     }
+    previousFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    window.requestAnimationFrame(() => {
+      const firstField = modalRef.current?.querySelector<HTMLElement>("#payment_address");
+      firstField?.focus();
+    });
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         closeModal();
+        return;
+      }
+      if (event.key !== "Tab" || !modalRef.current) {
+        return;
+      }
+
+      const focusable = Array.from(
+        modalRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => !element.hasAttribute("hidden"));
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
     const previousOverflow = document.body.style.overflow;
@@ -67,6 +104,8 @@ export default function LoginModal() {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
     };
   }, [closeModal, isOpen]);
 
@@ -76,15 +115,17 @@ export default function LoginModal() {
 
   return (
     <div
-      className="fixed inset-0 z-40 grid place-items-center"
+      className="fixed inset-0 z-40 grid place-items-center overflow-y-auto px-4 py-6 sm:py-10"
       id="login-modal"
       role="dialog"
       aria-modal="true"
       aria-labelledby="login-title"
+      aria-describedby="login-description"
     >
       <div className="absolute inset-0 bg-ink/60 backdrop-blur" onClick={closeModal} />
       <div
-        className="relative w-[min(480px,92vw)] rounded-3xl border border-stroke bg-card p-7 shadow-deep"
+        ref={modalRef}
+        className="relative max-h-[90dvh] w-[min(480px,92vw)] overflow-y-auto rounded-3xl border border-stroke bg-card p-6 shadow-deep sm:p-7"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-4">
@@ -105,7 +146,7 @@ export default function LoginModal() {
             Close
           </button>
         </div>
-        <p className="mt-3 text-ink-soft">
+        <p id="login-description" className="mt-3 text-ink-soft">
           Use your primary address and secret view key to access checkout tools.
           Your primary address is the only identifier we need - no email or other
           identifying information required.

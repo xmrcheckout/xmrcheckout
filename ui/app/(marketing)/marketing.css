@@ -839,10 +839,12 @@ a {
   inset: -7rem -6vw -5rem;
   z-index: -2;
   background-image:
-    repeating-linear-gradient(0deg, transparent 0 3.2rem, rgba(16, 18, 23, 0.035) 3.2rem calc(3.2rem + 1px)),
-    linear-gradient(114deg, transparent 0 10%, rgba(242, 104, 34, 0.08) 10% 18%, transparent 18% 57%, rgba(93, 122, 106, 0.1) 57% 69%, transparent 69% 100%);
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.68) 72%, rgba(0, 0, 0, 0.26));
-  opacity: 0.9;
+    linear-gradient(rgba(16, 18, 23, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 18, 23, 0.02) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent 42%, rgba(93, 122, 106, 0.06));
+  background-size: 4rem 4rem, 4rem 4rem, 100% 100%;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.5) 72%, rgba(0, 0, 0, 0.22));
+  opacity: 0.62;
 }
 
 .home-page > section {
@@ -869,25 +871,22 @@ a {
   inset: 0;
   z-index: -2;
   background:
-    linear-gradient(180deg, rgba(248, 242, 233, 0.94), rgba(248, 242, 233, 0.5) 46%, rgba(248, 242, 233, 0)),
-    linear-gradient(108deg, rgba(16, 18, 23, 0.07) 0%, rgba(16, 18, 23, 0) 31%, rgba(242, 104, 34, 0.13) 31% 39%, rgba(16, 18, 23, 0) 39% 100%);
+    linear-gradient(180deg, rgba(248, 242, 233, 0.96), rgba(248, 242, 233, 0.68) 48%, rgba(248, 242, 233, 0)),
+    linear-gradient(90deg, rgba(242, 104, 34, 0.06), transparent 42%, rgba(93, 122, 106, 0.07));
 }
 
 .home-hero::after {
   content: "";
   position: absolute;
-  inset: 9% -4vw 16% 34%;
+  inset: 12% 4vw 12% 42%;
   z-index: -1;
   background-image:
-    linear-gradient(rgba(16, 18, 23, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(16, 18, 23, 0.042) 1px, transparent 1px),
-    repeating-linear-gradient(90deg, transparent 0 5.2rem, rgba(242, 104, 34, 0.11) 5.2rem calc(5.2rem + 1px), transparent calc(5.2rem + 1px) 10.4rem);
+    linear-gradient(rgba(16, 18, 23, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 18, 23, 0.035) 1px, transparent 1px);
   background-position: center;
-  background-size: 4.6rem 4.6rem, 4.6rem 4.6rem, 100% 100%;
-  mask-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.68) 14%, rgba(0, 0, 0, 0.5) 72%, transparent);
-  opacity: 0.72;
-  transform: skewY(-4deg);
-  transform-origin: center;
+  background-size: 4.2rem 4.2rem, 4.2rem 4.2rem;
+  mask-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.5) 18%, rgba(0, 0, 0, 0.42) 78%, transparent);
+  opacity: 0.52;
 }
 
 .home-hero-copy {
@@ -908,8 +907,8 @@ a {
 .home-hero h1 {
   font-size: clamp(2.9rem, 2.15rem + 3.2vw, 5.2rem);
   line-height: 0.96;
-  max-width: 10.8ch;
-  text-wrap: balance;
+  max-width: 11ch;
+  text-wrap: pretty;
 }
 
 .home-lead {
@@ -985,15 +984,13 @@ a {
 .checkout-console {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(16, 18, 23, 0.2);
-  border-radius: 1.55rem;
-  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 18, 23, 0.18);
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.96);
   box-shadow:
-    0 32px 80px rgba(16, 18, 23, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.46) inset;
+    0 24px 54px rgba(16, 18, 23, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.58) inset;
   margin-top: 0.35rem;
-  transform: perspective(1400px) rotateY(-7deg) rotateX(2deg);
-  transform-origin: center right;
   animation: console-rise 0.8s ease both;
 }
 
@@ -1011,7 +1008,7 @@ a {
   justify-content: space-between;
   gap: 1rem;
   border-bottom: 1px solid rgba(16, 18, 23, 0.14);
-  background: rgba(248, 242, 233, 0.75);
+  background: rgba(248, 242, 233, 0.92);
   color: var(--ink-soft);
   font-size: 0.84rem;
   padding: 0.85rem 1rem;
@@ -1039,8 +1036,8 @@ a {
 .console-merchant {
   border-left: 1px solid rgba(16, 18, 23, 0.14);
   background:
-    linear-gradient(160deg, rgba(93, 122, 106, 0.12), rgba(248, 242, 233, 0.48)),
-    rgba(248, 242, 233, 0.48);
+    linear-gradient(160deg, rgba(93, 122, 106, 0.1), rgba(248, 242, 233, 0.58)),
+    rgba(248, 242, 233, 0.58);
 }
 
 .console-section-header {
@@ -1087,7 +1084,7 @@ a {
 
 .console-payment {
   display: grid;
-  grid-template-columns: 8.8rem minmax(0, 1fr);
+  grid-template-columns: 8.4rem minmax(0, 1fr);
   gap: 1rem;
   align-items: stretch;
 }
@@ -1095,18 +1092,22 @@ a {
 .console-qr {
   aspect-ratio: 1;
   border: 1px solid rgba(16, 18, 23, 0.22);
-  border-radius: 1rem;
+  border-radius: 0.9rem;
   background-color: #fff;
-  background-image:
-    linear-gradient(90deg, rgba(16, 18, 23, 0.9) 10px, transparent 10px),
-    linear-gradient(rgba(16, 18, 23, 0.9) 10px, transparent 10px),
-    linear-gradient(90deg, rgba(16, 18, 23, 0.2) 5px, transparent 5px),
-    linear-gradient(rgba(16, 18, 23, 0.2) 5px, transparent 5px);
-  background-position: 12px 12px, 12px 12px, 6px 6px, 6px 6px;
-  background-size: 34px 34px, 34px 34px, 17px 17px, 17px 17px;
+  display: grid;
+  padding: 0.65rem;
+  place-items: center;
   box-shadow:
-    inset 0 0 0 10px #fff,
+    inset 0 0 0 8px #fff,
     0 18px 36px rgba(16, 18, 23, 0.12);
+}
+
+.console-qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--ink);
+  shape-rendering: crispEdges;
 }
 
 .console-address {
@@ -1346,11 +1347,11 @@ a {
 @keyframes console-rise {
   from {
     opacity: 0;
-    transform: perspective(1400px) rotateY(-7deg) rotateX(2deg) translateY(18px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
-    transform: perspective(1400px) rotateY(-7deg) rotateX(2deg) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -1384,10 +1385,6 @@ a {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  position: fixed;
-  right: 2rem;
-  bottom: 2rem;
-  z-index: 25;
 }
 
 .donate-link {
@@ -2203,6 +2200,16 @@ a {
 
   .endpoint-row {
     grid-template-columns: 1fr;
+  }
+
+  .donate-entry {
+    position: static;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .donate-link {
+    box-shadow: 0 12px 24px rgba(16, 18, 23, 0.16);
   }
 }
 

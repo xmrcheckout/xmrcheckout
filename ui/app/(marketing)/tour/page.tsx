@@ -256,7 +256,30 @@ export default async function TourPage({
   const awaitingConfirmationCount = invoices.filter(
     (invoice) => invoice.status === "payment_detected"
   ).length;
-  const confirmedCount = invoices.filter((invoice) => invoice.status === "confirmed").length;
+  const failedWebhookCount = fixture.deliveries.filter(
+    (delivery) => delivery.http_status !== null && delivery.http_status >= 400
+  ).length;
+  const needsAttentionItems = [
+    ...invoices
+      .filter((invoice) => invoice.status === "payment_detected")
+      .map((invoice) => ({
+        title: invoice.id,
+        detail: `${invoice.confirmations ?? 0}/${invoice.confirmation_target} confirmations reached.`,
+      })),
+    ...fixture.deliveries
+      .filter((delivery) => delivery.http_status !== null && delivery.http_status >= 400)
+      .map((delivery) => ({
+        title: delivery.event,
+        detail: `Webhook returned HTTP ${delivery.http_status}. Review delivery history.`,
+      })),
+  ];
+  const recentActivityItems = fixture.deliveries.slice(0, 3).map((delivery) => ({
+    title: delivery.event,
+    detail:
+      delivery.http_status && delivery.http_status >= 400
+        ? `Delivery failed for ${delivery.invoice_id ?? "an invoice"}.`
+        : `Delivery accepted for ${delivery.invoice_id ?? "an invoice"}.`,
+  }));
 
   const tabBaseClass =
     "inline-flex items-center rounded-xl border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:-translate-y-0.5";
@@ -292,13 +315,13 @@ export default async function TourPage({
         </aside>
         <div className="grid gap-6">
           {activeTab === "overview" ? (
-            <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
-              <h1 className="font-serif text-3xl">Operational overview.</h1>
+            <div className="rounded-2xl border border-stroke bg-white/85 p-7 shadow-soft backdrop-blur sm:p-8">
+              <h1 className="font-serif text-3xl">Operational overview</h1>
               <p className="mt-2 text-ink-soft">
-                Track invoice flow and confirmation progress at a glance.
+                A merchant-facing snapshot of invoices, confirmations, and webhook delivery.
               </p>
-              <div className="mt-6 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <div className="mt-6 rounded-xl border border-stroke bg-white/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
                   Primary address (example)
                 </p>
                 <p className="mt-3 break-all font-mono text-sm text-ink">
@@ -321,16 +344,16 @@ export default async function TourPage({
                     detail: "Waiting for the configured confirmation target.",
                   },
                   {
-                    title: "Confirmed invoices",
-                    value: confirmedCount.toString(),
-                    detail: "Confirmed on-chain invoices display here.",
+                    title: "Webhook issues",
+                    value: failedWebhookCount.toString(),
+                    detail: "Failed deliveries appear in webhook history.",
                   },
                 ].map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft"
+                    className="rounded-xl border border-stroke bg-white/70 p-5"
                   >
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
                       {item.title}
                     </p>
                     <h2 className="mt-3 text-2xl font-semibold">{item.value}</h2>
@@ -338,9 +361,58 @@ export default async function TourPage({
                   </div>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Webhook endpoints
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border border-stroke bg-white/70 p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="font-serif text-xl">Needs attention</h2>
+                      <p className="mt-1 text-sm text-ink-soft">
+                        Items a merchant would review before fulfilling orders.
+                      </p>
+                    </div>
+                    <Link
+                      className="text-sm font-semibold text-ink underline underline-offset-4"
+                      href="/tour?tab=invoices&status=payment_detected"
+                    >
+                      View invoices
+                    </Link>
+                  </div>
+                  <div className="mt-4 grid gap-3">
+                    {needsAttentionItems.length > 0 ? (
+                      needsAttentionItems.map((item) => (
+                        <div
+                          className="border-t border-stroke pt-3 text-sm"
+                          key={`${item.title}-${item.detail}`}
+                        >
+                          <p className="font-semibold text-ink">{item.title}</p>
+                          <p className="mt-1 text-ink-soft">{item.detail}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-ink-soft">
+                        No invoices or webhook deliveries need review.
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-stroke bg-white/70 p-5">
+                  <h2 className="font-serif text-xl">Recent activity</h2>
+                  <div className="mt-4 grid gap-3">
+                    {recentActivityItems.map((item) => (
+                      <div
+                        className="border-t border-stroke pt-3 text-sm"
+                        key={`${item.title}-${item.detail}`}
+                      >
+                        <p className="font-semibold text-ink">{item.title}</p>
+                        <p className="mt-1 text-ink-soft">{item.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 rounded-xl border border-stroke bg-white/70 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                  Active webhook endpoint
                 </p>
                 {fixture.webhooks.length === 0 ? (
                   <p className="mt-3 text-sm text-ink-soft">
@@ -370,8 +442,8 @@ export default async function TourPage({
                   </div>
                 )}
               </div>
-              <div className="mt-5 rounded-2xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">
-                We never hold funds. All payments move from the customer to your wallet.
+              <div className="mt-5 rounded-xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">
+                We never hold funds. Payments move from the customer to your wallet.
               </div>
             </div>
           ) : null}

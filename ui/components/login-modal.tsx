@@ -130,11 +130,11 @@ export default function LoginModal() {
       >
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
-              Merchant access
+            <p className="text-sm font-semibold text-clay">
+              View-only setup
             </p>
             <h3 id="login-title" className="mt-2 font-serif text-xl">
-              Sign in to your dashboard.
+              Connect your wallet for payment detection.
             </h3>
           </div>
           <button
@@ -146,16 +146,23 @@ export default function LoginModal() {
             Close
           </button>
         </div>
-        <p id="login-description" className="mt-3 text-ink-soft">
-          Use your primary address and secret view key to access checkout tools.
-          Your primary address is the only identifier we need - no email or other
-          identifying information required.
-          <br />
-          Your secret view key is stored encrypted at rest and used only for payment detection.
-        </p>
+        <div
+          id="login-description"
+          className="mt-4 rounded-2xl border border-stroke bg-white/60 p-4 text-sm text-ink-soft"
+        >
+          <p className="font-semibold text-ink">Before you continue</p>
+          <p className="mt-2">
+            Your primary address identifies the dashboard. Your secret view key
+            lets XMR Checkout detect incoming invoice payments. It is stored
+            encrypted at rest and cannot spend from your wallet.
+          </p>
+          <p className="mt-2 font-semibold text-clay">
+            Never paste a spend key here.
+          </p>
+        </div>
         <LoginForm />
         <p className="mt-4 text-sm font-semibold text-sage">
-          We never require more than view-only access to keep your funds safe.
+          View-only access is the maximum permission this software asks for.
         </p>
       </div>
     </div>

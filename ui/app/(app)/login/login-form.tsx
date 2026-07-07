@@ -30,6 +30,7 @@ export default function LoginForm() {
   const [state, formAction] = useFormState(loginAction, initialState);
   const [paymentAddress, setPaymentAddress] = useState("");
   const [viewKey, setViewKey] = useState("");
+  const [isViewKeyVisible, setIsViewKeyVisible] = useState(false);
   const [validationStatus, setValidationStatus] = useState<
     "idle" | "checking" | "valid" | "invalid" | "error"
   >("idle");
@@ -128,6 +129,10 @@ export default function LoginForm() {
           value={paymentAddress}
           onChange={(event) => setPaymentAddress(event.target.value)}
         />
+        <p className="text-sm text-ink-soft">
+          Use the 95-character primary address that starts with 4. Subaddresses
+          and integrated addresses are not used for dashboard access.
+        </p>
       </div>
       <div className="grid gap-2">
         <div className="flex items-center justify-between gap-3">
@@ -153,16 +158,29 @@ export default function LoginForm() {
             </span>
           ) : null}
         </div>
-        <input
-          className="min-h-[48px] w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
-          id="view_key"
-          name="view_key"
-          type="password"
-          autoComplete="off"
-          required
-          value={viewKey}
-          onChange={(event) => setViewKey(event.target.value)}
-        />
+        <div className="relative">
+          <input
+            className="min-h-[48px] w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 pr-20 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+            id="view_key"
+            name="view_key"
+            type={isViewKeyVisible ? "text" : "password"}
+            autoComplete="off"
+            required
+            value={viewKey}
+            onChange={(event) => setViewKey(event.target.value)}
+          />
+          <button
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-3 py-1 text-xs font-semibold text-ink"
+            type="button"
+            onClick={() => setIsViewKeyVisible((current) => !current)}
+          >
+            {isViewKeyVisible ? "Hide" : "Show"}
+          </button>
+        </div>
+        <p className="text-sm text-ink-soft">
+          Paste the 64-character secret view key, not a spend key. This allows
+          detection only.
+        </p>
       </div>
       {validationStatus === "checking" ? (
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">

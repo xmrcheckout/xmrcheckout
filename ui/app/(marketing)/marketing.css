@@ -553,6 +553,258 @@ a {
   background: transparent;
 }
 
+.product-preview {
+  display: grid;
+  gap: 1rem;
+}
+
+.preview-pane {
+  border: 1px solid var(--stroke);
+  border-radius: 1.35rem;
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 18px 42px rgba(16, 18, 23, 0.1);
+  padding: clamp(1rem, 1.8vw, 1.45rem);
+}
+
+.preview-pane--invoice {
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.preview-pane--status {
+  margin-left: clamp(0rem, 5vw, 4rem);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.preview-kicker {
+  color: var(--clay);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.preview-header h2 {
+  font-family: var(--font-sans, "Space Grotesk", "Helvetica Neue", Arial, sans-serif);
+  font-size: clamp(1.1rem, 1rem + 0.45vw, 1.4rem);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.preview-status {
+  border: 1px solid rgba(192, 115, 63, 0.32);
+  border-radius: 999px;
+  color: var(--clay);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  white-space: nowrap;
+}
+
+.preview-status--detected {
+  border-color: rgba(93, 122, 106, 0.38);
+  color: var(--sage);
+}
+
+.preview-amount {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 1.25rem;
+}
+
+.preview-amount span {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: clamp(1.45rem, 1.15rem + 1.4vw, 2.3rem);
+  font-weight: 700;
+}
+
+.preview-amount small,
+.preview-address p,
+.preview-confirmations span,
+.preview-event-log span {
+  color: var(--ink-soft);
+}
+
+.preview-payment-grid {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1.1rem;
+  align-items: stretch;
+}
+
+.mock-qr {
+  aspect-ratio: 1;
+  border: 1px solid rgba(16, 18, 23, 0.22);
+  border-radius: 0.9rem;
+  background-color: #fff;
+  background-image:
+    linear-gradient(90deg, rgba(16, 18, 23, 0.9) 10px, transparent 10px),
+    linear-gradient(rgba(16, 18, 23, 0.9) 10px, transparent 10px),
+    linear-gradient(90deg, rgba(16, 18, 23, 0.22) 5px, transparent 5px),
+    linear-gradient(rgba(16, 18, 23, 0.22) 5px, transparent 5px);
+  background-position: 12px 12px, 12px 12px, 6px 6px, 6px 6px;
+  background-size: 34px 34px, 34px 34px, 17px 17px, 17px 17px;
+  box-shadow: inset 0 0 0 10px #fff;
+}
+
+.preview-address {
+  display: grid;
+  align-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.preview-address code {
+  display: block;
+  border: 1px solid rgba(16, 18, 23, 0.12);
+  border-radius: 0.8rem;
+  background: rgba(16, 18, 23, 0.06);
+  color: var(--ink);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.95rem;
+  padding: 0.75rem;
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.preview-actions span {
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 0.7rem;
+}
+
+.preview-confirmations {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.25rem;
+}
+
+.preview-confirmations strong {
+  display: block;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.preview-confirmations span {
+  font-size: 0.9rem;
+}
+
+.preview-progress {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(16, 18, 23, 0.1);
+}
+
+.preview-progress span {
+  display: block;
+  width: 50%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--monero), var(--sage));
+}
+
+.preview-event-log {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.preview-event-log div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  border-top: 1px solid rgba(16, 18, 23, 0.1);
+  padding-top: 0.55rem;
+  font-size: 0.85rem;
+}
+
+.checkout-flow {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--stroke);
+}
+
+.checkout-flow li {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 1rem;
+  border-bottom: 1px solid var(--stroke);
+  padding: 1.15rem 0;
+}
+
+.checkout-flow span {
+  color: var(--clay);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.checkout-flow h3 {
+  font-family: var(--font-sans, "Space Grotesk", "Helvetica Neue", Arial, sans-serif);
+  font-size: 1rem;
+  margin: 0 0 0.15rem;
+}
+
+.checkout-flow p {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.trust-boundary {
+  display: grid;
+  gap: 2rem;
+}
+
+.trust-boundary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--stroke);
+  border-bottom: 1px solid var(--stroke);
+}
+
+.trust-boundary-grid > div {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.4rem 1.5rem;
+}
+
+.trust-boundary-grid > div + div {
+  border-left: 1px solid var(--stroke);
+}
+
+.trust-boundary-grid h3 {
+  font-family: var(--font-sans, "Space Grotesk", "Helvetica Neue", Arial, sans-serif);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.trust-boundary-grid ul {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
 .site-footer {
   padding: 2rem 6vw 3rem;
   display: flex;
@@ -1242,6 +1494,42 @@ a {
   .docs-jump-nav a,
   .docs-jump-nav span {
     flex: 0 0 auto;
+  }
+
+  .preview-pane--status {
+    margin-left: 0;
+  }
+
+  .preview-header {
+    align-items: flex-start;
+  }
+
+  .preview-status {
+    white-space: normal;
+    text-align: right;
+  }
+
+  .preview-payment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mock-qr {
+    width: min(14rem, 100%);
+    justify-self: center;
+  }
+
+  .trust-boundary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trust-boundary-grid > div {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .trust-boundary-grid > div + div {
+    border-top: 1px solid var(--stroke);
+    border-left: 0;
   }
 
   .hero {

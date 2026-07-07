@@ -542,33 +542,22 @@ const requirementsByEndpoint = Object.fromEntries(
 
 export default function DocsPage() {
   return (
-    <main className="px-[6vw] pb-20 pt-10 text-ink">
-      <section className="grid max-w-[52rem] gap-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+    <main className="px-[6vw] pb-20 pt-8 text-ink">
+      <section className="grid max-w-[58rem] gap-4">
+        <p className="text-sm font-semibold text-clay">
           Documentation
         </p>
         <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-          Monero checkout documentation & API reference.
+          Quick start and API reference.
         </h1>
         <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-          xmrcheckout.com generates invoices, detects Monero payments using view-only access,
-          and relays status events. Setup is explicit: bring your primary address and secret
-          view key - never spend keys, never custody.
+          Create invoices, send customers to hosted invoice pages, and receive
+          invoice status through polling or webhooks. Setup uses your primary
+          address and secret view key; spend keys are never requested.
         </p>
-        <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-            Customer → Merchant wallet
-          </span>
-          <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-            No spend keys required
-          </span>
-          <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-            OpenAPI schema available
-          </span>
-        </div>
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
             href="/docs/integrations"
           >
             Integration recipes
@@ -592,41 +581,55 @@ export default function DocsPage() {
         ))}
       </nav>
 
-      <section id="start" className="mt-10 scroll-mt-24 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-          Start here
-        </p>
-        <ol className="mt-3 grid gap-3 text-sm text-ink-soft sm:grid-cols-4">
-          <li className="rounded-xl border border-stroke bg-white/70 p-4">
-            <p className="font-semibold text-ink">1) Sign in (view-only)</p>
-            <p className="mt-1">
-              Use your primary address + secret view key to retrieve an API key.
-            </p>
-          </li>
-          <li className="rounded-xl border border-stroke bg-white/70 p-4">
-            <p className="font-semibold text-ink">2) Create an invoice</p>
-            <p className="mt-1">
-              Call <span className="font-mono text-ink">POST /api/core/invoices</span> and
-              redirect the customer to the hosted invoice URL.
-            </p>
-          </li>
-          <li className="rounded-xl border border-stroke bg-white/70 p-4">
-            <p className="font-semibold text-ink">3) Optional: configure webhooks</p>
-            <p className="mt-1">
-              Subscribe to <span className="font-mono text-ink">invoice.confirmed</span> to
-              get status events pushed to your system.
-            </p>
-          </li>
-          <li className="rounded-xl border border-stroke bg-white/70 p-4">
-            <p className="font-semibold text-ink">4) Confirm and fulfill</p>
-            <p className="mt-1">
-              Wait for <span className="font-mono text-ink">invoice.confirmed</span> (webhook
-              or polling). You can also check the public status endpoint, then mark your
-              order paid.
-            </p>
-          </li>
-        </ol>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+      <section
+        id="start"
+        className="mt-8 grid scroll-mt-24 gap-6 rounded-2xl border border-stroke bg-white/65 p-6 shadow-soft backdrop-blur lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)]"
+      >
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-clay">Start here</p>
+          <h2 className="mt-2 font-serif text-2xl">Create and check an invoice.</h2>
+          <ol className="mt-4 grid gap-4 text-sm text-ink-soft">
+            <li className="border-t border-stroke pt-3">
+              <p className="font-semibold text-ink">1. Sign in with view-only wallet data</p>
+              <p className="mt-1">
+                Use your primary address and secret view key to retrieve an API key.
+              </p>
+            </li>
+            <li className="border-t border-stroke pt-3">
+              <p className="font-semibold text-ink">2. Create an invoice</p>
+              <p className="mt-1">
+                Call <span className="font-mono text-ink">POST /api/core/invoices</span> and
+                send the customer to the hosted invoice URL.
+              </p>
+            </li>
+            <li className="border-t border-stroke pt-3">
+              <p className="font-semibold text-ink">3. Listen for status</p>
+              <p className="mt-1">
+                Subscribe to webhooks or poll the public invoice endpoint until
+                <span className="font-mono text-ink"> invoice.confirmed</span>.
+              </p>
+            </li>
+          </ol>
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-ink">Minimal request</p>
+          <pre className="mt-3 max-w-full overflow-x-auto rounded-xl border border-stroke bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft">
+            <code>{`POST /api/core/invoices
+Authorization: ApiKey <api_key>
+Content-Type: application/json
+
+{
+  "amount_xmr": "0.125",
+  "confirmation_target": 2,
+  "metadata": { "order_id": "ORDER-1234" }
+}`}</code>
+          </pre>
+          <p className="mt-3 text-sm text-ink-soft">
+            The response includes the invoice id, payment address, amount, and
+            hosted invoice URL.
+          </p>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 lg:col-span-2">
           <Link
             className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:-translate-y-0.5"
             href="/docs/integrations"

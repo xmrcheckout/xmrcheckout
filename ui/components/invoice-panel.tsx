@@ -949,12 +949,13 @@ export default function InvoicePanel({
   };
 
   return (
-    <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
+    <div className="rounded-2xl border border-stroke bg-white/85 p-6 shadow-soft backdrop-blur sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl">Invoices</h1>
           <p className="mt-2 text-ink-soft">
-            Search, sort, and expand invoices for details.
+            Create invoices, follow confirmations, and open a row when you need
+            the raw details.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -1026,9 +1027,13 @@ export default function InvoicePanel({
         </div>
 
         {activeList.length === 0 ? (
-          <p className="text-sm font-semibold text-ink-soft">
-            No invoices match your filters.
-          </p>
+          <div className="rounded-xl border border-stroke bg-white/70 p-5 text-sm text-ink-soft">
+            <p className="font-semibold text-ink">No invoices match these filters.</p>
+            <p className="mt-1">
+              Adjust the search or status filter, or create a new invoice when
+              you are ready to test the flow.
+            </p>
+          </div>
         ) : (
           <>
             <div className="grid gap-4 lg:hidden">

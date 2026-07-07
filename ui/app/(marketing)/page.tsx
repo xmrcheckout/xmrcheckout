@@ -31,9 +31,18 @@ export default function MarketingHomePage() {
               Read the docs
             </Link>
           </div>
+          <div className="home-proof-strip" aria-label="Trust boundary summary">
+            <span>View-only detection</span>
+            <span>No spend keys</span>
+            <span>Customer to merchant wallet</span>
+          </div>
         </div>
 
         <div className="checkout-console" aria-label="Checkout preview">
+          <div className="console-topbar">
+            <span>Checkout preview</span>
+            <strong>View-only observer</strong>
+          </div>
           <div className="console-grid">
             <section className="console-customer" aria-label="Customer payment view">
               <div className="console-section-header">

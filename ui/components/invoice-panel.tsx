@@ -140,6 +140,7 @@ function CreateInvoiceModal({
     "account_default" | "monero" | "none" | "custom"
   >("account_default");
   const [qrLogoDataUrl, setQrLogoDataUrl] = useState<string | null>(null);
+  const [copiedPublicInvoiceUrl, setCopiedPublicInvoiceUrl] = useState(false);
   const [createInvoiceOrigin, setCreateInvoiceOrigin] = useState<string | null>(
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null
   );
@@ -252,6 +253,18 @@ function CreateInvoiceModal({
     };
     reader.readAsDataURL(file);
   };
+  const handleCopyPublicInvoiceUrl = async () => {
+    if (!publicInvoiceUrl) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(publicInvoiceUrl);
+      setCopiedPublicInvoiceUrl(true);
+      window.setTimeout(() => setCopiedPublicInvoiceUrl(false), 2000);
+    } catch {
+      setCopiedPublicInvoiceUrl(false);
+    }
+  };
 
   const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
   const inputClass =
@@ -273,6 +286,9 @@ function CreateInvoiceModal({
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
       <div className="flex max-h-[85vh] w-full max-w-3xl flex-col rounded-3xl border border-stroke bg-white shadow-deep">
+        <span className="sr-only" role="status" aria-live="polite">
+          {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : ""}
+        </span>
         <div className="flex flex-wrap items-start justify-between gap-4 p-8 pb-0">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
@@ -326,6 +342,23 @@ function CreateInvoiceModal({
                       {publicInvoiceUrl}
                     </Link>
                   </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <button
+                      className={secondaryButton}
+                      type="button"
+                      onClick={handleCopyPublicInvoiceUrl}
+                    >
+                      {copiedPublicInvoiceUrl ? "Copied link" : "Copy link"}
+                    </button>
+                    <Link
+                      className={primaryButton}
+                      href={publicInvoiceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open invoice
+                    </Link>
+                  </div>
                   {state.warnings && state.warnings.length > 0 ? (
                     <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
                       {state.warnings.map((warning) => (
@@ -353,6 +386,12 @@ function CreateInvoiceModal({
               <div className="min-h-0 flex-1 overflow-y-auto pr-1">
                 <div className="grid gap-6">
                   <div className="grid gap-4">
+                    <div>
+                      <p className={labelClass}>Amount</p>
+                      <p className="mt-1 text-sm text-ink-soft">
+                        Define the invoice amount in XMR, or use an informational fiat reference.
+                      </p>
+                    </div>
                     <div className="grid gap-2">
                       <label className={labelClass} htmlFor="wizard_amount_mode">
                         Amount type
@@ -474,7 +513,7 @@ function CreateInvoiceModal({
 
                   <details className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                     <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-                      Optional details
+                      Confirmation and expiry
                     </summary>
                     <div className="mt-4 grid gap-5">
                       <div className="grid gap-3">
@@ -591,6 +630,14 @@ function CreateInvoiceModal({
                         ) : null}
                       </div>
 
+                    </div>
+                  </details>
+
+                  <details className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                    <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
+                      Customer display
+                    </summary>
+                    <div className="mt-4 grid gap-5">
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="grid gap-2">
                           <label className={labelClass} htmlFor="wizard_recipient">
@@ -701,6 +748,22 @@ function CreateInvoiceModal({
                     <p className="mt-2">
                       Amount: <strong>{formattedDraftAmount || "-"}</strong>{" "}
                       {amountMode === "xmr" ? "XMR" : fiatCurrencyLabel}
+                    </p>
+                    <p className="mt-2">
+                      Confirmation target:{" "}
+                      <strong>
+                        {confirmationMode === "custom"
+                          ? confirmationTarget || "-"
+                          : defaultConfirmationTarget}
+                      </strong>
+                    </p>
+                    <p className="mt-2">
+                      Expiry:{" "}
+                      <strong>
+                        {expiryMode === "custom"
+                          ? expiryValue || "Custom date not set"
+                          : "Default (60 minutes)"}
+                      </strong>
                     </p>
                     {amountMode === "fiat" ? (
                       <p className="mt-2 text-sm text-ink-soft">
@@ -943,6 +1006,27 @@ export default function InvoicePanel({
     const nextOrder = sort === key && order === "asc" ? "desc" : "asc";
     return buildInvoicesHref({ sort: key, order: nextOrder });
   };
+  const sortIndicator = (key: string) => {
+    if (sort !== key) {
+      return "";
+    }
+    return order === "asc" ? " (asc)" : " (desc)";
+  };
+  const statusPillClass = (status: InvoiceItem["status"]) => {
+    if (status === "payment_detected") {
+      return "border-emerald-200 bg-emerald-50 text-emerald-800";
+    }
+    if (status === "confirmed") {
+      return "border-sage/30 bg-sage/10 text-sage";
+    }
+    if (status === "expired") {
+      return "border-red-200 bg-red-50 text-red-700";
+    }
+    if (status === "invalid") {
+      return "border-clay/30 bg-clay/10 text-clay";
+    }
+    return "border-amber-200 bg-amber-50 text-amber-900";
+  };
 
   const applySearch = () => {
     router.push(buildInvoicesHref({ q: searchInput }));
@@ -1052,22 +1136,10 @@ export default function InvoicePanel({
                       invoice.archived_at ? "bg-ink/5" : ""
                     }`}
                   >
-                    <div
-                      className="grid cursor-pointer gap-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15 focus-visible:ring-offset-2 focus-visible:ring-offset-white/60"
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => toggleInvoice(invoice.id)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          toggleInvoice(invoice.id);
-                        }
-                      }}
-                    >
+                    <div className="grid gap-1 text-left">
                       {mode === "tour" ? (
                         <span
                           className="w-fit font-mono text-xs text-ink underline underline-offset-4"
-                          onClick={(event) => event.stopPropagation()}
                         >
                           {invoice.id}
                         </span>
@@ -1077,7 +1149,6 @@ export default function InvoicePanel({
                           href={`/invoice/${invoice.id}`}
                           target="_blank"
                           rel="noreferrer"
-                          onClick={(event) => event.stopPropagation()}
                         >
                           {invoice.id}
                         </Link>
@@ -1097,7 +1168,9 @@ export default function InvoicePanel({
                           Paid after expiry
                         </span>
                       ) : null}
-                      <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                      <span
+                        className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${statusPillClass(invoice.status)}`}
+                      >
                         {formatStatus(invoice.status)}
                       </span>
                     </div>
@@ -1134,13 +1207,33 @@ export default function InvoicePanel({
                       </div>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2">
+                      {mode !== "tour" ? (
+                        <Link
+                          className={smallSecondaryButton}
+                          href={`/invoice/${invoice.id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Open
+                        </Link>
+                      ) : null}
                       <button
                         className={smallSecondaryButton}
                         type="button"
+                        aria-expanded={isExpanded}
                         onClick={() => toggleInvoice(invoice.id)}
                       >
                         {isExpanded ? "Hide" : "Details"}
                       </button>
+                      {isArchivable ? (
+                        <button
+                          className={smallSecondaryButton}
+                          type="button"
+                          onClick={() => openArchiveModal(invoice.id)}
+                        >
+                          Archive
+                        </button>
+                      ) : null}
                     </div>
                     {isExpanded ? (
                       <div className="mt-4 grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
@@ -1260,28 +1353,31 @@ export default function InvoicePanel({
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("amount_xmr")}>
-                      Amount
+                      Amount{sortIndicator("amount_xmr")}
                     </Link>
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("status")}>
-                      Status
+                      Status{sortIndicator("status")}
                     </Link>
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("confirmations")}>
-                      Confirmations
+                      Confirmations{sortIndicator("confirmations")}
                     </Link>
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("created_at")}>
-                      Created
+                      Created{sortIndicator("created_at")}
                     </Link>
                   </th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("expires_at")}>
-                      Expires
+                      Expires{sortIndicator("expires_at")}
                     </Link>
+                  </th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -1300,22 +1396,10 @@ export default function InvoicePanel({
                         className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
                       >
                         <td className="max-w-[320px] px-4 py-3 align-top">
-                          <div
-                            className="grid cursor-pointer gap-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15 focus-visible:ring-offset-2 focus-visible:ring-offset-white/60"
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => toggleInvoice(invoice.id)}
-                            onKeyDown={(event) => {
-                              if (event.key === "Enter" || event.key === " ") {
-                                event.preventDefault();
-                                toggleInvoice(invoice.id);
-                              }
-                            }}
-                          >
+                          <div className="grid gap-1 text-left">
                             {mode === "tour" ? (
                               <span
                                 className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
-                                onClick={(event) => event.stopPropagation()}
                               >
                                 {invoice.id}
                               </span>
@@ -1325,7 +1409,6 @@ export default function InvoicePanel({
                                 href={`/invoice/${invoice.id}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                onClick={(event) => event.stopPropagation()}
                               >
                                 {invoice.id}
                               </Link>
@@ -1351,7 +1434,9 @@ export default function InvoicePanel({
                           {formatXmrAmount(invoice.amount_xmr)} XMR
                         </td>
                         <td className="px-4 py-3 align-top whitespace-nowrap">
-                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink whitespace-nowrap">
+                          <span
+                            className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] whitespace-nowrap ${statusPillClass(invoice.status)}`}
+                          >
                             {formatStatus(invoice.status)}
                           </span>
                         </td>
@@ -1368,10 +1453,41 @@ export default function InvoicePanel({
                             {formatTimestamp(invoice.expires_at)}
                           </span>
                         </td>
+                        <td className="px-4 py-3 align-top">
+                          <div className="flex flex-wrap gap-2">
+                            {mode !== "tour" ? (
+                              <Link
+                                className={smallSecondaryButton}
+                                href={`/invoice/${invoice.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Open
+                              </Link>
+                            ) : null}
+                            <button
+                              className={smallSecondaryButton}
+                              type="button"
+                              aria-expanded={isExpanded}
+                              onClick={() => toggleInvoice(invoice.id)}
+                            >
+                              {isExpanded ? "Hide" : "Details"}
+                            </button>
+                            {isArchivable ? (
+                              <button
+                                className={smallSecondaryButton}
+                                type="button"
+                                onClick={() => openArchiveModal(invoice.id)}
+                              >
+                                Archive
+                              </button>
+                            ) : null}
+                          </div>
+                        </td>
                       </tr>
                       {isExpanded ? (
                         <tr className="border-b border-stroke">
-                          <td className="px-4 py-4" colSpan={6}>
+                          <td className="px-4 py-4" colSpan={7}>
                             <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                               <div className="grid gap-3 sm:grid-cols-2">
                                 <div className="grid gap-2">

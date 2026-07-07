@@ -133,6 +133,22 @@ const daemonBadge = (systemStatus: SystemStatusSummary | null) => {
   };
 };
 
+const formatStatus = (status: InvoiceStatus) => {
+  if (status === "payment_detected") {
+    return "Payment detected";
+  }
+  if (status === "pending") {
+    return "Awaiting funds";
+  }
+  if (status === "confirmed") {
+    return "Confirmed";
+  }
+  if (status === "invalid") {
+    return "Invalid";
+  }
+  return "Expired";
+};
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -253,7 +269,7 @@ export default async function DashboardPage({
       webhooksData = (await response.json()) as WebhookSummary[];
     }
   }
-  if (activeTab === "webhooks" && activeWebhookTab === "history") {
+  if (activeTab === "overview" || (activeTab === "webhooks" && activeWebhookTab === "history")) {
     const historyUrl = new URL(`${apiBaseUrl}/api/core/webhooks/history`);
     historyUrl.searchParams.set("limit", "50");
     const response = await fetch(historyUrl.toString(), {
@@ -316,6 +332,48 @@ export default async function DashboardPage({
   const confirmedCount = allInvoices.filter(
     (invoice) => invoice.status === "confirmed"
   ).length;
+  const expiredOrInvalidCount = allInvoices.filter(
+    (invoice) => invoice.status === "expired" || invoice.status === "invalid"
+  ).length;
+  const failedWebhookCount = webhookHistory.filter(
+    (delivery) => delivery.http_status === null || (delivery.http_status ?? 0) >= 400
+  ).length;
+  const needsAttentionItems = [
+    ...allInvoices
+      .filter((invoice) => invoice.status === "payment_detected")
+      .slice(0, 3)
+      .map((invoice) => ({
+        title: invoice.id,
+        detail: `${invoice.confirmations ?? 0}/${invoice.confirmation_target} confirmations reached.`,
+        href: `/invoice/${invoice.id}`,
+      })),
+    ...allInvoices
+      .filter((invoice) => invoice.status === "expired" || invoice.status === "invalid")
+      .slice(0, 3)
+      .map((invoice) => ({
+        title: invoice.id,
+        detail: `${formatStatus(invoice.status)} invoice needs merchant review.`,
+        href: `/invoice/${invoice.id}`,
+      })),
+    ...webhookHistory
+      .filter((delivery) => delivery.http_status === null || (delivery.http_status ?? 0) >= 400)
+      .slice(0, 3)
+      .map((delivery) => ({
+        title: delivery.event,
+        detail:
+          delivery.http_status === null
+            ? "Webhook delivery did not receive a response."
+            : `Webhook returned HTTP ${delivery.http_status}.`,
+        href: "/dashboard?tab=webhooks&webhook_tab=history",
+      })),
+  ].slice(0, 5);
+  const recentActivityItems = webhookHistory.slice(0, 4).map((delivery) => ({
+    title: delivery.event,
+    detail:
+      delivery.http_status === null || delivery.http_status >= 400
+        ? `Delivery failed for ${delivery.invoice_id ?? "an invoice"}.`
+        : `Delivery recorded for ${delivery.invoice_id ?? "an invoice"}.`,
+  }));
   const walletStatusBadge = walletRpcBadge(systemStatus);
   const daemonStatusBadge = daemonBadge(systemStatus);
   const lastReconcileCompleted = systemStatus?.last_reconcile_completed_at
@@ -354,80 +412,110 @@ export default async function DashboardPage({
             <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
               <h1 className="font-serif text-3xl">Operational overview.</h1>
               <p className="mt-2 text-ink-soft">
-                Track invoice flow and confirmation progress at a glance.
+                Review invoices, confirmations, webhooks, and Monero connectivity.
               </p>
-              <div className="mt-6 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Primary address
-                </p>
-                <p className="mt-3 break-all font-mono text-sm text-ink">
-                  {profileData?.payment_address ?? "Unavailable"}
-                </p>
-                <p className="mt-2 text-sm text-ink-soft">
-                  This is the wallet address used for your invoices.
-                </p>
-              </div>
-              <div className="mt-4 grid gap-4 lg:grid-cols-3">
+              <div className="mt-6 grid gap-4 lg:grid-cols-3">
                 {[
                   {
-                    title: "Invoices today",
-                    value: invoicesTodayCount.toString(),
-                    detail: "Totals will appear once invoices are created.",
-                  },
-                  {
-                    title: "Invoices awaiting confirmation",
+                    title: "Awaiting confirmation",
                     value: awaitingConfirmationCount.toString(),
-                    detail: "Waiting for the configured confirmation target.",
+                    detail: "Detected payments below the confirmation target.",
+                    href: "/dashboard?tab=invoices&status=payment_detected",
                   },
                   {
-                    title: "Confirmed invoices",
-                    value: confirmedCount.toString(),
-                    detail: "Confirmed on-chain invoices will display here.",
+                    title: "Expired or invalid",
+                    value: expiredOrInvalidCount.toString(),
+                    detail: "Invoices that may need merchant review.",
+                    href: "/dashboard?tab=invoices",
+                  },
+                  {
+                    title: "Webhook issues",
+                    value: failedWebhookCount.toString(),
+                    detail: "Recent deliveries without a successful response.",
+                    href: "/dashboard?tab=webhooks&webhook_tab=history",
                   },
                 ].map((item) => (
-                  <div
+                  <Link
                     key={item.title}
-                    className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft"
+                    className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft transition hover:-translate-y-0.5"
+                    href={item.href}
                   >
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                       {item.title}
                     </p>
                     <h2 className="mt-3 text-2xl font-semibold">{item.value}</h2>
                     <p className="mt-2 text-sm text-ink-soft">{item.detail}</p>
-                  </div>
+                  </Link>
                 ))}
               </div>
-              <div className="mt-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-                  Webhook endpoints
-                </p>
-                {webhooksData.length === 0 ? (
-                  <p className="mt-3 text-sm text-ink-soft">
-                    No webhooks configured yet.{" "}
-                    <Link className="font-semibold text-ink underline" href="/dashboard?tab=webhooks">
-                      Add a webhook endpoint.
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h2 className="font-serif text-xl">Needs attention</h2>
+                      <p className="mt-1 text-sm text-ink-soft">
+                        Items to review before fulfilling or troubleshooting orders.
+                      </p>
+                    </div>
+                    <Link
+                      className="text-sm font-semibold text-ink underline underline-offset-4"
+                      href="/dashboard?tab=invoices"
+                    >
+                      View invoices
                     </Link>
-                  </p>
-                ) : (
-                  <div className="mt-3 grid gap-3 text-sm text-ink">
-                    {webhooksData.map((webhook) => (
-                      <div
-                        className="rounded-xl border border-stroke bg-white/80 px-4 py-3"
-                        key={webhook.id}
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="break-all font-semibold">{webhook.url}</p>
-                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
-                            {webhook.active ? "Active" : "Paused"}
-                          </span>
-                        </div>
-                        <p className="mt-2 text-xs text-ink-soft">
-                          Events: {webhook.events.join(", ")}
-                        </p>
-                      </div>
-                    ))}
                   </div>
-                )}
+                  <div className="mt-4 grid gap-3">
+                    {needsAttentionItems.length > 0 ? (
+                      needsAttentionItems.map((item) => (
+                        <Link
+                          className="rounded-xl border border-stroke bg-white/70 px-4 py-3 text-sm transition hover:bg-white"
+                          href={item.href}
+                          key={`${item.title}-${item.detail}`}
+                        >
+                          <p className="break-all font-semibold text-ink">{item.title}</p>
+                          <p className="mt-1 text-ink-soft">{item.detail}</p>
+                        </Link>
+                      ))
+                    ) : (
+                      <p className="rounded-xl border border-stroke bg-white/70 px-4 py-3 text-sm text-ink-soft">
+                        No invoices or webhook deliveries need review.
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h2 className="font-serif text-xl">Recent webhook activity</h2>
+                      <p className="mt-1 text-sm text-ink-soft">
+                        Latest delivery attempts for invoice events.
+                      </p>
+                    </div>
+                    <Link
+                      className="text-sm font-semibold text-ink underline underline-offset-4"
+                      href="/dashboard?tab=webhooks&webhook_tab=history"
+                    >
+                      History
+                    </Link>
+                  </div>
+                  <div className="mt-4 grid gap-3">
+                    {recentActivityItems.length > 0 ? (
+                      recentActivityItems.map((item) => (
+                        <div
+                          className="rounded-xl border border-stroke bg-white/70 px-4 py-3 text-sm"
+                          key={`${item.title}-${item.detail}`}
+                        >
+                          <p className="font-semibold text-ink">{item.title}</p>
+                          <p className="mt-1 text-ink-soft">{item.detail}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="rounded-xl border border-stroke bg-white/70 px-4 py-3 text-sm text-ink-soft">
+                        No webhook delivery attempts recorded yet.
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="mt-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -490,6 +578,70 @@ export default async function DashboardPage({
                     Last reconciler error: {systemStatus.last_reconcile_error}
                   </p>
                 ) : null}
+              </div>
+              <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+                <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Invoice totals
+                  </p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                    <div>
+                      <p className="text-sm text-ink-soft">Created today</p>
+                      <p className="text-lg font-semibold text-ink">
+                        {invoicesTodayCount}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-ink-soft">Confirmed</p>
+                      <p className="text-lg font-semibold text-ink">
+                        {confirmedCount}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    Primary address
+                  </p>
+                  <p className="mt-3 break-all font-mono text-xs text-ink sm:text-sm">
+                    {profileData?.payment_address ?? "Unavailable"}
+                  </p>
+                  <p className="mt-2 text-sm text-ink-soft">
+                    This wallet address is used to derive invoice subaddresses.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  Webhook endpoints
+                </p>
+                {webhooksData.length === 0 ? (
+                  <p className="mt-3 text-sm text-ink-soft">
+                    No webhooks configured yet.{" "}
+                    <Link className="font-semibold text-ink underline" href="/dashboard?tab=webhooks">
+                      Add a webhook endpoint.
+                    </Link>
+                  </p>
+                ) : (
+                  <div className="mt-3 grid gap-3 text-sm text-ink">
+                    {webhooksData.map((webhook) => (
+                      <div
+                        className="rounded-xl border border-stroke bg-white/80 px-4 py-3"
+                        key={webhook.id}
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="break-all font-semibold">{webhook.url}</p>
+                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                            {webhook.active ? "Active" : "Paused"}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-xs text-ink-soft">
+                          Events: {webhook.events.join(", ")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="mt-5 rounded-2xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">
                 We never hold funds. All payments move from the customer to your

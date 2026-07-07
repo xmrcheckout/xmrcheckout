@@ -34,7 +34,7 @@ export default function SiteHeader({
           <button type="submit">Log out</button>
         </form>
       ) : (
-        <LoginTrigger className="nav-primary">Log in</LoginTrigger>
+        <LoginTrigger className="nav-primary">Connect view-only wallet</LoginTrigger>
       )}
     </>
   );

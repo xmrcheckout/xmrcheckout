@@ -287,7 +287,7 @@ export default async function InvoiceStatusDetailPage({
           </p>
           <details className="rounded-xl border border-stroke bg-white/60 px-4 py-3 text-sm text-ink-soft shadow-soft">
             <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.18em] text-ink">
-              Details
+              Invoice metadata
             </summary>
             <div className="mt-3 grid gap-2">
               <p className="font-mono text-xs text-ink">Invoice ID: {invoiceId}</p>

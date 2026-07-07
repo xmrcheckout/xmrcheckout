@@ -23,6 +23,9 @@ export default function SecretCard({ label, value, buttonLabel }: SecretCardProp
 
   return (
     <div className="grid gap-4 rounded-2xl border border-stroke bg-white/80 p-6 shadow-soft backdrop-blur">
+      <span className="sr-only" role="status" aria-live="polite">
+        {copied ? `${label} copied to clipboard` : ""}
+      </span>
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
           {label}

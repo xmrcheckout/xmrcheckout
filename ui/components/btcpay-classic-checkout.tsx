@@ -196,7 +196,7 @@ export default function BtcpayClassicCheckout({
     };
   }, [uri, qrLogoMode]);
 
-  const isActionDisabled = status === "expired" || status === "invalid";
+  const canSendPayment = status === "pending";
   const resolvedQrLogoMode = qrLogoMode ?? "monero";
   const resolvedLogoSrc =
     resolvedQrLogoMode === "custom"
@@ -285,19 +285,24 @@ export default function BtcpayClassicCheckout({
 
   return (
     <div className="rounded-[28px] border border-stroke bg-white px-6 py-8 shadow-card">
+      <span className="sr-only" role="status" aria-live="polite">
+        {copiedField ? `${copiedField} copied to clipboard` : ""}
+      </span>
       <div className="text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft">
           Payment request
         </p>
         <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
           <p className="text-[1.9rem] font-semibold text-ink">{formattedAmount} XMR</p>
-          <button
-            className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
-            type="button"
-            onClick={() => handleCopy(formattedAmount, "amount")}
-          >
-            {copiedField === "amount" ? "Copied" : "Copy"}
-          </button>
+          {canSendPayment ? (
+            <button
+              className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+              type="button"
+              onClick={() => handleCopy(formattedAmount, "amount")}
+            >
+              {copiedField === "amount" ? "Copied" : "Copy"}
+            </button>
+          ) : null}
         </div>
         <p className="mt-2 text-sm text-sage">{statusMessage(status, confirmationTarget)}</p>
       </div>
@@ -328,20 +333,22 @@ export default function BtcpayClassicCheckout({
             <dt className="text-ink-soft">Amount due</dt>
             <dd className="flex items-center gap-2 font-semibold">
               <span>{formattedAmount} XMR</span>
-              <button
-                className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
-                type="button"
-                onClick={() => handleCopy(formattedAmount, "amount")}
-              >
-                {copiedField === "amount" ? "Copied" : "Copy"}
-              </button>
+              {canSendPayment ? (
+                <button
+                  className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                  type="button"
+                  onClick={() => handleCopy(formattedAmount, "amount")}
+                >
+                  {copiedField === "amount" ? "Copied" : "Copy"}
+                </button>
+              ) : null}
             </dd>
           </div>
         </dl>
       </details>
 
       <div className="mt-6 flex items-center justify-center">
-        {qrDataUrl ? (
+        {canSendPayment && qrDataUrl ? (
           <div className="relative rounded-2xl border border-ink/10 bg-white p-3 shadow-soft">
             <Image
               className="h-[260px] w-[260px]"
@@ -365,7 +372,13 @@ export default function BtcpayClassicCheckout({
               </div>
             ) : null}
           </div>
-        ) : null}
+        ) : (
+          <p className="rounded-xl border border-stroke bg-cream/70 px-4 py-3 text-sm font-semibold text-ink-soft">
+            {canSendPayment
+              ? "QR is loading. Use the payment address below if it does not appear."
+              : "Payment entry is unavailable for this invoice state."}
+          </p>
+        )}
       </div>
 
       <div className="mt-6">
@@ -373,30 +386,29 @@ export default function BtcpayClassicCheckout({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
             Address
           </p>
-          <button
-            className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
-            type="button"
-            onClick={() => handleCopy(address, "address")}
-          >
-            {copiedField === "address" ? "Copied" : "Copy"}
-          </button>
+          {canSendPayment ? (
+            <button
+              className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+              type="button"
+              onClick={() => handleCopy(address, "address")}
+            >
+              {copiedField === "address" ? "Copied" : "Copy"}
+            </button>
+          ) : null}
         </div>
         <p className="mt-3 break-all rounded-xl bg-ink/5 px-3 py-2 font-mono text-xs text-ink">
           {address}
         </p>
       </div>
 
-      <a
-        className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-cream transition ${
-          isActionDisabled
-            ? "cursor-not-allowed bg-ink/30"
-            : "bg-sage shadow-[0_14px_22px_rgba(93,122,106,0.25)] hover:-translate-y-0.5"
-        }`}
-        href={isActionDisabled ? undefined : uri}
-        aria-disabled={isActionDisabled}
-      >
-        Pay in wallet
-      </a>
+      {canSendPayment ? (
+        <a
+          className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_14px_22px_rgba(93,122,106,0.25)] transition hover:-translate-y-0.5"
+          href={uri}
+        >
+          Pay in wallet
+        </a>
+      ) : null}
     </div>
   );
 }

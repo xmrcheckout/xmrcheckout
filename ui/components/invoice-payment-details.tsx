@@ -37,6 +37,7 @@ export default function InvoicePaymentDetails({
   const { rate: usdRate, updatedAt: usdRateUpdatedAt, source: usdRateSource } =
     useXmrUsdRate();
   const isInvalid = status === "invalid";
+  const isExpired = status === "expired";
   const canSendPayment = status === "pending";
   const shouldPromptPayment = canSendPayment && !hasDetectedPayment && !isInvalid;
   const formattedAmount = useMemo(() => formatXmrAmount(amount), [amount]);
@@ -133,23 +134,32 @@ export default function InvoicePaymentDetails({
   }`;
   const heading = isInvalid
     ? "Invoice marked invalid. Do not send payment."
-    : status === "expired"
+    : isExpired
       ? "Invoice expired before detection."
       : hasDetectedPayment
         ? status === "confirmed"
           ? `Payment confirmed on-chain at ${confirmationLabel}.`
           : "Payment detected. Confirmations are in progress."
         : "Send the exact amount to this address.";
+  const showCopyActions = canSendPayment;
+  const showPaymentUri = canSendPayment;
 
   return (
     <section className="rounded-2xl border border-stroke bg-card p-6 shadow-card backdrop-blur sm:p-8">
+      <span className="sr-only" role="status" aria-live="polite">
+        {copiedField ? `${copiedField} copied to clipboard` : ""}
+      </span>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
             Payment details
           </p>
           <h2 className="mt-2 font-serif text-2xl">{heading}</h2>
-          {shouldPromptPayment ? (
+          {isInvalid || isExpired ? (
+            <p className="mt-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+              Do not send payment for this invoice state.
+            </p>
+          ) : shouldPromptPayment ? (
             <p className="mt-2 text-sm text-ink-soft">
               Your wallet adds the network fee on top. Do not subtract it from
               the amount shown.
@@ -161,20 +171,22 @@ export default function InvoicePaymentDetails({
         </span>
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_240px]">
+      <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_260px]">
         <div className="grid gap-5">
-          <div className="rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft">
+          <div className="rounded-2xl border border-stroke bg-white/75 p-5 shadow-soft">
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                 Exact amount
               </p>
-              <button
-                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
-                type="button"
-                onClick={() => handleCopy(formattedAmount, "amount")}
-              >
-                {copiedField === "amount" ? "Copied" : "Copy"}
-              </button>
+              {showCopyActions ? (
+                <button
+                  className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                  type="button"
+                  onClick={() => handleCopy(formattedAmount, "amount")}
+                >
+                  {copiedField === "amount" ? "Copied" : "Copy"}
+                </button>
+              ) : null}
             </div>
             <p className="mt-3 break-words font-mono text-3xl font-semibold text-ink">
               {formattedAmount} XMR
@@ -198,18 +210,65 @@ export default function InvoicePaymentDetails({
             ) : null}
           </div>
 
+          <div className="rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft xl:hidden">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              Scan or open wallet
+            </p>
+            {canSendPayment && qrDataUrl ? (
+              <div className="mt-4 grid justify-items-center gap-4">
+                <div className="relative h-[220px] w-[220px] rounded-2xl border border-stroke bg-white p-2 shadow-soft">
+                  <Image
+                    className="h-full w-full rounded-xl border border-ink/10 bg-white"
+                    src={qrDataUrl}
+                    alt="Payment request QR"
+                    width={220}
+                    height={220}
+                    unoptimized
+                  />
+                  {resolvedLogoSrc ? (
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_6px_12px_rgba(16,18,23,0.18)]">
+                        <Image
+                          src={resolvedLogoSrc}
+                          alt="QR logo"
+                          width={32}
+                          height={32}
+                          unoptimized={resolvedQrLogoMode === "custom"}
+                        />
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+                <a
+                  className="inline-flex w-full items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-cream shadow-[0_14px_24px_rgba(16,18,23,0.16)] transition hover:-translate-y-0.5"
+                  href={uri}
+                >
+                  Open wallet
+                </a>
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-ink-soft">
+                {isInvalid || isExpired
+                  ? "Payment entry is unavailable for this invoice state."
+                  : "QR is available while the invoice is awaiting funds."}
+              </p>
+            )}
+          </div>
+
           <div className="rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft">
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
                 Payment address
               </p>
-              <button
-                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
-                type="button"
-                onClick={() => handleCopy(address, "address")}
-              >
-                {copiedField === "address" ? "Copied" : "Copy"}
-              </button>
+              {showCopyActions ? (
+                <button
+                  className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                  type="button"
+                  onClick={() => handleCopy(address, "address")}
+                >
+                  {copiedField === "address" ? "Copied" : "Copy"}
+                </button>
+              ) : null}
             </div>
             <p className="mt-3 break-words rounded-xl bg-ink/10 px-3 py-2 font-mono text-xs text-ink sm:text-sm">
               {address}
@@ -217,9 +276,9 @@ export default function InvoicePaymentDetails({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft">
+        <div className="hidden rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft xl:block">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-            Wallet QR
+            Scan or open wallet
           </p>
           {canSendPayment && qrDataUrl ? (
             <div className="mt-4 grid justify-items-center gap-4">
@@ -255,7 +314,7 @@ export default function InvoicePaymentDetails({
             </div>
           ) : (
             <p className="mt-3 text-sm text-ink-soft">
-              {isInvalid || status === "expired"
+              {isInvalid || isExpired
                 ? "Payment entry is unavailable for this invoice state."
                 : "QR is available while the invoice is awaiting funds."}
             </p>
@@ -263,34 +322,36 @@ export default function InvoicePaymentDetails({
         </div>
       </div>
 
-      <details className="mt-6 rounded-2xl border border-stroke bg-white/60 p-5 shadow-soft">
-        <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-          Payment request URI
-        </summary>
-        <div className="mt-4 grid gap-3">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
-              URI
+      {showPaymentUri ? (
+        <details className="mt-6 rounded-2xl border border-stroke bg-white/60 p-5 shadow-soft">
+          <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
+            Advanced wallet URI
+          </summary>
+          <div className="mt-4 grid gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                URI
+              </p>
+              <button
+                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                type="button"
+                onClick={() => handleCopy(uri, "uri")}
+              >
+                {copiedField === "uri" ? "Copied" : "Copy"}
+              </button>
+            </div>
+            <p className="break-words rounded-xl bg-ink/10 px-3 py-2 font-mono text-xs text-ink sm:text-sm">
+              {uri}
             </p>
-            <button
-              className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
-              type="button"
-              onClick={() => handleCopy(uri, "uri")}
-            >
-              {copiedField === "uri" ? "Copied" : "Copy"}
-            </button>
+            {shouldPromptPayment ? (
+              <p className="text-sm text-ink-soft">
+                After you pay, this page updates automatically once the payment is
+                detected on-chain.
+              </p>
+            ) : null}
           </div>
-          <p className="break-words rounded-xl bg-ink/10 px-3 py-2 font-mono text-xs text-ink sm:text-sm">
-            {uri}
-          </p>
-          {shouldPromptPayment ? (
-            <p className="text-sm text-ink-soft">
-              After you pay, this page updates automatically once the payment is
-              detected on-chain.
-            </p>
-          ) : null}
-        </div>
-      </details>
+        </details>
+      ) : null}
     </section>
   );
 }

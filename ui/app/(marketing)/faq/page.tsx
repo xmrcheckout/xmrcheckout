@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { areDonationsEnabled } from "../../../lib/donations";
+
 export const metadata: Metadata = {
   title: "FAQ",
   description:
     "Frequently asked questions about XMR Checkout: non-custodial Monero invoices with view-only detection.",
 };
 
-const donationsEnabled = process.env.NEXT_PUBLIC_DONATIONS_ENABLED === "true";
+const donationsEnabled = areDonationsEnabled();
 
 type FaqItem = {
   question: string;

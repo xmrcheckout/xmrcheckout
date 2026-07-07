@@ -6,6 +6,7 @@ import "./marketing.css";
 import DonateModal from "../../components/donate-modal";
 import LoginModal from "../../components/login-modal";
 import SiteHeader from "../../components/site-header";
+import { areDonationsEnabled } from "../../lib/donations";
 
 export default async function MarketingLayout({
   children,
@@ -15,6 +16,7 @@ export default async function MarketingLayout({
   const cookieStore = await cookies();
   const apiKey = cookieStore.get("xmrcheckout_api_key")?.value;
   const isAuthenticated = Boolean(apiKey);
+  const donationsEnabled = areDonationsEnabled();
 
   return (
     <div>
@@ -47,7 +49,7 @@ export default async function MarketingLayout({
           </p>
         </div>
         <Suspense fallback={null}>
-          <DonateModal />
+          <DonateModal donationsEnabled={donationsEnabled} />
         </Suspense>
       </footer>
     </div>

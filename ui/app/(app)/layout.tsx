@@ -4,12 +4,15 @@ import { Suspense } from "react";
 import "../(marketing)/marketing.css";
 import DonateModal from "../../components/donate-modal";
 import SiteHeader from "../../components/site-header";
+import { areDonationsEnabled } from "../../lib/donations";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const donationsEnabled = areDonationsEnabled();
+
   return (
     <div>
       <SiteHeader isAuthenticated />
@@ -27,7 +30,7 @@ export default function AppLayout({
           </p>
         </div>
         <Suspense fallback={null}>
-          <DonateModal />
+          <DonateModal donationsEnabled={donationsEnabled} />
         </Suspense>
       </footer>
     </div>

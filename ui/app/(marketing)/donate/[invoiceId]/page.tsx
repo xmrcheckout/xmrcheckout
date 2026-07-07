@@ -7,6 +7,7 @@ import DonationStatusActions from "../../../../components/donation-status-action
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import { formatRelativeTime } from "../../../../components/relative-time";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
+import { areDonationsEnabled } from "../../../../lib/donations";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -95,8 +96,7 @@ export default async function DonateStatusDetailPage({
 }: {
   params: Promise<{ invoiceId: string }>;
 }) {
-  const donationsEnabled = process.env.NEXT_PUBLIC_DONATIONS_ENABLED === "true";
-  if (!donationsEnabled) {
+  if (!areDonationsEnabled()) {
     notFound();
   }
   const { invoiceId } = await params;

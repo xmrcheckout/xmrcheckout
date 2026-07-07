@@ -183,8 +183,12 @@ services:
   ui:
     build:
       context: ./ui
+      args:
+        DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
+        NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://nginx/api}
+      DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
       NEXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost}
       NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
     depends_on:

@@ -1,5 +1,7 @@
 "use server";
 
+import { areDonationsEnabled } from "../../../lib/donations";
+
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
 export type DonationState = {
@@ -11,8 +13,7 @@ export async function createDonationAction(
   _prevState: DonationState,
   formData: FormData
 ): Promise<DonationState> {
-  const donationsEnabled = process.env.NEXT_PUBLIC_DONATIONS_ENABLED === "true";
-  if (!donationsEnabled) {
+  if (!areDonationsEnabled()) {
     return { error: "Donations are disabled.", invoiceId: null };
   }
   const amount = Number(formData.get("amount_xmr"));

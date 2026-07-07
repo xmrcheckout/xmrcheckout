@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 
+import { areDonationsEnabled } from "../lib/donations";
+
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.SITE_URL ??
   "http://localhost";
 const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
-const donationsEnabled = process.env.NEXT_PUBLIC_DONATIONS_ENABLED === "true";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -31,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
     },
   ];
-  if (donationsEnabled) {
+  if (areDonationsEnabled()) {
     entries.push({
       url: `${normalizedSiteUrl}/donate`,
       lastModified,

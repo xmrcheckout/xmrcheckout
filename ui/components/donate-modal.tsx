@@ -18,11 +18,14 @@ const initialState: DonationState = {
   invoiceId: null,
 };
 
-export default function DonateModal() {
+type DonateModalProps = {
+  donationsEnabled: boolean;
+};
+
+export default function DonateModal({ donationsEnabled }: DonateModalProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const donationsEnabled = process.env.NEXT_PUBLIC_DONATIONS_ENABLED === "true";
   const isOpen = searchParams.get(donateParam) === "1";
   const [state, formAction] = useFormState(createDonationAction, initialState);
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -86,9 +89,9 @@ export default function DonateModal() {
   }
 
   return (
-    <div className="flex items-center">
+    <div className="donate-entry">
       <button
-        className="rounded-full border border-stroke bg-white/40 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-clay transition hover:text-ink"
+        className="donate-link"
         type="button"
         onClick={openModal}
       >

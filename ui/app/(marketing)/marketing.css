@@ -898,16 +898,18 @@ a {
 
 .home-kicker {
   color: var(--clay);
-  font-size: 0.86rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.92rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .home-hero h1 {
-  font-size: clamp(2.9rem, 2.15rem + 3.2vw, 5.2rem);
-  line-height: 0.96;
-  max-width: 11ch;
+  font-family: var(--font-sans, "Space Grotesk", "Helvetica Neue", Arial, sans-serif);
+  font-size: clamp(2.45rem, 2.05rem + 2.25vw, 4.35rem);
+  font-weight: 650;
+  line-height: 1.02;
+  max-width: 13ch;
   text-wrap: pretty;
 }
 
@@ -932,7 +934,7 @@ a {
   cursor: pointer;
   font: inherit;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 650;
   min-height: 3rem;
   padding: 0.85rem 1.35rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -958,7 +960,7 @@ a {
 .home-doc-link {
   color: var(--ink);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 650;
   text-decoration: underline;
   text-underline-offset: 0.25rem;
 }
@@ -976,8 +978,8 @@ a {
   background: rgba(255, 255, 255, 0.52);
   box-shadow: 0 8px 20px rgba(16, 18, 23, 0.06);
   color: var(--ink-soft);
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.76rem;
+  font-weight: 650;
   padding: 0.5rem 0.75rem;
 }
 
@@ -990,6 +992,7 @@ a {
   box-shadow:
     0 24px 54px rgba(16, 18, 23, 0.14),
     0 0 0 1px rgba(255, 255, 255, 0.58) inset;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   margin-top: 0.35rem;
   animation: console-rise 0.8s ease both;
 }
@@ -1010,13 +1013,13 @@ a {
   border-bottom: 1px solid rgba(16, 18, 23, 0.14);
   background: rgba(248, 242, 233, 0.92);
   color: var(--ink-soft);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   padding: 0.85rem 1rem;
 }
 
 .console-topbar strong {
   color: var(--sage);
-  font-weight: 700;
+  font-weight: 650;
 }
 
 .console-grid {
@@ -1049,8 +1052,8 @@ a {
 
 .console-section-header p {
   color: var(--clay);
-  font-size: 0.84rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 650;
 }
 
 .console-section-header span {
@@ -1059,7 +1062,7 @@ a {
   background: rgba(255, 255, 255, 0.72);
   color: var(--ink-soft);
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 650;
   padding: 0.32rem 0.65rem;
   white-space: nowrap;
 }
@@ -1071,7 +1074,7 @@ a {
 
 .console-amount strong {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  font-size: clamp(1.65rem, 1.25rem + 1.45vw, 2.45rem);
+  font-size: clamp(1.55rem, 1.2rem + 1.2vw, 2.2rem);
   line-height: 1;
 }
 
@@ -1140,7 +1143,7 @@ a {
   cursor: default;
   font: inherit;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 650;
   padding: 0.45rem 0.75rem;
 }
 
@@ -1151,7 +1154,7 @@ a {
 
 .console-status-row strong {
   display: block;
-  font-size: 2.2rem;
+  font-size: 2rem;
   line-height: 1;
 }
 
@@ -1217,9 +1220,9 @@ a {
 .home-process h2,
 .home-trust h2,
 .home-integration h2 {
-  font-size: clamp(1.9rem, 1.7rem + 0.8vw, 2.6rem);
-  line-height: 1.08;
-  max-width: 18ch;
+  font-size: clamp(1.75rem, 1.6rem + 0.6vw, 2.35rem);
+  line-height: 1.12;
+  max-width: 20ch;
 }
 
 .home-process ol {
@@ -1255,8 +1258,8 @@ a {
 .home-process li > span {
   color: var(--clay);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  font-size: 0.86rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 650;
 }
 
 .home-process h3,
@@ -1328,6 +1331,7 @@ a {
   background: rgba(248, 242, 233, 0.08);
   color: var(--cream);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.92rem;
   overflow-wrap: anywhere;
   padding: 0.7rem 0.85rem;
 }

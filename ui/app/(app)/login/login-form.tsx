@@ -94,11 +94,11 @@ export default function LoginForm() {
   }, [paymentAddress, viewKey]);
 
   return (
-    <form className="mt-6 grid gap-5" action={formAction}>
-      <div className="grid gap-2">
+    <form className="mt-4 grid gap-3" action={formAction}>
+      <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
           <label
-            className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+            className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft"
             htmlFor="payment_address"
           >
             Primary address
@@ -120,24 +120,24 @@ export default function LoginForm() {
           ) : null}
         </div>
         <textarea
-          className="min-h-[96px] w-full resize-none rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+          className="min-h-[72px] w-full resize-none rounded-xl border border-stroke bg-white/80 px-3 py-2.5 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
           id="payment_address"
           name="payment_address"
-          rows={3}
+          rows={2}
           autoComplete="off"
           required
           value={paymentAddress}
           onChange={(event) => setPaymentAddress(event.target.value)}
         />
-        <p className="text-sm text-ink-soft">
+        <p className="text-xs leading-relaxed text-ink-soft">
           Use the 95-character primary address that starts with 4. Subaddresses
           and integrated addresses are not used for dashboard access.
         </p>
       </div>
-      <div className="grid gap-2">
+      <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
           <label
-            className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+            className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft"
             htmlFor="view_key"
           >
             Secret view key
@@ -160,7 +160,7 @@ export default function LoginForm() {
         </div>
         <div className="relative">
           <input
-            className="min-h-[48px] w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 pr-20 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+            className="min-h-[42px] w-full rounded-xl border border-stroke bg-white/80 px-3 py-2.5 pr-20 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
             id="view_key"
             name="view_key"
             type={isViewKeyVisible ? "text" : "password"}
@@ -170,25 +170,25 @@ export default function LoginForm() {
             onChange={(event) => setViewKey(event.target.value)}
           />
           <button
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-3 py-1 text-xs font-semibold text-ink"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.7rem] font-semibold text-ink"
             type="button"
             onClick={() => setIsViewKeyVisible((current) => !current)}
           >
             {isViewKeyVisible ? "Hide" : "Show"}
           </button>
         </div>
-        <p className="text-sm text-ink-soft">
+        <p className="text-xs leading-relaxed text-ink-soft">
           Paste the 64-character secret view key, not a spend key. This allows
           detection only.
         </p>
       </div>
       {validationStatus === "checking" ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-amber-700">
           Checking address and view key
         </p>
       ) : null}
       {validationStatus === "valid" ? (
-        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-emerald-700">
           Address and view key match
         </p>
       ) : null}
@@ -204,7 +204,7 @@ export default function LoginForm() {
       ) : null}
       <div className="flex items-center justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none disabled:hover:translate-y-0"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none disabled:hover:translate-y-0"
           type="submit"
           disabled={!canSubmit}
         >

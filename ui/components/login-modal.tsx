@@ -115,7 +115,7 @@ export default function LoginModal() {
 
   return (
     <div
-      className="fixed inset-0 z-40 grid place-items-center overflow-y-auto px-4 py-6 sm:py-10"
+      className="fixed inset-0 z-40 grid place-items-center overflow-y-auto px-3 py-3 sm:px-4 sm:py-4"
       id="login-modal"
       role="dialog"
       aria-modal="true"
@@ -125,20 +125,20 @@ export default function LoginModal() {
       <div className="absolute inset-0 bg-ink/60 backdrop-blur" onClick={closeModal} />
       <div
         ref={modalRef}
-        className="relative max-h-[90dvh] w-[min(480px,92vw)] overflow-y-auto rounded-3xl border border-stroke bg-card p-6 shadow-deep sm:p-7"
+        className="relative max-h-[calc(100dvh-1.5rem)] w-[min(500px,94vw)] overflow-y-auto rounded-2xl border border-stroke bg-card p-4 shadow-deep sm:p-5"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-clay">
+            <p className="text-xs font-semibold text-clay">
               View-only setup
             </p>
-            <h3 id="login-title" className="mt-2 font-serif text-xl">
+            <h3 id="login-title" className="mt-1 font-serif text-lg leading-tight">
               Connect your wallet for payment detection.
             </h3>
           </div>
           <button
-            className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-ink transition hover:-translate-y-0.5"
+            className="shrink-0 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-ink transition hover:-translate-y-0.5"
             type="button"
             onClick={closeModal}
             aria-label="Close login modal"
@@ -148,22 +148,20 @@ export default function LoginModal() {
         </div>
         <div
           id="login-description"
-          className="mt-4 rounded-2xl border border-stroke bg-white/60 p-4 text-sm text-ink-soft"
+          className="mt-3 rounded-xl border border-stroke bg-white/60 p-3 text-xs leading-relaxed text-ink-soft sm:text-sm"
         >
           <p className="font-semibold text-ink">Before you continue</p>
-          <p className="mt-2">
+          <p className="mt-1">
             Your primary address identifies the dashboard. Your secret view key
-            lets XMR Checkout detect incoming invoice payments. It is stored
-            encrypted at rest and cannot spend from your wallet.
+            lets XMR Checkout detect incoming invoice payments. It is encrypted
+            at rest, cannot spend from your wallet, and is the maximum permission
+            this software asks for.
           </p>
-          <p className="mt-2 font-semibold text-clay">
+          <p className="mt-1 font-semibold text-clay">
             Never paste a spend key here.
           </p>
         </div>
         <LoginForm />
-        <p className="mt-4 text-sm font-semibold text-sage">
-          View-only access is the maximum permission this software asks for.
-        </p>
       </div>
     </div>
   );

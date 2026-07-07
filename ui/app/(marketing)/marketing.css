@@ -169,7 +169,7 @@ a {
   align-items: center;
   position: relative;
   z-index: 30;
-  padding: 2.4rem 6vw 1.2rem;
+  padding: 2rem 6vw 1rem;
 }
 
 .brand {
@@ -180,8 +180,8 @@ a {
 }
 
 .brand-logo {
-  width: clamp(4.6rem, 3.5vw + 2.8rem, 6.4rem);
-  height: clamp(4.6rem, 3.5vw + 2.8rem, 6.4rem);
+  width: clamp(3.2rem, 2vw + 2.2rem, 4.2rem);
+  height: clamp(3.2rem, 2vw + 2.2rem, 4.2rem);
   border-radius: 0;
   border: none;
   background: transparent;
@@ -895,6 +895,7 @@ a {
   border-radius: 1.2rem;
   background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 22px 55px rgba(16, 18, 23, 0.12);
+  margin-top: 0.35rem;
 }
 
 .console-topbar {
@@ -1852,8 +1853,8 @@ a {
   }
 
   .brand-logo {
-    width: 4.2rem;
-    height: 4.2rem;
+    width: 3.4rem;
+    height: 3.4rem;
   }
 
   .docs-jump-nav {

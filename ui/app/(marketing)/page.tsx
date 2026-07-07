@@ -34,14 +34,10 @@ export default function MarketingHomePage() {
         </div>
 
         <div className="checkout-console" aria-label="Checkout preview">
-          <div className="console-topbar">
-            <span>Hosted invoice</span>
-            <strong>View-only detection</strong>
-          </div>
           <div className="console-grid">
             <section className="console-customer" aria-label="Customer payment view">
               <div className="console-section-header">
-                <p>Customer sees</p>
+                <p>Hosted invoice</p>
                 <span>Awaiting funds</span>
               </div>
               <div className="console-amount">
@@ -60,7 +56,7 @@ export default function MarketingHomePage() {
 
             <section className="console-merchant" aria-label="Merchant status view">
               <div className="console-section-header">
-                <p>Merchant sees</p>
+                <p>Merchant dashboard</p>
                 <span>Payment detected</span>
               </div>
               <div className="console-status-row">

@@ -185,7 +185,7 @@ export default function MarketingHomePage() {
               Read the docs
             </Link>
           </div>
-          <div className="home-proof-strip" aria-label="Trust boundary summary">
+          <div className="home-proof-strip" aria-label="Wallet access summary">
             <span>View key only</span>
             <span>No spend authority</span>
             <span>Customer pays your wallet</span>
@@ -287,28 +287,27 @@ export default function MarketingHomePage() {
         </ol>
       </section>
 
-      <section className="home-trust" aria-labelledby="home-trust-title">
-        <div className="home-trust-copy">
-          <p className="home-kicker">Trust boundary</p>
-          <h2 id="home-trust-title">What the software can and cannot do.</h2>
+      <section className="home-wallet" aria-labelledby="home-wallet-title">
+        <div className="home-wallet-copy">
+          <p className="home-kicker">Wallet access</p>
+          <h2 id="home-wallet-title">Your wallet receives the XMR.</h2>
           <p>
-            XMR Checkout only needs the permissions required to see incoming
-            payments. A view key can help detect payments; it cannot spend from
-            your wallet.
+            Connect a primary address and secret view key for incoming invoice
+            monitoring. Spend keys stay in your wallet.
           </p>
         </div>
-        <div className="home-trust-table">
+        <div className="home-wallet-table">
           <div>
-            <h3>You provide</h3>
-            <p>Primary address, secret view key, confirmation target, optional webhook URL.</p>
+            <h3>Merchant wallet</h3>
+            <p>Customer payments go straight to your Monero address.</p>
           </div>
           <div>
-            <h3>The software can</h3>
-            <p>Create payment requests, assign subaddresses, detect incoming payments, relay status events.</p>
+            <h3>View-only monitoring</h3>
+            <p>The app checks invoice status and confirmation progress.</p>
           </div>
           <div>
-            <h3>The software cannot</h3>
-            <p>Use spend keys, sign transactions, move funds, or touch bank accounts.</p>
+            <h3>Store updates</h3>
+            <p>Polling and webhooks notify your store when invoices are detected or confirmed.</p>
           </div>
         </div>
       </section>

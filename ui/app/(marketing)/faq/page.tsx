@@ -176,7 +176,7 @@ const faqItems: FaqItem[] = [
 	        <p className="text-ink-soft">
 	          BTCPay Server is a general-purpose, self-hosted payment server with a primary focus on Bitcoin
 	          and optional integrations for other assets (including Monero via a plugin). XMR Checkout is intentionally
-	          focused on Monero checkout with a view-only trust boundary and a minimal, deterministic core.
+	          focused on Monero checkout, view-only detection, and a minimal, deterministic core.
 	        </p>
 	        <p className="text-ink-soft">
 	          Some hosted BTCPay deployments may not include the Monero plugin by default. XMR Checkout provides a
@@ -253,8 +253,8 @@ export default function FaqPage() {
 	          <h1 className="font-sans font-semibold text-3xl">Direct answers.</h1>
 	          <p className="max-w-[46rem] text-[1.02rem] leading-relaxed text-ink-soft">
 	            XMR Checkout is non-custodial checkout software for accepting Monero
-	            payments. We focus on a conservative trust boundary: view-only
-	            detection and merchant-owned funds.
+	            payments. Detection is view-only, and customer payments go to the
+	            merchant wallet.
 	          </p>
         </div>
 

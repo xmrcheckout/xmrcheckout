@@ -1118,7 +1118,7 @@ a {
 }
 
 .home-process,
-.home-trust,
+.home-wallet,
 .home-integration {
   display: grid;
   gap: 1.6rem;
@@ -1132,7 +1132,7 @@ a {
 }
 
 .home-process::before,
-.home-trust::before {
+.home-wallet::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1142,7 +1142,7 @@ a {
 }
 
 .home-process h2,
-.home-trust h2,
+.home-wallet h2,
 .home-integration h2 {
   font-size: clamp(1.75rem, 1.6rem + 0.6vw, 2.35rem);
   line-height: 1.12;
@@ -1181,35 +1181,35 @@ a {
 }
 
 .home-process h3,
-.home-trust h3 {
+.home-wallet h3 {
   font-family: var(--font-sans, "Space Grotesk", "Helvetica Neue", Arial, sans-serif);
   font-size: 1rem;
   margin: 0 0 0.15rem;
 }
 
 .home-process p,
-.home-trust p,
+.home-wallet p,
 .home-integration p {
   color: var(--ink-soft);
 }
 
-.home-trust {
+.home-wallet {
   grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
   align-items: start;
   margin-inline: -6vw;
   padding: clamp(2rem, 4vw, 3.2rem) 6vw;
 }
 
-.home-trust-copy {
+.home-wallet-copy {
   max-width: 34rem;
 }
 
-.home-trust-table {
+.home-wallet-table {
   display: grid;
   gap: 0.8rem;
 }
 
-.home-trust-table div {
+.home-wallet-table div {
   display: grid;
   gap: 0.25rem;
   border: 1px solid rgba(16, 18, 23, 0.14);
@@ -1262,6 +1262,19 @@ a {
 .home-page ~ .site-footer a,
 .home-page ~ .site-footer .donate-link {
   color: var(--cream);
+}
+
+.home-page ~ .site-footer .donate-link {
+  border-color: rgba(248, 242, 233, 0.78);
+  background: var(--cream);
+  color: var(--ink);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+.home-page ~ .site-footer .donate-link:hover {
+  border-color: var(--cream);
+  background: var(--sand);
+  color: var(--ink);
 }
 
 @keyframes console-rise {
@@ -1982,7 +1995,7 @@ a {
 
   .home-hero,
   .home-process,
-  .home-trust,
+  .home-wallet,
   .home-integration {
     grid-template-columns: 1fr;
   }

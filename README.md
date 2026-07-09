@@ -4,21 +4,17 @@
 
 # xmrcheckout.com
 
-Non-custodial Monero checkout software for merchants. Payments go directly from the customer to the merchant wallet.
+Non-custodial Monero checkout software for merchants who want customers to pay their own wallet directly.
 
-xmrcheckout is open source and self-hostable. It creates invoices, shows payment instructions, and watches the chain for incoming payments using view-only wallet access (address + secret view key). It can also notify your systems via API and webhooks.
+xmrcheckout is open source and self-hostable. It creates XMR invoices, shows a hosted payment page, watches for incoming transactions with view-only wallet access, and sends status updates through the API or webhooks.
 
-Hard rules:
-- It never requests or stores private spend keys.
-- It never signs transactions.
-- It never moves funds on behalf of users.
-- View-only access (wallet address + private view key) is the maximum trust boundary.
+The app is view-only. It does not ask for spend keys, sign transactions, or move funds on behalf of users.
 
 ## Contents
 
 - [Who it's for](#who-its-for)
-- [What it does](#what-it-does)
-- [Trust model](#trust-model)
+- [How it works](#how-it-works)
+- [Wallet access and fund flow](#wallet-access-and-fund-flow)
 - [Repository layout](#repository-layout)
 - [Screenshots](#screenshots)
 - [Quick start](#quick-start)
@@ -28,31 +24,28 @@ Hard rules:
 
 ## Who it's for
 
-If you want Monero payments to go straight to your own wallet, this is for you.
+Use xmrcheckout when you want Monero payments to go straight to your wallet, with invoice status handled by software you control.
 
-Common fits:
-- A merchant who wants a clean hosted checkout UI (self-hosted by you).
-- A team that wants API + webhooks to plug into an existing order flow.
-- Anyone who prefers a conservative trust model (view-only access for detection).
+It fits merchants who need a hosted checkout page, teams that want API and webhook updates for an existing order flow, and operators who prefer view-only invoice detection.
 
-## What it does
+## How it works
 
 Typical flow:
 1. Your integration creates an invoice (defined in XMR).
-2. The UI shows payment instructions (address + amount).
-3. The system observes the chain using view-only wallet access to detect payments and update invoice status.
-4. Optional integrations (for example webhooks) can be used to trigger your internal order flow.
+2. The hosted page shows the customer the address, amount, QR code, and wallet URI.
+3. The reconciler checks the wallet and daemon for matching incoming payments.
+4. Your store reads invoice status through the API or receives webhook events.
 
-Not included (by design):
-- It does not provide custody, refunds, or any fund-moving automation.
-- It does not act as a financial intermediary.
-- It does not touch fiat rails in the core system.
+Out of scope:
+- Custody, refunds, or fund movement.
+- Acting as an intermediary between customer and merchant.
+- Fiat rails in the core system.
 
-## Trust model
+## Wallet access and fund flow
 
-- Funds always move from the customer to the merchant wallet; xmrcheckout only observes the chain and reports status.
-- You keep spend authority. The maximum permission level xmrcheckout uses is view-only wallet access (wallet address + private view key).
-- If any configuration or integration implies spend authority, treat it as a misconfiguration and stop.
+Funds move from the customer to the merchant wallet. xmrcheckout watches for the payment and reports what it sees.
+
+You keep spend authority. Configure the app with a wallet address and private view key only. If a setup path asks for spend authority, stop and fix the configuration before using it.
 
 ## Repository layout
 

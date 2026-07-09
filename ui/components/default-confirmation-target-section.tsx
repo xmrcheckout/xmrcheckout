@@ -35,7 +35,7 @@ export default function DefaultConfirmationTargetSection({
   return (
     <div className="grid gap-4">
       <div>
-        <h2 className="font-serif text-2xl">Default confirmations</h2>
+        <h2 className="font-sans font-semibold text-2xl">Default confirmations</h2>
         <p className="mt-2 text-sm text-ink-soft">
           Used as the default confirmation target for new invoices.
         </p>
@@ -43,7 +43,7 @@ export default function DefaultConfirmationTargetSection({
       <form className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]" action={formAction}>
         <div className="grid gap-2">
           <label
-            className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+            className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
             htmlFor="default_confirmation_target"
           >
             Confirmation target
@@ -62,7 +62,7 @@ export default function DefaultConfirmationTargetSection({
         </div>
         <div className="flex items-end justify-end">
           <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
             type="submit"
           >
             Save

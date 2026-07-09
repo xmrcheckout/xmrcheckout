@@ -207,7 +207,7 @@ export default function BtcpayClassicCheckout({
 
   if (status === "confirmed") {
     return (
-      <div className="rounded-[28px] border border-stroke bg-white px-6 py-8 shadow-card">
+      <div className="rounded-2xl border border-stroke bg-white px-6 py-8 shadow-card">
         <div className="text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sage/15 text-sage">
             <svg
@@ -223,7 +223,7 @@ export default function BtcpayClassicCheckout({
               <path d="M20 6 9 17l-5-5" />
             </svg>
           </div>
-          <p className="mt-4 text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft">
+          <p className="mt-4 text-sm font-semibold uppercase tracking-[0.08em] text-ink-soft">
             Invoice paid
           </p>
         </div>
@@ -263,7 +263,7 @@ export default function BtcpayClassicCheckout({
 
         <div className="mt-8 grid gap-3">
           <a
-            className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_14px_22px_rgba(93,122,106,0.25)] transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_16px_rgba(93,122,106,0.16)] transition hover:opacity-95"
             href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
           >
             View receipt
@@ -284,19 +284,19 @@ export default function BtcpayClassicCheckout({
   }
 
   return (
-    <div className="rounded-[28px] border border-stroke bg-white px-6 py-8 shadow-card">
+    <div className="rounded-2xl border border-stroke bg-white px-6 py-8 shadow-card">
       <span className="sr-only" role="status" aria-live="polite">
         {copiedField ? `${copiedField} copied to clipboard` : ""}
       </span>
       <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft">
+        <p className="text-sm font-semibold uppercase tracking-[0.08em] text-ink-soft">
           Payment request
         </p>
         <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
           <p className="text-[1.9rem] font-semibold text-ink">{formattedAmount} XMR</p>
           {canSendPayment ? (
             <button
-              className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+              className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:bg-white"
               type="button"
               onClick={() => handleCopy(formattedAmount, "amount")}
             >
@@ -335,7 +335,7 @@ export default function BtcpayClassicCheckout({
               <span>{formattedAmount} XMR</span>
               {canSendPayment ? (
                 <button
-                  className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                  className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:bg-white"
                   type="button"
                   onClick={() => handleCopy(formattedAmount, "amount")}
                 >
@@ -360,7 +360,7 @@ export default function BtcpayClassicCheckout({
             />
             {resolvedLogoSrc ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_8px_16px_rgba(16,18,23,0.18)]">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_6px_12px_rgba(16,18,23,0.12)]">
                   <Image
                     src={resolvedLogoSrc}
                     alt="QR logo"
@@ -383,12 +383,12 @@ export default function BtcpayClassicCheckout({
 
       <div className="mt-6">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
             Address
           </p>
           {canSendPayment ? (
             <button
-              className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+              className="rounded-full border border-stroke bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:bg-white"
               type="button"
               onClick={() => handleCopy(address, "address")}
             >
@@ -403,7 +403,7 @@ export default function BtcpayClassicCheckout({
 
       {canSendPayment ? (
         <a
-          className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_14px_22px_rgba(93,122,106,0.25)] transition hover:-translate-y-0.5"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_16px_rgba(93,122,106,0.16)] transition hover:opacity-95"
           href={uri}
         >
           Pay in wallet

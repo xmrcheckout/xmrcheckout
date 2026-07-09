@@ -229,7 +229,7 @@ const faqItems: FaqItem[] = [
 function FaqCard({ item }: { item: FaqItem }) {
   return (
     <details className="group rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur">
-      <summary className="cursor-pointer list-none select-none font-serif text-xl text-ink [&::-webkit-details-marker]:hidden">
+      <summary className="cursor-pointer list-none select-none font-sans font-semibold text-xl text-ink [&::-webkit-details-marker]:hidden">
         <span className="inline-flex items-start justify-between gap-4">
           <span>{item.question}</span>
           <span className="mt-1 text-sm text-ink-soft transition group-open:rotate-45">
@@ -247,10 +247,10 @@ export default function FaqPage() {
     <main className="text-ink">
       <section className="px-[6vw] pb-20 pt-10">
         <div className="grid gap-4">
-	          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-monero">
+	          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-monero">
 	            FAQ
 	          </p>
-	          <h1 className="font-serif text-3xl">Direct answers.</h1>
+	          <h1 className="font-sans font-semibold text-3xl">Direct answers.</h1>
 	          <p className="max-w-[46rem] text-[1.02rem] leading-relaxed text-ink-soft">
 	            XMR Checkout is non-custodial checkout software for accepting Monero
 	            payments. We focus on a conservative trust boundary: view-only
@@ -265,7 +265,7 @@ export default function FaqPage() {
         </div>
 
         <div className="mt-12 rounded-3xl border border-stroke bg-card p-8 shadow-card backdrop-blur">
-          <h2 className="font-serif text-2xl">Still have questions?</h2>
+          <h2 className="font-sans font-semibold text-2xl">Still have questions?</h2>
           <p className="mt-2 text-ink-soft">
             Start with{" "}
             <Link className="underline underline-offset-4" href="/docs">

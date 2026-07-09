@@ -282,13 +282,13 @@ export default async function TourPage({
   }));
 
   const tabBaseClass =
-    "inline-flex items-center rounded-xl border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:-translate-y-0.5";
+    "inline-flex items-center rounded-xl border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:opacity-95";
   const tabActiveClass =
-    "border-ink bg-ink text-cream shadow-[0_12px_24px_rgba(16,18,23,0.18)]";
+    "border-ink bg-ink text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)]";
   const subTabBaseClass =
-    "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:-translate-y-0.5";
+    "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:opacity-95";
   const subTabActiveClass =
-    "border-ink bg-ink text-cream shadow-[0_10px_18px_rgba(16,18,23,0.18)]";
+    "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]";
 
   return (
     <main className="px-[6vw] py-12 text-ink">
@@ -316,12 +316,12 @@ export default async function TourPage({
         <div className="grid gap-6">
           {activeTab === "overview" ? (
             <div className="rounded-2xl border border-stroke bg-white/85 p-7 shadow-soft backdrop-blur sm:p-8">
-              <h1 className="font-serif text-3xl">Operational overview</h1>
+              <h1 className="font-sans font-semibold text-3xl">Operational overview</h1>
               <p className="mt-2 text-ink-soft">
                 A merchant-facing snapshot of invoices, confirmations, and webhook delivery.
               </p>
               <div className="mt-6 rounded-xl border border-stroke bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Primary address (example)
                 </p>
                 <p className="mt-3 break-all font-mono text-sm text-ink">
@@ -353,7 +353,7 @@ export default async function TourPage({
                     key={item.title}
                     className="rounded-xl border border-stroke bg-white/70 p-5"
                   >
-                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       {item.title}
                     </p>
                     <h2 className="mt-3 text-2xl font-semibold">{item.value}</h2>
@@ -365,7 +365,7 @@ export default async function TourPage({
                 <div className="rounded-xl border border-stroke bg-white/70 p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h2 className="font-serif text-xl">Needs attention</h2>
+                      <h2 className="font-sans font-semibold text-xl">Needs attention</h2>
                       <p className="mt-1 text-sm text-ink-soft">
                         Items a merchant would review before fulfilling orders.
                       </p>
@@ -396,7 +396,7 @@ export default async function TourPage({
                   </div>
                 </div>
                 <div className="rounded-xl border border-stroke bg-white/70 p-5">
-                  <h2 className="font-serif text-xl">Recent activity</h2>
+                  <h2 className="font-sans font-semibold text-xl">Recent activity</h2>
                   <div className="mt-4 grid gap-3">
                     {recentActivityItems.map((item) => (
                       <div
@@ -411,7 +411,7 @@ export default async function TourPage({
                 </div>
               </div>
               <div className="mt-4 rounded-xl border border-stroke bg-white/70 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Active webhook endpoint
                 </p>
                 {fixture.webhooks.length === 0 ? (
@@ -430,7 +430,7 @@ export default async function TourPage({
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <p className="break-all font-semibold">{webhook.url}</p>
-                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
                             {webhook.active ? "Active" : "Paused"}
                           </span>
                         </div>
@@ -464,7 +464,7 @@ export default async function TourPage({
             <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h1 className="font-serif text-3xl">Webhook endpoints.</h1>
+                  <h1 className="font-sans font-semibold text-3xl">Webhook endpoints.</h1>
                   <p className="mt-2 text-ink-soft">
                     Relay invoice state updates to your systems. Optional overrides let
                     you target different URLs per event.

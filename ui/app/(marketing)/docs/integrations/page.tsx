@@ -20,10 +20,10 @@ export default function IntegrationsPage() {
   return (
     <main className="px-[6vw] pb-20 pt-10 text-ink">
       <section className="grid max-w-[54rem] gap-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
           Integration recipes
         </p>
-        <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
+        <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
           Copy/paste examples for common backends.
         </h1>
         <p className="text-[1.05rem] leading-relaxed text-ink-soft">
@@ -33,7 +33,7 @@ export default function IntegrationsPage() {
         </p>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <Link
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
             href="/docs"
           >
             Back to API docs
@@ -43,7 +43,7 @@ export default function IntegrationsPage() {
           className="docs-jump-nav"
           aria-label="Recipe languages"
         >
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
             Jump to:
           </span>
           {[
@@ -56,7 +56,7 @@ export default function IntegrationsPage() {
           ].map((item) => (
             <a
               key={item.href}
-              className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
               href={item.href}
             >
               {item.label}
@@ -67,7 +67,7 @@ export default function IntegrationsPage() {
 
       <section className="mt-10 grid gap-6 lg:grid-cols-2">
         <div className={sectionCardClass}>
-          <h2 className="font-serif text-2xl">Conceptual flow</h2>
+          <h2 className="font-sans font-semibold text-2xl">Conceptual flow</h2>
 	          <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-soft">
 	            <li>
 	              Create an invoice via{" "}
@@ -101,20 +101,20 @@ export default function IntegrationsPage() {
         </div>
 
         <div className={sectionCardClass}>
-          <h2 className="font-serif text-2xl">Environment variables</h2>
+          <h2 className="font-sans font-semibold text-2xl">Environment variables</h2>
           <p className="mt-2 text-ink-soft">
             Keep secrets server-side. Never expose API keys or webhook secrets in browser
             code.
           </p>
           <div className="mt-4 grid gap-3 text-sm">
             <div className="rounded-xl border border-stroke bg-white/60 p-4">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">
+              <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 XMRCHECKOUT_API_KEY
               </p>
               <p className="mt-2 text-ink-soft">Used to call authenticated endpoints.</p>
             </div>
             <div className="rounded-xl border border-stroke bg-white/60 p-4">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">
+              <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 XMRCHECKOUT_WEBHOOK_SECRET
               </p>
               <p className="mt-2 text-ink-soft">
@@ -123,7 +123,7 @@ export default function IntegrationsPage() {
               </p>
             </div>
             <div className="rounded-xl border border-stroke bg-white/60 p-4">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">
+              <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 XMRCHECKOUT_API_BASE_URL
               </p>
               <p className="mt-2 text-ink-soft">
@@ -137,7 +137,7 @@ export default function IntegrationsPage() {
 
       <section id="btcpay" className="mt-10 grid gap-6 scroll-mt-24">
         <div className="grid max-w-[54rem] gap-2">
-          <h2 className="font-serif text-2xl">BTCPay compatibility (WooCommerce)</h2>
+          <h2 className="font-sans font-semibold text-2xl">BTCPay compatibility (WooCommerce)</h2>
           <p className="text-ink-soft">
             Use the official WooCommerce Greenfield plugin with the compatibility
             endpoints. Keys remain view-only, and invoices stay non-custodial.
@@ -145,7 +145,7 @@ export default function IntegrationsPage() {
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           <div className={sectionCardClass}>
-            <h3 className="font-serif text-xl">Setup steps</h3>
+            <h3 className="font-sans font-semibold text-xl">Setup steps</h3>
             <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-soft">
               <li>Sign in to XMR Checkout to get your API key.</li>
               <li>
@@ -172,7 +172,7 @@ export default function IntegrationsPage() {
             </ol>
           </div>
 	          <div className={sectionCardClass}>
-	            <h3 className="font-serif text-xl">Behavior notes</h3>
+	            <h3 className="font-sans font-semibold text-xl">Behavior notes</h3>
 	            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
 	              <li>Authorization header: Authorization: token &lt;api_key&gt;.</li>
 	              <li>
@@ -195,7 +195,7 @@ curl -sS "$XMRCHECKOUT_BTCPAY_URL/stores" \\
 
       <section id="curl" className="mt-12 grid gap-8 scroll-mt-24">
         <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-serif text-2xl">curl</h2>
+          <h2 className="font-sans font-semibold text-2xl">curl</h2>
           <p className="text-ink-soft">
             Create an invoice, then poll status until it is confirmed.
           </p>
@@ -241,7 +241,7 @@ curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
 
       <section id="node" className="mt-12 grid gap-8 scroll-mt-24">
         <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-serif text-2xl">Node.js</h2>
+          <h2 className="font-sans font-semibold text-2xl">Node.js</h2>
           <p className="text-ink-soft">
             Example shows creating an invoice with <span className="font-mono text-ink">fetch</span>{" "}
             and receiving webhooks with Express.
@@ -312,7 +312,7 @@ app.listen(3001, () => {
 
       <section id="php" className="mt-12 grid gap-8 scroll-mt-24">
         <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-serif text-2xl">PHP</h2>
+          <h2 className="font-sans font-semibold text-2xl">PHP</h2>
           <p className="text-ink-soft">
             Minimal create-invoice example and a webhook receiver endpoint.
           </p>
@@ -381,7 +381,7 @@ http_response_code(204);`}</code>
 
       <section id="python" className="mt-12 grid gap-8 scroll-mt-24">
         <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-serif text-2xl">Python</h2>
+          <h2 className="font-sans font-semibold text-2xl">Python</h2>
           <p className="text-ink-soft">
             Create an invoice with <span className="font-mono text-ink">requests</span> and
             receive webhooks with FastAPI.
@@ -441,7 +441,7 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
 
       <section id="go" className="mt-12 grid gap-8 scroll-mt-24">
         <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-serif text-2xl">Go</h2>
+          <h2 className="font-sans font-semibold text-2xl">Go</h2>
           <p className="text-ink-soft">
             Create an invoice with <span className="font-mono text-ink">net/http</span> and
             receive webhooks with a standard handler.

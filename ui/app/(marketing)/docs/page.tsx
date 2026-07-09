@@ -547,7 +547,7 @@ export default function DocsPage() {
         <p className="text-sm font-semibold text-clay">
           Documentation
         </p>
-        <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
+        <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
           Quick start and API reference.
         </h1>
         <p className="text-[1.05rem] leading-relaxed text-ink-soft">
@@ -557,7 +557,7 @@ export default function DocsPage() {
         </p>
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
             href="/docs/integrations"
           >
             Integration recipes
@@ -587,7 +587,7 @@ export default function DocsPage() {
       >
         <div className="min-w-0">
           <p className="text-sm font-semibold text-clay">Start here</p>
-          <h2 className="mt-2 font-serif text-2xl">Create and check an invoice.</h2>
+          <h2 className="mt-2 font-sans font-semibold text-2xl">Create and check an invoice.</h2>
           <ol className="mt-4 grid gap-4 text-sm text-ink-soft">
             <li className="border-t border-stroke pt-3">
               <p className="font-semibold text-ink">1. Sign in with view-only wallet data</p>
@@ -631,13 +631,13 @@ Content-Type: application/json
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3 lg:col-span-2">
           <Link
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
             href="/docs/integrations"
           >
             See recipes
           </Link>
           <a
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
             href={`${normalizedSiteUrl}/openapi.json`}
             rel="noreferrer"
             target="_blank"
@@ -648,7 +648,7 @@ Content-Type: application/json
       </section>
 
       <section id="fiat-inputs" className="mt-10 scroll-mt-24 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-        <h2 className="font-serif text-2xl">Fiat inputs (optional)</h2>
+        <h2 className="font-sans font-semibold text-2xl">Fiat inputs (optional)</h2>
         <p className="mt-2 text-ink-soft">
           You can request an invoice using a fiat amount. The backend converts the
           value to XMR using the current rate and returns a non-binding quote in the
@@ -671,7 +671,7 @@ Content-Type: application/json
 
       <section id="concepts" className="mt-10 grid scroll-mt-24 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">Core principles</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">Core principles</h3>
           <p className="text-ink-soft">
             All behavior is constrained by non-custodial rules.
           </p>
@@ -682,7 +682,7 @@ Content-Type: application/json
           </ul>
         </div>
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">Subaddress-only invoices</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">Subaddress-only invoices</h3>
           <p className="text-ink-soft">
             Every invoice uses a subaddress derived from your primary address for
             clearer reconciliation.
@@ -695,7 +695,7 @@ Content-Type: application/json
           </ul>
         </div>
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">Invoice lifecycle</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">Invoice lifecycle</h3>
           <p className="text-ink-soft">
             Clear state transitions without hidden automation.
           </p>
@@ -709,7 +709,7 @@ Content-Type: application/json
 
       <section className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">Authentication</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">Authentication</h3>
           <p className="text-ink-soft">
             Two auth modes keep integrations explicit and observable.
           </p>
@@ -721,7 +721,7 @@ Content-Type: application/json
           </ul>
         </div>
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">Webhook events</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">Webhook events</h3>
           <p className="text-ink-soft">Observable events for merchant systems.</p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
             <li>invoice.created</li>
@@ -733,7 +733,7 @@ Content-Type: application/json
           </ul>
         </div>
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">Base URL</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">Base URL</h3>
           <p className="text-ink-soft">
             The API can be reached from:
           </p>
@@ -745,7 +745,7 @@ Content-Type: application/json
 
       <section className="mt-6 grid gap-6 sm:grid-cols-2">
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">BTCPay compatibility (WooCommerce)</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">BTCPay compatibility (WooCommerce)</h3>
           <p className="text-ink-soft">
             A Greenfield-compatible subset keeps the official WooCommerce plugin working
             without custodial behavior.
@@ -760,7 +760,7 @@ Content-Type: application/json
           </ul>
         </div>
         <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-serif text-xl">BTCPay webhooks</h3>
+          <h3 className="mb-2 font-sans font-semibold text-xl">BTCPay webhooks</h3>
           <p className="text-ink-soft">Deliveries are signed with the BTCPay header format.</p>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
             <li>
@@ -773,7 +773,7 @@ Content-Type: application/json
 
       <section id="api-reference" className="mt-12 grid scroll-mt-24 gap-6">
         <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-serif text-2xl">API reference</h2>
+          <h2 className="font-sans font-semibold text-2xl">API reference</h2>
           <p className="text-ink-soft">
             Every endpoint exposed by the API is listed below, grouped by access
             mode.
@@ -798,12 +798,12 @@ Content-Type: application/json
                   <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
-                      <h3 className="font-serif text-xl">{group.title}</h3>
+                      <h3 className="font-sans font-semibold text-xl">{group.title}</h3>
                       <p className="text-sm font-semibold text-sage">
                         Auth: {group.auth}
                       </p>
                     </div>
-                    <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                    <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
                       {group.items.length} endpoints
                     </span>
                     </div>
@@ -819,7 +819,7 @@ Content-Type: application/json
                           key={`${endpoint.method}-${endpoint.path}`}
                         >
                           <span
-                            className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${
+                            className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${
                               methodStyles[endpoint.method] ?? "bg-ink/10 text-ink-soft"
                             }`}
                           >
@@ -836,7 +836,7 @@ Content-Type: application/json
                             </div>
                             {requirements ? (
                               <details className="rounded-lg border border-ink/10 bg-white/70 px-3 py-2 text-sm text-ink-soft">
-                                <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.18em] text-sage">
+                                <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-sage">
                                   Requirements
                                 </summary>
                                 <div className="mt-2 grid gap-2">
@@ -879,7 +879,7 @@ Content-Type: application/json
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stroke bg-white/60 px-5 py-4 text-sm text-ink-soft shadow-soft backdrop-blur">
           <span>Need the machine-readable schema?</span>
           <a
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
             href={`${normalizedSiteUrl}/openapi.json`}
             rel="noreferrer"
             target="_blank"

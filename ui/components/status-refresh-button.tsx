@@ -23,7 +23,7 @@ export default function StatusRefreshButton({
 
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70 ${className}`}
       type="button"
       onClick={handleRefresh}
       disabled={isRefreshing}

@@ -33,7 +33,7 @@ export default function InvoiceStatusLookup({
       onSubmit={handleSubmit}
     >
       <label
-        className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+        className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
         htmlFor="invoice_id"
       >
         Invoice ID
@@ -52,7 +52,7 @@ export default function InvoiceStatusLookup({
           required
         />
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
           type="submit"
         >
           Check status

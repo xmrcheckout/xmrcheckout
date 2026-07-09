@@ -383,13 +383,13 @@ export default async function DashboardPage({
     ? formatRelativeTime(systemStatus.last_reconcile_started_at)
     : null;
   const tabBaseClass =
-    "inline-flex items-center rounded-xl border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:-translate-y-0.5";
+    "inline-flex items-center rounded-xl border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:opacity-95";
   const tabActiveClass =
-    "border-ink bg-ink text-cream shadow-[0_12px_24px_rgba(16,18,23,0.18)]";
+    "border-ink bg-ink text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)]";
   const subTabBaseClass =
-    "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:-translate-y-0.5";
+    "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:opacity-95";
   const subTabActiveClass =
-    "border-ink bg-ink text-cream shadow-[0_10px_18px_rgba(16,18,23,0.18)]";
+    "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]";
 
   return (
     <main className="px-[6vw] py-12 text-ink">
@@ -410,7 +410,7 @@ export default async function DashboardPage({
         <div className="grid gap-6">
           {activeTab === "overview" ? (
             <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
-              <h1 className="font-serif text-3xl">Operational overview.</h1>
+              <h1 className="font-sans font-semibold text-3xl">Operational overview.</h1>
               <p className="mt-2 text-ink-soft">
                 Review invoices, confirmations, webhooks, and Monero connectivity.
               </p>
@@ -437,10 +437,10 @@ export default async function DashboardPage({
                 ].map((item) => (
                   <Link
                     key={item.title}
-                    className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft transition hover:-translate-y-0.5"
+                    className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft transition hover:opacity-95"
                     href={item.href}
                   >
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       {item.title}
                     </p>
                     <h2 className="mt-3 text-2xl font-semibold">{item.value}</h2>
@@ -452,7 +452,7 @@ export default async function DashboardPage({
                 <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-serif text-xl">Needs attention</h2>
+                      <h2 className="font-sans font-semibold text-xl">Needs attention</h2>
                       <p className="mt-1 text-sm text-ink-soft">
                         Items to review before fulfilling or troubleshooting orders.
                       </p>
@@ -486,7 +486,7 @@ export default async function DashboardPage({
                 <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-serif text-xl">Recent webhook activity</h2>
+                      <h2 className="font-sans font-semibold text-xl">Recent webhook activity</h2>
                       <p className="mt-1 text-sm text-ink-soft">
                         Latest delivery attempts for invoice events.
                       </p>
@@ -519,10 +519,10 @@ export default async function DashboardPage({
               </div>
               <div className="mt-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Monero connectivity
                   </p>
-                  <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em]">
+                  <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em]">
                     <span
                       className={`rounded-full px-3 py-1 ${walletStatusBadge.className}`}
                     >
@@ -537,7 +537,7 @@ export default async function DashboardPage({
                 </div>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Current daemon height
                     </p>
                     <p className="mt-1 text-lg font-semibold">
@@ -545,7 +545,7 @@ export default async function DashboardPage({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Detection poll interval
                     </p>
                     <p className="mt-1 text-lg font-semibold">
@@ -553,7 +553,7 @@ export default async function DashboardPage({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Last successful reconcile
                     </p>
                     <p className="mt-1 text-lg font-semibold">
@@ -561,7 +561,7 @@ export default async function DashboardPage({
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Last reconcile start
                     </p>
                     <p className="mt-1 text-lg font-semibold">
@@ -581,7 +581,7 @@ export default async function DashboardPage({
               </div>
               <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
                 <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Invoice totals
                   </p>
                   <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
@@ -600,7 +600,7 @@ export default async function DashboardPage({
                   </div>
                 </div>
                 <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Primary address
                   </p>
                   <p className="mt-3 break-all font-mono text-xs text-ink sm:text-sm">
@@ -612,7 +612,7 @@ export default async function DashboardPage({
                 </div>
               </div>
               <div className="mt-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Webhook endpoints
                 </p>
                 {webhooksData.length === 0 ? (
@@ -631,7 +631,7 @@ export default async function DashboardPage({
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <p className="break-all font-semibold">{webhook.url}</p>
-                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
                             {webhook.active ? "Active" : "Paused"}
                           </span>
                         </div>
@@ -666,7 +666,7 @@ export default async function DashboardPage({
                 <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <h1 className="font-serif text-3xl">Profile settings.</h1>
+                      <h1 className="font-sans font-semibold text-3xl">Profile settings.</h1>
                       <p className="mt-2 text-ink-soft">
                         Manage credentials and delivery settings for your integration.
                       </p>
@@ -674,7 +674,7 @@ export default async function DashboardPage({
                   </div>
                   <div className="mt-6 grid gap-6 lg:grid-cols-2">
                     <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft">
-                      <h2 className="font-serif text-2xl">Store id</h2>
+                      <h2 className="font-sans font-semibold text-2xl">Store id</h2>
                       <p className="mt-2 min-h-[2.5rem] text-sm text-ink-soft">
                         Single-store per primary address. Use this id in the BTCPay
                         WooCommerce plugin store field.
@@ -686,7 +686,7 @@ export default async function DashboardPage({
                       </div>
                     </div>
                     <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft">
-                      <h2 className="font-serif text-2xl">API key</h2>
+                      <h2 className="font-sans font-semibold text-2xl">API key</h2>
                       <p className="mt-2 min-h-[2.5rem] text-sm text-ink-soft">
                         Use this key with authenticated endpoints.
                       </p>
@@ -695,7 +695,7 @@ export default async function DashboardPage({
                       </div>
                     </div>
                     <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft">
-                      <h2 className="font-serif text-2xl">Webhook secret</h2>
+                      <h2 className="font-sans font-semibold text-2xl">Webhook secret</h2>
                       <p className="mt-2 min-h-[2.5rem] text-sm text-ink-soft">
                         Sent with each delivery as the{" "}
                         <code>X-Webhook-Secret</code> header.
@@ -728,7 +728,7 @@ export default async function DashboardPage({
                 </div>
               ) : (
                 <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
-                  <h1 className="font-serif text-3xl">API key</h1>
+                  <h1 className="font-sans font-semibold text-3xl">API key</h1>
                   <p className="mt-2 text-ink-soft">
                     Sign in again to reveal your API key.
                   </p>
@@ -740,7 +740,7 @@ export default async function DashboardPage({
             <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h1 className="font-serif text-3xl">Webhook endpoints.</h1>
+                  <h1 className="font-sans font-semibold text-3xl">Webhook endpoints.</h1>
                   <p className="mt-2 text-ink-soft">
                     Relay invoice state updates to your systems. Optional overrides let
                     you target different URLs per event.

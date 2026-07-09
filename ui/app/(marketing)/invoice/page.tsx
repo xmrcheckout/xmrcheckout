@@ -12,10 +12,10 @@ export default function InvoiceStatusPage() {
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
         <div className="grid gap-6">
           <div className="grid gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Invoice status
             </p>
-            <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
+            <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
               Check a Monero invoice status.
             </h1>
             <p className="text-[1.05rem] leading-relaxed text-ink-soft">
@@ -28,20 +28,20 @@ export default function InvoiceStatusPage() {
         </div>
         <div className="grid gap-6">
           <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               View-only detection
             </p>
-            <h2 className="mt-2 font-serif text-2xl">No sign-in required.</h2>
+            <h2 className="mt-2 font-sans font-semibold text-2xl">No sign-in required.</h2>
             <p className="mt-2 text-ink-soft">
               Anyone with the invoice id can view its status. Share this page with
               customers who need a quick update.
             </p>
           </div>
           <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Example status
             </p>
-            <h2 className="mt-2 font-serif text-2xl">What you will see.</h2>
+            <h2 className="mt-2 font-sans font-semibold text-2xl">What you will see.</h2>
             <div className="mt-4 grid gap-3 text-sm text-ink-soft">
               <div className="flex items-center gap-3">
                 <span className="timeline-dot is-active h-2.5 w-2.5 rounded-full bg-monero"></span>

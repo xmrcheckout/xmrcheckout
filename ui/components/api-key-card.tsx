@@ -25,7 +25,7 @@ export default function ApiKeyCard({ apiKey }: ApiKeyCardProps) {
         {copied ? "API key copied to clipboard" : ""}
       </span>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
           Your API key
         </p>
         <code className="mt-2 block break-all rounded-xl bg-ink/10 px-3 py-2 text-sm text-ink">
@@ -34,7 +34,7 @@ export default function ApiKeyCard({ apiKey }: ApiKeyCardProps) {
       </div>
       <div className="flex justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
           type="button"
           onClick={handleCopy}
         >

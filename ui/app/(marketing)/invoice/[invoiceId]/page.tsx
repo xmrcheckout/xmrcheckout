@@ -163,10 +163,10 @@ export default async function InvoiceStatusDetailPage({
       <main className="px-[6vw] pb-20 pt-10 text-ink">
         <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div className="grid gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Invoice status
             </p>
-            <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
+            <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
               Invoice not found.
             </h1>
             <p className="text-[1.05rem] leading-relaxed text-ink-soft">
@@ -175,7 +175,7 @@ export default async function InvoiceStatusDetailPage({
             </p>
           </div>
           <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Need another lookup?
             </p>
             <div className="mt-4">
@@ -192,10 +192,10 @@ export default async function InvoiceStatusDetailPage({
       <main className="px-[6vw] pb-20 pt-10 text-ink">
         <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div className="grid gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Invoice status
             </p>
-            <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
+            <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
               Status unavailable.
             </h1>
             <p className="text-[1.05rem] leading-relaxed text-ink-soft">
@@ -259,7 +259,6 @@ export default async function InvoiceStatusDetailPage({
     });
   }
 
-  const showConfirmedStamp = invoice.status === "confirmed";
   const createdTimestamp = formatTimestamp(invoice.created_at);
   const expiresTimestamp = formatTimestamp(invoice.expires_at);
   const lastReconcileCompleted = formatTimestamp(systemStatus?.last_reconcile_completed_at ?? null);
@@ -271,10 +270,10 @@ export default async function InvoiceStatusDetailPage({
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
         <InvoiceStatusAutoRefresh intervalMs={30000} />
         <div className="grid gap-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
             Payment request
           </p>
-          <h1 className="font-serif text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
+          <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
             Payment request
           </h1>
           <p className="text-[1.05rem] leading-relaxed text-ink-soft">
@@ -286,7 +285,7 @@ export default async function InvoiceStatusDetailPage({
             {statusDescription(invoice.status, confirmationTarget, confirmations)}
           </p>
           <details className="rounded-xl border border-stroke bg-white/60 px-4 py-3 text-sm text-ink-soft shadow-soft">
-            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.18em] text-ink">
+            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-ink">
               Invoice metadata
             </summary>
             <div className="mt-3 grid gap-2">
@@ -311,33 +310,30 @@ export default async function InvoiceStatusDetailPage({
           />
         </div>
         <div className="relative overflow-hidden rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-          {showConfirmedStamp ? (
-            <div
-              className="pointer-events-none absolute left-1/2 top-4 z-10 grid h-20 w-20 -translate-x-1/2 -rotate-[12deg] place-items-center rounded-full border-2 border-emerald-700 bg-cream/80 text-center text-[0.55rem] font-bold uppercase tracking-[0.2em] text-emerald-800 shadow-[0_10px_20px_rgba(16,18,23,0.18)]"
-              aria-hidden="true"
-            >
-              <span className="leading-tight">Payment confirmed</span>
-            </div>
-          ) : null}
           <div className="flex items-center justify-between gap-3">
-            <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+            <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
               Status
             </span>
             <div className="flex items-center gap-2">
               <span
-                className={`rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${statusPillStyles[invoice.status]}`}
+                className={`rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${statusPillStyles[invoice.status]}`}
               >
                 {statusLabel}
               </span>
               <StatusRefreshButton label="Refresh" />
             </div>
           </div>
+          {invoice.status === "confirmed" ? (
+            <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">
+              Payment confirmed.
+            </p>
+          ) : null}
           <details className="mt-4 rounded-xl border border-stroke bg-white/70 p-4">
-            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.18em] text-ink">
+            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-ink">
               Detection health
             </summary>
             <div className="mt-3 grid gap-3">
-              <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em]">
+              <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em]">
                 <span className={`rounded-full px-3 py-1 ${walletStatusBadge.className}`}>
                   {walletStatusBadge.label}
                 </span>
@@ -347,7 +343,7 @@ export default async function InvoiceStatusDetailPage({
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Current block height
                   </p>
                   <p className="mt-1 text-sm font-semibold">
@@ -355,7 +351,7 @@ export default async function InvoiceStatusDetailPage({
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Detection poll
                   </p>
                   <p className="mt-1 text-sm font-semibold">
@@ -363,7 +359,7 @@ export default async function InvoiceStatusDetailPage({
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Last successful scan
                   </p>
                   <p
@@ -383,7 +379,7 @@ export default async function InvoiceStatusDetailPage({
           </details>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 Confirmations
               </p>
               <p className="mt-1 text-lg font-semibold">
@@ -391,7 +387,7 @@ export default async function InvoiceStatusDetailPage({
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 Created
               </p>
               <p
@@ -402,7 +398,7 @@ export default async function InvoiceStatusDetailPage({
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 Expires
               </p>
               <p
@@ -417,7 +413,7 @@ export default async function InvoiceStatusDetailPage({
       </section>
 
       <section className="mt-8 rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-        <h2 className="font-serif text-2xl">Timeline</h2>
+        <h2 className="font-sans font-semibold text-2xl">Timeline</h2>
         <ol className="mt-5 grid gap-3">
           {[...timelineItems].reverse().map((item) => (
             <li
@@ -425,7 +421,7 @@ export default async function InvoiceStatusDetailPage({
               key={item.label}
             >
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   {item.label}
                 </p>
                 <p
@@ -443,7 +439,7 @@ export default async function InvoiceStatusDetailPage({
       <section className="mt-6 grid gap-4">
         {checkoutContinueAvailable ? (
           <a
-            className="inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            className="inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
             href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
             rel="noreferrer"
           >

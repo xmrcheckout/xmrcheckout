@@ -133,12 +133,12 @@ export default function LoginModal() {
             <p className="text-xs font-semibold text-clay">
               View-only setup
             </p>
-            <h3 id="login-title" className="mt-1 font-serif text-lg leading-tight">
+            <h3 id="login-title" className="mt-1 font-sans font-semibold text-lg leading-tight">
               Connect your wallet for payment detection.
             </h3>
           </div>
           <button
-            className="shrink-0 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-ink transition hover:-translate-y-0.5"
+            className="shrink-0 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95"
             type="button"
             onClick={closeModal}
             aria-label="Close login modal"

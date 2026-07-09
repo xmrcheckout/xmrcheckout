@@ -98,13 +98,13 @@ export default function LoginForm() {
       <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
           <label
-            className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft"
+            className="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft"
             htmlFor="payment_address"
           >
             Primary address
           </label>
           {isLikelyPrimaryAddress(paymentAddress) ? (
-            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-600">
               <svg
                 className="h-3.5 w-3.5"
                 viewBox="0 0 16 16"
@@ -137,13 +137,13 @@ export default function LoginForm() {
       <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
           <label
-            className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft"
+            className="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft"
             htmlFor="view_key"
           >
             Secret view key
           </label>
           {isLikelySecretViewKey(viewKey) ? (
-            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-600">
               <svg
                 className="h-3.5 w-3.5"
                 viewBox="0 0 16 16"
@@ -183,12 +183,12 @@ export default function LoginForm() {
         </p>
       </div>
       {validationStatus === "checking" ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-amber-700">
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-amber-700">
           Checking address and view key
         </p>
       ) : null}
       {validationStatus === "valid" ? (
-        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-emerald-700">
+        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-emerald-700">
           Address and view key match
         </p>
       ) : null}
@@ -204,7 +204,7 @@ export default function LoginForm() {
       ) : null}
       <div className="flex items-center justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none disabled:hover:translate-y-0"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none disabled:hover:translate-y-0"
           type="submit"
           disabled={!canSubmit}
         >

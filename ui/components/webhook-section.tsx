@@ -57,7 +57,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
       <form className="grid gap-6" action={createAction}>
         <div className="grid gap-2">
           <label
-            className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+            className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
             htmlFor="default_url"
           >
             Default webhook URL
@@ -107,7 +107,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
         ) : null}
         <div className="flex justify-end">
           <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
             type="submit"
           >
             Save webhook
@@ -115,7 +115,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
         </div>
       </form>
       <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
           Hint
         </p>
         <p className="mt-2 text-sm text-ink-soft">
@@ -126,7 +126,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
       </div>
       <div className="grid gap-4">
         <div>
-          <h3 className="font-serif text-xl">Active webhooks</h3>
+          <h3 className="font-sans font-semibold text-xl">Active webhooks</h3>
         </div>
         {deleteState.error ? (
           <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
@@ -150,7 +150,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
                 className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft backdrop-blur"
               >
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Webhook
                   </p>
                   <code className="mt-2 block break-all rounded-lg bg-ink/10 px-3 py-2 text-sm text-ink">
@@ -159,7 +159,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
                   <div className="mt-4 grid gap-3">
                     {hook.events.map((event) => (
                       <div key={event} className="grid gap-1">
-                        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                        <span className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                           {event}
                         </span>
                         <code className="break-all rounded-lg bg-ink/10 px-3 py-2 text-sm text-ink">
@@ -171,7 +171,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
                 </div>
                 <div className="flex">
                   <button
-                    className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
                     type="submit"
                     name="webhook_id"
                     value={hook.id}

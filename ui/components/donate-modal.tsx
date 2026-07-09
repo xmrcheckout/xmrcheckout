@@ -111,15 +111,15 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
                   Support xmrcheckout.com
                 </p>
-                <h3 id="donate-title" className="mt-2 font-serif text-xl">
+                <h3 id="donate-title" className="mt-2 font-sans font-semibold text-xl">
                   If xmrcheckout.com has been helpful, a donation is appreciated.
                 </h3>
               </div>
               <button
-                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-ink transition hover:-translate-y-0.5"
+                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
                 type="button"
                 onClick={closeModal}
                 aria-label="Close donation modal"
@@ -132,7 +132,7 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
             </p>
             <form className="mt-4 grid gap-4" action={formAction} ref={formRef}>
               <label
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+                className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
                 htmlFor="donation_amount"
               >
                 Amount (XMR)
@@ -172,14 +172,14 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
               ) : null}
               <div className="flex flex-wrap justify-end gap-3">
                 <button
-                  className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
                   type="button"
                   onClick={closeModal}
                 >
                   Cancel
                 </button>
                 <button
-                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
                   type="submit"
                 >
                   Donate

@@ -72,7 +72,7 @@ export default function DefaultQrLogoSection({
   return (
     <div className="grid gap-4">
       <div>
-        <h2 className="font-serif text-2xl">Default QR logo</h2>
+        <h2 className="font-sans font-semibold text-2xl">Default QR logo</h2>
         <p className="mt-2 text-sm text-ink-soft">
           Applies to new invoices unless overridden at creation time.
         </p>
@@ -80,7 +80,7 @@ export default function DefaultQrLogoSection({
       <form className="grid gap-4" action={formAction}>
         <div className="grid gap-2">
           <label
-            className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+            className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
             htmlFor="default_qr_logo"
           >
             Logo mode
@@ -106,7 +106,7 @@ export default function DefaultQrLogoSection({
         {logo === "custom" ? (
           <div className="grid gap-2">
             <label
-              className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft"
+              className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
               htmlFor="default_qr_logo_file"
             >
               Custom logo image
@@ -123,7 +123,7 @@ export default function DefaultQrLogoSection({
             </p>
             {logoDataUrl ? (
               <button
-                className="inline-flex w-fit items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
+                className="inline-flex w-fit items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
                 type="button"
                 onClick={() => setLogoDataUrl(null)}
               >
@@ -141,7 +141,7 @@ export default function DefaultQrLogoSection({
 
         {previewSrc ? (
           <div className="flex items-center gap-3 rounded-2xl border border-stroke bg-white/70 p-4 shadow-soft">
-            <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_6px_12px_rgba(16,18,23,0.18)]">
+            <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(16,18,23,0.12)]">
               <Image
                 src={previewSrc}
                 alt="QR logo preview"
@@ -166,7 +166,7 @@ export default function DefaultQrLogoSection({
         ) : null}
         <div className="flex justify-end">
           <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
             type="submit"
           >
             Save

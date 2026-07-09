@@ -266,15 +266,15 @@ function CreateInvoiceModal({
     }
   };
 
-  const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
+  const labelClass = "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
   const inputClass =
     "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const primaryButton =
-    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
   const secondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
   const smallSecondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
 
   const createDisabled =
     !amount ||
@@ -291,10 +291,10 @@ function CreateInvoiceModal({
         </span>
         <div className="flex flex-wrap items-start justify-between gap-4 p-8 pb-0">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
               Create invoice
             </p>
-            <h2 className="mt-2 font-serif text-2xl">Create a new invoice</h2>
+            <h2 className="mt-2 font-sans font-semibold text-2xl">Create a new invoice</h2>
             {mode === "tour" ? (
               <p className="mt-2 text-sm font-semibold text-ink-soft">
                 Tour mode: submissions are simulated. No invoice is created.
@@ -314,7 +314,7 @@ function CreateInvoiceModal({
             <div className="grid gap-4">
               {publicInvoiceUrl ? (
                 <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Invoice created
                   </p>
                   <p className="mt-3 text-sm text-ink">
@@ -992,15 +992,15 @@ export default function InvoicePanel({
     }
   }, [archiveState.archivedId, expandedInvoiceId, mode, router]);
 
-  const labelClass = "text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft";
+  const labelClass = "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
   const inputClass =
     "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const primaryButton =
-    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
   const secondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
   const smallSecondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
 
   const sortHref = (key: string) => {
     const nextOrder = sort === key && order === "asc" ? "desc" : "asc";
@@ -1036,7 +1036,7 @@ export default function InvoicePanel({
     <div className="rounded-2xl border border-stroke bg-white/85 p-6 shadow-soft backdrop-blur sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl">Invoices</h1>
+          <h1 className="font-sans font-semibold text-3xl">Invoices</h1>
           <p className="mt-2 text-ink-soft">
             Create invoices, follow confirmations, and open a row when you need
             the raw details.
@@ -1098,9 +1098,9 @@ export default function InvoicePanel({
           {invoiceStatusOptions.map((option) => (
             <Link
               key={option.value}
-              className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition hover:-translate-y-0.5 ${
+              className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] transition hover:opacity-95 ${
                 statusFilter === option.value
-                  ? "border-ink bg-ink text-cream shadow-[0_10px_18px_rgba(16,18,23,0.16)]"
+                  ? "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]"
                   : "border-stroke bg-white/60 text-ink"
               }`}
               href={buildInvoicesHref({ status: option.value })}
@@ -1159,17 +1159,17 @@ export default function InvoicePanel({
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {invoice.archived_at ? (
-                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
                           Archived
                         </span>
                       ) : null}
                       {showPaidAfterExpiry ? (
-                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
                           Paid after expiry
                         </span>
                       ) : null}
                       <span
-                        className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${statusPillClass(invoice.status)}`}
+                        className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${statusPillClass(invoice.status)}`}
                       >
                         {formatStatus(invoice.status)}
                       </span>
@@ -1322,18 +1322,18 @@ export default function InvoicePanel({
                             </button>
                           ) : (
                             !invoice.archived_at ? (
-                              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
+                              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                                 {formatStatus(invoice.status)} invoices cannot be archived.
                               </p>
                             ) : null
                           )}
                           {archiveState.error && archiveModalInvoiceId === invoice.id ? (
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-clay">
+                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
                               {archiveState.error}
                             </p>
                           ) : null}
                           {archiveState.archivedId === invoice.id ? (
-                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sage">
+                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-sage">
                               Invoice archived.
                             </p>
                           ) : null}
@@ -1348,35 +1348,35 @@ export default function InvoicePanel({
               <table className="w-full border-collapse text-left text-sm">
               <thead className="bg-white/60">
                 <tr className="border-b border-stroke">
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Invoice
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("amount_xmr")}>
                       Amount{sortIndicator("amount_xmr")}
                     </Link>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("status")}>
                       Status{sortIndicator("status")}
                     </Link>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("confirmations")}>
                       Confirmations{sortIndicator("confirmations")}
                     </Link>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("created_at")}>
                       Created{sortIndicator("created_at")}
                     </Link>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     <Link className="underline underline-offset-4" href={sortHref("expires_at")}>
                       Expires{sortIndicator("expires_at")}
                     </Link>
                   </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Actions
                   </th>
                 </tr>
@@ -1419,12 +1419,12 @@ export default function InvoicePanel({
                           </div>
                           <div className="mt-2 flex flex-wrap gap-2">
                             {invoice.archived_at ? (
-                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
                                 Archived
                               </span>
                             ) : null}
                             {showPaidAfterExpiry ? (
-                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
                                 Paid after expiry
                               </span>
                             ) : null}
@@ -1435,7 +1435,7 @@ export default function InvoicePanel({
                         </td>
                         <td className="px-4 py-3 align-top whitespace-nowrap">
                           <span
-                            className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] whitespace-nowrap ${statusPillClass(invoice.status)}`}
+                            className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] whitespace-nowrap ${statusPillClass(invoice.status)}`}
                           >
                             {formatStatus(invoice.status)}
                           </span>
@@ -1627,10 +1627,10 @@ export default function InvoicePanel({
           <div className="w-full max-w-lg rounded-3xl border border-stroke bg-white p-8 shadow-deep">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Archive invoice
                 </p>
-                <h2 className="mt-2 font-serif text-2xl">Archive this invoice?</h2>
+                <h2 className="mt-2 font-sans font-semibold text-2xl">Archive this invoice?</h2>
                 <p className="mt-2 text-sm text-ink-soft">
                   Archived invoices stay available in the archive list.
                 </p>

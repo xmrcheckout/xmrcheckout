@@ -88,7 +88,7 @@ export default function WebhookHistoryPanel({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       {delivery.event}
                     </p>
                     <p className="mt-2 break-all text-sm font-semibold text-ink">
@@ -99,14 +99,14 @@ export default function WebhookHistoryPanel({
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+                    <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
                       {statusLabel}
                     </span>
                     {isFailed ? (
                       <form action={formAction}>
                         <input type="hidden" name="delivery_id" value={delivery.id} />
                         <button
-                          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink transition hover:-translate-y-0.5"
+                          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95"
                           type="submit"
                         >
                           Redeliver
@@ -117,13 +117,13 @@ export default function WebhookHistoryPanel({
                 </div>
                 {hasInvoiceDetails ? (
                   <details className="mt-3 rounded-lg border border-stroke bg-white/70 px-3 py-2">
-                    <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.12em] text-ink">
+                    <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.06em] text-ink">
                       View invoice details
                     </summary>
                     <div className="mt-3 grid gap-2 text-xs text-ink-soft">
                       {delivery.invoice_id ? (
                         <div>
-                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
                             Invoice id
                           </p>
                           <p className="mt-1 break-all text-xs text-ink">
@@ -133,7 +133,7 @@ export default function WebhookHistoryPanel({
                       ) : null}
                       {delivery.invoice_address ? (
                         <div>
-                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
                             Subaddress
                           </p>
                           <p className="mt-1 break-all text-xs text-ink">
@@ -143,7 +143,7 @@ export default function WebhookHistoryPanel({
                       ) : null}
                       {delivery.invoice_subaddress_index !== null ? (
                         <div>
-                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
                             Subaddress index
                           </p>
                           <p className="mt-1 text-xs text-ink">
@@ -153,7 +153,7 @@ export default function WebhookHistoryPanel({
                       ) : null}
                       {delivery.invoice_amount_xmr ? (
                         <div>
-                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
                             Invoice amount (XMR)
                           </p>
                           <p className="mt-1 text-xs text-ink">
@@ -163,7 +163,7 @@ export default function WebhookHistoryPanel({
                       ) : null}
                       {delivery.invoice_status ? (
                         <div>
-                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
                             Invoice status
                           </p>
                           <p className="mt-1 text-xs text-ink">

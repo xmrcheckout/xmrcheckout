@@ -151,10 +151,10 @@ export default function InvoicePaymentDetails({
       </span>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
             Payment details
           </p>
-          <h2 className="mt-2 font-serif text-2xl">{heading}</h2>
+          <h2 className="mt-2 font-sans font-semibold text-2xl">{heading}</h2>
           {isInvalid || isExpired ? (
             <p className="mt-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
               Do not send payment for this invoice state.
@@ -166,7 +166,7 @@ export default function InvoicePaymentDetails({
             </p>
           ) : null}
         </div>
-        <span className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+        <span className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft">
           {statusLabel}
         </span>
       </div>
@@ -175,12 +175,12 @@ export default function InvoicePaymentDetails({
         <div className="grid gap-5">
           <div className="rounded-2xl border border-stroke bg-white/75 p-5 shadow-soft">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 Exact amount
               </p>
               {showCopyActions ? (
                 <button
-                  className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                  className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:bg-white"
                   type="button"
                   onClick={() => handleCopy(formattedAmount, "amount")}
                 >
@@ -211,7 +211,7 @@ export default function InvoicePaymentDetails({
           </div>
 
           <div className="rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft xl:hidden">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
               Scan or open wallet
             </p>
             {canSendPayment && qrDataUrl ? (
@@ -227,7 +227,7 @@ export default function InvoicePaymentDetails({
                   />
                   {resolvedLogoSrc ? (
                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_6px_12px_rgba(16,18,23,0.18)]">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(16,18,23,0.12)]">
                         <Image
                           src={resolvedLogoSrc}
                           alt="QR logo"
@@ -240,7 +240,7 @@ export default function InvoicePaymentDetails({
                   ) : null}
                 </div>
                 <a
-                  className="inline-flex w-full items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-cream shadow-[0_14px_24px_rgba(16,18,23,0.16)] transition hover:-translate-y-0.5"
+                  className="inline-flex w-full items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.12)] transition hover:opacity-95"
                   href={uri}
                 >
                   Open wallet
@@ -257,12 +257,12 @@ export default function InvoicePaymentDetails({
 
           <div className="rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 Payment address
               </p>
               {showCopyActions ? (
                 <button
-                  className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                  className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:bg-white"
                   type="button"
                   onClick={() => handleCopy(address, "address")}
                 >
@@ -277,7 +277,7 @@ export default function InvoicePaymentDetails({
         </div>
 
         <div className="hidden rounded-2xl border border-stroke bg-white/65 p-5 shadow-soft xl:block">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
             Scan or open wallet
           </p>
           {canSendPayment && qrDataUrl ? (
@@ -293,7 +293,7 @@ export default function InvoicePaymentDetails({
                 />
                 {resolvedLogoSrc ? (
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_6px_12px_rgba(16,18,23,0.18)]">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(16,18,23,0.12)]">
                       <Image
                         src={resolvedLogoSrc}
                         alt="QR logo"
@@ -306,7 +306,7 @@ export default function InvoicePaymentDetails({
                 ) : null}
               </div>
               <a
-                className="inline-flex w-full items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-cream shadow-[0_14px_24px_rgba(16,18,23,0.16)] transition hover:-translate-y-0.5"
+                className="inline-flex w-full items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.12)] transition hover:opacity-95"
                 href={uri}
               >
                 Open wallet
@@ -329,11 +329,11 @@ export default function InvoicePaymentDetails({
           </summary>
           <div className="mt-4 grid gap-3">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 URI
               </p>
               <button
-                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink-soft transition hover:bg-white"
+                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:bg-white"
                 type="button"
                 onClick={() => handleCopy(uri, "uri")}
               >

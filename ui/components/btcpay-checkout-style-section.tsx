@@ -46,7 +46,7 @@ export default function BtcpayCheckoutStyleSection({
   return (
     <form action={formAction} className="grid gap-4">
       <div>
-        <h3 className="font-serif text-2xl">BTCPay checkout layout</h3>
+        <h3 className="font-sans font-semibold text-2xl">BTCPay checkout layout</h3>
         <p className="mt-2 text-sm text-ink-soft">
           This setting only applies to BTCPay checkouts (invoices created via the
           BTCPay compatibility endpoints).
@@ -81,7 +81,7 @@ export default function BtcpayCheckoutStyleSection({
       ) : null}
       <div className="flex justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full border border-stroke bg-ink px-5 py-2.5 text-sm font-semibold text-cream transition hover:-translate-y-0.5"
+          className="inline-flex items-center justify-center rounded-full border border-stroke bg-ink px-5 py-2.5 text-sm font-semibold text-cream transition hover:opacity-95"
           type="submit"
         >
           Save preference

@@ -27,7 +27,7 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
       ) : null}
       <form action={formAction} className="flex justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
+          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
           type="submit"
         >
           Reset API key

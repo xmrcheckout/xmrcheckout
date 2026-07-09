@@ -159,10 +159,10 @@ export default async function BtcpayModalInvoicePage({
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Payment request
             </p>
-            <h1 className="mt-2 font-serif text-2xl">Invoice not found</h1>
+            <h1 className="mt-2 font-sans font-semibold text-2xl">Invoice not found</h1>
           </div>
         </div>
         <p className="mt-3 text-sm text-ink-soft">
@@ -179,10 +179,10 @@ export default async function BtcpayModalInvoicePage({
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
               Payment request
             </p>
-            <h1 className="mt-2 font-serif text-2xl">Status unavailable</h1>
+            <h1 className="mt-2 font-sans font-semibold text-2xl">Status unavailable</h1>
           </div>
         </div>
         <p className="mt-3 text-sm text-ink-soft">
@@ -224,7 +224,7 @@ export default async function BtcpayModalInvoicePage({
         <div className="mx-auto grid max-w-md gap-5">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
                 Payment request
               </p>
             </div>
@@ -254,10 +254,10 @@ export default async function BtcpayModalInvoicePage({
         <>
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-clay">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
                 Payment request
               </p>
-              <h1 className="mt-2 font-serif text-2xl">Payment request</h1>
+              <h1 className="mt-2 font-sans font-semibold text-2xl">Payment request</h1>
             </div>
             <div className="flex items-center gap-2">
               <StatusRefreshButton label="Refresh" className="text-xs" />
@@ -278,18 +278,18 @@ export default async function BtcpayModalInvoicePage({
 
           <div className="mt-4 rounded-2xl border border-stroke bg-card p-5 shadow-card backdrop-blur">
             <div className="flex items-center justify-between gap-3">
-              <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-ink">
+              <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
                 Status
               </span>
               <span
-                className={`rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${statusPillStyles[invoice.status]}`}
+                className={`rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${statusPillStyles[invoice.status]}`}
               >
                 {statusLabel}
               </span>
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Confirmations
                 </p>
                 <p className="mt-1 text-lg font-semibold">
@@ -297,7 +297,7 @@ export default async function BtcpayModalInvoicePage({
                 </p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Created
                 </p>
                 <p
@@ -308,7 +308,7 @@ export default async function BtcpayModalInvoicePage({
                 </p>
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Expires
                 </p>
                 <p
@@ -321,10 +321,10 @@ export default async function BtcpayModalInvoicePage({
             </div>
             <div className="mt-4 rounded-xl border border-stroke bg-white/70 p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Monero node
                 </p>
-                <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em]">
+                <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em]">
                   <span
                     className={`rounded-full px-3 py-1 ${walletStatusBadge.className}`}
                   >
@@ -339,7 +339,7 @@ export default async function BtcpayModalInvoicePage({
               </div>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Current block height
                   </p>
                   <p className="mt-1 text-sm font-semibold">
@@ -347,7 +347,7 @@ export default async function BtcpayModalInvoicePage({
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Detection poll
                   </p>
                   <p className="mt-1 text-sm font-semibold">
@@ -355,7 +355,7 @@ export default async function BtcpayModalInvoicePage({
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Last successful scan
                   </p>
                   <p
@@ -374,7 +374,7 @@ export default async function BtcpayModalInvoicePage({
             </div>
             {checkoutContinueAvailable ? (
               <a
-                className="mt-5 inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2 text-sm font-semibold text-cream shadow-[0_16px_30px_rgba(16,18,23,0.18)] transition hover:-translate-y-0.5"
+                className="mt-5 inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
                 href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
                 rel="noreferrer"
               >
@@ -386,7 +386,7 @@ export default async function BtcpayModalInvoicePage({
           {shouldShowBtcpayActions ? (
             <div className="mt-6 grid gap-3">
               <a
-                className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_14px_22px_rgba(93,122,106,0.25)] transition hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_16px_rgba(93,122,106,0.16)] transition hover:opacity-95"
                 href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
               >
                 View receipt

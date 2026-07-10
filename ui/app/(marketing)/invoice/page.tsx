@@ -1,67 +1,124 @@
 import type { Metadata } from "next";
 
 import InvoiceStatusLookup from "../../../components/invoice-status-lookup";
+import PageIntroBand from "../../../components/page-intro-band";
 
 export const metadata: Metadata = {
   title: "Invoice Status",
 };
 
+const statusPath = [
+  {
+    label: "Detected",
+    detail: "Incoming XMR is visible on-chain.",
+    dotClass: "bg-monero",
+  },
+  {
+    label: "Confirming",
+    detail: "The configured target is not reached yet.",
+    dotClass: "bg-amber-500",
+  },
+  {
+    label: "Confirmed",
+    detail: "The required confirmation target is reached.",
+    dotClass: "bg-sage",
+  },
+] as const;
+
 export default function InvoiceStatusPage() {
   return (
-    <main className="px-[6vw] pb-20 pt-10 text-ink">
-      <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-        <div className="grid gap-6">
-          <div className="grid gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Invoice status
+    <main className="px-[6vw] pb-20 pt-8 text-ink">
+      <div className="mx-auto w-full max-w-7xl">
+        <PageIntroBand
+          id="invoice-status-title"
+          eyebrow="Invoice status"
+          title="Check a Monero invoice status."
+          description={
+            <p>
+              Paste an invoice id to see detection and confirmation progress.
+              This public view never requests wallet credentials.
             </p>
-            <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-              Check a Monero invoice status.
-            </h1>
-            <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-              Paste the invoice id to see detection and confirmation state.
+          }
+          facts={[
+            { label: "Access", value: "No sign-in" },
+            { label: "Detection", value: "View only" },
+            { label: "Funds", value: "Merchant wallet" },
+          ]}
+        />
+
+        <section className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.8fr)] lg:items-start">
+          <section
+            className="rounded-surface border border-stroke bg-card p-6 shadow-card sm:p-7"
+            aria-labelledby="lookup-title"
+          >
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <span
+                className="h-2 w-2 rounded-full bg-clay"
+                aria-hidden="true"
+              />
+              Public lookup
             </p>
-          </div>
-          <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-            <InvoiceStatusLookup />
-          </div>
-        </div>
-        <div className="grid gap-6">
-          <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              View-only detection
-            </p>
-            <h2 className="mt-2 font-sans font-semibold text-2xl">No sign-in required.</h2>
+            <h2
+              className="mt-1 font-sans text-2xl font-semibold"
+              id="lookup-title"
+            >
+              Find an invoice
+            </h2>
             <p className="mt-2 text-ink-soft">
-              Anyone with the invoice id can view its status. Share this page with
-              customers who need a quick update.
+              Anyone with the invoice id can view its current state. No changes
+              can be made from this page.
             </p>
-          </div>
-          <div className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Example status
-            </p>
-            <h2 className="mt-2 font-sans font-semibold text-2xl">What you will see.</h2>
-            <div className="mt-4 grid gap-3 text-sm text-ink-soft">
-              <div className="flex items-center gap-3">
-                <span className="timeline-dot is-active h-2.5 w-2.5 rounded-full bg-monero"></span>
-                <span className="font-semibold text-ink">Detected</span>
-                <span>Seen on the network</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-monero/60"></span>
-                <span className="font-semibold text-ink">Confirming</span>
-                <span>Waiting on confirmations</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-ink/20"></span>
-                <span className="font-semibold text-ink">Confirmed</span>
-                <span>Target reached</span>
-              </div>
+            <div className="mt-6">
+              <InvoiceStatusLookup />
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+
+          <section
+            className="overflow-hidden rounded-surface border border-stroke bg-white/70 shadow-soft"
+            aria-labelledby="status-path-title"
+          >
+            <div className="border-b border-stroke bg-sand/50 px-5 py-4 sm:px-6">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span
+                  className="h-2 w-2 rounded-full bg-clay"
+                  aria-hidden="true"
+                />
+                Example status
+              </p>
+              <h2
+                className="mt-1 font-sans text-xl font-semibold"
+                id="status-path-title"
+              >
+                What the customer will see
+              </h2>
+            </div>
+            <ol className="divide-y divide-stroke">
+              {statusPath.map((item, index) => (
+                <li
+                  className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 px-5 py-4 sm:px-6"
+                  key={item.label}
+                >
+                  <span
+                    className={`mt-1.5 h-2.5 w-2.5 rounded-full ${item.dotClass}`}
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-ink-soft">
+                        0{index + 1}
+                      </span>
+                      <p className="text-sm font-semibold text-ink">
+                        {item.label}
+                      </p>
+                    </div>
+                    <p className="mt-1 text-sm text-ink-soft">{item.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </section>
+      </div>
     </main>
   );
 }

@@ -1,51 +1,88 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+
+import PageIntroBand from "../../../../components/page-intro-band";
 
 export const metadata: Metadata = {
   title: "Integration Recipes",
 };
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.SITE_URL ??
+  "http://localhost:3000";
 const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
 const publicApiBaseUrl = `${normalizedSiteUrl}/api/core`;
 
 const codeBlockClass =
-  "overflow-x-auto rounded-2xl border border-stroke bg-ink px-6 py-5 text-xs leading-relaxed text-cream shadow-soft";
+  "max-w-full overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-5 text-xs leading-relaxed text-cream shadow-soft sm:px-6";
 
 const sectionCardClass =
-  "rounded-2xl border border-stroke bg-white/70 p-7 shadow-soft backdrop-blur";
+  "rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-7";
+
+function RecipeHeader({
+  children,
+  id,
+  index,
+  title,
+}: {
+  children: ReactNode;
+  id: string;
+  index: string;
+  title: string;
+}) {
+  return (
+    <header className="max-w-[54rem]">
+      <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+        <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />
+        Recipe {index}
+      </p>
+      <h2 className="mt-1 font-sans text-2xl font-semibold" id={`${id}-title`}>
+        {title}
+      </h2>
+      <div className="mt-1 text-ink-soft">{children}</div>
+    </header>
+  );
+}
 
 export default function IntegrationsPage() {
   return (
-    <main className="px-[6vw] pb-20 pt-10 text-ink">
-      <section className="grid max-w-[54rem] gap-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-          Integration recipes
-        </p>
-        <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-          Copy/paste examples for common backends.
-        </h1>
-        <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-          Recipes follow the same pattern: create an invoice with an XMR amount, send
-          the customer to the hosted invoice page, then fulfill your order when the
-          invoice is confirmed.
-        </p>
-        <div className="flex flex-wrap items-center gap-3 text-sm">
+    <main className="px-[6vw] pb-20 pt-8 text-ink">
+      <div className="mx-auto w-full max-w-7xl">
+        <section aria-label="Integration recipe introduction">
+          <PageIntroBand
+            eyebrow="Integration recipes"
+            id="integration-recipes-title"
+            title="Copy/paste examples for common backends."
+            description={
+              <p>
+                Recipes follow the same pattern: create an invoice with an XMR
+                amount, send the customer to the hosted invoice page, then
+                fulfill your order when the invoice is confirmed.
+              </p>
+            }
+            facts={[
+              { label: "Recipes", value: "6 paths" },
+              { label: "Transport", value: "REST + JSON" },
+              { label: "Secrets", value: "Server-side" },
+            ]}
+          />
+        </section>
+
+        <div className="mt-5">
           <Link
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
+            className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
             href="/docs"
           >
             Back to API docs
           </Link>
         </div>
+
         <nav
-          className="docs-jump-nav"
+          className="mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card p-2 shadow-soft"
           aria-label="Recipe languages"
         >
-          <span className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-            Jump to:
-          </span>
           {[
             { href: "#btcpay", label: "BTCPay" },
             { href: "#curl", label: "curl" },
@@ -53,157 +90,224 @@ export default function IntegrationsPage() {
             { href: "#php", label: "PHP" },
             { href: "#python", label: "Python" },
             { href: "#go", label: "Go" },
-          ].map((item) => (
+          ].map((item, index) => (
             <a
               key={item.href}
-              className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
+              className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
               href={item.href}
             >
+              <span className="font-mono text-xs text-ink-soft/60">
+                0{index + 1}
+              </span>
               {item.label}
             </a>
           ))}
         </nav>
-      </section>
 
-      <section className="mt-10 grid gap-6 lg:grid-cols-2">
-        <div className={sectionCardClass}>
-          <h2 className="font-sans font-semibold text-2xl">Conceptual flow</h2>
-	          <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-soft">
-	            <li>
-	              Create an invoice via{" "}
-	              <span className="font-mono text-ink">POST /api/core/invoices</span>.
-	            </li>
-              <li>
-                Optional: include{" "}
-                <span className="font-mono text-ink">checkout_continue_url</span> to show a
-                customer-facing Continue button after confirmation.
-              </li>
-	            <li>
-	              Redirect the customer to <span className="font-mono text-ink">invoice_url</span>.
-	            </li>
-	            <li>
-	              Wait for <span className="font-mono text-ink">invoice.confirmed</span> via webhook
-	              (recommended) or polling.
-	            </li>
-	          </ol>
-          <div className="mt-4 rounded-xl border border-stroke bg-white/60 p-4 text-sm text-ink-soft">
-            <p className="font-semibold text-ink">What to store</p>
-            <ul className="mt-2 list-disc space-y-1 pl-5">
-              <li>
-                Your internal order id in{" "}
-                <span className="font-mono text-ink">metadata.order_id</span>
-              </li>
-              <li>
-                The returned <span className="font-mono text-ink">invoice.id</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className={sectionCardClass}>
-          <h2 className="font-sans font-semibold text-2xl">Environment variables</h2>
-          <p className="mt-2 text-ink-soft">
-            Keep secrets server-side. Never expose API keys or webhook secrets in browser
-            code.
-          </p>
-          <div className="mt-4 grid gap-3 text-sm">
-            <div className="rounded-xl border border-stroke bg-white/60 p-4">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                XMRCHECKOUT_API_KEY
+        <section className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">
+            <div className="px-5 py-5 sm:px-6">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-clay"
+                  aria-hidden="true"
+                />
+                Request path
               </p>
-              <p className="mt-2 text-ink-soft">Used to call authenticated endpoints.</p>
+              <h2 className="mt-1 font-sans text-2xl font-semibold">
+                Conceptual flow
+              </h2>
             </div>
-            <div className="rounded-xl border border-stroke bg-white/60 p-4">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                XMRCHECKOUT_WEBHOOK_SECRET
-              </p>
-              <p className="mt-2 text-ink-soft">
-                Used to verify the <span className="font-mono text-ink">X-Webhook-Secret</span>{" "}
-                header on webhook deliveries.
-              </p>
-            </div>
-            <div className="rounded-xl border border-stroke bg-white/60 p-4">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                XMRCHECKOUT_API_BASE_URL
-              </p>
-              <p className="mt-2 text-ink-soft">
-                Public base URL, including <span className="font-mono text-ink">/api/core</span>:{" "}
-                <span className="font-mono text-ink">{publicApiBaseUrl}</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="btcpay" className="mt-10 grid gap-6 scroll-mt-24">
-        <div className="grid max-w-[54rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">BTCPay compatibility (WooCommerce)</h2>
-          <p className="text-ink-soft">
-            Use the official WooCommerce Greenfield plugin with the compatibility
-            endpoints. Keys remain view-only, and invoices stay non-custodial.
-          </p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className={sectionCardClass}>
-            <h3 className="font-sans font-semibold text-xl">Setup steps</h3>
-            <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-soft">
-              <li>Sign in to XMR Checkout to get your API key.</li>
-              <li>
-                Store id: returned by the login response or via{" "}
-                <span className="font-mono text-ink">GET /api/v1/stores</span>. The
-                stores call returns a single store (one per primary address); use the{" "}
-                <span className="font-mono text-ink">id</span> field.
+            <ol className="grid divide-y divide-stroke border-y border-stroke bg-white/60 sm:grid-cols-2 sm:divide-x">
+              <li className="min-w-0 px-5 py-4 sm:px-6">
+                <span className="font-mono text-xs text-ink-soft">01</span>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Create an invoice via{" "}
+                  <span className="font-mono text-ink">
+                    POST /api/core/invoices
+                  </span>
+                  .
+                </p>
               </li>
-              <li>Install the official BTCPay WooCommerce plugin.</li>
-              <li>
-                In WooCommerce → BTCPay settings, set:
-                <ul className="mt-2 list-disc space-y-1 pl-5">
-                  <li>
-                    Server URL:{" "}
-                    <span className="font-mono text-ink">{normalizedSiteUrl}</span>{" "}
-                    (the plugin appends <span className="font-mono text-ink">/api/v1</span>).
-                  </li>
-                  <li>Store ID: the id returned from the stores call.</li>
-                  <li>API key: your XMR Checkout API key.</li>
-                  <li>Payment method: XMR-CHAIN (shows as XMR_CHAIN in WooCommerce).</li>
-                  <li>Modal checkout is supported; the hosted invoice page is recommended for clarity.</li>
-                </ul>
+              <li className="min-w-0 px-5 py-4 sm:px-6">
+                <span className="font-mono text-xs text-ink-soft">02</span>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Optional: include{" "}
+                  <span className="font-mono text-ink">
+                    checkout_continue_url
+                  </span>{" "}
+                  to show a customer-facing Continue button after confirmation.
+                </p>
+              </li>
+              <li className="min-w-0 px-5 py-4 sm:px-6">
+                <span className="font-mono text-xs text-ink-soft">03</span>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Redirect the customer to{" "}
+                  <span className="font-mono text-ink">invoice_url</span>.
+                </p>
+              </li>
+              <li className="min-w-0 px-5 py-4 sm:px-6">
+                <span className="font-mono text-xs text-ink-soft">04</span>
+                <p className="mt-2 text-sm text-ink-soft">
+                  Wait for{" "}
+                  <span className="font-mono text-ink">invoice.confirmed</span>{" "}
+                  via webhook (recommended) or polling.
+                </p>
               </li>
             </ol>
+            <div className="bg-sand/50 px-5 py-4 text-sm text-ink-soft sm:px-6">
+              <p className="font-semibold text-ink">What to store</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                <li>
+                  Your internal order id in{" "}
+                  <span className="font-mono text-ink">metadata.order_id</span>
+                </li>
+                <li>
+                  The returned{" "}
+                  <span className="font-mono text-ink">invoice.id</span>
+                </li>
+              </ul>
+            </div>
           </div>
-	          <div className={sectionCardClass}>
-	            <h3 className="font-sans font-semibold text-xl">Behavior notes</h3>
-	            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-	              <li>Authorization header: Authorization: token &lt;api_key&gt;.</li>
-	              <li>
-	                Status mapping: pending → New, payment detected → Processing, confirmed → final.
-	              </li>
-	              <li>Expired and Invalid statuses map directly.</li>
-	              <li>Webhook deliveries use the BTCPay-Sig header.</li>
-	            </ul>
-	          </div>
-	        </div>
-        <pre className={codeBlockClass}>
-          <code>{`# Verify compatibility endpoints
+
+          <div className={`${sectionCardClass} border-t-4 border-t-clay`}>
+            <h2 className="font-sans text-2xl font-semibold">
+              Environment variables
+            </h2>
+            <p className="mt-2 text-ink-soft">
+              Keep secrets server-side. Never expose API keys or webhook secrets
+              in browser code.
+            </p>
+            <dl className="mt-4 divide-y divide-stroke border-y border-stroke text-sm">
+              <div className="py-4">
+                <dt className="break-all font-mono text-xs font-semibold text-ink">
+                  XMRCHECKOUT_API_KEY
+                </dt>
+                <dd className="mt-1 text-ink-soft">
+                  Used to call authenticated endpoints.
+                </dd>
+              </div>
+              <div className="py-4">
+                <dt className="break-all font-mono text-xs font-semibold text-ink">
+                  XMRCHECKOUT_WEBHOOK_SECRET
+                </dt>
+                <dd className="mt-1 text-ink-soft">
+                  Used to verify the{" "}
+                  <span className="font-mono text-ink">X-Webhook-Secret</span>{" "}
+                  header on webhook deliveries.
+                </dd>
+              </div>
+              <div className="py-4">
+                <dt className="break-all font-mono text-xs font-semibold text-ink">
+                  XMRCHECKOUT_API_BASE_URL
+                </dt>
+                <dd className="mt-1 break-words text-ink-soft">
+                  Public base URL, including{" "}
+                  <span className="font-mono text-ink">/api/core</span>:{" "}
+                  <span className="break-all font-mono text-ink">
+                    {publicApiBaseUrl}
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        <section
+          id="btcpay"
+          className="mt-12 grid scroll-mt-24 gap-6 border-t border-stroke pt-8"
+          aria-labelledby="btcpay-title"
+        >
+          <RecipeHeader
+            id="btcpay"
+            index="01"
+            title="BTCPay compatibility (WooCommerce)"
+          >
+            <p className="text-ink-soft">
+              Use the official WooCommerce Greenfield plugin with the
+              compatibility endpoints. Keys remain view-only, and invoices stay
+              non-custodial.
+            </p>
+          </RecipeHeader>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className={sectionCardClass}>
+              <h3 className="font-sans font-semibold text-xl">Setup steps</h3>
+              <ol className="mt-3 list-decimal space-y-3 pl-5 text-ink-soft marker:font-mono marker:text-ink-soft">
+                <li>Sign in to XMR Checkout to get your API key.</li>
+                <li>
+                  Store id: returned by the login response or via{" "}
+                  <span className="font-mono text-ink">GET /api/v1/stores</span>
+                  . The stores call returns a single store (one per primary
+                  address); use the{" "}
+                  <span className="font-mono text-ink">id</span> field.
+                </li>
+                <li>Install the official BTCPay WooCommerce plugin.</li>
+                <li>
+                  In WooCommerce → BTCPay settings, set:
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    <li>
+                      Server URL:{" "}
+                      <span className="font-mono text-ink">
+                        {normalizedSiteUrl}
+                      </span>{" "}
+                      (the plugin appends{" "}
+                      <span className="font-mono text-ink">/api/v1</span>).
+                    </li>
+                    <li>Store ID: the id returned from the stores call.</li>
+                    <li>API key: your XMR Checkout API key.</li>
+                    <li>
+                      Payment method: XMR-CHAIN (shows as XMR_CHAIN in
+                      WooCommerce).
+                    </li>
+                    <li>
+                      Modal checkout is supported; the hosted invoice page is
+                      recommended for clarity.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+            </div>
+            <div className={`${sectionCardClass} border-t-4 border-t-sage`}>
+              <h3 className="font-sans font-semibold text-xl">
+                Behavior notes
+              </h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+                <li>
+                  Authorization header: Authorization: token &lt;api_key&gt;.
+                </li>
+                <li>
+                  Status mapping: pending → New, payment detected → Processing,
+                  confirmed → final.
+                </li>
+                <li>Expired and Invalid statuses map directly.</li>
+                <li>Webhook deliveries use the BTCPay-Sig header.</li>
+              </ul>
+            </div>
+          </div>
+          <pre className={codeBlockClass}>
+            <code>{`# Verify compatibility endpoints
 export XMRCHECKOUT_BTCPAY_URL="${normalizedSiteUrl}/api/v1"
 export XMRCHECKOUT_API_KEY="xmrcheckout_..."
 
 curl -sS "$XMRCHECKOUT_BTCPAY_URL/stores" \\
   -H "Authorization: token $XMRCHECKOUT_API_KEY"`}</code>
-        </pre>
-      </section>
+          </pre>
+        </section>
 
-      <section id="curl" className="mt-12 grid gap-8 scroll-mt-24">
-        <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">curl</h2>
-          <p className="text-ink-soft">
-            Create an invoice, then poll status until it is confirmed.
-          </p>
-        </div>
+        <section
+          id="curl"
+          className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
+          aria-labelledby="curl-title"
+        >
+          <RecipeHeader id="curl" index="02" title="curl">
+            <p className="text-ink-soft">
+              Create an invoice, then poll status until it is confirmed.
+            </p>
+          </RecipeHeader>
 
-        <div className="grid gap-4">
-          <pre className={codeBlockClass}>
-            <code>{`# 1) Create invoice
+          <div className="grid gap-4">
+            <pre className={codeBlockClass}>
+              <code>{`# 1) Create invoice
 export XMRCHECKOUT_API_BASE_URL="${publicApiBaseUrl}"
 export XMRCHECKOUT_API_KEY="xmrcheckout_..."
 
@@ -215,10 +319,10 @@ curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
     "confirmation_target": 2,
     "metadata": { "order_id": "ORDER-1234" }
   }'`}</code>
-          </pre>
+            </pre>
 
-          <pre className={codeBlockClass}>
-            <code>{`# 1b) Create invoice from fiat (non-binding conversion)
+            <pre className={codeBlockClass}>
+              <code>{`# 1b) Create invoice from fiat (non-binding conversion)
 curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
   -H "Authorization: ApiKey $XMRCHECKOUT_API_KEY" \\
   -H "Content-Type: application/json" \\
@@ -228,29 +332,33 @@ curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
     "confirmation_target": 2,
     "metadata": { "order_id": "ORDER-1234" }
   }'`}</code>
-          </pre>
+            </pre>
 
-          <pre className={codeBlockClass}>
-            <code>{`# 2) Poll public status (no auth)
+            <pre className={codeBlockClass}>
+              <code>{`# 2) Poll public status (no auth)
 export INVOICE_ID="uuid-from-response"
 
 curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
-          </pre>
-        </div>
-      </section>
+            </pre>
+          </div>
+        </section>
 
-      <section id="node" className="mt-12 grid gap-8 scroll-mt-24">
-        <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">Node.js</h2>
-          <p className="text-ink-soft">
-            Example shows creating an invoice with <span className="font-mono text-ink">fetch</span>{" "}
-            and receiving webhooks with Express.
-          </p>
-        </div>
+        <section
+          id="node"
+          className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
+          aria-labelledby="node-title"
+        >
+          <RecipeHeader id="node" index="03" title="Node.js">
+            <p className="text-ink-soft">
+              Example shows creating an invoice with{" "}
+              <span className="font-mono text-ink">fetch</span> and receiving
+              webhooks with Express.
+            </p>
+          </RecipeHeader>
 
-        <div className="grid gap-4">
-          <pre className={codeBlockClass}>
-            <code>{`// create-invoice.mjs
+          <div className="grid gap-4">
+            <pre className={codeBlockClass}>
+              <code>{`// create-invoice.mjs
 const API_BASE_URL = process.env.XMRCHECKOUT_API_BASE_URL;
 const API_KEY = process.env.XMRCHECKOUT_API_KEY;
 
@@ -275,10 +383,10 @@ export async function createInvoice({ amountXmr, orderId }) {
 
   return await response.json(); // includes invoice_url
 }`}</code>
-          </pre>
+            </pre>
 
-          <pre className={codeBlockClass}>
-            <code>{`// webhook-server.mjs
+            <pre className={codeBlockClass}>
+              <code>{`// webhook-server.mjs
 import express from "express";
 
 const WEBHOOK_SECRET = process.env.XMRCHECKOUT_WEBHOOK_SECRET;
@@ -306,21 +414,24 @@ app.post("/xmrcheckout/webhook", (req, res) => {
 app.listen(3001, () => {
   console.log("Listening on http://localhost:3001/xmrcheckout/webhook");
 });`}</code>
-          </pre>
-        </div>
-      </section>
+            </pre>
+          </div>
+        </section>
 
-      <section id="php" className="mt-12 grid gap-8 scroll-mt-24">
-        <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">PHP</h2>
-          <p className="text-ink-soft">
-            Minimal create-invoice example and a webhook receiver endpoint.
-          </p>
-        </div>
+        <section
+          id="php"
+          className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
+          aria-labelledby="php-title"
+        >
+          <RecipeHeader id="php" index="04" title="PHP">
+            <p className="text-ink-soft">
+              Minimal create-invoice example and a webhook receiver endpoint.
+            </p>
+          </RecipeHeader>
 
-        <div className="grid gap-4">
-          <pre className={codeBlockClass}>
-            <code>{`<?php
+          <div className="grid gap-4">
+            <pre className={codeBlockClass}>
+              <code>{`<?php
 // create_invoice.php
 
 $apiBaseUrl = getenv("XMRCHECKOUT_API_BASE_URL");
@@ -351,10 +462,10 @@ if ($body === false || $status < 200 || $status >= 300) {
 
 $invoice = json_decode($body, true);
 echo $invoice["invoice_url"];`}</code>
-          </pre>
+            </pre>
 
-          <pre className={codeBlockClass}>
-            <code>{`<?php
+            <pre className={codeBlockClass}>
+              <code>{`<?php
 // webhook.php
 
 $webhookSecret = getenv("XMRCHECKOUT_WEBHOOK_SECRET");
@@ -375,22 +486,26 @@ if ($event === "invoice.confirmed" && $orderId) {
 }
 
 http_response_code(204);`}</code>
-          </pre>
-        </div>
-      </section>
+            </pre>
+          </div>
+        </section>
 
-      <section id="python" className="mt-12 grid gap-8 scroll-mt-24">
-        <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">Python</h2>
-          <p className="text-ink-soft">
-            Create an invoice with <span className="font-mono text-ink">requests</span> and
-            receive webhooks with FastAPI.
-          </p>
-        </div>
+        <section
+          id="python"
+          className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
+          aria-labelledby="python-title"
+        >
+          <RecipeHeader id="python" index="05" title="Python">
+            <p className="text-ink-soft">
+              Create an invoice with{" "}
+              <span className="font-mono text-ink">requests</span> and receive
+              webhooks with FastAPI.
+            </p>
+          </RecipeHeader>
 
-        <div className="grid gap-4">
-          <pre className={codeBlockClass}>
-            <code>{`# create_invoice.py
+          <div className="grid gap-4">
+            <pre className={codeBlockClass}>
+              <code>{`# create_invoice.py
 import os
 import requests
 
@@ -410,10 +525,10 @@ response = requests.post(
 response.raise_for_status()
 invoice = response.json()
 print(invoice["invoice_url"])`}</code>
-          </pre>
+            </pre>
 
-          <pre className={codeBlockClass}>
-            <code>{`# webhook_server.py
+            <pre className={codeBlockClass}>
+              <code>{`# webhook_server.py
 import os
 from fastapi import FastAPI, Header, HTTPException
 
@@ -435,22 +550,27 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
         pass
 
     return None`}</code>
-          </pre>
-        </div>
-      </section>
+            </pre>
+          </div>
+        </section>
 
-      <section id="go" className="mt-12 grid gap-8 scroll-mt-24">
-        <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">Go</h2>
-          <p className="text-ink-soft">
-            Create an invoice with <span className="font-mono text-ink">net/http</span> and
-            receive webhooks with a standard handler.
-          </p>
-        </div>
+        <section
+          id="go"
+          className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
+          aria-labelledby="go-title"
+        >
+          <RecipeHeader id="go" index="06" title="Go">
+            <p className="text-ink-soft">
+              Create an invoice with{" "}
+              <span className="font-mono text-ink">net/http</span> and receive
+              webhooks with a standard handler.
+            </p>
+          </RecipeHeader>
 
-        <div className="grid gap-4">
-          <pre className={codeBlockClass}>
-            <code>{`// create_invoice.go
+          <div className="grid gap-4">
+            <pre className={codeBlockClass}>
+              <code>
+                {`// create_invoice.go
 package main
 
 import (
@@ -465,8 +585,12 @@ import (
 )
 
 type invoiceResponse struct {
-  ID         string ` + "`json:\"id\"`" + `
-  InvoiceURL string ` + "`json:\"invoice_url\"`" + `
+  ID         string ` +
+                  '`json:"id"`' +
+                  `
+  InvoiceURL string ` +
+                  '`json:"invoice_url"`' +
+                  `
 }
 
 func main() {
@@ -502,11 +626,13 @@ func main() {
     panic(err)
   }
   fmt.Println(invoice.InvoiceURL)
-}`}</code>
-          </pre>
+}`}
+              </code>
+            </pre>
 
-          <pre className={codeBlockClass}>
-            <code>{`// webhook_server.go
+            <pre className={codeBlockClass}>
+              <code>
+                {`// webhook_server.go
 package main
 
 import (
@@ -516,10 +642,16 @@ import (
 )
 
 type webhookPayload struct {
-  Event   string ` + "`json:\"event\"`" + `
+  Event   string ` +
+                  '`json:"event"`' +
+                  `
   Invoice struct {
-    Metadata map[string]any ` + "`json:\"metadata\"`" + `
-  } ` + "`json:\"invoice\"`" + `
+    Metadata map[string]any ` +
+                  '`json:"metadata"`' +
+                  `
+  } ` +
+                  '`json:"invoice"`' +
+                  `
 }
 
 func main() {
@@ -549,10 +681,12 @@ func main() {
   })
 
   _ = http.ListenAndServe(":3001", nil)
-}`}</code>
-          </pre>
-        </div>
-      </section>
+}`}
+              </code>
+            </pre>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

@@ -90,11 +90,7 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
 
   return (
     <div className="donate-entry">
-      <button
-        className="donate-link"
-        type="button"
-        onClick={openModal}
-      >
+      <button className="donate-link" type="button" onClick={openModal}>
         Donate
       </button>
       {isOpen ? (
@@ -104,22 +100,33 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
           aria-modal="true"
           aria-labelledby="donate-title"
         >
-          <div className="absolute inset-0 bg-ink/60 backdrop-blur" onClick={closeModal} />
           <div
-            className="relative w-[min(420px,92vw)] rounded-3xl border border-stroke bg-card p-7 text-ink shadow-deep"
+            className="absolute inset-0 bg-ink/60 backdrop-blur"
+            onClick={closeModal}
+          />
+          <div
+            className="relative w-[min(420px,92vw)] overflow-hidden rounded-surface border border-ink/20 bg-card text-ink shadow-deep"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start justify-between gap-4 border-b border-cream/20 bg-ink px-5 py-5 text-cream">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
+                <p className="flex items-center gap-2 text-xs font-semibold text-cream/70">
+                  <span
+                    className="h-2 w-2 rounded-full bg-monero"
+                    aria-hidden="true"
+                  />
                   Support xmrcheckout.com
                 </p>
-                <h3 id="donate-title" className="mt-2 font-sans font-semibold text-xl">
-                  If xmrcheckout.com has been helpful, a donation is appreciated.
+                <h3
+                  id="donate-title"
+                  className="mt-2 font-sans font-semibold text-xl"
+                >
+                  If xmrcheckout.com has been helpful, a donation is
+                  appreciated.
                 </h3>
               </div>
               <button
-                className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
+                className="rounded-full border border-cream/30 bg-cream/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-cream transition hover:bg-cream/20"
                 type="button"
                 onClick={closeModal}
                 aria-label="Close donation modal"
@@ -127,69 +134,77 @@ export default function DonateModal({ donationsEnabled }: DonateModalProps) {
                 Close
               </button>
             </div>
-            <p className="mt-3 text-ink-soft">
-              Choose an amount and we will open an invoice page with payment details and status.
-            </p>
-            <form className="mt-4 grid gap-4" action={formAction} ref={formRef}>
-              <label
-                className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
-                htmlFor="donation_amount"
+            <div className="p-5">
+              <p className="text-ink-soft">
+                Choose an amount and we will open an invoice page with payment
+                details and status.
+              </p>
+              <form
+                className="mt-4 grid gap-4"
+                action={formAction}
+                ref={formRef}
               >
-                Amount (XMR)
-              </label>
-              <input
-                className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
-                id="donation_amount"
-                name="amount_xmr"
-                type="number"
-                step="0.000001"
-                min="0"
-                placeholder="0.10"
-                required
-                onChange={(event) => setAmountInput(event.target.value)}
-              />
-              <div className="min-h-[2.75rem]">
-                {usdEstimate ? (
-                  <>
-                    <p className="text-sm text-ink-soft">
-                      Approx. USD reference: ~{usdEstimate}
-                    </p>
-                    <details className="w-fit text-xs text-ink-soft">
-                      <summary className="cursor-pointer select-none underline underline-offset-4">
-                        About this estimate
-                      </summary>
-                      <p className="mt-2 max-w-[46ch] leading-relaxed">
-                        Reference only, uses CoinGecko spot rate. Not a quote or guarantee.
+                <label
+                  className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
+                  htmlFor="donation_amount"
+                >
+                  Amount (XMR)
+                </label>
+                <input
+                  className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+                  id="donation_amount"
+                  name="amount_xmr"
+                  type="number"
+                  step="0.000001"
+                  min="0"
+                  placeholder="0.10"
+                  required
+                  onChange={(event) => setAmountInput(event.target.value)}
+                />
+                <div className="min-h-[2.75rem]">
+                  {usdEstimate ? (
+                    <>
+                      <p className="text-sm text-ink-soft">
+                        Approx. USD reference: ~{usdEstimate}
                       </p>
-                    </details>
-                  </>
+                      <details className="w-fit text-xs text-ink-soft">
+                        <summary className="cursor-pointer select-none underline underline-offset-4">
+                          About this estimate
+                        </summary>
+                        <p className="mt-2 max-w-[46ch] leading-relaxed">
+                          Reference only, uses CoinGecko spot rate. Not a quote
+                          or guarantee.
+                        </p>
+                      </details>
+                    </>
+                  ) : null}
+                </div>
+                {state.error ? (
+                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                    {state.error}
+                  </p>
                 ) : null}
-              </div>
-              {state.error ? (
-                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                  {state.error}
-                </p>
-              ) : null}
-              <div className="flex flex-wrap justify-end gap-3">
-                <button
-                  className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
-                  type="button"
-                  onClick={closeModal}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
-                  type="submit"
-                >
-                  Donate
-                </button>
-              </div>
-            </form>
-            <p className="mt-4 text-sm text-ink-soft">
-              Payments go directly to the founder wallet. This checkout never
-              moves funds.
-            </p>
+                <div className="flex flex-wrap justify-end gap-3">
+                  <button
+                    className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
+                    type="button"
+                    onClick={closeModal}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+                    type="submit"
+                  >
+                    Donate
+                  </button>
+                </div>
+              </form>
+              <p className="mt-4 border-l-2 border-sage pl-3 text-sm text-ink-soft">
+                Payments go directly to the founder wallet. This checkout never
+                moves funds.
+              </p>
+            </div>
           </div>
         </div>
       ) : null}

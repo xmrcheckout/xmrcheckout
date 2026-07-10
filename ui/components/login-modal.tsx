@@ -59,10 +59,13 @@ export default function LoginModal() {
       return;
     }
     previousFocusRef.current =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
 
     window.requestAnimationFrame(() => {
-      const firstField = modalRef.current?.querySelector<HTMLElement>("#payment_address");
+      const firstField =
+        modalRef.current?.querySelector<HTMLElement>("#payment_address");
       firstField?.focus();
     });
 
@@ -77,8 +80,8 @@ export default function LoginModal() {
 
       const focusable = Array.from(
         modalRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
       ).filter((element) => !element.hasAttribute("hidden"));
 
       if (focusable.length === 0) {
@@ -122,23 +125,33 @@ export default function LoginModal() {
       aria-labelledby="login-title"
       aria-describedby="login-description"
     >
-      <div className="absolute inset-0 bg-ink/60 backdrop-blur" onClick={closeModal} />
+      <div
+        className="absolute inset-0 bg-ink/60 backdrop-blur"
+        onClick={closeModal}
+      />
       <div
         ref={modalRef}
-        className="relative max-h-[calc(100dvh-1.5rem)] w-[min(500px,94vw)] overflow-y-auto rounded-2xl border border-stroke bg-card p-4 shadow-deep sm:p-5"
+        className="relative max-h-[calc(100dvh-1.5rem)] w-[min(500px,94vw)] overflow-y-auto rounded-surface border border-ink/20 bg-card shadow-deep"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3 border-b border-cream/20 bg-ink px-4 py-4 text-cream sm:px-5">
           <div>
-            <p className="text-xs font-semibold text-clay">
+            <p className="flex items-center gap-2 text-xs font-semibold text-cream/70">
+              <span
+                className="h-2 w-2 rounded-full bg-monero"
+                aria-hidden="true"
+              />
               View-only setup
             </p>
-            <h3 id="login-title" className="mt-1 font-sans font-semibold text-lg leading-tight">
+            <h3
+              id="login-title"
+              className="mt-1 font-sans font-semibold text-lg leading-tight"
+            >
               Connect your wallet for payment detection.
             </h3>
           </div>
           <button
-            className="shrink-0 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95"
+            className="shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
             type="button"
             onClick={closeModal}
             aria-label="Close login modal"
@@ -146,22 +159,24 @@ export default function LoginModal() {
             Close
           </button>
         </div>
-        <div
-          id="login-description"
-          className="mt-3 rounded-xl border border-stroke bg-white/60 p-3 text-xs leading-relaxed text-ink-soft sm:text-sm"
-        >
-          <p className="font-semibold text-ink">Before you continue</p>
-          <p className="mt-1">
-            Your primary address identifies the dashboard. Your secret view key
-            lets XMR Checkout detect incoming invoice payments. It is encrypted
-            at rest, cannot spend from your wallet, and is the maximum permission
-            this software asks for.
-          </p>
-          <p className="mt-1 font-semibold text-clay">
-            Never paste a spend key here.
-          </p>
+        <div className="p-4 sm:p-5">
+          <div
+            id="login-description"
+            className="border-l-2 border-sage pl-3 text-xs leading-relaxed text-ink-soft sm:text-sm"
+          >
+            <p className="font-semibold text-ink">Before you continue</p>
+            <p className="mt-1">
+              Your primary address identifies the dashboard. Your secret view
+              key lets XMR Checkout detect incoming invoice payments. It is
+              encrypted at rest, cannot spend from your wallet, and is the
+              maximum permission this software asks for.
+            </p>
+            <p className="mt-1 font-semibold text-ink">
+              Never paste a spend key here.
+            </p>
+          </div>
+          <LoginForm />
         </div>
-        <LoginForm />
       </div>
     </div>
   );

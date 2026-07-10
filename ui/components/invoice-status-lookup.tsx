@@ -40,7 +40,7 @@ export default function InvoiceStatusLookup({
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <input
-          className="min-w-[220px] flex-1 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+          className="min-h-12 min-w-[220px] flex-1 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
           id="invoice_id"
           name="invoice_id"
           type="text"
@@ -52,7 +52,7 @@ export default function InvoiceStatusLookup({
           required
         />
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+          className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="submit"
         >
           Check status

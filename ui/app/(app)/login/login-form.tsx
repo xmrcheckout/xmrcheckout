@@ -8,8 +8,11 @@ import { loginAction, type LoginState } from "./actions";
 const initialState: LoginState = { error: null };
 
 const apiBaseUrl =
-  typeof window === "undefined" ? process.env.NEXT_PUBLIC_API_BASE_URL ?? "" : "";
-const base58Pattern = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/;
+  typeof window === "undefined"
+    ? (process.env.NEXT_PUBLIC_API_BASE_URL ?? "")
+    : "";
+const base58Pattern =
+  /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/;
 const viewKeyPattern = /^[0-9a-fA-F]{64}$/;
 const validationDelayMs = 450;
 
@@ -24,7 +27,8 @@ const isLikelyPrimaryAddress = (value: string) => {
   return base58Pattern.test(trimmed);
 };
 
-const isLikelySecretViewKey = (value: string) => viewKeyPattern.test(value.trim());
+const isLikelySecretViewKey = (value: string) =>
+  viewKeyPattern.test(value.trim());
 
 export default function LoginForm() {
   const [state, formAction] = useFormState(loginAction, initialState);
@@ -34,17 +38,25 @@ export default function LoginForm() {
   const [validationStatus, setValidationStatus] = useState<
     "idle" | "checking" | "valid" | "invalid" | "error"
   >("idle");
-  const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const [validationMessage, setValidationMessage] = useState<string | null>(
+    null,
+  );
 
   const canSubmit = useMemo(() => {
-    if (!isLikelyPrimaryAddress(paymentAddress) || !isLikelySecretViewKey(viewKey)) {
+    if (
+      !isLikelyPrimaryAddress(paymentAddress) ||
+      !isLikelySecretViewKey(viewKey)
+    ) {
       return false;
     }
     return validationStatus !== "checking" && validationStatus !== "invalid";
   }, [paymentAddress, validationStatus, viewKey]);
 
   useEffect(() => {
-    if (!isLikelyPrimaryAddress(paymentAddress) || !isLikelySecretViewKey(viewKey)) {
+    if (
+      !isLikelyPrimaryAddress(paymentAddress) ||
+      !isLikelySecretViewKey(viewKey)
+    ) {
       setValidationStatus("idle");
       setValidationMessage(null);
       return;
@@ -82,7 +94,7 @@ export default function LoginForm() {
         }
         setValidationStatus("error");
         setValidationMessage(
-          "Unable to validate the address and view key yet. You can still sign in to confirm."
+          "Unable to validate the address and view key yet. You can still sign in to confirm.",
         );
       }
     }, validationDelayMs);
@@ -104,7 +116,7 @@ export default function LoginForm() {
             Primary address
           </label>
           {isLikelyPrimaryAddress(paymentAddress) ? (
-            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-800">
               <svg
                 className="h-3.5 w-3.5"
                 viewBox="0 0 16 16"
@@ -143,7 +155,7 @@ export default function LoginForm() {
             Secret view key
           </label>
           {isLikelySecretViewKey(viewKey) ? (
-            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-800">
               <svg
                 className="h-3.5 w-3.5"
                 viewBox="0 0 16 16"
@@ -170,7 +182,7 @@ export default function LoginForm() {
             onChange={(event) => setViewKey(event.target.value)}
           />
           <button
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.7rem] font-semibold text-ink"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.7rem] font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
             type="button"
             onClick={() => setIsViewKeyVisible((current) => !current)}
           >
@@ -204,7 +216,7 @@ export default function LoginForm() {
       ) : null}
       <div className="flex items-center justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none disabled:hover:translate-y-0"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none"
           type="submit"
           disabled={!canSubmit}
         >

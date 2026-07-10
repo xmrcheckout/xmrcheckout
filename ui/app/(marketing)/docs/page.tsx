@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
 
+import PageIntroBand from "../../../components/page-intro-band";
+import StatusBadge from "../../../components/status-badge";
+
 export const metadata: Metadata = {
   title: "Docs",
 };
@@ -11,16 +14,21 @@ const apiBaseUrl =
   process.env.API_BASE_URL ??
   "http://localhost:8000";
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.SITE_URL ??
+  "http://localhost:3000";
 const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
 
 const methodStyles: Record<string, string> = {
   GET: "bg-emerald-900/10 text-emerald-800",
-  POST: "bg-amber-900/15 text-amber-800",
+  POST: "bg-amber-900/20 text-amber-800",
   DELETE: "bg-red-900/10 text-red-700",
   PUT: "bg-blue-900/10 text-blue-800",
   PATCH: "bg-blue-900/10 text-blue-800",
 };
+
+const codeBlockClass =
+  "max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
 
 const endpointGroups = [
   {
@@ -30,7 +38,8 @@ const endpointGroups = [
       {
         method: "POST",
         path: "/api/core/auth/login",
-        description: "Exchange a primary address and secret view key for an API key and webhook secret.",
+        description:
+          "Exchange a primary address and secret view key for an API key and webhook secret.",
       },
     ],
   },
@@ -46,12 +55,14 @@ const endpointGroups = [
       {
         method: "GET",
         path: "/api/core/public/invoice/{invoice_id}/continue",
-        description: "After confirmation, redirect to the merchant-provided Continue URL (if configured).",
+        description:
+          "After confirmation, redirect to the merchant-provided Continue URL (if configured).",
       },
       {
         method: "GET",
         path: "/api/core/public/system/status",
-        description: "Read daemon, wallet-rpc, block height, and reconciler heartbeat without auth.",
+        description:
+          "Read daemon, wallet-rpc, block height, and reconciler heartbeat without auth.",
       },
     ],
   },
@@ -62,7 +73,8 @@ const endpointGroups = [
       {
         method: "GET",
         path: "/api/core/invoices",
-        description: "List invoices for the signed-in user (supports search and sorting).",
+        description:
+          "List invoices for the signed-in user (supports search and sorting).",
       },
       {
         method: "GET",
@@ -109,7 +121,8 @@ const endpointGroups = [
       {
         method: "POST",
         path: "/api/core/webhooks",
-        description: "Register webhook URLs (single or per-event) and event filters.",
+        description:
+          "Register webhook URLs (single or per-event) and event filters.",
       },
       {
         method: "DELETE",
@@ -537,27 +550,37 @@ const endpointRequirements = [
 ];
 
 const requirementsByEndpoint = Object.fromEntries(
-  endpointRequirements.map((entry) => [`${entry.method} ${entry.path}`, entry])
+  endpointRequirements.map((entry) => [`${entry.method} ${entry.path}`, entry]),
 );
 
 export default function DocsPage() {
   return (
     <main className="px-[6vw] pb-20 pt-8 text-ink">
-      <section className="grid max-w-[58rem] gap-4">
-        <p className="text-sm font-semibold text-clay">
-          Documentation
-        </p>
-        <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-          Quick start and API reference.
-        </h1>
-        <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-          Create invoices, send customers to hosted invoice pages, and receive
-          invoice status through polling or webhooks. Setup uses your primary
-          address and secret view key; spend keys are never requested.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="mx-auto w-full max-w-7xl">
+        <section aria-label="Documentation introduction">
+          <PageIntroBand
+            eyebrow="Documentation"
+            id="docs-title"
+            title="Quick start and API reference."
+            description={
+              <p>
+                Create invoices, send customers to hosted invoice pages, and
+                receive invoice status through polling or webhooks. Setup uses
+                your primary address and secret view key; spend keys are never
+                requested.
+              </p>
+            }
+            facts={[
+              { label: "Wallet access", value: "View-only" },
+              { label: "Invoice unit", value: "XMR" },
+              { label: "API format", value: "REST + JSON" },
+            ]}
+          />
+        </section>
+
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <Link
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             href="/docs/integrations"
           >
             Integration recipes
@@ -566,55 +589,110 @@ export default function DocsPage() {
             Copy/paste examples for curl, Node, PHP, Python, and Go.
           </span>
         </div>
-      </section>
 
-      <nav className="docs-jump-nav" aria-label="Documentation sections">
-        {[
-          { href: "#start", label: "Start" },
-          { href: "#fiat-inputs", label: "Fiat inputs" },
-          { href: "#concepts", label: "Concepts" },
-          { href: "#api-reference", label: "API reference" },
-        ].map((item) => (
-          <a key={item.href} href={item.href}>
-            {item.label}
-          </a>
-        ))}
-      </nav>
+        <nav
+          className="mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card p-2 shadow-soft"
+          aria-label="Documentation sections"
+        >
+          {[
+            { href: "#start", label: "Start" },
+            { href: "#fiat-inputs", label: "Fiat inputs" },
+            { href: "#concepts", label: "Concepts" },
+            { href: "#api-reference", label: "API reference" },
+          ].map((item, index) => (
+            <a
+              className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+              key={item.href}
+              href={item.href}
+            >
+              <span className="font-mono text-xs text-ink-soft/60">
+                0{index + 1}
+              </span>
+              {item.label}
+            </a>
+          ))}
+        </nav>
 
-      <section
-        id="start"
-        className="mt-8 grid scroll-mt-24 gap-6 rounded-2xl border border-stroke bg-white/65 p-6 shadow-soft backdrop-blur lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)]"
-      >
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-clay">Start here</p>
-          <h2 className="mt-2 font-sans font-semibold text-2xl">Create and check an invoice.</h2>
-          <ol className="mt-4 grid gap-4 text-sm text-ink-soft">
-            <li className="border-t border-stroke pt-3">
-              <p className="font-semibold text-ink">1. Sign in with view-only wallet data</p>
-              <p className="mt-1">
-                Use your primary address and secret view key to retrieve an API key.
+        <section
+          id="start"
+          className="mt-8 scroll-mt-24 overflow-hidden rounded-surface border border-stroke bg-card shadow-soft"
+          aria-labelledby="start-title"
+        >
+          <header className="flex flex-wrap items-end justify-between gap-4 px-5 py-5 sm:px-6">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-clay"
+                  aria-hidden="true"
+                />
+                Start here
+              </p>
+              <h2
+                className="mt-1 font-sans text-2xl font-semibold"
+                id="start-title"
+              >
+                Create and check an invoice.
+              </h2>
+            </div>
+            <StatusBadge label="View-only setup" tone="success" />
+          </header>
+          <ol className="grid divide-y divide-stroke border-y border-stroke bg-white/60 md:grid-cols-3 md:divide-x md:divide-y-0">
+            <li className="min-w-0 px-5 py-5 sm:px-6">
+              <span className="font-mono text-xs text-ink-soft">01</span>
+              <p className="mt-2 font-semibold text-ink">
+                Sign in with view-only wallet data
+              </p>
+              <p className="mt-1 text-sm text-ink-soft">
+                Use your primary address and secret view key to retrieve an API
+                key.
               </p>
             </li>
-            <li className="border-t border-stroke pt-3">
-              <p className="font-semibold text-ink">2. Create an invoice</p>
-              <p className="mt-1">
-                Call <span className="font-mono text-ink">POST /api/core/invoices</span> and
-                send the customer to the hosted invoice URL.
+            <li className="min-w-0 px-5 py-5 sm:px-6">
+              <span className="font-mono text-xs text-ink-soft">02</span>
+              <p className="mt-2 font-semibold text-ink">Create an invoice</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                Call{" "}
+                <span className="font-mono text-ink">
+                  POST /api/core/invoices
+                </span>{" "}
+                and send the customer to the hosted invoice URL.
               </p>
             </li>
-            <li className="border-t border-stroke pt-3">
-              <p className="font-semibold text-ink">3. Listen for status</p>
-              <p className="mt-1">
+            <li className="min-w-0 px-5 py-5 sm:px-6">
+              <span className="font-mono text-xs text-ink-soft">03</span>
+              <p className="mt-2 font-semibold text-ink">Listen for status</p>
+              <p className="mt-1 text-sm text-ink-soft">
                 Subscribe to webhooks or poll the public invoice endpoint until
                 <span className="font-mono text-ink"> invoice.confirmed</span>.
               </p>
             </li>
           </ol>
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-ink">Minimal request</p>
-          <pre className="mt-3 max-w-full overflow-x-auto rounded-xl border border-stroke bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft">
-            <code>{`POST /api/core/invoices
+          <div className="grid gap-5 px-5 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)] lg:items-start">
+            <div>
+              <p className="text-sm font-semibold text-ink">Minimal request</p>
+              <p className="mt-2 max-w-xl text-sm text-ink-soft">
+                The response includes the invoice id, payment address, amount,
+                and hosted invoice URL.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <Link
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  href="/docs/integrations"
+                >
+                  See recipes
+                </Link>
+                <a
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  href={`${normalizedSiteUrl}/openapi.json`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  OpenAPI JSON
+                </a>
+              </div>
+            </div>
+            <pre className={codeBlockClass}>
+              <code>{`POST /api/core/invoices
 Authorization: ApiKey <api_key>
 Content-Type: application/json
 
@@ -623,39 +701,45 @@ Content-Type: application/json
   "confirmation_target": 2,
   "metadata": { "order_id": "ORDER-1234" }
 }`}</code>
-          </pre>
-          <p className="mt-3 text-sm text-ink-soft">
-            The response includes the invoice id, payment address, amount, and
-            hosted invoice URL.
-          </p>
-        </div>
-        <div className="mt-4 flex flex-wrap items-center gap-3 lg:col-span-2">
-          <Link
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
-            href="/docs/integrations"
-          >
-            See recipes
-          </Link>
-          <a
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
-            href={`${normalizedSiteUrl}/openapi.json`}
-            rel="noreferrer"
-            target="_blank"
-          >
-            OpenAPI JSON
-          </a>
-        </div>
-      </section>
+            </pre>
+          </div>
+        </section>
 
-      <section id="fiat-inputs" className="mt-10 scroll-mt-24 rounded-2xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-        <h2 className="font-sans font-semibold text-2xl">Fiat inputs (optional)</h2>
-        <p className="mt-2 text-ink-soft">
-          You can request an invoice using a fiat amount. The backend converts the
-          value to XMR using the current rate and returns a non-binding quote in the
-          response. The invoice is always stored in XMR.
-        </p>
-        <pre className="mt-4 overflow-x-auto rounded-2xl border border-stroke bg-ink px-6 py-5 text-xs leading-relaxed text-cream shadow-soft">
-          <code>{`POST /api/core/invoices
+        <section
+          id="fiat-inputs"
+          className="mt-10 grid scroll-mt-24 overflow-hidden rounded-surface border border-stroke bg-sand/60 shadow-soft lg:grid-cols-[minmax(0,0.8fr)_minmax(420px,1.2fr)] lg:items-stretch"
+          aria-labelledby="fiat-inputs-title"
+        >
+          <div className="px-5 py-6 sm:px-6 lg:py-7">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <span
+                className="h-2.5 w-2.5 rounded-full bg-sage"
+                aria-hidden="true"
+              />
+              Optional input
+            </p>
+            <h2
+              className="mt-1 font-sans text-2xl font-semibold"
+              id="fiat-inputs-title"
+            >
+              Fiat inputs (optional)
+            </h2>
+            <p className="mt-3 text-ink-soft">
+              You can request an invoice using a fiat amount. The backend
+              converts the value to XMR using the current rate and returns a
+              non-binding quote in the response. The invoice is always stored in
+              XMR.
+            </p>
+            <StatusBadge
+              className="mt-4"
+              label="Non-binding quote"
+              tone="neutral"
+            />
+          </div>
+          <pre
+            className={`${codeBlockClass} m-4 lg:m-0 lg:rounded-none lg:border-0 lg:shadow-none`}
+          >
+            <code>{`POST /api/core/invoices
 Authorization: ApiKey <api_key>
 Content-Type: application/json
 
@@ -666,229 +750,310 @@ Content-Type: application/json
   "checkout_continue_url": "https://merchant.example/thanks",
   "metadata": { "order_id": "ORDER-1234" }
 }`}</code>
-        </pre>
-      </section>
+          </pre>
+        </section>
 
-      <section id="concepts" className="mt-10 grid scroll-mt-24 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">Core principles</h3>
-          <p className="text-ink-soft">
-            All behavior is constrained by non-custodial rules.
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>Merchants retain wallet access (your keys, your funds)</li>
-            <li>View-only access maximum</li>
-            <li>No fiat rails or execution of financial actions</li>
-          </ul>
-        </div>
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">Subaddress-only invoices</h3>
-          <p className="text-ink-soft">
-            Every invoice uses a subaddress derived from your primary address for
-            clearer reconciliation.
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>Subaddress index shown on each invoice</li>
-            <li>Wallet lookahead controls discovery</li>
-            <li>Subaddresses cycle through indices 1 to 100</li>
-            <li>Wallets may require adding the index to view funds</li>
-          </ul>
-        </div>
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">Invoice lifecycle</h3>
-          <p className="text-ink-soft">
-            Clear state transitions without hidden automation.
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>Pending → Payment detected → Confirmed</li>
-            <li>Pending → Expired</li>
-            <li>Pending → Invalid (manual)</li>
-          </ul>
-        </div>
-      </section>
+        <section
+          id="concepts"
+          className="mt-12 grid scroll-mt-24 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <header className="border-b border-stroke pb-5 sm:col-span-2 lg:col-span-3">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <span
+                className="h-2.5 w-2.5 rounded-full bg-clay"
+                aria-hidden="true"
+              />
+              System model
+            </p>
+            <h2 className="mt-1 font-sans text-2xl font-semibold">
+              Concepts and boundaries
+            </h2>
+            <p className="mt-1 max-w-2xl text-ink-soft">
+              The operating rules, access model, and compatibility details
+              behind the API.
+            </p>
+          </header>
+          <div className="rounded-surface border border-stroke border-t-4 border-t-clay bg-white/70 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              Core principles
+            </h3>
+            <p className="text-ink-soft">
+              All behavior is constrained by non-custodial rules.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>Merchants retain wallet access (your keys, your funds)</li>
+              <li>View-only access maximum</li>
+              <li>No fiat rails or execution of financial actions</li>
+            </ul>
+          </div>
+          <div className="rounded-surface border border-stroke border-t-4 border-t-sage bg-white/70 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              Subaddress-only invoices
+            </h3>
+            <p className="text-ink-soft">
+              Every invoice uses a subaddress derived from your primary address
+              for clearer reconciliation.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>Subaddress index shown on each invoice</li>
+              <li>Wallet lookahead controls discovery</li>
+              <li>Subaddresses cycle through indices 1 to 100</li>
+              <li>Wallets may require adding the index to view funds</li>
+            </ul>
+          </div>
+          <div className="rounded-surface border border-stroke border-t-4 border-t-monero bg-white/70 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              Invoice lifecycle
+            </h3>
+            <p className="text-ink-soft">
+              Clear state transitions without hidden automation.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>Pending → Payment detected → Confirmed</li>
+              <li>Pending → Expired</li>
+              <li>Pending → Invalid (manual)</li>
+            </ul>
+          </div>
+        </section>
 
-      <section className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">Authentication</h3>
-          <p className="text-ink-soft">
-            Two auth modes keep integrations explicit and observable.
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>API key for authenticated endpoints</li>
-            <li>Primary address + secret view key to retrieve API credentials</li>
-            <li>Headers: Authorization: ApiKey &lt;api_key&gt;</li>
-            <li>BTCPay compatibility: Authorization: token &lt;api_key&gt;</li>
-          </ul>
-        </div>
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">Webhook events</h3>
-          <p className="text-ink-soft">Observable events for merchant systems.</p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>invoice.created</li>
-            <li>invoice.payment_detected</li>
-            <li>invoice.confirmed</li>
-            <li>invoice.expired</li>
-            <li>Deliveries include the X-Webhook-Secret header</li>
-            <li>Webhooks are optional; poll /api/core/public/invoice/&lt;invoice_id&gt; without auth</li>
-          </ul>
-        </div>
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">Base URL</h3>
-          <p className="text-ink-soft">
-            The API can be reached from:
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>{normalizedSiteUrl}/api/core</li>
-          </ul>
-        </div>
-      </section>
+        <section className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              Authentication
+            </h3>
+            <p className="text-ink-soft">
+              Two auth modes keep integrations explicit and observable.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>API key for authenticated endpoints</li>
+              <li>
+                Primary address + secret view key to retrieve API credentials
+              </li>
+              <li>Headers: Authorization: ApiKey &lt;api_key&gt;</li>
+              <li>
+                BTCPay compatibility: Authorization: token &lt;api_key&gt;
+              </li>
+            </ul>
+          </div>
+          <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              Webhook events
+            </h3>
+            <p className="text-ink-soft">
+              Observable events for merchant systems.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>invoice.created</li>
+              <li>invoice.payment_detected</li>
+              <li>invoice.confirmed</li>
+              <li>invoice.expired</li>
+              <li>Deliveries include the X-Webhook-Secret header</li>
+              <li>
+                Webhooks are optional; poll
+                /api/core/public/invoice/&lt;invoice_id&gt; without auth
+              </li>
+            </ul>
+          </div>
+          <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">Base URL</h3>
+            <p className="text-ink-soft">The API can be reached from:</p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>{normalizedSiteUrl}/api/core</li>
+            </ul>
+          </div>
+        </section>
 
-      <section className="mt-6 grid gap-6 sm:grid-cols-2">
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">BTCPay compatibility (WooCommerce)</h3>
-          <p className="text-ink-soft">
-            A Greenfield-compatible subset keeps the official WooCommerce plugin working
-            without custodial behavior.
-          </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>
-              Base URL uses <span className="font-mono text-ink">/api/v1</span>
-            </li>
-            <li>Supported endpoints: stores, invoices, payment methods, webhooks</li>
-            <li>Invoices are defined in XMR; fiat inputs are quote-only metadata</li>
-            <li>Modal checkout is supported; the hosted invoice page is recommended for clarity</li>
-          </ul>
-        </div>
-        <div className="rounded-xl border border-stroke bg-white/60 p-6 shadow-soft backdrop-blur">
-          <h3 className="mb-2 font-sans font-semibold text-xl">BTCPay webhooks</h3>
-          <p className="text-ink-soft">Deliveries are signed with the BTCPay header format.</p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-            <li>
-              <span className="font-mono text-ink">BTCPay-Sig: sha256=&lt;hmac&gt;</span>
-            </li>
-            <li>Event names follow BTCPay conventions for compatibility.</li>
-          </ul>
-        </div>
-      </section>
+        <section className="mt-5 grid gap-5 sm:grid-cols-2">
+          <div className="rounded-surface border border-stroke bg-sand/60 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              BTCPay compatibility (WooCommerce)
+            </h3>
+            <p className="text-ink-soft">
+              A Greenfield-compatible subset keeps the official WooCommerce
+              plugin working without custodial behavior.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>
+                Base URL uses{" "}
+                <span className="font-mono text-ink">/api/v1</span>
+              </li>
+              <li>
+                Supported endpoints: stores, invoices, payment methods, webhooks
+              </li>
+              <li>
+                Invoices are defined in XMR; fiat inputs are quote-only metadata
+              </li>
+              <li>
+                Modal checkout is supported; the hosted invoice page is
+                recommended for clarity
+              </li>
+            </ul>
+          </div>
+          <div className="rounded-surface border border-stroke bg-sand/60 p-6 shadow-soft">
+            <h3 className="mb-2 font-sans font-semibold text-xl">
+              BTCPay webhooks
+            </h3>
+            <p className="text-ink-soft">
+              Deliveries are signed with the BTCPay header format.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
+              <li>
+                <span className="font-mono text-ink">
+                  BTCPay-Sig: sha256=&lt;hmac&gt;
+                </span>
+              </li>
+              <li>Event names follow BTCPay conventions for compatibility.</li>
+            </ul>
+          </div>
+        </section>
 
-      <section id="api-reference" className="mt-12 grid scroll-mt-24 gap-6">
-        <div className="grid max-w-[52rem] gap-2">
-          <h2 className="font-sans font-semibold text-2xl">API reference</h2>
-          <p className="text-ink-soft">
-            Every endpoint exposed by the API is listed below, grouped by access
-            mode.
-          </p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          {endpointGroups.map((group, index) => {
-            const needsDivider =
-              group.title.startsWith("BTCPay") &&
-              endpointGroups[index - 1] &&
-              !endpointGroups[index - 1].title.startsWith("BTCPay");
+        <section id="api-reference" className="mt-12 grid scroll-mt-24 gap-6">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stroke pb-5">
+            <div className="max-w-[52rem]">
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-sage"
+                  aria-hidden="true"
+                />
+                Endpoint directory
+              </p>
+              <h2 className="mt-1 font-sans font-semibold text-2xl">
+                API reference
+              </h2>
+              <p className="text-ink-soft">
+                Every endpoint exposed by the API is listed below, grouped by
+                access mode.
+              </p>
+            </div>
+            <StatusBadge
+              label={`${endpointRequirements.length} documented routes`}
+            />
+          </div>
+          <div className="grid gap-6 lg:grid-cols-2">
+            {endpointGroups.map((group, index) => {
+              const needsDivider =
+                group.title.startsWith("BTCPay") &&
+                endpointGroups[index - 1] &&
+                !endpointGroups[index - 1].title.startsWith("BTCPay");
 
-            return (
-              <Fragment key={group.title}>
-                {needsDivider ? (
-                  <div className="h-px w-full bg-monero/70 lg:col-span-2" aria-hidden="true"></div>
-                ) : null}
-                <details
-                  className="rounded-2xl border border-stroke bg-white/70 p-6 shadow-soft backdrop-blur"
-                  open
-                >
-                  <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                      <h3 className="font-sans font-semibold text-xl">{group.title}</h3>
-                      <p className="text-sm font-semibold text-sage">
-                        Auth: {group.auth}
-                      </p>
-                    </div>
-                    <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                      {group.items.length} endpoints
-                    </span>
-                    </div>
-                  </summary>
-                  <div className="mt-5 grid gap-3">
-                    {group.items.map((endpoint) => {
-                      const requirements =
-                        requirementsByEndpoint[`${endpoint.method} ${endpoint.path}`];
-
-                      return (
-                        <div
-                          className="grid gap-4 rounded-xl border border-ink/10 bg-white/60 p-4 sm:grid-cols-[auto_1fr]"
-                          key={`${endpoint.method}-${endpoint.path}`}
-                        >
-                          <span
-                            className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${
-                              methodStyles[endpoint.method] ?? "bg-ink/10 text-ink-soft"
-                            }`}
-                          >
-                            {endpoint.method}
-                          </span>
-                          <div className="grid gap-2">
-                            <div className="grid gap-1">
-                              <span className="font-mono text-sm text-ink">
-                                {endpoint.path}
-                              </span>
-                              <span className="text-sm text-ink-soft">
-                                {endpoint.description}
-                              </span>
-                            </div>
-                            {requirements ? (
-                              <details className="rounded-lg border border-ink/10 bg-white/70 px-3 py-2 text-sm text-ink-soft">
-                                <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-sage">
-                                  Requirements
-                                </summary>
-                                <div className="mt-2 grid gap-2">
-                                  <div>
-                                    <span className="font-semibold text-ink">
-                                      Required:
-                                    </span>{" "}
-                                    {requirements.required.length > 0
-                                      ? requirements.required.join(", ")
-                                      : "None"}
-                                  </div>
-                                  {requirements.optional.length > 0 ? (
-                                    <div>
-                                      <span className="font-semibold text-ink">
-                                        Optional:
-                                      </span>{" "}
-                                      {requirements.optional.join(", ")}
-                                    </div>
-                                  ) : null}
-                                  {requirements.notes.length > 0 ? (
-                                    <ul className="list-disc space-y-1 pl-5">
-                                      {requirements.notes.map((note) => (
-                                        <li key={note}>{note}</li>
-                                      ))}
-                                    </ul>
-                                  ) : null}
-                                </div>
-                              </details>
-                            ) : null}
+              return (
+                <Fragment key={group.title}>
+                  {needsDivider ? (
+                    <div
+                      className="h-px w-full bg-monero/70 lg:col-span-2"
+                      aria-hidden="true"
+                    ></div>
+                  ) : null}
+                  <details
+                    className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft"
+                    open
+                  >
+                    <summary className="cursor-pointer list-none px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-clay/50 [&::-webkit-details-marker]:hidden">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                          <h3 className="font-sans font-semibold text-xl">
+                            {group.title}
+                          </h3>
+                          <div className="mt-2">
+                            <StatusBadge
+                              label={`Auth: ${group.auth}`}
+                              tone={
+                                group.auth === "None" ? "success" : "pending"
+                              }
+                            />
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </details>
-              </Fragment>
-            );
-          })}
-        </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-stroke bg-white/60 px-5 py-4 text-sm text-ink-soft shadow-soft backdrop-blur">
-          <span>Need the machine-readable schema?</span>
-          <a
-            className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:opacity-95"
-            href={`${normalizedSiteUrl}/openapi.json`}
-            rel="noreferrer"
-            target="_blank"
-          >
-            OpenAPI JSON
-          </a>
-        </div>
-      </section>
+                        <span className="text-xs font-semibold text-ink-soft">
+                          {group.items.length} endpoints
+                        </span>
+                      </div>
+                    </summary>
+                    <div className="border-t border-stroke bg-white/50 px-5 pb-5">
+                      {group.items.map((endpoint) => {
+                        const requirements =
+                          requirementsByEndpoint[
+                            `${endpoint.method} ${endpoint.path}`
+                          ];
 
+                        return (
+                          <div
+                            className="grid gap-3 border-t border-stroke py-4 first:border-t-0 sm:grid-cols-[auto_1fr] sm:gap-4"
+                            key={`${endpoint.method}-${endpoint.path}`}
+                          >
+                            <span
+                              className={`inline-flex h-7 items-center justify-center self-start rounded-lg px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${
+                                methodStyles[endpoint.method] ??
+                                "bg-ink/10 text-ink-soft"
+                              }`}
+                            >
+                              {endpoint.method}
+                            </span>
+                            <div className="grid gap-2">
+                              <div className="grid gap-1">
+                                <span className="break-all font-mono text-sm text-ink">
+                                  {endpoint.path}
+                                </span>
+                                <span className="text-sm text-ink-soft">
+                                  {endpoint.description}
+                                </span>
+                              </div>
+                              {requirements ? (
+                                <details className="rounded-lg border border-ink/10 bg-white/70 px-3 py-2 text-sm text-ink-soft">
+                                  <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-ink">
+                                    Requirements
+                                  </summary>
+                                  <div className="mt-2 grid gap-2">
+                                    <div>
+                                      <span className="font-semibold text-ink">
+                                        Required:
+                                      </span>{" "}
+                                      {requirements.required.length > 0
+                                        ? requirements.required.join(", ")
+                                        : "None"}
+                                    </div>
+                                    {requirements.optional.length > 0 ? (
+                                      <div>
+                                        <span className="font-semibold text-ink">
+                                          Optional:
+                                        </span>{" "}
+                                        {requirements.optional.join(", ")}
+                                      </div>
+                                    ) : null}
+                                    {requirements.notes.length > 0 ? (
+                                      <ul className="list-disc space-y-1 pl-5">
+                                        {requirements.notes.map((note) => (
+                                          <li key={note}>{note}</li>
+                                        ))}
+                                      </ul>
+                                    ) : null}
+                                  </div>
+                                </details>
+                              ) : null}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </details>
+                </Fragment>
+              );
+            })}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-surface border border-ink bg-ink px-5 py-4 text-sm text-cream shadow-soft">
+            <span className="text-cream/70">
+              Need the machine-readable schema?
+            </span>
+            <a
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream/25 bg-cream/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/60"
+              href={`${normalizedSiteUrl}/openapi.json`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              OpenAPI JSON
+            </a>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

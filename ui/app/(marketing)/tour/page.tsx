@@ -11,10 +11,60 @@ export const metadata: Metadata = {
 
 const tabs = ["overview", "invoices", "webhooks"] as const;
 const webhookTabs = ["settings", "history"] as const;
-const invoiceStatuses = ["pending", "payment_detected", "confirmed", "expired", "invalid"] as const;
+const invoiceStatuses = [
+  "pending",
+  "payment_detected",
+  "confirmed",
+  "expired",
+  "invalid",
+] as const;
 type TourTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
 type InvoiceStatus = (typeof invoiceStatuses)[number];
+
+const tabDetails: Record<
+  TourTab,
+  { index: string; label: string; detail: string }
+> = {
+  overview: {
+    index: "01",
+    label: "Overview",
+    detail: "Activity and status",
+  },
+  invoices: {
+    index: "02",
+    label: "Invoices",
+    detail: "Create and inspect",
+  },
+  webhooks: {
+    index: "03",
+    label: "Webhooks",
+    detail: "Relay and history",
+  },
+};
+
+const invoicePath = [
+  {
+    label: "Invoice created",
+    detail: "Awaiting XMR",
+    dotClass: "bg-amber-500",
+  },
+  {
+    label: "XMR detected",
+    detail: "1 of 2 confirmations",
+    dotClass: "bg-monero",
+  },
+  {
+    label: "Confirmed",
+    detail: "Target reached",
+    dotClass: "bg-sage",
+  },
+  {
+    label: "Webhook relayed",
+    detail: "Store updated",
+    dotClass: "bg-ink",
+  },
+] as const;
 
 type TourSearchParams = Record<string, string | string[] | undefined>;
 
@@ -55,12 +105,7 @@ type WebhookDeliverySummary = {
   invoice_subaddress_index: number | null;
   invoice_amount_xmr: string | null;
   invoice_status:
-    | "pending"
-    | "payment_detected"
-    | "confirmed"
-    | "expired"
-    | "invalid"
-    | null;
+    "pending" | "payment_detected" | "confirmed" | "expired" | "invalid" | null;
   http_status: number | null;
   error_message: string | null;
   created_at: string;
@@ -86,7 +131,10 @@ const buildNowFixture = () => {
       detected_at: null,
       confirmed_at: null,
       expires_at: iso(25 * 60 * 1000),
-      metadata: { recipient_name: "Example customer", description: "Order #1027" },
+      metadata: {
+        recipient_name: "Example customer",
+        description: "Order #1027",
+      },
     },
     {
       id: "demo_inv_detected",
@@ -139,8 +187,14 @@ const buildNowFixture = () => {
     {
       id: "demo_hook_1",
       url: "https://example.com/xmrcheckout/webhook",
-      events: ["invoice.created", "invoice.payment_detected", "invoice.confirmed"],
-      event_urls: { "invoice.expired": "https://example.com/xmrcheckout/invoice-expired" },
+      events: [
+        "invoice.created",
+        "invoice.payment_detected",
+        "invoice.confirmed",
+      ],
+      event_urls: {
+        "invoice.expired": "https://example.com/xmrcheckout/invoice-expired",
+      },
       active: true,
       created_at: iso(-9 * 24 * 60 * 60 * 1000),
     },
@@ -178,7 +232,6 @@ const buildNowFixture = () => {
   ];
 
   return {
-    paymentAddress: exampleAddress,
     defaultConfirmationTarget: 2,
     invoices,
     webhooks,
@@ -203,7 +256,7 @@ export default async function TourPage({
     ? webhookTabParam[0]
     : webhookTabParam;
   const activeWebhookTab: WebhookTab = webhookTabs.includes(
-    activeWebhookTabValue as WebhookTab
+    activeWebhookTabValue as WebhookTab,
   )
     ? (activeWebhookTabValue as WebhookTab)
     : "settings";
@@ -219,7 +272,8 @@ export default async function TourPage({
   const statusParam = resolvedSearchParams?.status;
   const statusValue = Array.isArray(statusParam) ? statusParam[0] : statusParam;
   const invoiceStatusFilter: InvoiceStatus | "all" =
-    activeTab === "invoices" && invoiceStatuses.includes(statusValue as InvoiceStatus)
+    activeTab === "invoices" &&
+    invoiceStatuses.includes(statusValue as InvoiceStatus)
       ? (statusValue as InvoiceStatus)
       : "all";
 
@@ -238,6 +292,9 @@ export default async function TourPage({
       : "desc";
 
   const fixture = buildNowFixture();
+  const exampleInvoice =
+    fixture.invoices.find((invoice) => invoice.status === "payment_detected") ??
+    fixture.invoices[0];
   const invoices = includeArchived
     ? fixture.invoices
     : fixture.invoices.filter((invoice) => !invoice.archived_at);
@@ -252,12 +309,14 @@ export default async function TourPage({
     );
   };
 
-  const invoicesTodayCount = invoices.filter((invoice) => isToday(invoice.created_at)).length;
+  const invoicesTodayCount = invoices.filter((invoice) =>
+    isToday(invoice.created_at),
+  ).length;
   const awaitingConfirmationCount = invoices.filter(
-    (invoice) => invoice.status === "payment_detected"
+    (invoice) => invoice.status === "payment_detected",
   ).length;
   const failedWebhookCount = fixture.deliveries.filter(
-    (delivery) => delivery.http_status !== null && delivery.http_status >= 400
+    (delivery) => delivery.http_status !== null && delivery.http_status >= 400,
   ).length;
   const needsAttentionItems = [
     ...invoices
@@ -265,109 +324,311 @@ export default async function TourPage({
       .map((invoice) => ({
         title: invoice.id,
         detail: `${invoice.confirmations ?? 0}/${invoice.confirmation_target} confirmations reached.`,
+        category: "Confirmations",
+        dotClass: "bg-monero",
       })),
     ...fixture.deliveries
-      .filter((delivery) => delivery.http_status !== null && delivery.http_status >= 400)
+      .filter(
+        (delivery) =>
+          delivery.http_status !== null && delivery.http_status >= 400,
+      )
       .map((delivery) => ({
         title: delivery.event,
         detail: `Webhook returned HTTP ${delivery.http_status}. Review delivery history.`,
+        category: "Delivery",
+        dotClass: "bg-red-500",
       })),
   ];
-  const recentActivityItems = fixture.deliveries.slice(0, 3).map((delivery) => ({
-    title: delivery.event,
-    detail:
-      delivery.http_status && delivery.http_status >= 400
-        ? `Delivery failed for ${delivery.invoice_id ?? "an invoice"}.`
-        : `Delivery accepted for ${delivery.invoice_id ?? "an invoice"}.`,
-  }));
+  const recentActivityItems = fixture.deliveries
+    .slice(0, 3)
+    .map((delivery) => ({
+      title: delivery.event,
+      detail:
+        delivery.http_status && delivery.http_status >= 400
+          ? `Delivery failed for ${delivery.invoice_id ?? "an invoice"}.`
+          : `Delivery accepted for ${delivery.invoice_id ?? "an invoice"}.`,
+      status:
+        delivery.http_status && delivery.http_status >= 400
+          ? "Needs review"
+          : "Accepted",
+      dotClass:
+        delivery.http_status && delivery.http_status >= 400
+          ? "bg-red-500"
+          : "bg-sage",
+    }));
+
+  const overviewMetrics = [
+    {
+      title: "Invoices today",
+      value: invoicesTodayCount.toString(),
+      detail: "Created in this simulated workspace.",
+      accentClass: "border-t-clay",
+      valueClass: "text-clay",
+    },
+    {
+      title: "Awaiting confirmation",
+      value: awaitingConfirmationCount.toString(),
+      detail: "Waiting for the configured target.",
+      accentClass: "border-t-monero",
+      valueClass: "text-monero",
+    },
+    {
+      title: "Webhook issues",
+      value: failedWebhookCount.toString(),
+      detail: "Failed deliveries ready to review.",
+      accentClass: "border-t-red-500",
+      valueClass: "text-red-700",
+    },
+  ];
 
   const tabBaseClass =
-    "inline-flex items-center rounded-xl border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:opacity-95";
+    "group flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2";
   const tabActiveClass =
     "border-ink bg-ink text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)]";
+  const tabInactiveClass =
+    "border-stroke bg-cream/60 text-ink hover:border-ink/40 hover:bg-white/80";
   const subTabBaseClass =
-    "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft transition hover:opacity-95";
+    "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-ink/40 hover:bg-white";
   const subTabActiveClass =
     "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]";
 
   return (
-    <main className="px-[6vw] py-12 text-ink">
-      <section className="mx-auto grid w-full max-w-6xl gap-4">
-        <div className="rounded-2xl border border-stroke bg-white/80 px-5 py-3 shadow-soft backdrop-blur">
-          <p className="text-sm font-semibold text-ink">
-            Tour mode uses simulated data. No wallet connection. No changes are saved.
-          </p>
+    <main className="px-[6vw] pb-16 pt-8 text-ink">
+      <section
+        className="mx-auto w-full max-w-7xl"
+        aria-label="Tour environment"
+      >
+        <div className="overflow-hidden rounded-[1.2rem] border border-ink bg-ink text-cream shadow-card">
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(430px,0.72fr)]">
+            <div className="border-b border-cream/20 px-5 py-6 sm:px-7 lg:border-b-0 lg:border-r">
+              <div className="flex items-center gap-2 text-sm font-semibold text-cream/75">
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-monero"
+                  aria-hidden="true"
+                />
+                Tour workspace
+              </div>
+              <p className="mt-2 max-w-2xl font-sans text-xl font-semibold leading-snug sm:text-2xl">
+                Explore a merchant checkout workspace with simulated activity.
+              </p>
+              <p className="mt-2 max-w-2xl text-sm text-cream/70">
+                Customer payments go directly to the merchant wallet. Spend
+                authority stays outside this software.
+              </p>
+            </div>
+            <dl className="grid grid-cols-3 divide-x divide-cream/20 bg-cream/[0.04]">
+              {[
+                ["Data", "Simulated only"],
+                ["Wallet", "Not connected"],
+                ["Storage", "Nothing saved"],
+              ].map(([term, detail]) => (
+                <div className="min-w-0 px-3 py-5 sm:px-5 lg:py-7" key={term}>
+                  <dt className="text-xs font-semibold text-cream/60">
+                    {term}
+                  </dt>
+                  <dd className="mt-1 text-sm font-semibold text-cream sm:text-base">
+                    {detail}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
-      <section className="mx-auto mt-6 grid w-full max-w-6xl gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <aside className="grid gap-6">
-          <nav className="flex flex-col gap-2" aria-label="Tour sections">
-            {tabs.map((tab) => (
-              <Link
-                key={tab}
-                className={`${tabBaseClass} ${activeTab === tab ? tabActiveClass : ""}`}
-                href={`/tour?tab=${tab}`}
-              >
-                {tab}
-              </Link>
-            ))}
+
+      <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
+        <aside className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+          <div className="mb-5 hidden border-b border-stroke pb-5 lg:block">
+            <p className="font-sans text-sm font-semibold text-ink">
+              Tour sections
+            </p>
+            <p className="mt-1 text-sm text-ink-soft">
+              Move through the same views a merchant uses to monitor checkout
+              activity.
+            </p>
+          </div>
+          <nav
+            className="grid grid-cols-3 gap-2 lg:grid-cols-1"
+            aria-label="Tour sections"
+          >
+            {tabs.map((tab) => {
+              const detail = tabDetails[tab];
+              const isActive = activeTab === tab;
+
+              return (
+                <Link
+                  key={tab}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`${tabBaseClass} ${
+                    isActive ? tabActiveClass : tabInactiveClass
+                  }`}
+                  href={`/tour?tab=${tab}`}
+                >
+                  <span
+                    className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg border font-mono text-xs font-semibold sm:grid ${
+                      isActive
+                        ? "border-cream/25 bg-cream/10 text-cream"
+                        : "border-clay/40 bg-clay/10 text-ink"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {detail.index}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-xs font-semibold sm:text-sm">
+                      {detail.label}
+                    </span>
+                    <span
+                      className={`mt-0.5 hidden text-xs lg:block ${
+                        isActive ? "text-cream/70" : "text-ink-soft/70"
+                      }`}
+                    >
+                      {detail.detail}
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
+          <div className="mt-6 hidden border-l-2 border-sage pl-4 lg:block">
+            <p className="text-sm font-semibold text-ink">Direct to merchant</p>
+            <p className="mt-1 text-sm text-ink-soft">
+              The tour changes presentation only. It cannot connect a wallet or
+              move funds.
+            </p>
+          </div>
         </aside>
-        <div className="grid gap-6">
+
+        <div className="min-w-0">
           {activeTab === "overview" ? (
-            <div className="rounded-2xl border border-stroke bg-white/85 p-7 shadow-soft backdrop-blur sm:p-8">
-              <h1 className="font-sans font-semibold text-3xl">Operational overview</h1>
-              <p className="mt-2 text-ink-soft">
-                A merchant-facing snapshot of invoices, confirmations, and webhook delivery.
-              </p>
-              <div className="mt-6 rounded-xl border border-stroke bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  Primary address (example)
-                </p>
-                <p className="mt-3 break-all font-mono text-sm text-ink">
-                  {fixture.paymentAddress}
-                </p>
-                <p className="mt-2 text-sm text-ink-soft">
-                  This is an example address shown for the tour.
-                </p>
-              </div>
-              <div className="mt-4 grid gap-4 lg:grid-cols-3">
-                {[
-                  {
-                    title: "Invoices today",
-                    value: invoicesTodayCount.toString(),
-                    detail: "Totals update as invoices are created.",
-                  },
-                  {
-                    title: "Invoices awaiting confirmation",
-                    value: awaitingConfirmationCount.toString(),
-                    detail: "Waiting for the configured confirmation target.",
-                  },
-                  {
-                    title: "Webhook issues",
-                    value: failedWebhookCount.toString(),
-                    detail: "Failed deliveries appear in webhook history.",
-                  },
-                ].map((item) => (
+            <section
+              className="grid gap-6"
+              aria-labelledby="tour-overview-title"
+            >
+              <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
+                <div className="max-w-2xl">
+                  <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <span
+                      className="h-2 w-2 rounded-full bg-clay"
+                      aria-hidden="true"
+                    />
+                    Overview
+                  </p>
+                  <h1
+                    className="mt-1 font-sans text-3xl font-semibold leading-tight"
+                    id="tour-overview-title"
+                  >
+                    Merchant activity at a glance
+                  </h1>
+                  <p className="mt-2 text-ink-soft">
+                    Follow invoice state, confirmation progress, and webhook
+                    delivery from one operational view.
+                  </p>
+                </div>
+                <Link
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-ink bg-ink px-4 py-2 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
+                  href="/tour?tab=invoices"
+                >
+                  Open invoices
+                </Link>
+              </header>
+
+              <section
+                className="overflow-hidden rounded-[1.2rem] border border-stroke bg-card shadow-soft"
+                aria-labelledby="invoice-path-title"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-4 sm:px-6">
+                  <div>
+                    <h2
+                      className="font-sans text-lg font-semibold"
+                      id="invoice-path-title"
+                    >
+                      Example invoice path
+                    </h2>
+                    <p className="mt-1 text-sm text-ink-soft">
+                      Each state stays visible as incoming XMR reaches the
+                      configured target.
+                    </p>
+                  </div>
+                  <span className="rounded-full border border-sage/30 bg-sage/10 px-3 py-1.5 text-xs font-semibold text-ink">
+                    Target:{" "}
+                    {exampleInvoice?.confirmation_target ??
+                      fixture.defaultConfirmationTarget}{" "}
+                    confirmations
+                  </span>
+                </div>
+                <div className="border-y border-stroke bg-sand/50 px-5 py-4 sm:px-6">
+                  <p className="text-xs font-semibold text-ink-soft">
+                    Example invoice subaddress
+                  </p>
+                  <code className="mt-1 block break-all text-xs text-ink sm:text-sm">
+                    {exampleInvoice?.address}
+                  </code>
+                </div>
+                <ol className="grid divide-y divide-stroke bg-white/60 md:grid-cols-4 md:divide-x md:divide-y-0">
+                  {invoicePath.map((step, index) => (
+                    <li className="min-w-0 px-5 py-4" key={step.label}>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex items-center gap-2">
+                          <span
+                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${step.dotClass}`}
+                            aria-hidden="true"
+                          />
+                          <span className="font-mono text-xs text-ink-soft">
+                            0{index + 1}
+                          </span>
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm font-semibold text-ink">
+                        {step.label}
+                      </p>
+                      <p className="mt-0.5 text-xs text-ink-soft">
+                        {step.detail}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+
+              <dl
+                className="grid gap-4 sm:grid-cols-3"
+                aria-label="Tour metrics"
+              >
+                {overviewMetrics.map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-xl border border-stroke bg-white/70 p-5"
+                    className={`rounded-[1.2rem] border border-stroke border-t-4 bg-white/70 p-5 shadow-soft ${item.accentClass}`}
                   >
-                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                    <dt className="text-sm font-semibold text-ink-soft">
                       {item.title}
-                    </p>
-                    <h2 className="mt-3 text-2xl font-semibold">{item.value}</h2>
-                    <p className="mt-2 text-sm text-ink-soft">{item.detail}</p>
+                    </dt>
+                    <dd
+                      className={`mt-3 font-mono text-3xl font-semibold ${item.valueClass}`}
+                    >
+                      {item.value}
+                    </dd>
+                    <dd className="mt-2 text-sm text-ink-soft">
+                      {item.detail}
+                    </dd>
                   </div>
                 ))}
-              </div>
-              <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                <div className="rounded-xl border border-stroke bg-white/70 p-5">
-                  <div className="flex items-start justify-between gap-4">
+              </dl>
+
+              <div className="grid gap-4 xl:grid-cols-2">
+                <section
+                  className="rounded-[1.2rem] border border-stroke bg-white/70 p-5 shadow-soft"
+                  aria-labelledby="needs-attention-title"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-sans font-semibold text-xl">Needs attention</h2>
+                      <h2
+                        className="font-sans text-xl font-semibold"
+                        id="needs-attention-title"
+                      >
+                        Needs attention
+                      </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Items a merchant would review before fulfilling orders.
+                        Review these items before fulfilling orders.
                       </p>
                     </div>
                     <Link
@@ -377,15 +638,30 @@ export default async function TourPage({
                       View invoices
                     </Link>
                   </div>
-                  <div className="mt-4 grid gap-3">
+                  <div className="mt-4">
                     {needsAttentionItems.length > 0 ? (
                       needsAttentionItems.map((item) => (
                         <div
-                          className="border-t border-stroke pt-3 text-sm"
+                          className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-stroke py-3 first:border-t-0 first:pt-0 last:pb-0"
                           key={`${item.title}-${item.detail}`}
                         >
-                          <p className="font-semibold text-ink">{item.title}</p>
-                          <p className="mt-1 text-ink-soft">{item.detail}</p>
+                          <span
+                            className={`mt-1.5 h-2.5 w-2.5 rounded-full ${item.dotClass}`}
+                            aria-hidden="true"
+                          />
+                          <div className="min-w-0">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <p className="break-all font-mono text-sm font-semibold text-ink">
+                                {item.title}
+                              </p>
+                              <span className="rounded-full border border-stroke bg-cream/70 px-2 py-1 text-xs font-semibold text-ink-soft">
+                                {item.category}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-sm text-ink-soft">
+                              {item.detail}
+                            </p>
+                          </div>
                         </div>
                       ))
                     ) : (
@@ -394,59 +670,120 @@ export default async function TourPage({
                       </p>
                     )}
                   </div>
-                </div>
-                <div className="rounded-xl border border-stroke bg-white/70 p-5">
-                  <h2 className="font-sans font-semibold text-xl">Recent activity</h2>
-                  <div className="mt-4 grid gap-3">
+                </section>
+
+                <section
+                  className="rounded-[1.2rem] border border-stroke bg-white/70 p-5 shadow-soft"
+                  aria-labelledby="recent-activity-title"
+                >
+                  <h2
+                    className="font-sans text-xl font-semibold"
+                    id="recent-activity-title"
+                  >
+                    Recent webhook activity
+                  </h2>
+                  <p className="mt-1 text-sm text-ink-soft">
+                    The latest delivery attempts from this simulated workspace.
+                  </p>
+                  <div className="mt-4">
                     {recentActivityItems.map((item) => (
                       <div
-                        className="border-t border-stroke pt-3 text-sm"
+                        className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-stroke py-3 first:border-t-0 first:pt-0 last:pb-0"
                         key={`${item.title}-${item.detail}`}
                       >
-                        <p className="font-semibold text-ink">{item.title}</p>
-                        <p className="mt-1 text-ink-soft">{item.detail}</p>
+                        <span
+                          className={`mt-1.5 h-2.5 w-2.5 rounded-full ${item.dotClass}`}
+                          aria-hidden="true"
+                        />
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="break-all font-mono text-sm font-semibold text-ink">
+                              {item.title}
+                            </p>
+                            <span
+                              className={`rounded-full border px-2 py-1 text-xs font-semibold ${
+                                item.status === "Accepted"
+                                  ? "border-sage/30 bg-sage/10 text-ink"
+                                  : "border-red-200 bg-red-50 text-red-700"
+                              }`}
+                            >
+                              {item.status}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-sm text-ink-soft">
+                            {item.detail}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                </section>
               </div>
-              <div className="mt-4 rounded-xl border border-stroke bg-white/70 p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  Active webhook endpoint
-                </p>
+
+              <section
+                className="rounded-[1.2rem] border border-ink bg-ink p-5 text-cream shadow-card sm:p-6"
+                aria-labelledby="active-webhook-title"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-cream/70">
+                      <span
+                        className="h-2.5 w-2.5 rounded-full bg-sage"
+                        aria-hidden="true"
+                      />
+                      Active relay
+                    </div>
+                    <h2
+                      className="mt-1 font-sans text-xl font-semibold"
+                      id="active-webhook-title"
+                    >
+                      Webhook endpoint
+                    </h2>
+                  </div>
+                  <Link
+                    className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream/30 bg-cream/10 px-4 py-2 text-sm font-semibold text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/70"
+                    href="/tour?tab=webhooks"
+                  >
+                    Open webhooks
+                  </Link>
+                </div>
                 {fixture.webhooks.length === 0 ? (
-                  <p className="mt-3 text-sm text-ink-soft">
-                    No webhooks configured yet.{" "}
-                    <Link className="font-semibold text-ink underline" href="/tour?tab=webhooks">
-                      Add a webhook endpoint.
-                    </Link>
+                  <p className="mt-4 text-sm text-cream/70">
+                    No webhooks configured yet.
                   </p>
                 ) : (
-                  <div className="mt-3 grid gap-3 text-sm text-ink">
+                  <div className="mt-4 grid gap-4 border-t border-cream/20 pt-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
                     {fixture.webhooks.map((webhook) => (
-                      <div
-                        className="rounded-xl border border-stroke bg-white/80 px-4 py-3"
-                        key={webhook.id}
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="break-all font-semibold">{webhook.url}</p>
-                          <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                            {webhook.active ? "Active" : "Paused"}
-                          </span>
-                        </div>
-                        <p className="mt-2 text-xs text-ink-soft">
-                          Events: {webhook.events.join(", ")}
+                      <div className="min-w-0" key={webhook.id}>
+                        <p className="text-xs font-semibold text-cream/60">
+                          Endpoint URL
                         </p>
+                        <code className="mt-1 block break-all text-sm text-cream">
+                          {webhook.url}
+                        </code>
+                        <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-sage/40 bg-sage/20 px-2.5 py-1 text-xs font-semibold text-cream">
+                          <span
+                            className="h-2 w-2 rounded-full bg-sage"
+                            aria-hidden="true"
+                          />
+                          {webhook.active ? "Active" : "Paused"}
+                        </span>
                       </div>
                     ))}
+                    <div className="min-w-0 lg:border-l lg:border-cream/20 lg:pl-5">
+                      <p className="text-xs font-semibold text-cream/60">
+                        Relayed events
+                      </p>
+                      <p className="mt-1 break-words font-mono text-sm leading-relaxed text-cream/90">
+                        {fixture.webhooks[0]?.events.join("  /  ")}
+                      </p>
+                    </div>
                   </div>
                 )}
-              </div>
-              <div className="mt-5 rounded-xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">
-                We never hold funds. Payments move from the customer to your wallet.
-              </div>
-            </div>
+              </section>
+            </section>
           ) : null}
+
           {activeTab === "invoices" ? (
             <InvoicePanel
               mode="tour"
@@ -460,41 +797,55 @@ export default async function TourPage({
               defaultConfirmationTarget={fixture.defaultConfirmationTarget}
             />
           ) : null}
+
           {activeTab === "webhooks" ? (
-            <div className="rounded-2xl border border-stroke bg-white/80 p-8 shadow-card backdrop-blur">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h1 className="font-sans font-semibold text-3xl">Webhook endpoints.</h1>
-                  <p className="mt-2 text-ink-soft">
-                    Relay invoice state updates to your systems. Optional overrides let
-                    you target different URLs per event.
-                  </p>
-                </div>
-              </div>
-              <nav className="mt-6 flex flex-wrap gap-2" aria-label="Webhook views">
+            <section
+              className="grid gap-6"
+              aria-labelledby="tour-webhooks-title"
+            >
+              <header className="border-b border-stroke pb-6">
+                <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                  <span
+                    className="h-2 w-2 rounded-full bg-clay"
+                    aria-hidden="true"
+                  />
+                  Webhooks
+                </p>
+                <h1
+                  className="mt-1 font-sans text-3xl font-semibold leading-tight"
+                  id="tour-webhooks-title"
+                >
+                  Webhook endpoints
+                </h1>
+                <p className="mt-2 max-w-2xl text-ink-soft">
+                  Relay invoice state updates to your systems. Optional
+                  overrides let you target different URLs per event.
+                </p>
+              </header>
+              <nav className="flex flex-wrap gap-2" aria-label="Webhook views">
                 {webhookTabs.map((tab) => (
                   <Link
                     key={tab}
+                    aria-current={activeWebhookTab === tab ? "page" : undefined}
                     className={`${subTabBaseClass} ${
                       activeWebhookTab === tab ? subTabActiveClass : ""
                     }`}
                     href={`/tour?tab=webhooks&webhook_tab=${tab}`}
                   >
-                    {tab}
+                    {tab === "settings" ? "Endpoints" : "Delivery history"}
                   </Link>
                 ))}
               </nav>
               {activeWebhookTab === "settings" ? (
-                <div className="mt-6">
-                  <WebhookSection mode="tour" webhooks={fixture.webhooks} />
-                </div>
+                <WebhookSection mode="tour" webhooks={fixture.webhooks} />
               ) : null}
               {activeWebhookTab === "history" ? (
-                <div className="mt-6">
-                  <WebhookHistoryPanel mode="tour" deliveries={fixture.deliveries} />
-                </div>
+                <WebhookHistoryPanel
+                  mode="tour"
+                  deliveries={fixture.deliveries}
+                />
               ) : null}
-            </div>
+            </section>
           ) : null}
         </div>
       </section>

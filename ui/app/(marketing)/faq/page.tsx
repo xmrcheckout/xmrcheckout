@@ -329,7 +329,7 @@ export default function FaqPage() {
                 Control, operations, and deployment.
               </p>
             </div>
-            <div className="flex gap-2 overflow-x-auto p-3 lg:grid lg:gap-1.5">
+            <div className="grid gap-1.5 p-3">
               {faqGroups.map((group, index) => (
                 <a
                   className="inline-flex min-h-10 shrink-0 items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"

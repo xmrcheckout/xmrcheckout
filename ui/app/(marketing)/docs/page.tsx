@@ -64,6 +64,12 @@ const endpointGroups = [
         description:
           "Read daemon, wallet-rpc, block height, and reconciler heartbeat without auth.",
       },
+      {
+        method: "GET",
+        path: "/api/core/public/rates/{currency}",
+        description:
+          "Read a non-binding XMR-to-fiat reference rate without auth.",
+      },
     ],
   },
   {
@@ -284,6 +290,17 @@ const endpointRequirements = [
     notes: [
       "Returns wallet-rpc reachability, daemon reachability, current daemon height, and reconciler heartbeat timestamps.",
       "Use this endpoint to debug setup issues before sending a real payment.",
+    ],
+  },
+  {
+    method: "GET",
+    path: "/api/core/public/rates/{currency}",
+    auth: "None",
+    required: ["currency (three-letter path code)"],
+    optional: [],
+    notes: [
+      "Returns fiat units per XMR with a source and quote timestamp.",
+      "Informational only; no rate is locked and no fiat outcome is promised.",
     ],
   },
   {
@@ -591,7 +608,7 @@ export default function DocsPage() {
         </div>
 
         <nav
-          className="mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card p-2 shadow-soft"
+          className="mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card p-2 shadow-soft sm:flex"
           aria-label="Documentation sections"
         >
           {[
@@ -946,7 +963,6 @@ Content-Type: application/json
                   ) : null}
                   <details
                     className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft"
-                    open
                   >
                     <summary className="cursor-pointer list-none px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-clay/50 [&::-webkit-details-marker]:hidden">
                       <div className="flex flex-wrap items-center justify-between gap-4">

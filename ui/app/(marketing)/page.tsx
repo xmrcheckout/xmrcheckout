@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { LoginTrigger } from "../../components/login-modal";
 
@@ -163,7 +164,16 @@ function PreviewQr() {
   );
 }
 
-export default function MarketingHomePage() {
+export default async function MarketingHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ donate?: string | string[] }>;
+}) {
+  const query = await searchParams;
+  if (query.donate === "1") {
+    redirect("/donate");
+  }
+
   return (
     <main className="home-page text-ink">
       <section className="home-hero" aria-labelledby="home-hero-title">
@@ -212,7 +222,7 @@ export default function MarketingHomePage() {
                 <div className="console-address">
                   <span>Your wallet address</span>
                   <code>48xmr...7f2a</code>
-                  <button type="button">Open wallet</button>
+                  <span className="console-open-wallet">Open wallet</span>
                 </div>
               </div>
             </section>

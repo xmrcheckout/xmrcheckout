@@ -8,17 +8,20 @@ import NavLink from "./nav-link";
 type SiteHeaderProps = {
   isAuthenticated: boolean;
   includeTour?: boolean;
+  donationsEnabled?: boolean;
 };
 
 export default function SiteHeader({
   isAuthenticated,
   includeTour = false,
+  donationsEnabled = false,
 }: SiteHeaderProps) {
   const links = [
     { href: "/invoice", label: "Check Invoice" },
     ...(includeTour ? [{ href: "/tour", label: "Tour" }] : []),
     { href: "/docs", label: "Documentation" },
     { href: "/faq", label: "FAQ" },
+    ...(donationsEnabled ? [{ href: "/donate", label: "Donate" }] : []),
     ...(isAuthenticated ? [{ href: "/dashboard", label: "Dashboard" }] : []),
   ];
 

@@ -21,12 +21,20 @@ export async function createDonationAction(
     return { error: "Enter a valid XMR amount.", invoiceId: null };
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/donations`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount_xmr: amount }),
-    cache: "no-store",
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${apiBaseUrl}/api/core/donations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount_xmr: amount }),
+      cache: "no-store",
+    });
+  } catch {
+    return {
+      error: "Donation service is unavailable. Try again later.",
+      invoiceId: null,
+    };
+  }
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);

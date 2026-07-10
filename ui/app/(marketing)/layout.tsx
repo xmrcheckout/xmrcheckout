@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 
 import "./marketing.css";
-import DonateModal from "../../components/donate-modal";
 import LoginModal from "../../components/login-modal";
 import SiteHeader from "../../components/site-header";
 import { areDonationsEnabled } from "../../lib/donations";
@@ -19,14 +18,18 @@ export default async function MarketingLayout({
   const donationsEnabled = areDonationsEnabled();
 
   return (
-    <div>
+    <div className="marketing-shell">
       <div className="ambient">
         <span className="orb orb-a"></span>
         <span className="orb orb-b"></span>
         <span className="ambient-grid"></span>
       </div>
 
-      <SiteHeader isAuthenticated={isAuthenticated} includeTour />
+      <SiteHeader
+        donationsEnabled={donationsEnabled}
+        isAuthenticated={isAuthenticated}
+        includeTour
+      />
 
       {children}
 
@@ -34,7 +37,7 @@ export default async function MarketingLayout({
         <LoginModal />
       </Suspense>
 
-      <footer className="site-footer">
+      <footer className="site-footer site-footer-dark">
         <div className="site-footer-copy">
           <p>
             xmrcheckout.com - Non-custodial Monero checkout software. Open source. Self-hostable.
@@ -48,9 +51,13 @@ export default async function MarketingLayout({
             </Link>
           </p>
         </div>
-        <Suspense fallback={null}>
-          <DonateModal donationsEnabled={donationsEnabled} />
-        </Suspense>
+        {donationsEnabled ? (
+          <div className="donate-entry">
+            <Link className="donate-link" href="/donate">
+              Donate
+            </Link>
+          </div>
+        ) : null}
       </footer>
     </div>
   );

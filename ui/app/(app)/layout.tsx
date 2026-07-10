@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { Suspense } from "react";
 
 import "../(marketing)/marketing.css";
-import DonateModal from "../../components/donate-modal";
 import SiteHeader from "../../components/site-header";
 import { areDonationsEnabled } from "../../lib/donations";
 
@@ -15,7 +13,7 @@ export default function AppLayout({
 
   return (
     <div>
-      <SiteHeader isAuthenticated />
+      <SiteHeader donationsEnabled={donationsEnabled} isAuthenticated />
       {children}
       <footer className="site-footer">
         <div className="site-footer-copy">
@@ -29,9 +27,13 @@ export default function AppLayout({
             </Link>
           </p>
         </div>
-        <Suspense fallback={null}>
-          <DonateModal donationsEnabled={donationsEnabled} />
-        </Suspense>
+        {donationsEnabled ? (
+          <div className="donate-entry">
+            <Link className="donate-link" href="/donate">
+              Donate
+            </Link>
+          </div>
+        ) : null}
       </footer>
     </div>
   );

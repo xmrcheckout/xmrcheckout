@@ -8,7 +8,11 @@ type CopyIconButtonProps = {
   className?: string;
 };
 
-export default function CopyIconButton({ value, label, className }: CopyIconButtonProps) {
+export default function CopyIconButton({
+  value,
+  label,
+  className,
+}: CopyIconButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -33,15 +37,31 @@ export default function CopyIconButton({ value, label, className }: CopyIconButt
         onClick={handleCopy}
         className={
           className ??
-          "inline-flex h-7 w-7 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 transition hover:bg-neutral-50"
+          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-stroke bg-white/80 text-ink-soft transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden"
         }
       >
         {copied ? (
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              d="M20 6 9 17l-5-5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         ) : (
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path
               d="M8 5h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"
               strokeLinecap="round"

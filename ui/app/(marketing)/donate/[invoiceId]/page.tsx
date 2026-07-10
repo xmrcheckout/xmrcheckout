@@ -5,7 +5,11 @@ import InvoicePaymentDetails from "../../../../components/invoice-payment-detail
 import InvoiceStatusAutoRefresh from "../../../../components/invoice-status-auto-refresh";
 import DonationStatusActions from "../../../../components/donation-status-actions";
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
+import PageIntroBand from "../../../../components/page-intro-band";
 import { formatRelativeTime } from "../../../../components/relative-time";
+import StatusBadge, {
+  type StatusTone,
+} from "../../../../components/status-badge";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
 import { areDonationsEnabled } from "../../../../lib/donations";
 
@@ -17,11 +21,7 @@ export const metadata: Metadata = {
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
 type InvoiceStatus =
-  | "pending"
-  | "payment_detected"
-  | "confirmed"
-  | "expired"
-  | "invalid";
+  "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type InvoiceStatusResponse = {
   id: string;
@@ -56,7 +56,7 @@ const formatStatus = (status: InvoiceStatus) => {
 const statusDescription = (
   status: InvoiceStatus,
   confirmationTarget: number,
-  confirmations: number
+  confirmations: number,
 ) => {
   if (status === "pending") {
     return "Awaiting on-chain detection of your donation.";
@@ -83,12 +83,12 @@ const formatTimestamp = (value: string | null) => {
   };
 };
 
-const statusPillStyles: Record<InvoiceStatus, string> = {
-  pending: "bg-amber-100 text-amber-900",
-  payment_detected: "bg-emerald-100 text-emerald-900",
-  confirmed: "bg-ink/20 text-ink",
-  expired: "bg-red-100 text-red-700",
-  invalid: "bg-clay/15 text-clay",
+const statusTones: Record<InvoiceStatus, StatusTone> = {
+  pending: "pending",
+  payment_detected: "detected",
+  confirmed: "success",
+  expired: "error",
+  invalid: "error",
 };
 
 export default async function DonateStatusDetailPage({
@@ -102,32 +102,22 @@ export default async function DonateStatusDetailPage({
   const { invoiceId } = await params;
   const response = await fetch(
     `${apiBaseUrl}/api/core/public/donation/${encodeURIComponent(invoiceId)}`,
-    { cache: "no-store" }
+    { cache: "no-store" },
   );
 
   if (response.status === 404) {
     return (
-      <main className="px-[6vw] pb-20 pt-10 text-ink">
-        <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div className="grid gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Donation status
-            </p>
-            <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-              Donation invoice not found.
-            </h1>
-            <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-              The donation id does not match a known invoice. Check the id and
-              try again.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Need another lookup?
-            </p>
-            <div className="mt-4">
-              <InvoiceStatusLookup initialValue={invoiceId} compact />
-            </div>
+      <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+        <PageIntroBand
+          description="The donation id does not match a known invoice. Check the id and try again."
+          eyebrow="Donation lookup"
+          id="donation-not-found"
+          title="Donation invoice not found"
+        />
+        <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
+          <h2 className="text-lg font-semibold">Check another invoice</h2>
+          <div className="mt-4 max-w-2xl">
+            <InvoiceStatusLookup initialValue={invoiceId} compact />
           </div>
         </section>
       </main>
@@ -136,21 +126,16 @@ export default async function DonateStatusDetailPage({
 
   if (!response.ok) {
     return (
-      <main className="px-[6vw] pb-20 pt-10 text-ink">
-        <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <div className="grid gap-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Donation status
-            </p>
-            <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-              Status unavailable.
-            </h1>
-            <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-              We could not load this donation status. Refresh the page or try
-              again later.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
+      <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+        <PageIntroBand
+          description="We could not load this donation status. Refresh the page or try again later."
+          eyebrow="Donation lookup"
+          id="donation-unavailable"
+          title="Status unavailable"
+        />
+        <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
+          <h2 className="text-lg font-semibold">Try the lookup again</h2>
+          <div className="mt-4 max-w-2xl">
             <InvoiceStatusLookup initialValue={invoiceId} compact />
           </div>
         </section>
@@ -162,7 +147,6 @@ export default async function DonateStatusDetailPage({
   const statusLabel = formatStatus(invoice.status);
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
-  const isInvalid = invoice.status === "invalid";
   const hasDetectedPayment =
     invoice.status === "payment_detected" || invoice.status === "confirmed";
   const timelineItems: {
@@ -205,121 +189,119 @@ export default async function DonateStatusDetailPage({
   const expiresTimestamp = formatTimestamp(invoice.expires_at);
 
   return (
-    <main className="px-[6vw] pb-20 pt-10 text-ink">
-      <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-        <InvoiceStatusAutoRefresh intervalMs={30000} />
-        <div className="grid gap-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-            Make a donation
-          </p>
-          <h1 className="font-sans font-semibold text-[clamp(2.2rem,2rem+1.4vw,3.4rem)] leading-[1.1]">
-            Make a donation
-          </h1>
-          <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-            {isInvalid
-              ? "This donation is marked invalid. Do not pay."
-              : "Send the exact amount shown below to donate."}
-          </p>
-          <p className="text-[1.05rem] leading-relaxed text-ink-soft">
-            {statusDescription(invoice.status, confirmationTarget, confirmations)}
-          </p>
-          <details className="rounded-xl border border-stroke bg-white/60 px-4 py-3 text-sm text-ink-soft shadow-soft">
-            <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-ink">
-              Details
-            </summary>
-            <div className="mt-3 grid gap-2">
-              <p className="font-mono text-xs text-ink">Donation ID: {invoiceId}</p>
-              <p>This status page is public. Anyone with the link can view the current state.</p>
-            </div>
-          </details>
-        </div>
-        <div className="relative overflow-hidden rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-          <div className="flex items-center justify-between gap-3">
-            <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
-              Status
-            </span>
-            <div className="flex items-center gap-2">
-              <span
-                className={`rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${statusPillStyles[invoice.status]}`}
-              >
-                {statusLabel}
-              </span>
-              <StatusRefreshButton label="Refresh" />
-            </div>
-          </div>
-          {invoice.status === "confirmed" ? (
-            <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800">
-              Donation confirmed.
-            </p>
-          ) : null}
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                Confirmations
-              </p>
-              <p className="mt-1 text-lg font-semibold">
-                {confirmations}/{confirmationTarget}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                Created
-              </p>
-              <p
-                className="mt-1 text-sm font-semibold"
-                title={createdTimestamp.relative ?? undefined}
-              >
-                {createdTimestamp.label}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                Expires
-              </p>
-              <p
-                className="mt-1 text-sm font-semibold"
-                title={expiresTimestamp.relative ?? undefined}
-              >
-                {expiresTimestamp.label}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <InvoicePaymentDetails
-        address={invoice.address}
-        amount={invoice.amount_xmr}
-        hasDetectedPayment={hasDetectedPayment}
-        status={invoice.status}
-        confirmationTarget={confirmationTarget}
+    <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+      <InvoiceStatusAutoRefresh intervalMs={30000} />
+      <PageIntroBand
+        description={statusDescription(
+          invoice.status,
+          confirmationTarget,
+          confirmations,
+        )}
+        eyebrow="Direct-to-wallet donation"
+        facts={[
+          {
+            label: "Current status",
+            value: (
+              <StatusBadge
+                label={statusLabel}
+                tone={statusTones[invoice.status]}
+              />
+            ),
+          },
+          {
+            label: "Confirmations",
+            value: `${confirmations}/${confirmationTarget}`,
+          },
+          {
+            label: "Expires",
+            value: expiresTimestamp.label,
+          },
+        ]}
+        id="donation-request-title"
+        title="Make a donation"
       />
 
-      <section className="mt-8 rounded-2xl border border-stroke bg-card p-7 shadow-card backdrop-blur">
-        <h2 className="font-sans font-semibold text-2xl">Timeline</h2>
-        <ol className="mt-5 grid gap-3">
-          {[...timelineItems].reverse().map((item) => (
-            <li
-              className="flex items-center justify-between gap-6 rounded-xl border border-ink/20 bg-white/70 px-4 py-3"
-              key={item.label}
-            >
+      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
+        <InvoicePaymentDetails
+          address={invoice.address}
+          amount={invoice.amount_xmr}
+          hasDetectedPayment={hasDetectedPayment}
+          status={invoice.status}
+          confirmationTarget={confirmationTarget}
+        />
+
+        <aside className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
+          <div className="flex items-center justify-between gap-3 border-b border-stroke px-5 py-4">
+            <div>
+              <p className="text-xs font-semibold text-ink-soft">
+                Donation context
+              </p>
+              <h2 className="mt-1 text-lg font-semibold">Request details</h2>
+            </div>
+            <StatusRefreshButton label="Refresh" />
+          </div>
+          <dl className="divide-y divide-stroke px-5 py-2 text-sm">
+            <div className="py-3">
+              <dt className="text-xs font-semibold text-ink-soft">
+                Donation ID
+              </dt>
+              <dd className="mt-1 break-all font-mono text-xs text-ink">
+                {invoiceId}
+              </dd>
+            </div>
+            <div className="grid grid-cols-2 gap-4 py-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  {item.label}
-                </p>
-                <p
+                <dt className="text-xs font-semibold text-ink-soft">Created</dt>
+                <dd
                   className="mt-1 text-sm font-semibold"
-                  title={item.timestamp.relative ?? undefined}
+                  title={createdTimestamp.relative ?? undefined}
                 >
-                  {item.timestamp.label}
-                </p>
+                  {createdTimestamp.label}
+                </dd>
               </div>
+              <div>
+                <dt className="text-xs font-semibold text-ink-soft">Expires</dt>
+                <dd
+                  className="mt-1 text-sm font-semibold"
+                  title={expiresTimestamp.relative ?? undefined}
+                >
+                  {expiresTimestamp.label}
+                </dd>
+              </div>
+            </div>
+          </dl>
+          <p className="border-t border-stroke bg-sand/50 px-5 py-4 text-xs leading-relaxed text-ink-soft">
+            This status page is public. Anyone with the link can view the
+            current donation state.
+          </p>
+        </aside>
+      </div>
+
+      <section
+        className="mt-8 border-y border-stroke py-6"
+        aria-labelledby="donation-timeline"
+      >
+        <h2 className="text-xl font-semibold" id="donation-timeline">
+          Donation timeline
+        </h2>
+        <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[...timelineItems].reverse().map((item) => (
+            <li className="border-l-2 border-sage pl-4" key={item.label}>
+              <p className="text-xs font-semibold text-ink-soft">
+                {item.label}
+              </p>
+              <p
+                className="mt-1 text-sm font-semibold"
+                title={item.timestamp.relative ?? undefined}
+              >
+                {item.timestamp.label}
+              </p>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="mt-6 grid gap-4">
+      <section className="mt-6 flex flex-wrap gap-3">
         <DonationStatusActions />
       </section>
     </main>

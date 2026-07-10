@@ -5,6 +5,7 @@ import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
 import InvoicePaymentDetails from "../../../components/invoice-payment-details";
 import InvoiceStatusAutoRefresh from "../../../components/invoice-status-auto-refresh";
 import { formatRelativeTime } from "../../../components/relative-time";
+import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import StatusRefreshButton from "../../../components/status-refresh-button";
 
 export const dynamic = "force-dynamic";
@@ -15,11 +16,7 @@ export const metadata: Metadata = {
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
 type InvoiceStatus =
-  | "pending"
-  | "payment_detected"
-  | "confirmed"
-  | "expired"
-  | "invalid";
+  "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type InvoiceStatusResponse = {
   id: string;
@@ -65,44 +62,44 @@ type SystemStatusResponse = {
 const walletRpcBadge = (systemStatus: SystemStatusResponse | null) => {
   if (!systemStatus) {
     return {
-      className: "bg-amber-100 text-amber-900",
       label: "Wallet RPC unavailable",
+      tone: "pending" as StatusTone,
     };
   }
   if (systemStatus.wallet_rpc === "ok") {
     return {
-      className: "bg-emerald-100 text-emerald-900",
       label: "Wallet RPC ok",
+      tone: "success" as StatusTone,
     };
   }
   return {
-    className: "bg-red-100 text-red-700",
     label: "Wallet RPC down",
+    tone: "error" as StatusTone,
   };
 };
 
 const daemonBadge = (systemStatus: SystemStatusResponse | null) => {
   if (!systemStatus) {
     return {
-      className: "bg-amber-100 text-amber-900",
       label: "Daemon unavailable",
+      tone: "pending" as StatusTone,
     };
   }
   if (systemStatus.daemon === "ok") {
     return {
-      className: "bg-emerald-100 text-emerald-900",
       label: "Daemon connected",
+      tone: "success" as StatusTone,
     };
   }
   if (systemStatus.daemon === "unknown") {
     return {
-      className: "bg-amber-100 text-amber-900",
       label: "Daemon not configured",
+      tone: "pending" as StatusTone,
     };
   }
   return {
-    className: "bg-red-100 text-red-700",
     label: "Daemon down",
+    tone: "error" as StatusTone,
   };
 };
 
@@ -132,12 +129,12 @@ const formatTimestamp = (value: string | null) => {
   };
 };
 
-const statusPillStyles: Record<InvoiceStatus, string> = {
-  pending: "bg-amber-100 text-amber-900",
-  payment_detected: "bg-emerald-100 text-emerald-900",
-  confirmed: "bg-ink/20 text-ink",
-  expired: "bg-red-100 text-red-700",
-  invalid: "bg-clay/15 text-clay",
+const statusTones: Record<InvoiceStatus, StatusTone> = {
+  pending: "pending",
+  payment_detected: "detected",
+  confirmed: "success",
+  expired: "error",
+  invalid: "error",
 };
 
 export default async function BtcpayModalInvoicePage({
@@ -147,48 +144,63 @@ export default async function BtcpayModalInvoicePage({
 }) {
   const { invoiceId } = await params;
   const [response, systemStatusResponse] = await Promise.all([
-    fetch(`${apiBaseUrl}/api/core/public/invoice/${encodeURIComponent(invoiceId)}`, {
-      cache: "no-store",
-    }),
+    fetch(
+      `${apiBaseUrl}/api/core/public/invoice/${encodeURIComponent(invoiceId)}`,
+      {
+        cache: "no-store",
+      },
+    ),
     fetch(`${apiBaseUrl}/api/core/public/system/status`, { cache: "no-store" }),
   ]);
 
   if (response.status === 404) {
     return (
-      <main className="min-h-screen bg-cream px-6 py-6 text-ink">
+      <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Payment request
+        <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
+          <header className="bg-ink px-6 py-5 text-cream">
+            <p className="flex items-center gap-2 text-sm font-semibold text-cream/70">
+              <span
+                className="h-2.5 w-2.5 rounded-full bg-monero"
+                aria-hidden="true"
+              />
+              Direct-to-wallet checkout
             </p>
-            <h1 className="mt-2 font-sans font-semibold text-2xl">Invoice not found</h1>
+            <h1 className="mt-2 text-2xl font-semibold">Invoice not found</h1>
+          </header>
+          <div className="px-6 py-5">
+            <p className="text-sm leading-relaxed text-ink-soft">
+              The invoice id does not match a known invoice. Check the id and
+              try again.
+            </p>
           </div>
-        </div>
-        <p className="mt-3 text-sm text-ink-soft">
-          The invoice id does not match a known invoice. Check the id and try
-          again.
-        </p>
+        </section>
       </main>
     );
   }
 
   if (!response.ok) {
     return (
-      <main className="min-h-screen bg-cream px-6 py-6 text-ink">
+      <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-              Payment request
+        <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
+          <header className="bg-ink px-6 py-5 text-cream">
+            <p className="flex items-center gap-2 text-sm font-semibold text-cream/70">
+              <span
+                className="h-2.5 w-2.5 rounded-full bg-monero"
+                aria-hidden="true"
+              />
+              Direct-to-wallet checkout
             </p>
-            <h1 className="mt-2 font-sans font-semibold text-2xl">Status unavailable</h1>
+            <h1 className="mt-2 text-2xl font-semibold">Status unavailable</h1>
+          </header>
+          <div className="px-6 py-5">
+            <p className="text-sm leading-relaxed text-ink-soft">
+              We could not load this invoice status. Refresh the page or try
+              again later.
+            </p>
           </div>
-        </div>
-        <p className="mt-3 text-sm text-ink-soft">
-          We could not load this invoice status. Refresh the page or try again
-          later.
-        </p>
+        </section>
       </main>
     );
   }
@@ -204,33 +216,38 @@ export default async function BtcpayModalInvoicePage({
     invoice.status === "payment_detected" || invoice.status === "confirmed";
   const createdTimestamp = formatTimestamp(invoice.created_at);
   const expiresTimestamp = formatTimestamp(invoice.expires_at);
-  const lastReconcileCompleted = formatTimestamp(systemStatus?.last_reconcile_completed_at ?? null);
+  const lastReconcileCompleted = formatTimestamp(
+    systemStatus?.last_reconcile_completed_at ?? null,
+  );
   const walletStatusBadge = walletRpcBadge(systemStatus);
   const daemonStatusBadge = daemonBadge(systemStatus);
-  const isBtcpayInvoice = Boolean(invoice.btcpay_amount && invoice.btcpay_currency);
+  const isBtcpayInvoice = Boolean(
+    invoice.btcpay_amount && invoice.btcpay_currency,
+  );
   const useClassicCheckout =
     isBtcpayInvoice && invoice.btcpay_checkout_style === "btcpay_classic";
-  const shouldShowBtcpayActions = isBtcpayInvoice && invoice.status === "confirmed";
+  const shouldShowBtcpayActions =
+    isBtcpayInvoice && invoice.status === "confirmed";
   const checkoutContinueAvailable =
     !isBtcpayInvoice &&
     invoice.status === "confirmed" &&
     Boolean(invoice.checkout_continue_available);
 
   return (
-    <main className="min-h-screen bg-cream px-6 py-6 text-ink">
+    <main className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
       <InvoiceStatusAutoRefresh intervalMs={30000} />
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       {useClassicCheckout ? (
         <div className="mx-auto grid max-w-md gap-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-                Payment request
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <StatusRefreshButton label="Refresh" className="text-xs" />
-            </div>
+          <div className="flex items-center justify-between gap-3 px-1">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <span
+                className="h-2.5 w-2.5 rounded-full bg-monero"
+                aria-hidden="true"
+              />
+              Direct-to-wallet checkout
+            </p>
+            <StatusRefreshButton label="Refresh" />
           </div>
           <BtcpayClassicCheckout
             invoiceId={invoiceId}
@@ -243,7 +260,9 @@ export default async function BtcpayModalInvoicePage({
             status={invoice.status}
             confirmationTarget={confirmationTarget}
             redirectUrl={invoice.btcpay_redirect_url ?? null}
-            redirectAutomatically={invoice.btcpay_redirect_automatically ?? null}
+            redirectAutomatically={
+              invoice.btcpay_redirect_automatically ?? null
+            }
             orderId={invoice.btcpay_order_id ?? null}
             orderNumber={invoice.btcpay_order_number ?? null}
             qrLogoMode={invoice.qr_logo ?? "monero"}
@@ -251,149 +270,138 @@ export default async function BtcpayModalInvoicePage({
           />
         </div>
       ) : (
-        <>
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
-                Payment request
-              </p>
-              <h1 className="mt-2 font-sans font-semibold text-2xl">Payment request</h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <StatusRefreshButton label="Refresh" className="text-xs" />
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <InvoicePaymentDetails
-              address={invoice.address}
-              amount={invoice.amount_xmr}
-              hasDetectedPayment={hasDetectedPayment}
-              status={invoice.status}
-              confirmationTarget={confirmationTarget}
-              qrLogoMode={invoice.qr_logo ?? "monero"}
-              qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
-            />
-          </div>
-
-          <div className="mt-4 rounded-2xl border border-stroke bg-card p-5 shadow-card backdrop-blur">
-            <div className="flex items-center justify-between gap-3">
-              <span className="rounded-full bg-ink/10 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                Status
-              </span>
+        <div className="mx-auto w-full max-w-4xl">
+          <div className="mb-4 flex items-center justify-between gap-3 px-1">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
               <span
-                className={`rounded-full px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${statusPillStyles[invoice.status]}`}
-              >
-                {statusLabel}
-              </span>
-            </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                className="h-2.5 w-2.5 rounded-full bg-monero"
+                aria-hidden="true"
+              />
+              Direct-to-wallet checkout
+            </p>
+            <StatusRefreshButton label="Refresh" />
+          </div>
+
+          <InvoicePaymentDetails
+            address={invoice.address}
+            amount={invoice.amount_xmr}
+            hasDetectedPayment={hasDetectedPayment}
+            status={invoice.status}
+            confirmationTarget={confirmationTarget}
+            qrLogoMode={invoice.qr_logo ?? "monero"}
+            qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
+          />
+
+          <section className="mt-4 overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">
+            <div className="grid divide-y divide-stroke sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+              <div className="px-5 py-4">
+                <p className="text-xs font-semibold text-ink-soft">Status</p>
+                <StatusBadge
+                  className="mt-2"
+                  label={statusLabel}
+                  tone={statusTones[invoice.status]}
+                />
+              </div>
+              <div className="px-5 py-4">
+                <p className="text-xs font-semibold text-ink-soft">
                   Confirmations
                 </p>
-                <p className="mt-1 text-lg font-semibold">
+                <p className="mt-2 text-lg font-semibold">
                   {confirmations}/{confirmationTarget}
                 </p>
               </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  Created
-                </p>
+              <div className="px-5 py-4">
+                <p className="text-xs font-semibold text-ink-soft">Expires</p>
                 <p
-                  className="mt-1 text-sm font-semibold"
-                  title={createdTimestamp.relative ?? undefined}
-                >
-                  {createdTimestamp.label}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  Expires
-                </p>
-                <p
-                  className="mt-1 text-sm font-semibold"
+                  className="mt-2 text-sm font-semibold"
                   title={expiresTimestamp.relative ?? undefined}
                 >
                   {expiresTimestamp.label}
                 </p>
               </div>
             </div>
-            <div className="mt-4 rounded-xl border border-stroke bg-white/70 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  Monero node
+            <details className="border-t border-stroke px-5 py-4">
+              <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
+                Detection details
+              </summary>
+              <div className="mt-4 grid gap-4">
+                <div className="flex flex-wrap gap-2">
+                  <StatusBadge
+                    label={walletStatusBadge.label}
+                    tone={walletStatusBadge.tone}
+                  />
+                  <StatusBadge
+                    label={daemonStatusBadge.label}
+                    tone={daemonStatusBadge.tone}
+                  />
+                </div>
+                <dl className="grid gap-4 text-sm sm:grid-cols-3">
+                  <div>
+                    <dt className="text-xs font-semibold text-ink-soft">
+                      Block height
+                    </dt>
+                    <dd className="mt-1 font-semibold">
+                      {systemStatus?.daemon_height?.toLocaleString() ??
+                        "Unavailable"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs font-semibold text-ink-soft">
+                      Detection poll
+                    </dt>
+                    <dd className="mt-1 font-semibold">
+                      {systemStatus?.invoice_reconcile_interval_seconds ?? 30}s
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs font-semibold text-ink-soft">
+                      Last scan
+                    </dt>
+                    <dd
+                      className="mt-1 font-semibold"
+                      title={lastReconcileCompleted.relative ?? undefined}
+                    >
+                      {lastReconcileCompleted.label}
+                    </dd>
+                  </div>
+                </dl>
+                {systemStatus?.last_reconcile_error ? (
+                  <p className="border-l-2 border-red-400 pl-3 text-sm text-red-700">
+                    Detection error: {systemStatus.last_reconcile_error}
+                  </p>
+                ) : null}
+                <p
+                  className="text-xs text-ink-soft"
+                  title={createdTimestamp.relative ?? undefined}
+                >
+                  Created {createdTimestamp.label}
                 </p>
-                <div className="flex flex-wrap gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em]">
-                  <span
-                    className={`rounded-full px-3 py-1 ${walletStatusBadge.className}`}
-                  >
-                    {walletStatusBadge.label}
-                  </span>
-                  <span
-                    className={`rounded-full px-3 py-1 ${daemonStatusBadge.className}`}
-                  >
-                    {daemonStatusBadge.label}
-                  </span>
-                </div>
               </div>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Current block height
-                  </p>
-                  <p className="mt-1 text-sm font-semibold">
-                    {systemStatus?.daemon_height?.toLocaleString() ?? "Unavailable"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Detection poll
-                  </p>
-                  <p className="mt-1 text-sm font-semibold">
-                    {systemStatus?.invoice_reconcile_interval_seconds ?? 30}s
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Last successful scan
-                  </p>
-                  <p
-                    className="mt-1 text-sm font-semibold"
-                    title={lastReconcileCompleted.relative ?? undefined}
-                  >
-                    {lastReconcileCompleted.label}
-                  </p>
-                </div>
-              </div>
-              {systemStatus?.last_reconcile_error ? (
-                <p className="mt-3 rounded-xl bg-red-100 px-3 py-2 text-sm text-red-700">
-                  Reconciler error: {systemStatus.last_reconcile_error}
-                </p>
-              ) : null}
-            </div>
+            </details>
             {checkoutContinueAvailable ? (
-              <a
-                className="mt-5 inline-flex w-fit items-center justify-center rounded-full bg-ink px-5 py-2 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
-                href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
-                rel="noreferrer"
-              >
-                Continue to merchant
-              </a>
+              <div className="border-t border-stroke bg-sand/50 px-5 py-4">
+                <a
+                  className="inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                  href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
+                  rel="noreferrer"
+                >
+                  Continue to merchant
+                </a>
+              </div>
             ) : null}
-          </div>
+          </section>
 
           {shouldShowBtcpayActions ? (
             <div className="mt-6 grid gap-3">
               <a
-                className="inline-flex items-center justify-center rounded-full bg-sage px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_16px_rgba(93,122,106,0.16)] transition hover:opacity-95"
+                className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
                 href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
               >
                 View receipt
               </a>
               {invoice.btcpay_redirect_url ? (
                 <a
-                  className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-sage transition hover:bg-cream"
+                  className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
                   href={invoice.btcpay_redirect_url}
                   target="_top"
                   rel="noreferrer"
@@ -403,7 +411,7 @@ export default async function BtcpayModalInvoicePage({
               ) : null}
             </div>
           ) : null}
-        </>
+        </div>
       )}
     </main>
   );

@@ -6,7 +6,7 @@ export default function DonationStatusActions() {
   return (
     <div className="flex flex-wrap gap-3">
       <Link
-        className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+        className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/75 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
         href="/"
       >
         Back to home

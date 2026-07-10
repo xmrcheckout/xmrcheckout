@@ -268,7 +268,7 @@ export default async function BtcpayReceiptPage({
               </div>
 
               <div className="flex flex-col justify-between px-6 py-7 sm:px-8">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col items-start gap-5 sm:flex-row sm:justify-between sm:gap-4">
                   <div>
                     <p className="text-sm font-semibold text-ink-soft">
                       Amount paid

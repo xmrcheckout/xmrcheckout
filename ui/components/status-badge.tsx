@@ -10,8 +10,8 @@ type StatusBadgeProps = {
 const toneClasses: Record<StatusTone, string> = {
   neutral: "border-stroke bg-white/70 text-ink",
   pending: "border-amber-300 bg-amber-50 text-amber-950",
-  detected: "border-monero/40 bg-monero/10 text-ink",
-  success: "border-sage/40 bg-sage/10 text-ink",
+  detected: "border-monero/50 bg-[#fff0e6] text-ink",
+  success: "border-sage/50 bg-[#e3ebe6] text-ink",
   error: "border-red-200 bg-red-50 text-red-700",
 };
 

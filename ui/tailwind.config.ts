@@ -32,6 +32,7 @@ const config: Config = {
         xl: "0.75rem",
         "2xl": "0.95rem",
         "3xl": "1.1rem",
+        surface: "1.2rem",
       },
     },
   },

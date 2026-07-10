@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import InvoicePanel from "../../../components/invoice-panel";
+import PageIntroBand from "../../../components/page-intro-band";
 import WebhookHistoryPanel from "../../../components/webhook-history-panel";
 import WebhookSection from "../../../components/webhook-section";
+import WorkspaceNav from "../../../components/workspace-nav";
 
 export const metadata: Metadata = {
   title: "Tour",
@@ -42,6 +44,12 @@ const tabDetails: Record<
     detail: "Relay and history",
   },
 };
+
+const tourNavItems = tabs.map((tab) => ({
+  value: tab,
+  href: `/tour?tab=${tab}`,
+  ...tabDetails[tab],
+}));
 
 const invoicePath = [
   {
@@ -381,12 +389,6 @@ export default async function TourPage({
     },
   ];
 
-  const tabBaseClass =
-    "group flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2";
-  const tabActiveClass =
-    "border-ink bg-ink text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)]";
-  const tabInactiveClass =
-    "border-stroke bg-cream/60 text-ink hover:border-ink/40 hover:bg-white/80";
   const subTabBaseClass =
     "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-ink/40 hover:bg-white";
   const subTabActiveClass =
@@ -398,106 +400,34 @@ export default async function TourPage({
         className="mx-auto w-full max-w-7xl"
         aria-label="Tour environment"
       >
-        <div className="overflow-hidden rounded-[1.2rem] border border-ink bg-ink text-cream shadow-card">
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(430px,0.72fr)]">
-            <div className="border-b border-cream/20 px-5 py-6 sm:px-7 lg:border-b-0 lg:border-r">
-              <div className="flex items-center gap-2 text-sm font-semibold text-cream/75">
-                <span
-                  className="h-2.5 w-2.5 rounded-full bg-monero"
-                  aria-hidden="true"
-                />
-                Tour workspace
-              </div>
-              <p className="mt-2 max-w-2xl font-sans text-xl font-semibold leading-snug sm:text-2xl">
-                Explore a merchant checkout workspace with simulated activity.
-              </p>
-              <p className="mt-2 max-w-2xl text-sm text-cream/70">
-                Customer payments go directly to the merchant wallet. Spend
-                authority stays outside this software.
-              </p>
-            </div>
-            <dl className="grid grid-cols-3 divide-x divide-cream/20 bg-cream/[0.04]">
-              {[
-                ["Data", "Simulated only"],
-                ["Wallet", "Not connected"],
-                ["Storage", "Nothing saved"],
-              ].map(([term, detail]) => (
-                <div className="min-w-0 px-3 py-5 sm:px-5 lg:py-7" key={term}>
-                  <dt className="text-xs font-semibold text-cream/60">
-                    {term}
-                  </dt>
-                  <dd className="mt-1 text-sm font-semibold text-cream sm:text-base">
-                    {detail}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
+        <PageIntroBand
+          as="p"
+          eyebrow="Tour workspace"
+          title="Explore a merchant checkout workspace with simulated activity."
+          description={
+            <p>
+              Customer payments go directly to the merchant wallet. Spend
+              authority stays outside this software.
+            </p>
+          }
+          facts={[
+            { label: "Data", value: "Simulated only" },
+            { label: "Wallet", value: "Not connected" },
+            { label: "Storage", value: "Nothing saved" },
+          ]}
+        />
       </section>
 
       <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
-        <aside className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-          <div className="mb-5 hidden border-b border-stroke pb-5 lg:block">
-            <p className="font-sans text-sm font-semibold text-ink">
-              Tour sections
-            </p>
-            <p className="mt-1 text-sm text-ink-soft">
-              Move through the same views a merchant uses to monitor checkout
-              activity.
-            </p>
-          </div>
-          <nav
-            className="grid grid-cols-3 gap-2 lg:grid-cols-1"
-            aria-label="Tour sections"
-          >
-            {tabs.map((tab) => {
-              const detail = tabDetails[tab];
-              const isActive = activeTab === tab;
-
-              return (
-                <Link
-                  key={tab}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`${tabBaseClass} ${
-                    isActive ? tabActiveClass : tabInactiveClass
-                  }`}
-                  href={`/tour?tab=${tab}`}
-                >
-                  <span
-                    className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg border font-mono text-xs font-semibold sm:grid ${
-                      isActive
-                        ? "border-cream/25 bg-cream/10 text-cream"
-                        : "border-clay/40 bg-clay/10 text-ink"
-                    }`}
-                    aria-hidden="true"
-                  >
-                    {detail.index}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate text-xs font-semibold sm:text-sm">
-                      {detail.label}
-                    </span>
-                    <span
-                      className={`mt-0.5 hidden text-xs lg:block ${
-                        isActive ? "text-cream/70" : "text-ink-soft/70"
-                      }`}
-                    >
-                      {detail.detail}
-                    </span>
-                  </span>
-                </Link>
-              );
-            })}
-          </nav>
-          <div className="mt-6 hidden border-l-2 border-sage pl-4 lg:block">
-            <p className="text-sm font-semibold text-ink">Direct to merchant</p>
-            <p className="mt-1 text-sm text-ink-soft">
-              The tour changes presentation only. It cannot connect a wallet or
-              move funds.
-            </p>
-          </div>
-        </aside>
+        <WorkspaceNav
+          activeValue={activeTab}
+          ariaLabel="Tour sections"
+          items={tourNavItems}
+          title="Tour sections"
+          description="Move through the same views a merchant uses to monitor checkout activity."
+          footerTitle="Direct to merchant"
+          footerDescription="The tour changes presentation only. It cannot connect a wallet or move funds."
+        />
 
         <div className="min-w-0">
           {activeTab === "overview" ? (

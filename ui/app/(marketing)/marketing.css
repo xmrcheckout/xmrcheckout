@@ -45,6 +45,13 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+
 .backdrop-blur {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -160,6 +167,9 @@ a {
   align-items: center;
   position: relative;
   z-index: 30;
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
   padding: 2rem 6vw 1rem;
 }
 
@@ -1299,6 +1309,8 @@ a {
 }
 
 .site-footer {
+  margin-top: 2rem;
+  border-top: 1px solid var(--fog);
   padding: 2rem 6vw 3rem;
   display: flex;
   flex-wrap: wrap;

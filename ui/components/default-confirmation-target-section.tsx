@@ -23,7 +23,7 @@ export default function DefaultConfirmationTargetSection({
   const router = useRouter();
   const [state, formAction] = useFormState(
     updateDefaultConfirmationTargetAction,
-    buildInitialState(initialValue)
+    buildInitialState(initialValue),
   );
 
   useEffect(() => {
@@ -35,12 +35,17 @@ export default function DefaultConfirmationTargetSection({
   return (
     <div className="grid gap-4">
       <div>
-        <h2 className="font-sans font-semibold text-2xl">Default confirmations</h2>
+        <h2 className="font-sans text-xl font-semibold">
+          Default confirmations
+        </h2>
         <p className="mt-2 text-sm text-ink-soft">
           Used as the default confirmation target for new invoices.
         </p>
       </div>
-      <form className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]" action={formAction}>
+      <form
+        className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
+        action={formAction}
+      >
         <div className="grid gap-2">
           <label
             className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
@@ -62,7 +67,7 @@ export default function DefaultConfirmationTargetSection({
         </div>
         <div className="flex items-end justify-end">
           <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             type="submit"
           >
             Save
@@ -82,4 +87,3 @@ export default function DefaultConfirmationTargetSection({
     </div>
   );
 }
-

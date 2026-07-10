@@ -2,7 +2,10 @@
 
 import { useFormState } from "react-dom";
 
-import { resetApiKeyAction, type ApiKeyState } from "../app/(app)/dashboard/actions";
+import {
+  resetApiKeyAction,
+  type ApiKeyState,
+} from "../app/(app)/dashboard/actions";
 import ApiKeyCard from "./api-key-card";
 
 const initialState = (apiKey: string): ApiKeyState => ({
@@ -15,7 +18,10 @@ type ApiKeySectionProps = {
 };
 
 export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
-  const [state, formAction] = useFormState(resetApiKeyAction, initialState(apiKey));
+  const [state, formAction] = useFormState(
+    resetApiKeyAction,
+    initialState(apiKey),
+  );
 
   return (
     <div className="grid gap-4">
@@ -27,7 +33,7 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
       ) : null}
       <form action={formAction} className="flex justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
+          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="submit"
         >
           Reset API key

@@ -8,7 +8,11 @@ type SecretCardProps = {
   buttonLabel: string;
 };
 
-export default function SecretCard({ label, value, buttonLabel }: SecretCardProps) {
+export default function SecretCard({
+  label,
+  value,
+  buttonLabel,
+}: SecretCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -22,21 +26,19 @@ export default function SecretCard({ label, value, buttonLabel }: SecretCardProp
   };
 
   return (
-    <div className="grid gap-4 rounded-2xl border border-stroke bg-white/80 p-6 shadow-soft backdrop-blur">
+    <div className="grid gap-4">
       <span className="sr-only" role="status" aria-live="polite">
         {copied ? `${label} copied to clipboard` : ""}
       </span>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-          {label}
-        </p>
-        <code className="mt-2 block break-all rounded-xl bg-ink/10 px-3 py-2 text-sm text-ink">
+        <p className="text-xs font-semibold text-ink-soft">{label}</p>
+        <code className="mt-2 block break-all border-l-2 border-clay bg-ink px-3 py-3 text-sm text-cream">
           {value}
         </code>
       </div>
       <div className="flex justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="button"
           onClick={handleCopy}
         >

@@ -9,6 +9,7 @@ import {
   redeliverWebhookDeliveryTourAction,
   type WebhookRedeliverState,
 } from "../app/(app)/dashboard/actions";
+import StatusBadge from "./status-badge";
 
 type WebhookDeliverySummary = {
   id: string;
@@ -20,12 +21,7 @@ type WebhookDeliverySummary = {
   invoice_subaddress_index: number | null;
   invoice_amount_xmr: string | null;
   invoice_status:
-    | "pending"
-    | "payment_detected"
-    | "confirmed"
-    | "expired"
-    | "invalid"
-    | null;
+    "pending" | "payment_detected" | "confirmed" | "expired" | "invalid" | null;
   http_status: number | null;
   error_message: string | null;
   created_at: string;
@@ -42,8 +38,10 @@ export default function WebhookHistoryPanel({
 }) {
   const router = useRouter();
   const [state, formAction] = useFormState(
-    mode === "tour" ? redeliverWebhookDeliveryTourAction : redeliverWebhookDeliveryAction,
-    initialState
+    mode === "tour"
+      ? redeliverWebhookDeliveryTourAction
+      : redeliverWebhookDeliveryAction,
+    initialState,
   );
 
   useEffect(() => {
@@ -53,9 +51,29 @@ export default function WebhookHistoryPanel({
   }, [mode, router, state.success]);
 
   const formatTimestamp = (value: string) => new Date(value).toLocaleString();
+  const failedCount = deliveries.filter(
+    (delivery) =>
+      delivery.http_status === null ||
+      (delivery.http_status !== null && delivery.http_status >= 400),
+  ).length;
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-5">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-stroke pb-4">
+        <div>
+          <h2 className="font-sans text-xl font-semibold">Delivery attempts</h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            Inspect responses and retry failed relay attempts explicitly.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <StatusBadge label={`${deliveries.length} recorded`} />
+          <StatusBadge
+            label={`${failedCount} need review`}
+            tone={failedCount > 0 ? "error" : "success"}
+          />
+        </div>
+      </div>
       {state.error ? (
         <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
           {state.error}
@@ -67,15 +85,20 @@ export default function WebhookHistoryPanel({
         </p>
       ) : null}
       {deliveries.length === 0 ? (
-        <p className="text-sm text-ink-soft">No webhook calls recorded yet.</p>
+        <p className="rounded-surface border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
+          No webhook calls recorded yet.
+        </p>
       ) : (
         <div className="grid gap-3">
           {deliveries.map((delivery) => {
             const statusLabel =
-              delivery.http_status !== null ? delivery.http_status.toString() : "No response";
+              delivery.http_status !== null
+                ? delivery.http_status.toString()
+                : "No response";
             const isFailed =
               delivery.http_status === null ||
-              (typeof delivery.http_status === "number" && delivery.http_status >= 400);
+              (typeof delivery.http_status === "number" &&
+                delivery.http_status >= 400);
             const hasInvoiceDetails =
               Boolean(delivery.invoice_id) ||
               Boolean(delivery.invoice_address) ||
@@ -84,7 +107,9 @@ export default function WebhookHistoryPanel({
             return (
               <div
                 key={delivery.id}
-                className="rounded-xl border border-stroke bg-white/80 px-4 py-3"
+                className={`rounded-surface border bg-white/70 px-4 py-4 shadow-soft ${
+                  isFailed ? "border-red-200" : "border-stroke"
+                }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -99,14 +124,19 @@ export default function WebhookHistoryPanel({
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                      {statusLabel}
-                    </span>
+                    <StatusBadge
+                      label={statusLabel}
+                      tone={isFailed ? "error" : "success"}
+                    />
                     {isFailed ? (
                       <form action={formAction}>
-                        <input type="hidden" name="delivery_id" value={delivery.id} />
+                        <input
+                          type="hidden"
+                          name="delivery_id"
+                          value={delivery.id}
+                        />
                         <button
-                          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95"
+                          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
                           type="submit"
                         >
                           Redeliver

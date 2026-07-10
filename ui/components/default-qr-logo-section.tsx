@@ -10,7 +10,10 @@ import {
   type DefaultQrLogoState,
 } from "../app/(app)/dashboard/actions";
 
-const buildInitialState = (logo: "monero" | "none" | "custom", logoDataUrl: string | null) => ({
+const buildInitialState = (
+  logo: "monero" | "none" | "custom",
+  logoDataUrl: string | null,
+) => ({
   logo,
   logoDataUrl,
   error: null,
@@ -26,10 +29,12 @@ export default function DefaultQrLogoSection({
 }) {
   const router = useRouter();
   const [logo, setLogo] = useState<"monero" | "none" | "custom">(initialLogo);
-  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(initialLogoDataUrl);
+  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(
+    initialLogoDataUrl,
+  );
   const [state, formAction] = useFormState(
     updateDefaultQrLogoAction,
-    buildInitialState(initialLogo, initialLogoDataUrl)
+    buildInitialState(initialLogo, initialLogoDataUrl),
   );
 
   useEffect(() => {
@@ -72,7 +77,7 @@ export default function DefaultQrLogoSection({
   return (
     <div className="grid gap-4">
       <div>
-        <h2 className="font-sans font-semibold text-2xl">Default QR logo</h2>
+        <h2 className="font-sans text-xl font-semibold">Default QR logo</h2>
         <p className="mt-2 text-sm text-ink-soft">
           Applies to new invoices unless overridden at creation time.
         </p>
@@ -92,7 +97,11 @@ export default function DefaultQrLogoSection({
             value={logo}
             onChange={(event) => {
               const value = event.target.value;
-              if (value === "none" || value === "custom" || value === "monero") {
+              if (
+                value === "none" ||
+                value === "custom" ||
+                value === "monero"
+              ) {
                 setLogo(value);
               }
             }}
@@ -119,11 +128,12 @@ export default function DefaultQrLogoSection({
               onChange={handleLogoFileChange}
             />
             <p className="text-sm text-ink-soft">
-              Stored as a data URL for use on public invoice pages. Keep it small.
+              Stored as a data URL for use on public invoice pages. Keep it
+              small.
             </p>
             {logoDataUrl ? (
               <button
-                className="inline-flex w-fit items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
+                className="inline-flex w-fit items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
                 type="button"
                 onClick={() => setLogoDataUrl(null)}
               >
@@ -136,11 +146,11 @@ export default function DefaultQrLogoSection({
         <input
           type="hidden"
           name="default_qr_logo_data_url"
-          value={logo === "custom" ? logoDataUrl ?? "" : ""}
+          value={logo === "custom" ? (logoDataUrl ?? "") : ""}
         />
 
         {previewSrc ? (
-          <div className="flex items-center gap-3 rounded-2xl border border-stroke bg-white/70 p-4 shadow-soft">
+          <div className="flex items-center gap-3 border-l-2 border-clay bg-sand/50 px-4 py-3">
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(16,18,23,0.12)]">
               <Image
                 src={previewSrc}
@@ -150,7 +160,9 @@ export default function DefaultQrLogoSection({
                 unoptimized={logo === "custom"}
               />
             </span>
-            <p className="text-sm text-ink-soft">Preview (used in the QR center).</p>
+            <p className="text-sm text-ink-soft">
+              Preview (used in the QR center).
+            </p>
           </div>
         ) : null}
 
@@ -166,7 +178,7 @@ export default function DefaultQrLogoSection({
         ) : null}
         <div className="flex justify-end">
           <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             type="submit"
           >
             Save
@@ -176,4 +188,3 @@ export default function DefaultQrLogoSection({
     </div>
   );
 }
-

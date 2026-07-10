@@ -12,6 +12,7 @@ import {
   FIAT_CURRENCY_SUGGESTIONS,
   getCurrencyFlag,
 } from "../lib/fiat-currencies";
+import StatusBadge, { type StatusTone } from "./status-badge";
 
 import {
   createInvoiceAction,
@@ -92,7 +93,10 @@ const formatTimestamp = (value: string | null) => {
   return new Date(value).toLocaleString();
 };
 
-const invoiceStatusOptions: { value: InvoiceItem["status"] | "all"; label: string }[] = [
+const invoiceStatusOptions: {
+  value: InvoiceItem["status"] | "all";
+  label: string;
+}[] = [
   { value: "all", label: "All" },
   { value: "pending", label: "Awaiting funds" },
   { value: "payment_detected", label: "Detected" },
@@ -109,7 +113,7 @@ type CreateInvoiceModalProps = {
 
 type CreateInvoiceAction = (
   prevState: InvoiceState,
-  formData: FormData
+  formData: FormData,
 ) => Promise<InvoiceState>;
 
 function CreateInvoiceModal({
@@ -124,11 +128,11 @@ function CreateInvoiceModal({
   const [amount, setAmount] = useState("");
   const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
   const [fiatCurrency, setFiatCurrency] = useState("USD");
-  const [confirmationMode, setConfirmationMode] = useState<"account_default" | "custom">(
-    "account_default"
-  );
+  const [confirmationMode, setConfirmationMode] = useState<
+    "account_default" | "custom"
+  >("account_default");
   const [confirmationTarget, setConfirmationTarget] = useState(
-    String(defaultConfirmationTarget ?? 10)
+    String(defaultConfirmationTarget ?? 10),
   );
   const [expiryMode, setExpiryMode] = useState<"default" | "custom">("default");
   const [expiresDate, setExpiresDate] = useState("");
@@ -142,10 +146,13 @@ function CreateInvoiceModal({
   const [qrLogoDataUrl, setQrLogoDataUrl] = useState<string | null>(null);
   const [copiedPublicInvoiceUrl, setCopiedPublicInvoiceUrl] = useState(false);
   const [createInvoiceOrigin, setCreateInvoiceOrigin] = useState<string | null>(
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null,
   );
-  const { rate: usdRate, updatedAt: usdRateUpdatedAt, source: usdRateSource } =
-    useXmrUsdRate();
+  const {
+    rate: usdRate,
+    updatedAt: usdRateUpdatedAt,
+    source: usdRateSource,
+  } = useXmrUsdRate();
   const {
     rate: fiatRate,
     updatedAt: fiatRateUpdatedAt,
@@ -218,12 +225,16 @@ function CreateInvoiceModal({
       ? "Fetching estimate..."
       : "Estimate unavailable";
   const usdEstimateMeta =
-    usdRateSource === "coingecko" ? "CoinGecko spot rate" : "external spot rate";
+    usdRateSource === "coingecko"
+      ? "CoinGecko spot rate"
+      : "external spot rate";
   const usdEstimateTime = usdRateUpdatedAt
     ? new Date(usdRateUpdatedAt).toLocaleString()
     : null;
   const fiatEstimateMeta =
-    fiatRateSource === "coingecko" ? "CoinGecko spot rate" : "external spot rate";
+    fiatRateSource === "coingecko"
+      ? "CoinGecko spot rate"
+      : "external spot rate";
   const fiatEstimateTime = fiatRateUpdatedAt
     ? new Date(fiatRateUpdatedAt).toLocaleString()
     : null;
@@ -236,9 +247,12 @@ function CreateInvoiceModal({
   const expiryValue = expiresDate ? `${expiresDate}T${expiryTimeValue}` : "";
   const expiryIsValid =
     expiryMode !== "custom" || (!expiresTime && !expiresDate) || !!expiresDate;
-  const isFiatCurrencyValid = amountMode !== "fiat" || Boolean(fiatCurrency.trim());
+  const isFiatCurrencyValid =
+    amountMode !== "fiat" || Boolean(fiatCurrency.trim());
 
-  const handleQrLogoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleQrLogoFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) {
       setQrLogoDataUrl(null);
@@ -266,15 +280,16 @@ function CreateInvoiceModal({
     }
   };
 
-  const labelClass = "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
+  const labelClass =
+    "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
   const inputClass =
     "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const primaryButton =
-    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const secondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const smallSecondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
 
   const createDisabled =
     !amount ||
@@ -285,7 +300,7 @@ function CreateInvoiceModal({
 
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
-      <div className="flex max-h-[85vh] w-full max-w-3xl flex-col rounded-3xl border border-stroke bg-white shadow-deep">
+      <div className="flex max-h-[85vh] w-full max-w-3xl flex-col rounded-surface border border-stroke bg-white shadow-deep">
         <span className="sr-only" role="status" aria-live="polite">
           {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : ""}
         </span>
@@ -294,7 +309,9 @@ function CreateInvoiceModal({
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
               Create invoice
             </p>
-            <h2 className="mt-2 font-sans font-semibold text-2xl">Create a new invoice</h2>
+            <h2 className="mt-2 font-sans font-semibold text-2xl">
+              Create a new invoice
+            </h2>
             {mode === "tour" ? (
               <p className="mt-2 text-sm font-semibold text-ink-soft">
                 Tour mode: submissions are simulated. No invoice is created.
@@ -327,8 +344,8 @@ function CreateInvoiceModal({
                         {formatXmrAmount(state.amount)} XMR
                       </p>
                       <p className="mt-1 text-sm text-ink-soft">
-                        The invoice is defined in XMR. Any fiat input was used only
-                        to estimate this amount at creation time.
+                        The invoice is defined in XMR. Any fiat input was used
+                        only to estimate this amount at creation time.
                       </p>
                     </div>
                   ) : null}
@@ -376,7 +393,11 @@ function CreateInvoiceModal({
               ) : null}
 
               <div className="flex flex-wrap justify-end gap-3">
-                <button className={secondaryButton} type="button" onClick={onClose}>
+                <button
+                  className={secondaryButton}
+                  type="button"
+                  onClick={onClose}
+                >
                   Done
                 </button>
               </div>
@@ -389,11 +410,15 @@ function CreateInvoiceModal({
                     <div>
                       <p className={labelClass}>Amount</p>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Define the invoice amount in XMR, or use an informational fiat reference.
+                        Define the invoice amount in XMR, or use an
+                        informational fiat reference.
                       </p>
                     </div>
                     <div className="grid gap-2">
-                      <label className={labelClass} htmlFor="wizard_amount_mode">
+                      <label
+                        className={labelClass}
+                        htmlFor="wizard_amount_mode"
+                      >
                         Amount type
                       </label>
                       <select
@@ -416,7 +441,10 @@ function CreateInvoiceModal({
 
                     {amountMode === "xmr" ? (
                       <div className="grid gap-2">
-                        <label className={labelClass} htmlFor="wizard_amount_xmr">
+                        <label
+                          className={labelClass}
+                          htmlFor="wizard_amount_xmr"
+                        >
                           Amount (XMR)
                         </label>
                         <input
@@ -438,8 +466,10 @@ function CreateInvoiceModal({
                             </summary>
                             <p className="mt-2 max-w-[46ch] leading-relaxed">
                               Reference only, uses {usdEstimateMeta}
-                              {usdEstimateTime ? ` from ${usdEstimateTime}` : ""}. Not a quote or
-                              guarantee.
+                              {usdEstimateTime
+                                ? ` from ${usdEstimateTime}`
+                                : ""}
+                              . Not a quote or guarantee.
                             </p>
                           </details>
                         ) : null}
@@ -447,7 +477,10 @@ function CreateInvoiceModal({
                     ) : (
                       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
                         <div className="grid gap-2">
-                          <label className={labelClass} htmlFor="wizard_amount_fiat">
+                          <label
+                            className={labelClass}
+                            htmlFor="wizard_amount_fiat"
+                          >
                             Amount (fiat)
                           </label>
                           <input
@@ -464,7 +497,10 @@ function CreateInvoiceModal({
                           />
                         </div>
                         <div className="grid gap-2">
-                          <label className={labelClass} htmlFor="wizard_currency">
+                          <label
+                            className={labelClass}
+                            htmlFor="wizard_currency"
+                          >
                             Currency
                           </label>
                           <input
@@ -491,19 +527,24 @@ function CreateInvoiceModal({
                           ))}
                         </datalist>
                         <p className="text-sm text-ink-soft sm:col-span-2">
-                          Fiat inputs create an XMR invoice using an informational rate at
-                          request time. The invoice is stored and checked in XMR.
+                          Fiat inputs create an XMR invoice using an
+                          informational rate at request time. The invoice is
+                          stored and checked in XMR.
                         </p>
                         {showFiatEstimate ? (
                           <details className="w-fit text-xs text-ink-soft sm:col-span-2">
                             <summary className="cursor-pointer select-none underline underline-offset-4">
                               Approx. XMR value: {draftXmrEstimateLabel}
-                              {fiatCurrencyFlag ? ` · ${fiatCurrencyLabel}` : ""}
+                              {fiatCurrencyFlag
+                                ? ` · ${fiatCurrencyLabel}`
+                                : ""}
                             </summary>
                             <p className="mt-2 max-w-[46ch] leading-relaxed">
                               Reference only, uses {fiatEstimateMeta}
-                              {fiatEstimateTime ? ` from ${fiatEstimateTime}` : ""}. Not a quote or
-                              guarantee.
+                              {fiatEstimateTime
+                                ? ` from ${fiatEstimateTime}`
+                                : ""}
+                              . Not a quote or guarantee.
                             </p>
                           </details>
                         ) : null}
@@ -520,7 +561,10 @@ function CreateInvoiceModal({
                         <p className={labelClass}>Confirmations</p>
                         <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_200px]">
                           <div className="grid gap-2">
-                            <label className={labelClass} htmlFor="wizard_confirmation_mode">
+                            <label
+                              className={labelClass}
+                              htmlFor="wizard_confirmation_mode"
+                            >
                               Mode
                             </label>
                             <select
@@ -529,7 +573,10 @@ function CreateInvoiceModal({
                               value={confirmationMode}
                               onChange={(event) => {
                                 const value = event.target.value;
-                                if (value === "account_default" || value === "custom") {
+                                if (
+                                  value === "account_default" ||
+                                  value === "custom"
+                                ) {
                                   setConfirmationMode(value);
                                 }
                               }}
@@ -542,7 +589,10 @@ function CreateInvoiceModal({
                           </div>
                           {confirmationMode === "custom" ? (
                             <div className="grid gap-2">
-                              <label className={labelClass} htmlFor="wizard_confirmation_target">
+                              <label
+                                className={labelClass}
+                                htmlFor="wizard_confirmation_target"
+                              >
                                 Target
                               </label>
                               <input
@@ -554,7 +604,9 @@ function CreateInvoiceModal({
                                 max="10"
                                 step="1"
                                 value={confirmationTarget}
-                                onChange={(event) => setConfirmationTarget(event.target.value)}
+                                onChange={(event) =>
+                                  setConfirmationTarget(event.target.value)
+                                }
                                 required
                               />
                             </div>
@@ -570,7 +622,8 @@ function CreateInvoiceModal({
                               0 confirmations
                             </button>
                             <p className="text-sm text-ink-soft">
-                              Create the invoice with a custom confirmation target.
+                              Create the invoice with a custom confirmation
+                              target.
                             </p>
                           </div>
                         ) : null}
@@ -579,7 +632,10 @@ function CreateInvoiceModal({
                       <div className="grid gap-3">
                         <p className={labelClass}>Expiry</p>
                         <div className="grid gap-2">
-                          <label className={labelClass} htmlFor="wizard_expiry_mode">
+                          <label
+                            className={labelClass}
+                            htmlFor="wizard_expiry_mode"
+                          >
                             Mode
                           </label>
                           <select
@@ -597,14 +653,19 @@ function CreateInvoiceModal({
                               }
                             }}
                           >
-                            <option value="default">Default (60 minutes)</option>
+                            <option value="default">
+                              Default (60 minutes)
+                            </option>
                             <option value="custom">Custom</option>
                           </select>
                         </div>
 
                         {expiryMode === "custom" ? (
                           <div className="grid gap-2">
-                            <label className={labelClass} htmlFor="wizard_expires_date">
+                            <label
+                              className={labelClass}
+                              htmlFor="wizard_expires_date"
+                            >
                               Expiry date
                             </label>
                             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_160px]">
@@ -614,7 +675,9 @@ function CreateInvoiceModal({
                                 name="expires_date"
                                 type="date"
                                 value={expiresDate}
-                                onChange={(event) => setExpiresDate(event.target.value)}
+                                onChange={(event) =>
+                                  setExpiresDate(event.target.value)
+                                }
                               />
                               <input
                                 className={inputClass}
@@ -622,14 +685,19 @@ function CreateInvoiceModal({
                                 name="expires_time"
                                 type="time"
                                 value={expiresTime}
-                                onChange={(event) => setExpiresTime(event.target.value)}
+                                onChange={(event) =>
+                                  setExpiresTime(event.target.value)
+                                }
                               />
                             </div>
-                            <input type="hidden" name="expires_at" value={expiryValue} />
+                            <input
+                              type="hidden"
+                              name="expires_at"
+                              value={expiryValue}
+                            />
                           </div>
                         ) : null}
                       </div>
-
                     </div>
                   </details>
 
@@ -640,7 +708,10 @@ function CreateInvoiceModal({
                     <div className="mt-4 grid gap-5">
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="grid gap-2">
-                          <label className={labelClass} htmlFor="wizard_recipient">
+                          <label
+                            className={labelClass}
+                            htmlFor="wizard_recipient"
+                          >
                             Recipient name
                           </label>
                           <input
@@ -650,11 +721,16 @@ function CreateInvoiceModal({
                             type="text"
                             placeholder="Your store"
                             value={recipientName}
-                            onChange={(event) => setRecipientName(event.target.value)}
+                            onChange={(event) =>
+                              setRecipientName(event.target.value)
+                            }
                           />
                         </div>
                         <div className="grid gap-2">
-                          <label className={labelClass} htmlFor="wizard_description">
+                          <label
+                            className={labelClass}
+                            htmlFor="wizard_description"
+                          >
                             Description
                           </label>
                           <input
@@ -664,13 +740,18 @@ function CreateInvoiceModal({
                             type="text"
                             placeholder="Order 1042"
                             value={description}
-                            onChange={(event) => setDescription(event.target.value)}
+                            onChange={(event) =>
+                              setDescription(event.target.value)
+                            }
                           />
                         </div>
                       </div>
 
                       <div className="grid gap-2">
-                        <label className={labelClass} htmlFor="wizard_checkout_continue_url">
+                        <label
+                          className={labelClass}
+                          htmlFor="wizard_checkout_continue_url"
+                        >
                           Continue URL
                         </label>
                         <input
@@ -680,15 +761,21 @@ function CreateInvoiceModal({
                           type="url"
                           placeholder="https://merchant.example/thanks"
                           value={checkoutContinueUrl}
-                          onChange={(event) => setCheckoutContinueUrl(event.target.value)}
+                          onChange={(event) =>
+                            setCheckoutContinueUrl(event.target.value)
+                          }
                         />
                         <p className="text-sm text-ink-soft">
-                          After confirmation, the hosted invoice page can show a Continue button.
+                          After confirmation, the hosted invoice page can show a
+                          Continue button.
                         </p>
                       </div>
 
                       <div className="grid gap-2">
-                        <label className={labelClass} htmlFor="wizard_qr_logo_mode">
+                        <label
+                          className={labelClass}
+                          htmlFor="wizard_qr_logo_mode"
+                        >
                           QR logo
                         </label>
                         <select
@@ -711,7 +798,9 @@ function CreateInvoiceModal({
                             }
                           }}
                         >
-                          <option value="account_default">Account default</option>
+                          <option value="account_default">
+                            Account default
+                          </option>
                           <option value="monero">Monero logo</option>
                           <option value="none">No logo</option>
                           <option value="custom">Custom image</option>
@@ -719,7 +808,9 @@ function CreateInvoiceModal({
                         <input
                           type="hidden"
                           name="qr_logo_data_url"
-                          value={qrLogoMode === "custom" ? qrLogoDataUrl ?? "" : ""}
+                          value={
+                            qrLogoMode === "custom" ? (qrLogoDataUrl ?? "") : ""
+                          }
                         />
                         {qrLogoMode === "custom" ? (
                           <input
@@ -767,7 +858,8 @@ function CreateInvoiceModal({
                     </p>
                     {amountMode === "fiat" ? (
                       <p className="mt-2 text-sm text-ink-soft">
-                        XMR invoice estimate: <strong>{draftXmrEstimateLabel}</strong>
+                        XMR invoice estimate:{" "}
+                        <strong>{draftXmrEstimateLabel}</strong>
                       </p>
                     ) : null}
                   </div>
@@ -781,10 +873,18 @@ function CreateInvoiceModal({
               </div>
 
               <div className="flex flex-wrap justify-end gap-3 border-t border-stroke pt-4">
-                <button className={secondaryButton} type="button" onClick={onClose}>
+                <button
+                  className={secondaryButton}
+                  type="button"
+                  onClick={onClose}
+                >
                   Cancel
                 </button>
-                <button className={primaryButton} type="submit" disabled={createDisabled}>
+                <button
+                  className={primaryButton}
+                  type="submit"
+                  disabled={createDisabled}
+                >
                   Create invoice
                 </button>
               </div>
@@ -811,12 +911,16 @@ export default function InvoicePanel({
   const normalizedBasePath = basePath.replace(/\/+$/, "") || "/";
   const [archiveState, archiveAction] = useFormState(
     mode === "tour" ? archiveInvoiceTourAction : archiveInvoiceAction,
-    initialArchiveState
+    initialArchiveState,
   );
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createModalKey, setCreateModalKey] = useState(0);
-  const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null);
-  const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<string | null>(null);
+  const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(
+    null,
+  );
+  const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<
+    string | null
+  >(null);
   const [searchInput, setSearchInput] = useState(searchQuery ?? "");
 
   const activeList = useMemo(() => {
@@ -863,7 +967,9 @@ export default function InvoicePanel({
       if (sort === "amount_xmr") {
         const left = Number.parseFloat(a.amount_xmr);
         const right = Number.parseFloat(b.amount_xmr);
-        const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
+        const diff =
+          (Number.isFinite(left) ? left : 0) -
+          (Number.isFinite(right) ? right : 0);
         return diff || a.id.localeCompare(b.id);
       }
       if (sort === "status") {
@@ -881,12 +987,16 @@ export default function InvoicePanel({
       if (sort === "expires_at") {
         const left = a.expires_at ? new Date(a.expires_at).getTime() : 0;
         const right = b.expires_at ? new Date(b.expires_at).getTime() : 0;
-        const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
+        const diff =
+          (Number.isFinite(left) ? left : 0) -
+          (Number.isFinite(right) ? right : 0);
         return diff || a.id.localeCompare(b.id);
       }
       const left = new Date(a.created_at).getTime();
       const right = new Date(b.created_at).getTime();
-      const diff = (Number.isFinite(left) ? left : 0) - (Number.isFinite(right) ? right : 0);
+      const diff =
+        (Number.isFinite(left) ? left : 0) -
+        (Number.isFinite(right) ? right : 0);
       return diff || a.id.localeCompare(b.id);
     };
 
@@ -932,7 +1042,9 @@ export default function InvoicePanel({
     }
     return `${normalizedBasePath}?${params.toString()}`;
   };
-  const archivedToggleHref = buildInvoicesHref({ includeArchived: !includeArchived });
+  const archivedToggleHref = buildInvoicesHref({
+    includeArchived: !includeArchived,
+  });
 
   const csvExportHref = (() => {
     if (mode === "tour") {
@@ -983,7 +1095,10 @@ export default function InvoicePanel({
   };
 
   useEffect(() => {
-    if (archiveState.archivedId && expandedInvoiceId === archiveState.archivedId) {
+    if (
+      archiveState.archivedId &&
+      expandedInvoiceId === archiveState.archivedId
+    ) {
       setExpandedInvoiceId(null);
       setArchiveModalInvoiceId(null);
       if (mode !== "tour") {
@@ -992,15 +1107,16 @@ export default function InvoicePanel({
     }
   }, [archiveState.archivedId, expandedInvoiceId, mode, router]);
 
-  const labelClass = "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
+  const labelClass =
+    "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
   const inputClass =
     "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const primaryButton =
-    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const secondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const smallSecondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
 
   const sortHref = (key: string) => {
     const nextOrder = sort === key && order === "asc" ? "desc" : "asc";
@@ -1012,20 +1128,17 @@ export default function InvoicePanel({
     }
     return order === "asc" ? " (asc)" : " (desc)";
   };
-  const statusPillClass = (status: InvoiceItem["status"]) => {
+  const statusTone = (status: InvoiceItem["status"]): StatusTone => {
     if (status === "payment_detected") {
-      return "border-emerald-200 bg-emerald-50 text-emerald-800";
+      return "detected";
     }
     if (status === "confirmed") {
-      return "border-sage/30 bg-sage/10 text-sage";
+      return "success";
     }
-    if (status === "expired") {
-      return "border-red-200 bg-red-50 text-red-700";
+    if (status === "expired" || status === "invalid") {
+      return "error";
     }
-    if (status === "invalid") {
-      return "border-clay/30 bg-clay/10 text-clay";
-    }
-    return "border-amber-200 bg-amber-50 text-amber-900";
+    return "pending";
   };
 
   const applySearch = () => {
@@ -1033,10 +1146,19 @@ export default function InvoicePanel({
   };
 
   return (
-    <div className="rounded-2xl border border-stroke bg-white/85 p-6 shadow-soft backdrop-blur sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="font-sans font-semibold text-3xl">Invoices</h1>
+    <section className="grid gap-6" aria-labelledby="invoice-panel-title">
+      <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
+        <div className="max-w-2xl">
+          <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
+            Invoices
+          </p>
+          <h1
+            className="mt-1 font-sans text-3xl font-semibold leading-tight"
+            id="invoice-panel-title"
+          >
+            Invoice activity
+          </h1>
           <p className="mt-2 text-ink-soft">
             Create invoices, follow confirmations, and open a row when you need
             the raw details.
@@ -1051,7 +1173,12 @@ export default function InvoicePanel({
               Export CSV
             </a>
           ) : (
-            <button className={secondaryButton} type="button" disabled title="Tour mode only">
+            <button
+              className={secondaryButton}
+              type="button"
+              disabled
+              title="Tour mode only"
+            >
               Export CSV
             </button>
           )}
@@ -1059,8 +1186,8 @@ export default function InvoicePanel({
             Create invoice
           </button>
         </div>
-      </div>
-      <div className="mt-6 grid gap-4">
+      </header>
+      <div className="grid gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <form
             className="flex w-full flex-1 flex-wrap items-end gap-3"
@@ -1087,21 +1214,27 @@ export default function InvoicePanel({
                 Apply
               </button>
               {searchQuery ? (
-                <Link className={smallSecondaryButton} href={buildInvoicesHref({ q: "" })}>
+                <Link
+                  className={smallSecondaryButton}
+                  href={buildInvoicesHref({ q: "" })}
+                >
                   Clear
                 </Link>
               ) : null}
             </div>
           </form>
         </div>
-        <div className="flex flex-wrap gap-2" aria-label="Invoice status filters">
+        <div
+          className="flex flex-wrap gap-2"
+          aria-label="Invoice status filters"
+        >
           {invoiceStatusOptions.map((option) => (
             <Link
               key={option.value}
-              className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] transition hover:opacity-95 ${
+              className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 ${
                 statusFilter === option.value
                   ? "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]"
-                  : "border-stroke bg-white/60 text-ink"
+                  : "border-stroke bg-white/60 text-ink hover:border-ink/40 hover:bg-white"
               }`}
               href={buildInvoicesHref({ status: option.value })}
             >
@@ -1111,8 +1244,10 @@ export default function InvoicePanel({
         </div>
 
         {activeList.length === 0 ? (
-          <div className="rounded-xl border border-stroke bg-white/70 p-5 text-sm text-ink-soft">
-            <p className="font-semibold text-ink">No invoices match these filters.</p>
+          <div className="rounded-surface border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
+            <p className="font-semibold text-ink">
+              No invoices match these filters.
+            </p>
             <p className="mt-1">
               Adjust the search or status filter, or create a new invoice when
               you are ready to test the flow.
@@ -1132,15 +1267,13 @@ export default function InvoicePanel({
                 return (
                   <div
                     key={invoice.id}
-                    className={`rounded-2xl border border-stroke bg-white/70 p-4 shadow-soft ${
+                    className={`rounded-surface border border-stroke bg-white/70 p-4 shadow-soft ${
                       invoice.archived_at ? "bg-ink/5" : ""
                     }`}
                   >
                     <div className="grid gap-1 text-left">
                       {mode === "tour" ? (
-                        <span
-                          className="w-fit font-mono text-xs text-ink underline underline-offset-4"
-                        >
+                        <span className="w-fit font-mono text-xs text-ink underline underline-offset-4">
                           {invoice.id}
                         </span>
                       ) : (
@@ -1154,25 +1287,24 @@ export default function InvoicePanel({
                         </Link>
                       )}
                       <span className="text-xs text-ink-soft">
-                        {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
+                        {invoice.address.slice(0, 18)}…
+                        {invoice.address.slice(-10)}
                       </span>
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {invoice.archived_at ? (
-                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                          Archived
-                        </span>
+                        <StatusBadge label="Archived" />
                       ) : null}
                       {showPaidAfterExpiry ? (
-                        <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                          Paid after expiry
-                        </span>
+                        <StatusBadge
+                          label="Paid after expiry"
+                          tone="detected"
+                        />
                       ) : null}
-                      <span
-                        className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] ${statusPillClass(invoice.status)}`}
-                      >
-                        {formatStatus(invoice.status)}
-                      </span>
+                      <StatusBadge
+                        label={formatStatus(invoice.status)}
+                        tone={statusTone(invoice.status)}
+                      />
                     </div>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                       <div className="grid gap-1">
@@ -1184,14 +1316,17 @@ export default function InvoicePanel({
                       <div className="grid gap-1">
                         <p className={labelClass}>Confirmations</p>
                         <p className="text-sm font-semibold text-ink">
-                          {invoice.confirmations ?? 0}/{invoice.confirmation_target}
+                          {invoice.confirmations ?? 0}/
+                          {invoice.confirmation_target}
                         </p>
                       </div>
                       <div className="grid gap-1">
                         <p className={labelClass}>Created</p>
                         <p
                           className="text-sm font-semibold text-ink"
-                          title={formatRelativeTime(invoice.created_at) ?? undefined}
+                          title={
+                            formatRelativeTime(invoice.created_at) ?? undefined
+                          }
                         >
                           {formatTimestamp(invoice.created_at)}
                         </p>
@@ -1200,7 +1335,9 @@ export default function InvoicePanel({
                         <p className={labelClass}>Expires</p>
                         <p
                           className="text-sm font-semibold text-ink"
-                          title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                          title={
+                            formatRelativeTime(invoice.expires_at) ?? undefined
+                          }
                         >
                           {formatTimestamp(invoice.expires_at)}
                         </p>
@@ -1242,7 +1379,10 @@ export default function InvoicePanel({
                             <p className={labelClass}>Created at</p>
                             <p
                               className="text-sm font-semibold text-ink"
-                              title={formatRelativeTime(invoice.created_at) ?? undefined}
+                              title={
+                                formatRelativeTime(invoice.created_at) ??
+                                undefined
+                              }
                             >
                               {formatTimestamp(invoice.created_at)}
                             </p>
@@ -1251,7 +1391,10 @@ export default function InvoicePanel({
                             <p className={labelClass}>Detected at</p>
                             <p
                               className="text-sm font-semibold text-ink"
-                              title={formatRelativeTime(invoice.detected_at) ?? undefined}
+                              title={
+                                formatRelativeTime(invoice.detected_at) ??
+                                undefined
+                              }
                             >
                               {formatTimestamp(invoice.detected_at)}
                             </p>
@@ -1260,7 +1403,10 @@ export default function InvoicePanel({
                             <p className={labelClass}>Confirmed at</p>
                             <p
                               className="text-sm font-semibold text-ink"
-                              title={formatRelativeTime(invoice.confirmed_at) ?? undefined}
+                              title={
+                                formatRelativeTime(invoice.confirmed_at) ??
+                                undefined
+                              }
                             >
                               {formatTimestamp(invoice.confirmed_at)}
                             </p>
@@ -1269,7 +1415,10 @@ export default function InvoicePanel({
                             <p className={labelClass}>Expires at</p>
                             <p
                               className="text-sm font-semibold text-ink"
-                              title={formatRelativeTime(invoice.expires_at) ?? undefined}
+                              title={
+                                formatRelativeTime(invoice.expires_at) ??
+                                undefined
+                              }
                             >
                               {formatTimestamp(invoice.expires_at)}
                             </p>
@@ -1291,7 +1440,10 @@ export default function InvoicePanel({
                               <p className={labelClass}>Archived at</p>
                               <p
                                 className="text-sm font-semibold text-ink"
-                                title={formatRelativeTime(invoice.archived_at) ?? undefined}
+                                title={
+                                  formatRelativeTime(invoice.archived_at) ??
+                                  undefined
+                                }
                               >
                                 {formatTimestamp(invoice.archived_at)}
                               </p>
@@ -1303,7 +1455,9 @@ export default function InvoicePanel({
                               <p
                                 className="text-sm font-semibold text-ink"
                                 title={
-                                  formatRelativeTime(invoice.paid_after_expiry_at) ?? undefined
+                                  formatRelativeTime(
+                                    invoice.paid_after_expiry_at,
+                                  ) ?? undefined
                                 }
                               >
                                 {formatTimestamp(invoice.paid_after_expiry_at)}
@@ -1320,20 +1474,20 @@ export default function InvoicePanel({
                             >
                               Archive invoice
                             </button>
-                          ) : (
-                            !invoice.archived_at ? (
-                              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                                {formatStatus(invoice.status)} invoices cannot be archived.
-                              </p>
-                            ) : null
-                          )}
-                          {archiveState.error && archiveModalInvoiceId === invoice.id ? (
-                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-clay">
+                          ) : !invoice.archived_at ? (
+                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                              {formatStatus(invoice.status)} invoices cannot be
+                              archived.
+                            </p>
+                          ) : null}
+                          {archiveState.error &&
+                          archiveModalInvoiceId === invoice.id ? (
+                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink">
                               {archiveState.error}
                             </p>
                           ) : null}
                           {archiveState.archivedId === invoice.id ? (
-                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-sage">
+                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink">
                               Invoice archived.
                             </p>
                           ) : null}
@@ -1344,270 +1498,327 @@ export default function InvoicePanel({
                 );
               })}
             </div>
-            <div className="hidden overflow-x-auto rounded-2xl border border-stroke bg-white/70 shadow-soft lg:block">
+            <div className="hidden overflow-x-auto rounded-surface border border-stroke bg-white/70 shadow-soft lg:block">
               <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-white/60">
-                <tr className="border-b border-stroke">
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Invoice
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("amount_xmr")}>
-                      Amount{sortIndicator("amount_xmr")}
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("status")}>
-                      Status{sortIndicator("status")}
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("confirmations")}>
-                      Confirmations{sortIndicator("confirmations")}
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("created_at")}>
-                      Created{sortIndicator("created_at")}
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    <Link className="underline underline-offset-4" href={sortHref("expires_at")}>
-                      Expires{sortIndicator("expires_at")}
-                    </Link>
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {activeList.map((invoice) => {
-                  const isExpanded = expandedInvoiceId === invoice.id;
-                  const showPaidAfterExpiry = Boolean(invoice.paid_after_expiry);
-                  const isArchivable =
-                    !invoice.archived_at &&
-                    (invoice.status === "pending" ||
-                      invoice.status === "expired" ||
-                      invoice.status === "invalid");
-                  return (
-                    <Fragment key={invoice.id}>
-                      <tr
-                        className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
+                <thead className="bg-white/60">
+                  <tr className="border-b border-stroke">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      Invoice
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      <Link
+                        className="underline underline-offset-4"
+                        href={sortHref("amount_xmr")}
                       >
-                        <td className="max-w-[320px] px-4 py-3 align-top">
-                          <div className="grid gap-1 text-left">
-                            {mode === "tour" ? (
-                              <span
-                                className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
-                              >
-                                {invoice.id}
+                        Amount{sortIndicator("amount_xmr")}
+                      </Link>
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      <Link
+                        className="underline underline-offset-4"
+                        href={sortHref("status")}
+                      >
+                        Status{sortIndicator("status")}
+                      </Link>
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      <Link
+                        className="underline underline-offset-4"
+                        href={sortHref("confirmations")}
+                      >
+                        Confirmations{sortIndicator("confirmations")}
+                      </Link>
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      <Link
+                        className="underline underline-offset-4"
+                        href={sortHref("created_at")}
+                      >
+                        Created{sortIndicator("created_at")}
+                      </Link>
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      <Link
+                        className="underline underline-offset-4"
+                        href={sortHref("expires_at")}
+                      >
+                        Expires{sortIndicator("expires_at")}
+                      </Link>
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeList.map((invoice) => {
+                    const isExpanded = expandedInvoiceId === invoice.id;
+                    const showPaidAfterExpiry = Boolean(
+                      invoice.paid_after_expiry,
+                    );
+                    const isArchivable =
+                      !invoice.archived_at &&
+                      (invoice.status === "pending" ||
+                        invoice.status === "expired" ||
+                        invoice.status === "invalid");
+                    return (
+                      <Fragment key={invoice.id}>
+                        <tr
+                          className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
+                        >
+                          <td className="max-w-[320px] px-4 py-3 align-top">
+                            <div className="grid gap-1 text-left">
+                              {mode === "tour" ? (
+                                <span className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4">
+                                  {invoice.id}
+                                </span>
+                              ) : (
+                                <Link
+                                  className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
+                                  href={`/invoice/${invoice.id}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {invoice.id}
+                                </Link>
+                              )}
+                              <span className="break-words text-xs text-ink-soft">
+                                {invoice.address.slice(0, 18)}…
+                                {invoice.address.slice(-10)}
                               </span>
-                            ) : (
-                              <Link
-                                className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
-                                href={`/invoice/${invoice.id}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                {invoice.id}
-                              </Link>
-                            )}
-                            <span className="break-words text-xs text-ink-soft">
-                              {invoice.address.slice(0, 18)}…{invoice.address.slice(-10)}
-                            </span>
-                          </div>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {invoice.archived_at ? (
-                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                                Archived
-                              </span>
-                            ) : null}
-                            {showPaidAfterExpiry ? (
-                              <span className="rounded-full border border-stroke bg-white/60 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.06em] text-ink">
-                                Paid after expiry
-                              </span>
-                            ) : null}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
-                          {formatXmrAmount(invoice.amount_xmr)} XMR
-                        </td>
-                        <td className="px-4 py-3 align-top whitespace-nowrap">
-                          <span
-                            className={`rounded-full border px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.06em] whitespace-nowrap ${statusPillClass(invoice.status)}`}
-                          >
-                            {formatStatus(invoice.status)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
-                          {invoice.confirmations ?? 0}/{invoice.confirmation_target}
-                        </td>
-                        <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
-                          <span title={formatRelativeTime(invoice.created_at) ?? undefined}>
-                            {formatTimestamp(invoice.created_at)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
-                          <span title={formatRelativeTime(invoice.expires_at) ?? undefined}>
-                            {formatTimestamp(invoice.expires_at)}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 align-top">
-                          <div className="flex flex-wrap gap-2">
-                            {mode !== "tour" ? (
-                              <Link
-                                className={smallSecondaryButton}
-                                href={`/invoice/${invoice.id}`}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Open
-                              </Link>
-                            ) : null}
-                            <button
-                              className={smallSecondaryButton}
-                              type="button"
-                              aria-expanded={isExpanded}
-                              onClick={() => toggleInvoice(invoice.id)}
+                            </div>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {invoice.archived_at ? (
+                                <StatusBadge label="Archived" />
+                              ) : null}
+                              {showPaidAfterExpiry ? (
+                                <StatusBadge
+                                  label="Paid after expiry"
+                                  tone="detected"
+                                />
+                              ) : null}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
+                            {formatXmrAmount(invoice.amount_xmr)} XMR
+                          </td>
+                          <td className="px-4 py-3 align-top whitespace-nowrap">
+                            <StatusBadge
+                              className="whitespace-nowrap"
+                              label={formatStatus(invoice.status)}
+                              tone={statusTone(invoice.status)}
+                            />
+                          </td>
+                          <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
+                            {invoice.confirmations ?? 0}/
+                            {invoice.confirmation_target}
+                          </td>
+                          <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
+                            <span
+                              title={
+                                formatRelativeTime(invoice.created_at) ??
+                                undefined
+                              }
                             >
-                              {isExpanded ? "Hide" : "Details"}
-                            </button>
-                            {isArchivable ? (
+                              {formatTimestamp(invoice.created_at)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
+                            <span
+                              title={
+                                formatRelativeTime(invoice.expires_at) ??
+                                undefined
+                              }
+                            >
+                              {formatTimestamp(invoice.expires_at)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 align-top">
+                            <div className="flex flex-wrap gap-2">
+                              {mode !== "tour" ? (
+                                <Link
+                                  className={smallSecondaryButton}
+                                  href={`/invoice/${invoice.id}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  Open
+                                </Link>
+                              ) : null}
                               <button
                                 className={smallSecondaryButton}
                                 type="button"
-                                onClick={() => openArchiveModal(invoice.id)}
+                                aria-expanded={isExpanded}
+                                onClick={() => toggleInvoice(invoice.id)}
                               >
-                                Archive
+                                {isExpanded ? "Hide" : "Details"}
                               </button>
-                            ) : null}
-                          </div>
-                        </td>
-                      </tr>
-                      {isExpanded ? (
-                        <tr className="border-b border-stroke">
-                          <td className="px-4 py-4" colSpan={7}>
-                            <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
-                              <div className="grid gap-3 sm:grid-cols-2">
-                                <div className="grid gap-2">
-                                  <p className={labelClass}>Created at</p>
-                                  <p
-                                    className="text-sm font-semibold text-ink"
-                                    title={formatRelativeTime(invoice.created_at) ?? undefined}
-                                  >
-                                    {formatTimestamp(invoice.created_at)}
-                                  </p>
-                                </div>
-                                <div className="grid gap-2">
-                                  <p className={labelClass}>Detected at</p>
-                                  <p
-                                    className="text-sm font-semibold text-ink"
-                                    title={formatRelativeTime(invoice.detected_at) ?? undefined}
-                                  >
-                                    {formatTimestamp(invoice.detected_at)}
-                                  </p>
-                                </div>
-                                <div className="grid gap-2">
-                                  <p className={labelClass}>Confirmed at</p>
-                                  <p
-                                    className="text-sm font-semibold text-ink"
-                                    title={formatRelativeTime(invoice.confirmed_at) ?? undefined}
-                                  >
-                                    {formatTimestamp(invoice.confirmed_at)}
-                                  </p>
-                                </div>
-                                <div className="grid gap-2">
-                                  <p className={labelClass}>Expires at</p>
-                                  <p
-                                    className="text-sm font-semibold text-ink"
-                                    title={formatRelativeTime(invoice.expires_at) ?? undefined}
-                                  >
-                                    {formatTimestamp(invoice.expires_at)}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="grid gap-3 sm:grid-cols-2">
-                                <div className="grid gap-2">
-                                  <p className={labelClass}>Confirmation target</p>
-                                  <p className="text-sm font-semibold text-ink">
-                                    {invoice.confirmation_target}
-                                  </p>
-                                </div>
-                                <div className="grid gap-2">
-                                  <p className={labelClass}>Subaddress index</p>
-                                  <p className="text-sm font-semibold text-ink">
-                                    {invoice.subaddress_index ?? "-"}
-                                  </p>
-                                </div>
-                                {invoice.archived_at ? (
-                                  <div className="grid gap-2">
-                                    <p className={labelClass}>Archived at</p>
-                                    <p
-                                      className="text-sm font-semibold text-ink"
-                                      title={formatRelativeTime(invoice.archived_at) ?? undefined}
-                                    >
-                                      {formatTimestamp(invoice.archived_at)}
-                                    </p>
-                                  </div>
-                                ) : null}
-                                {invoice.paid_after_expiry_at ? (
-                                  <div className="grid gap-2">
-                                    <p className={labelClass}>Paid after expiry at</p>
-                                    <p
-                                      className="text-sm font-semibold text-ink"
-                                      title={
-                                        formatRelativeTime(invoice.paid_after_expiry_at) ??
-                                        undefined
-                                      }
-                                    >
-                                      {formatTimestamp(invoice.paid_after_expiry_at)}
-                                    </p>
-                                  </div>
-                                ) : null}
-                              </div>
-                              <div className="flex flex-wrap items-center gap-3">
-                                {isArchivable ? (
-                                  <button
-                                    className={secondaryButton}
-                                    type="button"
-                                    onClick={() => openArchiveModal(invoice.id)}
-                                  >
-                                    Archive invoice
-                                  </button>
-                                ) : (
-                                  !invoice.archived_at ? (
-                                    <p className="text-sm text-ink-soft">
-                                      {formatStatus(invoice.status)} invoices cannot be archived.
-                                    </p>
-                                  ) : null
-                                )}
-                                {archiveState.error && archiveModalInvoiceId === invoice.id ? (
-                                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                                    {archiveState.error}
-                                  </p>
-                                ) : null}
-                                {archiveState.success &&
-                                archiveState.archivedId === invoice.id ? (
-                                  <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
-                                    {archiveState.success}
-                                  </p>
-                                ) : null}
-                              </div>
+                              {isArchivable ? (
+                                <button
+                                  className={smallSecondaryButton}
+                                  type="button"
+                                  onClick={() => openArchiveModal(invoice.id)}
+                                >
+                                  Archive
+                                </button>
+                              ) : null}
                             </div>
                           </td>
                         </tr>
-                      ) : null}
-                    </Fragment>
-                  );
-                })}
-              </tbody>
+                        {isExpanded ? (
+                          <tr className="border-b border-stroke">
+                            <td className="px-4 py-4" colSpan={7}>
+                              <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
+                                <div className="grid gap-3 sm:grid-cols-2">
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>Created at</p>
+                                    <p
+                                      className="text-sm font-semibold text-ink"
+                                      title={
+                                        formatRelativeTime(
+                                          invoice.created_at,
+                                        ) ?? undefined
+                                      }
+                                    >
+                                      {formatTimestamp(invoice.created_at)}
+                                    </p>
+                                  </div>
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>Detected at</p>
+                                    <p
+                                      className="text-sm font-semibold text-ink"
+                                      title={
+                                        formatRelativeTime(
+                                          invoice.detected_at,
+                                        ) ?? undefined
+                                      }
+                                    >
+                                      {formatTimestamp(invoice.detected_at)}
+                                    </p>
+                                  </div>
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>Confirmed at</p>
+                                    <p
+                                      className="text-sm font-semibold text-ink"
+                                      title={
+                                        formatRelativeTime(
+                                          invoice.confirmed_at,
+                                        ) ?? undefined
+                                      }
+                                    >
+                                      {formatTimestamp(invoice.confirmed_at)}
+                                    </p>
+                                  </div>
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>Expires at</p>
+                                    <p
+                                      className="text-sm font-semibold text-ink"
+                                      title={
+                                        formatRelativeTime(
+                                          invoice.expires_at,
+                                        ) ?? undefined
+                                      }
+                                    >
+                                      {formatTimestamp(invoice.expires_at)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="grid gap-3 sm:grid-cols-2">
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>
+                                      Confirmation target
+                                    </p>
+                                    <p className="text-sm font-semibold text-ink">
+                                      {invoice.confirmation_target}
+                                    </p>
+                                  </div>
+                                  <div className="grid gap-2">
+                                    <p className={labelClass}>
+                                      Subaddress index
+                                    </p>
+                                    <p className="text-sm font-semibold text-ink">
+                                      {invoice.subaddress_index ?? "-"}
+                                    </p>
+                                  </div>
+                                  {invoice.archived_at ? (
+                                    <div className="grid gap-2">
+                                      <p className={labelClass}>Archived at</p>
+                                      <p
+                                        className="text-sm font-semibold text-ink"
+                                        title={
+                                          formatRelativeTime(
+                                            invoice.archived_at,
+                                          ) ?? undefined
+                                        }
+                                      >
+                                        {formatTimestamp(invoice.archived_at)}
+                                      </p>
+                                    </div>
+                                  ) : null}
+                                  {invoice.paid_after_expiry_at ? (
+                                    <div className="grid gap-2">
+                                      <p className={labelClass}>
+                                        Paid after expiry at
+                                      </p>
+                                      <p
+                                        className="text-sm font-semibold text-ink"
+                                        title={
+                                          formatRelativeTime(
+                                            invoice.paid_after_expiry_at,
+                                          ) ?? undefined
+                                        }
+                                      >
+                                        {formatTimestamp(
+                                          invoice.paid_after_expiry_at,
+                                        )}
+                                      </p>
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div className="flex flex-wrap items-center gap-3">
+                                  {isArchivable ? (
+                                    <button
+                                      className={secondaryButton}
+                                      type="button"
+                                      onClick={() =>
+                                        openArchiveModal(invoice.id)
+                                      }
+                                    >
+                                      Archive invoice
+                                    </button>
+                                  ) : !invoice.archived_at ? (
+                                    <p className="text-sm text-ink-soft">
+                                      {formatStatus(invoice.status)} invoices
+                                      cannot be archived.
+                                    </p>
+                                  ) : null}
+                                  {archiveState.error &&
+                                  archiveModalInvoiceId === invoice.id ? (
+                                    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                                      {archiveState.error}
+                                    </p>
+                                  ) : null}
+                                  {archiveState.success &&
+                                  archiveState.archivedId === invoice.id ? (
+                                    <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
+                                      {archiveState.success}
+                                    </p>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : null}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
               </table>
             </div>
           </>
         )}
       </div>
-      <div className="mt-6 rounded-2xl border border-ink/10 bg-ink/10 px-4 py-3 text-sm font-semibold text-ink">
+      <div className="border-l-2 border-sage pl-4 text-sm font-semibold text-ink">
         We never hold funds. All payments move from the customer to your wallet.
       </div>
 
@@ -1624,13 +1835,15 @@ export default function InvoicePanel({
 
       {archiveModalInvoiceId ? (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
-          <div className="w-full max-w-lg rounded-3xl border border-stroke bg-white p-8 shadow-deep">
+          <div className="w-full max-w-lg rounded-surface border border-stroke bg-white p-8 shadow-deep">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Archive invoice
                 </p>
-                <h2 className="mt-2 font-sans font-semibold text-2xl">Archive this invoice?</h2>
+                <h2 className="mt-2 font-sans font-semibold text-2xl">
+                  Archive this invoice?
+                </h2>
                 <p className="mt-2 text-sm text-ink-soft">
                   Archived invoices stay available in the archive list.
                 </p>
@@ -1640,16 +1853,28 @@ export default function InvoicePanel({
                   </p>
                 ) : null}
               </div>
-              <button className={secondaryButton} type="button" onClick={closeArchiveModal}>
+              <button
+                className={secondaryButton}
+                type="button"
+                onClick={closeArchiveModal}
+              >
                 Close
               </button>
             </div>
             <div className="mt-6 flex flex-wrap justify-end gap-3">
-              <button className={secondaryButton} type="button" onClick={closeArchiveModal}>
+              <button
+                className={secondaryButton}
+                type="button"
+                onClick={closeArchiveModal}
+              >
                 Cancel
               </button>
               <form action={archiveAction}>
-                <input type="hidden" name="invoice_id" value={archiveModalInvoiceId} />
+                <input
+                  type="hidden"
+                  name="invoice_id"
+                  value={archiveModalInvoiceId}
+                />
                 <button className={primaryButton} type="submit">
                   Archive invoice
                 </button>
@@ -1658,6 +1883,6 @@ export default function InvoicePanel({
           </div>
         </div>
       ) : null}
-    </div>
+    </section>
   );
 }

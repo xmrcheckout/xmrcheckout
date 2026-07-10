@@ -22,7 +22,7 @@ export default function WebhookSecretSection({
 }: WebhookSecretSectionProps) {
   const [state, formAction] = useFormState(
     resetWebhookSecretAction,
-    initialState(webhookSecret)
+    initialState(webhookSecret),
   );
 
   return (
@@ -34,7 +34,7 @@ export default function WebhookSecretSection({
           buttonLabel="Copy webhook secret"
         />
       ) : (
-        <div className="rounded-2xl border border-stroke bg-white/80 p-6 text-sm text-ink-soft shadow-soft backdrop-blur">
+        <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
           Webhook secret unavailable. Reset to generate a new secret.
         </div>
       )}
@@ -45,7 +45,7 @@ export default function WebhookSecretSection({
       ) : null}
       <form action={formAction} className="flex justify-end">
         <button
-          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
+          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="submit"
         >
           Reset webhook secret

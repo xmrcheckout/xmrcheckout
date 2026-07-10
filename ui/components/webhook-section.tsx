@@ -9,6 +9,7 @@ import {
   deleteWebhookTourAction,
   type WebhookFormState,
 } from "../app/(app)/dashboard/actions";
+import StatusBadge from "./status-badge";
 
 type WebhookSummary = {
   id: string;
@@ -22,14 +23,26 @@ type WebhookSummary = {
 const initialState: WebhookFormState = { error: null, success: null };
 
 const webhookEvents = [
-  { event: "invoice.created", key: "invoice_created", label: "invoice.created" },
+  {
+    event: "invoice.created",
+    key: "invoice_created",
+    label: "invoice.created",
+  },
   {
     event: "invoice.payment_detected",
     key: "invoice_payment_detected",
     label: "invoice.payment_detected",
   },
-  { event: "invoice.confirmed", key: "invoice_confirmed", label: "invoice.confirmed" },
-  { event: "invoice.expired", key: "invoice_expired", label: "invoice.expired" },
+  {
+    event: "invoice.confirmed",
+    key: "invoice_confirmed",
+    label: "invoice.confirmed",
+  },
+  {
+    event: "invoice.expired",
+    key: "invoice_expired",
+    label: "invoice.expired",
+  },
 ];
 
 type WebhookSectionProps = {
@@ -37,24 +50,37 @@ type WebhookSectionProps = {
   webhooks: WebhookSummary[];
 };
 
-export default function WebhookSection({ mode = "live", webhooks }: WebhookSectionProps) {
+export default function WebhookSection({
+  mode = "live",
+  webhooks,
+}: WebhookSectionProps) {
   const [createState, createAction] = useFormState(
     mode === "tour" ? createWebhookTourAction : createWebhookAction,
-    initialState
+    initialState,
   );
   const [deleteState, deleteAction] = useFormState(
     mode === "tour" ? deleteWebhookTourAction : deleteWebhookAction,
-    initialState
+    initialState,
   );
 
   return (
     <div className="grid gap-8">
       {mode === "tour" ? (
-        <div className="rounded-2xl border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
+        <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
           Tour mode: webhook changes are simulated. No endpoints are saved.
         </div>
       ) : null}
-      <form className="grid gap-6" action={createAction}>
+      <form
+        className="grid gap-6 rounded-surface border border-stroke bg-card p-5 shadow-soft sm:p-6"
+        action={createAction}
+      >
+        <div>
+          <h2 className="font-sans text-xl font-semibold">Add an endpoint</h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            Select the invoice events to relay and optionally route events to
+            separate URLs.
+          </p>
+        </div>
         <div className="grid gap-2">
           <label
             className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
@@ -75,7 +101,10 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {webhookEvents.map(({ event, key, label }) => (
-            <div key={event} className="rounded-xl border border-stroke bg-white/70 p-4">
+            <div
+              key={event}
+              className="border-t-2 border-clay/40 bg-white/60 p-4"
+            >
               <label className="flex items-center gap-3 text-sm font-semibold text-ink">
                 <input
                   className="h-4 w-4 rounded border-stroke text-ink focus:ring-ink/20"
@@ -107,16 +136,16 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
         ) : null}
         <div className="flex justify-end">
           <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:opacity-95"
+            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             type="submit"
           >
             Save webhook
           </button>
         </div>
       </form>
-      <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-          Hint
+      <div className="border-l-2 border-sage pl-4">
+        <p className="text-sm font-semibold text-ink">
+          Polling remains available
         </p>
         <p className="mt-2 text-sm text-ink-soft">
           Webhooks are optional. You can poll{" "}
@@ -125,8 +154,13 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
         </p>
       </div>
       <div className="grid gap-4">
-        <div>
-          <h3 className="font-sans font-semibold text-xl">Active webhooks</h3>
+        <div className="border-b border-stroke pb-3">
+          <h2 className="font-sans text-xl font-semibold">
+            Configured endpoints
+          </h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            Review the exact destination used for each selected event.
+          </p>
         </div>
         {deleteState.error ? (
           <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
@@ -147,12 +181,18 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
             {webhooks.map((hook) => (
               <div
                 key={hook.id}
-                className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft backdrop-blur"
+                className="flex flex-wrap items-start justify-between gap-4 rounded-surface border border-stroke bg-white/70 p-5 shadow-soft"
               >
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Webhook
-                  </p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                      Webhook
+                    </p>
+                    <StatusBadge
+                      label={hook.active ? "Active" : "Paused"}
+                      tone={hook.active ? "success" : "neutral"}
+                    />
+                  </div>
                   <code className="mt-2 block break-all rounded-lg bg-ink/10 px-3 py-2 text-sm text-ink">
                     {hook.url || "Per-event URLs only"}
                   </code>
@@ -171,7 +211,7 @@ export default function WebhookSection({ mode = "live", webhooks }: WebhookSecti
                 </div>
                 <div className="flex">
                   <button
-                    className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95"
+                    className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
                     type="submit"
                     name="webhook_id"
                     value={hook.id}

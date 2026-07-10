@@ -1355,6 +1355,8 @@ summary:focus-visible {
 }
 
 .home-page ~ .site-footer {
+  position: relative;
+  z-index: 1;
   margin-top: 0;
   border-top: 1px solid rgba(248, 242, 233, 0.12);
   background: var(--ink);
@@ -1367,7 +1369,6 @@ summary:focus-visible {
 }
 
 .home-page ~ .site-footer .donate-link {
-  border-color: rgba(248, 242, 233, 0.78);
   background: #ffffff;
   color: #101217;
   border-color: rgba(16, 18, 23, 0.85);

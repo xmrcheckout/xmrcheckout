@@ -239,14 +239,19 @@ export default async function BtcpayModalInvoicePage({
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       {useClassicCheckout ? (
         <div className="mx-auto grid max-w-md gap-5">
-          <div className="flex items-center justify-between gap-3 px-1">
-            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <span
-                className="h-2.5 w-2.5 rounded-full bg-monero"
-                aria-hidden="true"
-              />
-              Direct-to-wallet checkout
-            </p>
+          <div className="flex items-start justify-between gap-3 px-1">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-monero"
+                  aria-hidden="true"
+                />
+                Direct-to-wallet checkout
+              </p>
+              <h1 className="mt-1 font-sans text-xl font-semibold text-ink">
+                Payment request
+              </h1>
+            </div>
             <StatusRefreshButton label="Refresh" />
           </div>
           <BtcpayClassicCheckout
@@ -271,14 +276,19 @@ export default async function BtcpayModalInvoicePage({
         </div>
       ) : (
         <div className="mx-auto w-full max-w-4xl">
-          <div className="mb-4 flex items-center justify-between gap-3 px-1">
-            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <span
-                className="h-2.5 w-2.5 rounded-full bg-monero"
-                aria-hidden="true"
-              />
-              Direct-to-wallet checkout
-            </p>
+          <div className="mb-4 flex items-start justify-between gap-3 px-1">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-monero"
+                  aria-hidden="true"
+                />
+                Direct-to-wallet checkout
+              </p>
+              <h1 className="mt-1 font-sans text-xl font-semibold text-ink">
+                Payment request
+              </h1>
+            </div>
             <StatusRefreshButton label="Refresh" />
           </div>
 

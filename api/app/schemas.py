@@ -194,6 +194,17 @@ class SystemStatusResponse(BaseModel):
     last_reconcile_error: str | None = None
 
 
+class RateQuoteResponse(BaseModel):
+    currency: str
+    rate: Decimal
+    source: str
+    quoted_at: datetime
+
+    @field_serializer("rate")
+    def _serialize_rate(self, value: Decimal) -> str:
+        return str(value)
+
+
 class ProfileResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

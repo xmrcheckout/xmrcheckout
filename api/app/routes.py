@@ -29,7 +29,7 @@ from .db import get_db
 from .formatting import format_xmr_amount
 from .models import Invoice, ProfileHistory, SystemStatus, User, Webhook, WebhookDelivery
 from monero.address import Address, IntegratedAddress, SubAddress
-from .rates import get_xmr_rate
+from .rates import UnsupportedCurrencyError, get_xmr_rate
 from .subaddress_allocator import MAX_SUBADDRESS_INDEX, create_subaddress_for_user
 from .schemas import (
     ApiCredentialsResetRequest,
@@ -43,6 +43,7 @@ from .schemas import (
     LoginResponse,
     ProfileResponse,
     ProfileUpdate,
+    RateQuoteResponse,
     SystemStatusResponse,
     WebhookCreate,
     WebhookDeliveryResponse,
@@ -378,7 +379,7 @@ def _resolve_invoice_amount(
         )
     try:
         quote = get_xmr_rate(requested_currency)
-    except ValueError as exc:
+    except UnsupportedCurrencyError as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
@@ -585,6 +586,38 @@ def get_donation_status(
 @router.get("/api/core/public/system/status", response_model=SystemStatusResponse)
 def get_public_system_status(db: Session = Depends(get_db)):
     return _load_public_system_status(db)
+
+
+@router.get(
+    "/api/core/public/rates/{currency}",
+    response_model=RateQuoteResponse,
+)
+def get_public_xmr_rate(currency: str, response: Response):
+    normalized_currency = currency.strip().upper()
+    if len(normalized_currency) != 3 or not normalized_currency.isalpha():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Currency must be a three-letter code",
+        )
+    try:
+        quote = get_xmr_rate(normalized_currency)
+    except UnsupportedCurrencyError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unsupported fiat currency",
+        ) from exc
+    except (RuntimeError, RequestException, ValueError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Fiat quote service unavailable",
+        ) from exc
+    response.headers["Cache-Control"] = "public, max-age=60"
+    return RateQuoteResponse(
+        currency=quote.currency,
+        rate=quote.rate,
+        source=quote.source,
+        quoted_at=quote.quoted_at,
+    )
 
 
 @router.post("/api/core/webhooks", response_model=WebhookResponse)

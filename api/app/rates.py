@@ -24,21 +24,25 @@ class QuoteResult:
     quoted_at: datetime
 
 
+class UnsupportedCurrencyError(ValueError):
+    pass
+
+
 _cache_lock = threading.Lock()
-_cached_quote: QuoteResult | None = None
-_cached_at: float | None = None
+_cached_quotes: dict[str, tuple[QuoteResult, float]] = {}
 
 
 def get_xmr_rate(currency: str) -> QuoteResult:
-    global _cached_quote, _cached_at
     normalized_currency = currency.strip().lower()
     if not COINGECKO_API_KEY:
         raise RuntimeError("CoinGecko API key is not configured")
 
     with _cache_lock:
-        if _cached_quote and _cached_at:
-            if time.monotonic() - _cached_at < RATE_TTL_SECONDS:
-                return _cached_quote
+        cached = _cached_quotes.get(normalized_currency)
+        if cached:
+            cached_quote, cached_at = cached
+            if time.monotonic() - cached_at < RATE_TTL_SECONDS:
+                return cached_quote
 
     params = {
         "vs_currencies": normalized_currency,
@@ -54,7 +58,7 @@ def get_xmr_rate(currency: str) -> QuoteResult:
         else None
     )
     if rate_value is None:
-        raise ValueError("Unsupported fiat currency at this time")
+        raise UnsupportedCurrencyError("Unsupported fiat currency at this time")
     rate = Decimal(str(rate_value))
     quote = QuoteResult(
         rate=rate,
@@ -63,6 +67,5 @@ def get_xmr_rate(currency: str) -> QuoteResult:
         quoted_at=datetime.now(timezone.utc),
     )
     with _cache_lock:
-        _cached_quote = quote
-        _cached_at = time.monotonic()
+        _cached_quotes[normalized_currency] = (quote, time.monotonic())
     return quote

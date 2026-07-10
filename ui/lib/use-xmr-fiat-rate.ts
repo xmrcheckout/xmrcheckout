@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 const RATE_TTL_MS = 5 * 60 * 1000;
-const BASE_URL = "https://api.coingecko.com/api/v3/simple/price";
 
 type CachedRate = {
   rate: number;
@@ -13,24 +12,26 @@ const inflight = new Map<string, Promise<number | null>>();
 
 const fetchRate = async (currency: string): Promise<number | null> => {
   try {
-    const params = new URLSearchParams({
-      ids: "monero",
-      vs_currencies: currency,
-    });
-    const response = await fetch(`${BASE_URL}?${params.toString()}`, {
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `/api/core/public/rates/${encodeURIComponent(currency)}`,
+      { cache: "no-store" }
+    );
     if (!response.ok) {
       return null;
     }
     const data = (await response.json()) as {
-      monero?: Record<string, number>;
+      rate?: string | number;
+      quoted_at?: string;
     };
-    const rate = data?.monero?.[currency];
-    if (typeof rate !== "number" || !Number.isFinite(rate)) {
+    const rate = Number(data.rate);
+    if (!Number.isFinite(rate) || rate <= 0) {
       return null;
     }
-    cachedRates.set(currency, { rate, updatedAt: Date.now() });
+    const quotedAt = data.quoted_at ? Date.parse(data.quoted_at) : Number.NaN;
+    cachedRates.set(currency, {
+      rate,
+      updatedAt: Number.isFinite(quotedAt) ? quotedAt : Date.now(),
+    });
     return rate;
   } catch {
     return null;
@@ -72,6 +73,8 @@ export const useXmrFiatRate = (currency: string | null) => {
       return;
     }
 
+    setRate(null);
+    setUpdatedAt(null);
     setStatus("loading");
     const request =
       inflight.get(normalized) ??

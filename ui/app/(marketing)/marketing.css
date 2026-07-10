@@ -1368,15 +1368,16 @@ summary:focus-visible {
 
 .home-page ~ .site-footer .donate-link {
   border-color: rgba(248, 242, 233, 0.78);
-  background: var(--cream);
-  color: var(--ink);
+  background: #ffffff;
+  color: #101217;
+  border-color: rgba(16, 18, 23, 0.85);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
 }
 
 .home-page ~ .site-footer .donate-link:hover {
-  border-color: var(--cream);
-  background: var(--sand);
-  color: var(--ink);
+  border-color: #101217;
+  background: #f1e5d2;
+  color: #101217;
 }
 
 @keyframes console-rise {

@@ -125,6 +125,10 @@ cp .env.example .env
 4. Choose a wallet-rpc target and provision view-only wallets:
 - Use the bundled wallet-rpc containers:
   - Set `MONERO_WALLET_RPC_URLS=http://wallet-rpc-reconciler-1:18083,http://wallet-rpc-reconciler-2:18083,http://wallet-rpc-reconciler-3:18083`
+  - Each container uses its own deterministic wallet shard under
+    `./wallets/reconciler-1`, `./wallets/reconciler-2`, or
+    `./wallets/reconciler-3`. Keep the URL ordering stable because it defines
+    which shard owns each view-only wallet.
 - Or point to an external wallet-rpc service:
   - Set `MONERO_WALLET_RPC_URLS`, `MONERO_WALLET_RPC_USER`, `MONERO_WALLET_RPC_PASSWORD`, and `MONERO_WALLET_RPC_WALLET_PASSWORD`
 
@@ -165,6 +169,24 @@ Common causes:
 - wallet cache file does not match the `.keys` file
 - daemon URL is unreachable from the wallet-rpc containers
 
+At startup, each bundled wallet-rpc container checks its own shard for a
+zero-byte wallet cache with a valid matching `.keys` file. It moves only the
+damaged cache and temporary artifacts into a timestamped `.quarantine`
+directory so the cache can be rebuilt without deleting view-only keys.
+
+To migrate an older shared `./wallets/reconciler` directory, stop the
+reconciler and wallet-rpc services, validate the migration, then apply it:
+
+```
+python scripts/migrate_wallet_shards.py \
+  --source wallets/reconciler --target-root wallets --shards 3
+python scripts/migrate_wallet_shards.py \
+  --source wallets/reconciler --target-root wallets --shards 3 --apply
+```
+
+The migration copies and verifies files; it does not alter the shared source
+directory.
+
 4. If you are running the bundled `monerod`, check whether it is synced:
 
 ```
@@ -180,7 +202,10 @@ docker compose logs api
 docker compose logs reconciler
 ```
 
-The reconciler is what updates invoice detection and confirmations. If it is down, invoices will not advance even when wallet-rpc and the daemon are healthy.
+The reconciler is what updates invoice detection and confirmations. If it is
+down or degraded, invoices will not reliably advance even when wallet-rpc and
+the daemon are reachable. The public system-status endpoint reports attempted,
+successful, and failed invoice checks from the latest cycle.
 
 ### Optional: Postgres backups (disabled by default)
 

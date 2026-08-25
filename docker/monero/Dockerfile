@@ -24,7 +24,8 @@ RUN set -eux; \
   rm -rf /tmp/monero* /tmp/monero.tar.bz2
 
 COPY entrypoint.sh /usr/local/bin/monero-wallet-rpc-entrypoint
-RUN chmod +x /usr/local/bin/monero-wallet-rpc-entrypoint
+COPY repair-wallet-caches.sh /usr/local/bin/repair-wallet-caches
+RUN chmod +x /usr/local/bin/monero-wallet-rpc-entrypoint /usr/local/bin/repair-wallet-caches
 
 EXPOSE 18081 18083
 

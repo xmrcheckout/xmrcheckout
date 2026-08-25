@@ -127,6 +127,20 @@ checkout observed the payment; `paid_after_expiry_at` records the on-chain
 threshold-crossing time for payments that arrived after expiry. If transfer
 timing is unavailable, detection time is used conservatively.
 
+After upgrading an existing installation, review and repair stored late-payment
+metadata with the reconciler's idempotent maintenance command. Run it without
+`--apply` first to inspect the proposed changes:
+
+```
+docker compose exec -T reconciler python -m app.reclassify_invoice_timing
+docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
+```
+
+Webhook destinations must use HTTPS and resolve exclusively to public IP
+addresses. Loopback, private, link-local, and other special-use destinations
+are rejected, including at redirect hops. This restriction applies to both the
+native API and the BTCPay-compatible API.
+
 3. Choose a Monero daemon source:
 - **Use a third-party daemon (default):**
   - Leave `MONERO_DAEMON_URL` as-is (the default points at a public Monero daemon).

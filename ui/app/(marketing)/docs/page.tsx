@@ -378,6 +378,7 @@ const endpointRequirements = [
     notes: [
       "Provide url for all selected events unless every event is mapped in event_urls.",
       "Events must be one of: invoice.created, invoice.payment_detected, invoice.confirmed, invoice.expired.",
+      "Every destination must use HTTPS and resolve only to public IP addresses; redirects are checked again before delivery.",
     ],
   },
   {
@@ -511,6 +512,7 @@ const endpointRequirements = [
     notes: [
       "Deliveries include BTCPay-Sig: sha256=<hmac>.",
       "Events follow BTCPay naming conventions for compatibility.",
+      "The destination must use HTTPS and resolve only to public IP addresses; redirects are checked again before delivery.",
     ],
   },
   {
@@ -866,6 +868,10 @@ Content-Type: application/json
               <li>invoice.expired</li>
               <li>Deliveries include the X-Webhook-Secret header</li>
               <li>
+                Destinations must use HTTPS and resolve only to public IP
+                addresses; redirect destinations are validated again
+              </li>
+              <li>
                 Webhooks are optional; poll
                 /api/core/public/invoice/&lt;invoice_id&gt; without auth
               </li>
@@ -920,6 +926,10 @@ Content-Type: application/json
                 </span>
               </li>
               <li>Event names follow BTCPay conventions for compatibility.</li>
+              <li>
+                Destinations must use HTTPS and resolve only to public IP
+                addresses.
+              </li>
             </ul>
           </div>
         </section>

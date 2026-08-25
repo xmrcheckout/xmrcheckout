@@ -62,7 +62,7 @@ const endpointGroups = [
         method: "GET",
         path: "/api/core/public/system/status",
         description:
-          "Read daemon, wallet-rpc, block height, and reconciler heartbeat without auth.",
+          "Read daemon, wallet-rpc, block height, and invoice-detection health without auth.",
       },
       {
         method: "GET",
@@ -288,7 +288,7 @@ const endpointRequirements = [
     required: [],
     optional: [],
     notes: [
-      "Returns wallet-rpc reachability, daemon reachability, current daemon height, and reconciler heartbeat timestamps.",
+      "Returns wallet-rpc and daemon reachability, current daemon height, reconciler health, heartbeat timestamps, and latest invoice-check counts.",
       "Use this endpoint to debug setup issues before sending a real payment.",
     ],
   },

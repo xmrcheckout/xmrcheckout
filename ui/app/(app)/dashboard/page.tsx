@@ -86,11 +86,15 @@ type ProfileSummary = {
 type SystemStatusSummary = {
   wallet_rpc: "ok" | "unreachable";
   daemon: "ok" | "unreachable" | "unknown";
+  reconciler: "ok" | "degraded" | "unavailable";
   daemon_height: number | null;
   invoice_reconcile_interval_seconds: number;
   last_reconcile_started_at: string | null;
   last_reconcile_completed_at: string | null;
   last_reconcile_error: string | null;
+  last_reconcile_attempted_invoices: number;
+  last_reconcile_succeeded_invoices: number;
+  last_reconcile_failed_invoices: number;
 };
 
 const dashboardNavItems = [
@@ -166,6 +170,16 @@ const daemonBadge = (systemStatus: SystemStatusSummary | null) => {
     tone: "error" as StatusTone,
     label: "Down",
   };
+};
+
+const reconcilerBadge = (systemStatus: SystemStatusSummary | null) => {
+  if (!systemStatus || systemStatus.reconciler === "unavailable") {
+    return { tone: "pending" as StatusTone, label: "Unavailable" };
+  }
+  if (systemStatus.reconciler === "ok") {
+    return { tone: "success" as StatusTone, label: "Healthy" };
+  }
+  return { tone: "error" as StatusTone, label: "Degraded" };
 };
 
 const formatStatus = (status: InvoiceStatus) => {
@@ -448,11 +462,9 @@ export default async function DashboardPage({
   }));
   const walletStatusBadge = walletRpcBadge(systemStatus);
   const daemonStatusBadge = daemonBadge(systemStatus);
+  const reconcilerStatusBadge = reconcilerBadge(systemStatus);
   const lastReconcileCompleted = systemStatus?.last_reconcile_completed_at
     ? formatRelativeTime(systemStatus.last_reconcile_completed_at)
-    : null;
-  const lastReconcileStarted = systemStatus?.last_reconcile_started_at
-    ? formatRelativeTime(systemStatus.last_reconcile_started_at)
     : null;
   const subTabBaseClass =
     "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2";
@@ -738,6 +750,10 @@ export default async function DashboardPage({
                       label={`Daemon: ${daemonStatusBadge.label}`}
                       tone={daemonStatusBadge.tone}
                     />
+                    <StatusBadge
+                      label={`Detection: ${reconcilerStatusBadge.label}`}
+                      tone={reconcilerStatusBadge.tone}
+                    />
                   </div>
                 </div>
                 <dl className="grid border-y border-stroke bg-white/60 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x xl:divide-stroke">
@@ -757,8 +773,10 @@ export default async function DashboardPage({
                       value: lastReconcileCompleted ?? "Not yet recorded",
                     },
                     {
-                      label: "Last check started",
-                      value: lastReconcileStarted ?? "Not yet recorded",
+                      label: "Latest invoice checks",
+                      value: systemStatus
+                        ? `${systemStatus.last_reconcile_succeeded_invoices}/${systemStatus.last_reconcile_attempted_invoices} successful`
+                        : "Unavailable",
                     },
                   ].map((item) => (
                     <div

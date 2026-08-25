@@ -40,11 +40,15 @@ type InvoiceStatusResponse = {
 type SystemStatusResponse = {
   wallet_rpc: "ok" | "unreachable";
   daemon: "ok" | "unreachable" | "unknown";
+  reconciler: "ok" | "degraded" | "unavailable";
   daemon_height: number | null;
   invoice_reconcile_interval_seconds: number;
   last_reconcile_started_at: string | null;
   last_reconcile_completed_at: string | null;
   last_reconcile_error: string | null;
+  last_reconcile_attempted_invoices: number;
+  last_reconcile_succeeded_invoices: number;
+  last_reconcile_failed_invoices: number;
 };
 
 const walletRpcBadge = (systemStatus: SystemStatusResponse | null) => {
@@ -89,6 +93,16 @@ const daemonBadge = (systemStatus: SystemStatusResponse | null) => {
     label: "Daemon down",
     tone: "error" as StatusTone,
   };
+};
+
+const reconcilerBadge = (systemStatus: SystemStatusResponse | null) => {
+  if (!systemStatus || systemStatus.reconciler === "unavailable") {
+    return { label: "Detection unavailable", tone: "pending" as StatusTone };
+  }
+  if (systemStatus.reconciler === "ok") {
+    return { label: "Detection healthy", tone: "success" as StatusTone };
+  }
+  return { label: "Detection degraded", tone: "error" as StatusTone };
 };
 
 const formatStatus = (status: InvoiceStatus) => {
@@ -254,6 +268,7 @@ export default async function InvoiceStatusDetailPage({
   );
   const walletStatusBadge = walletRpcBadge(systemStatus);
   const daemonStatusBadge = daemonBadge(systemStatus);
+  const reconcilerStatusBadge = reconcilerBadge(systemStatus);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
@@ -354,6 +369,10 @@ export default async function InvoiceStatusDetailPage({
                 <StatusBadge
                   label={daemonStatusBadge.label}
                   tone={daemonStatusBadge.tone}
+                />
+                <StatusBadge
+                  label={reconcilerStatusBadge.label}
+                  tone={reconcilerStatusBadge.tone}
                 />
               </div>
               <dl className="grid grid-cols-2 gap-4 text-sm">

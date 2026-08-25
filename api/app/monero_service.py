@@ -199,6 +199,7 @@ class MoneroWalletService:
             view_key=view_key,
         )
         self._ensure_daemon(backend)
+        self._ensure_wallet_synced(backend)
         try:
             index_response = backend.client.raw_request(
                 "get_address_index",
@@ -260,6 +261,7 @@ class MoneroWalletService:
             view_key=view_key,
         )
         self._ensure_daemon(backend)
+        self._ensure_wallet_synced(backend)
         try:
             index_response = backend.client.raw_request(
                 "get_address_index",
@@ -452,6 +454,24 @@ class MoneroWalletService:
             )
         except (RPCError, RequestException) as exc:
             self._raise_wallet_rpc_error(exc)
+
+    def _ensure_wallet_synced(self, backend: WalletBackend) -> None:
+        daemon_height = self._daemon_height()
+        if daemon_height is None:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Monero daemon height is unavailable",
+            )
+        try:
+            response = backend.client.raw_request("get_height")
+        except (RPCError, RequestException) as exc:
+            self._raise_wallet_rpc_error(exc)
+        wallet_height = response.get("height") if isinstance(response, dict) else None
+        if not isinstance(wallet_height, int) or wallet_height < daemon_height:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="View-only wallet is still syncing",
+            )
 
     @staticmethod
     def _raise_wallet_rpc_error(exc: Exception) -> None:

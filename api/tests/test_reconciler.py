@@ -5,6 +5,7 @@ from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
+from fastapi import HTTPException
 from requests import RequestException
 
 from app import reconciler, routes
@@ -173,6 +174,28 @@ class WalletRecoverySafetyTests(unittest.TestCase):
             logging.WARNING,
         )
         self.assertGreaterEqual(logging.getLogger("urllib3").level, logging.WARNING)
+
+    def test_unsynced_wallet_is_rejected_before_transfer_read(self):
+        client = Mock()
+        client.raw_request.return_value = {"height": 90}
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._daemon_height = Mock(return_value=100)
+
+        with self.assertRaises(HTTPException) as context:
+            service._ensure_wallet_synced(backend)
+
+        self.assertEqual(context.exception.status_code, 503)
+        self.assertEqual(context.exception.detail, "View-only wallet is still syncing")
+
+    def test_synced_wallet_passes_height_guard(self):
+        client = Mock()
+        client.raw_request.return_value = {"height": 100}
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._daemon_height = Mock(return_value=100)
+
+        service._ensure_wallet_synced(backend)
 
 
 if __name__ == "__main__":

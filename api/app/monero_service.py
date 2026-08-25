@@ -373,6 +373,12 @@ class MoneroWalletService:
     ) -> None:
         if backend.current_wallet == wallet_name:
             return
+        if backend.current_wallet is None and self._adopt_open_wallet(
+            backend,
+            wallet_name=wallet_name,
+            payment_address=payment_address,
+        ):
+            return
         backend.ready_wallet = None
         close_start = time.monotonic()
         try:
@@ -443,6 +449,34 @@ class MoneroWalletService:
                         ),
                     ) from gen_exc
                 raise
+
+    def _adopt_open_wallet(
+        self,
+        backend: WalletBackend,
+        *,
+        wallet_name: str,
+        payment_address: str,
+    ) -> bool:
+        try:
+            response = backend.client.session.post(
+                f"{backend.url.rstrip('/')}/json_rpc",
+                json={"jsonrpc": "2.0", "id": "address", "method": "get_address"},
+                timeout=5,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (RequestException, ValueError) as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Monero wallet RPC is busy or unreachable",
+            ) from exc
+        result = payload.get("result") if isinstance(payload, dict) else None
+        open_address = result.get("address") if isinstance(result, dict) else None
+        if open_address != payment_address:
+            return False
+        backend.current_wallet = wallet_name
+        backend.ready_wallet = None
+        return True
 
     def _ensure_daemon(self, backend: WalletBackend) -> None:
         if not self._daemon_address:

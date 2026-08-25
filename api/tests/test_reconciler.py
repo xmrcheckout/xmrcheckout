@@ -166,6 +166,41 @@ class ReconcilerStatusTests(unittest.TestCase):
 
 
 class WalletRecoverySafetyTests(unittest.TestCase):
+    def test_existing_matching_wallet_is_adopted_without_close(self):
+        client = Mock()
+        client.session.post.return_value.json.return_value = {
+            "result": {"address": "merchant-address"}
+        }
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+
+        service._ensure_wallet_open(
+            backend=backend,
+            wallet_name="user-wallet",
+            payment_address="merchant-address",
+            view_key="view-key",
+        )
+
+        self.assertEqual(backend.current_wallet, "user-wallet")
+        client.raw_request.assert_not_called()
+
+    def test_busy_existing_wallet_is_never_closed(self):
+        client = Mock()
+        client.session.post.side_effect = RequestException("busy")
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+
+        with self.assertRaises(HTTPException) as context:
+            service._ensure_wallet_open(
+                backend=backend,
+                wallet_name="user-wallet",
+                payment_address="merchant-address",
+                view_key="view-key",
+            )
+
+        self.assertEqual(context.exception.status_code, 503)
+        client.raw_request.assert_not_called()
+
     def test_new_wallet_generation_scans_from_height_zero(self):
         client = Mock()
 

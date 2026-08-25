@@ -46,11 +46,12 @@ def main() -> None:
         level_name = "INFO"
     level = getattr(logging, level_name.upper(), logging.INFO)
     _configure_logging(level)
+    service = MoneroWalletService()
     while True:
         status_db: Session | None = None
         try:
             status_db = SessionLocal()
-            service = MoneroWalletService()
+            service.begin_reconcile_cycle()
             _safe_update_monero_connectivity_status(status_db, service)
             _safe_update_reconciler_status(
                 status_db,

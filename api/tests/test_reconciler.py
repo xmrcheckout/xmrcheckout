@@ -201,7 +201,9 @@ class WalletRecoverySafetyTests(unittest.TestCase):
 
     def test_unsynced_wallet_is_rejected_before_transfer_read(self):
         client = Mock()
-        client.raw_request.return_value = {"height": 90}
+        client.session.post.return_value.json.return_value = {
+            "result": {"height": 90}
+        }
         backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
         service = object.__new__(MoneroWalletService)
         service._daemon_height = Mock(return_value=100)
@@ -214,12 +216,37 @@ class WalletRecoverySafetyTests(unittest.TestCase):
 
     def test_synced_wallet_passes_height_guard(self):
         client = Mock()
-        client.raw_request.return_value = {"height": 100}
+        client.session.post.return_value.json.return_value = {
+            "result": {"height": 100}
+        }
         backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
         service = object.__new__(MoneroWalletService)
         service._daemon_height = Mock(return_value=100)
 
         service._ensure_wallet_synced(backend)
+
+    def test_new_cycle_keeps_open_wallet_and_rechecks_sync(self):
+        first = WalletBackend(
+            client=Mock(),
+            url="http://wallet-rpc-1:18083",
+            current_wallet="wallet-one",
+            ready_wallet="wallet-one",
+        )
+        second = WalletBackend(
+            client=Mock(),
+            url="http://wallet-rpc-2:18083",
+            current_wallet="wallet-two",
+            ready_wallet="wallet-two",
+        )
+        service = object.__new__(MoneroWalletService)
+        service._backends = [first, second]
+
+        service.begin_reconcile_cycle()
+
+        self.assertEqual(first.current_wallet, "wallet-one")
+        self.assertEqual(second.current_wallet, "wallet-two")
+        self.assertIsNone(first.ready_wallet)
+        self.assertIsNone(second.ready_wallet)
 
 
 if __name__ == "__main__":

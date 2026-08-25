@@ -99,6 +99,10 @@ class MoneroWalletService:
         self._daemon_address = _normalize_daemon_address(MONERO_DAEMON_URL)
         self._wallet_dir = MONERO_WALLET_RPC_WALLET_DIR.strip()
 
+    def begin_reconcile_cycle(self) -> None:
+        for backend in self._backends:
+            backend.ready_wallet = None
+
     def get_status(self) -> dict[str, str | int | None]:
         daemon_height = self._daemon_height()
         for backend in self._backends:
@@ -461,10 +465,20 @@ class MoneroWalletService:
                 detail="Monero daemon height is unavailable",
             )
         try:
-            response = backend.client.raw_request("get_height")
-        except (RPCError, RequestException) as exc:
-            self._raise_wallet_rpc_error(exc)
-        wallet_height = response.get("height") if isinstance(response, dict) else None
+            response = backend.client.session.post(
+                f"{backend.url.rstrip('/')}/json_rpc",
+                json={"jsonrpc": "2.0", "id": "height", "method": "get_height"},
+                timeout=5,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (RequestException, ValueError) as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Monero wallet RPC is busy or unreachable",
+            ) from exc
+        result = payload.get("result") if isinstance(payload, dict) else None
+        wallet_height = result.get("height") if isinstance(result, dict) else None
         if not isinstance(wallet_height, int) or wallet_height < daemon_height:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

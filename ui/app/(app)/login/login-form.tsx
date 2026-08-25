@@ -57,8 +57,6 @@ export default function LoginForm() {
       !isLikelyPrimaryAddress(paymentAddress) ||
       !isLikelySecretViewKey(viewKey)
     ) {
-      setValidationStatus("idle");
-      setValidationMessage(null);
       return;
     }
 
@@ -139,7 +137,11 @@ export default function LoginForm() {
           autoComplete="off"
           required
           value={paymentAddress}
-          onChange={(event) => setPaymentAddress(event.target.value)}
+          onChange={(event) => {
+            setPaymentAddress(event.target.value);
+            setValidationStatus("idle");
+            setValidationMessage(null);
+          }}
         />
         <p className="text-xs leading-relaxed text-ink-soft">
           Use the 95-character primary address that starts with 4. Subaddresses
@@ -179,7 +181,11 @@ export default function LoginForm() {
             autoComplete="off"
             required
             value={viewKey}
-            onChange={(event) => setViewKey(event.target.value)}
+            onChange={(event) => {
+              setViewKey(event.target.value);
+              setValidationStatus("idle");
+              setValidationMessage(null);
+            }}
           />
           <button
             className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.7rem] font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"

@@ -40,24 +40,43 @@ const fetchRate = async (currency: string): Promise<number | null> => {
 
 type RateStatus = "idle" | "loading" | "ready" | "error";
 
+type RateSnapshot = {
+  currency: string;
+  rate: number | null;
+  updatedAt: number | null;
+  status: RateStatus;
+};
+
+const snapshotFor = (currency: string): RateSnapshot => {
+  if (!currency) {
+    return { currency, rate: null, updatedAt: null, status: "idle" };
+  }
+  const cached = cachedRates.get(currency);
+  if (cached && Date.now() - cached.updatedAt < RATE_TTL_MS) {
+    return {
+      currency,
+      rate: cached.rate,
+      updatedAt: cached.updatedAt,
+      status: "ready",
+    };
+  }
+  return { currency, rate: null, updatedAt: null, status: "loading" };
+};
+
 export const useXmrFiatRate = (currency: string | null) => {
   const normalized = currency?.trim().toLowerCase() ?? "";
-  const cached = normalized ? cachedRates.get(normalized) : null;
-  const [rate, setRate] = useState<number | null>(cached?.rate ?? null);
-  const [updatedAt, setUpdatedAt] = useState<number | null>(cached?.updatedAt ?? null);
-  const [status, setStatus] = useState<RateStatus>(() => {
-    if (!normalized) {
-      return "idle";
-    }
-    return cached?.rate ? "ready" : "loading";
-  });
+  const [snapshot, setSnapshot] = useState<RateSnapshot>(() =>
+    snapshotFor(normalized),
+  );
+  if (snapshot.currency !== normalized) {
+    setSnapshot(snapshotFor(normalized));
+  }
+  const current =
+    snapshot.currency === normalized ? snapshot : snapshotFor(normalized);
 
   useEffect(() => {
     let active = true;
     if (!normalized) {
-      setRate(null);
-      setUpdatedAt(null);
-      setStatus("idle");
       return;
     }
 
@@ -67,15 +86,9 @@ export const useXmrFiatRate = (currency: string | null) => {
       cachedEntry && now - cachedEntry.updatedAt < RATE_TTL_MS;
 
     if (hasFreshRate) {
-      setRate(cachedEntry.rate);
-      setUpdatedAt(cachedEntry.updatedAt);
-      setStatus("ready");
       return;
     }
 
-    setRate(null);
-    setUpdatedAt(null);
-    setStatus("loading");
     const request =
       inflight.get(normalized) ??
       fetchRate(normalized).finally(() => {
@@ -89,12 +102,20 @@ export const useXmrFiatRate = (currency: string | null) => {
       }
       const nextCached = cachedRates.get(normalized);
       if (nextRate !== null && nextCached) {
-        setRate(nextCached.rate);
-        setUpdatedAt(nextCached.updatedAt);
-        setStatus("ready");
+        setSnapshot({
+          currency: normalized,
+          rate: nextCached.rate,
+          updatedAt: nextCached.updatedAt,
+          status: "ready",
+        });
         return;
       }
-      setStatus("error");
+      setSnapshot({
+        currency: normalized,
+        rate: null,
+        updatedAt: null,
+        status: "error",
+      });
     });
 
     return () => {
@@ -102,5 +123,5 @@ export const useXmrFiatRate = (currency: string | null) => {
     };
   }, [normalized]);
 
-  return { rate, updatedAt, status, source: "coingecko" as const };
+  return { ...current, source: "coingecko" as const };
 };

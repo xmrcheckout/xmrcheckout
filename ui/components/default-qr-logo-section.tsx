@@ -43,11 +43,6 @@ export default function DefaultQrLogoSection({
     }
   }, [router, state.success]);
 
-  useEffect(() => {
-    setLogo(initialLogo);
-    setLogoDataUrl(initialLogoDataUrl);
-  }, [initialLogo, initialLogoDataUrl]);
-
   const previewSrc = useMemo(() => {
     if (logo === "monero") {
       return "/monero-logo.svg";

@@ -13,6 +13,7 @@ import {
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
 import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
+import { useBrowserOrigin } from "../lib/use-browser-origin";
 import {
   FIAT_CURRENCY_SUGGESTIONS,
   getCurrencyFlag,
@@ -49,7 +50,7 @@ export default function CreateInvoiceCard() {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [qrColor, setQrColor] = useState("#1b1b1a");
   const [qrLogo, setQrLogo] = useState<string | null>(null);
-  const [origin, setOrigin] = useState<string | null>(null);
+  const origin = useBrowserOrigin();
   const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
   const [amountInput, setAmountInput] = useState("");
   const [fiatCurrency, setFiatCurrency] = useState("USD");
@@ -62,10 +63,6 @@ export default function CreateInvoiceCard() {
     "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const secondaryButton =
     "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:opacity-95";
-
-  useEffect(() => {
-    setOrigin(window.location.origin);
-  }, []);
 
   const publicInvoiceUrl = useMemo(() => {
     if (!state.invoiceId) {
@@ -118,7 +115,6 @@ export default function CreateInvoiceCard() {
   useEffect(() => {
     let active = true;
     if (!uri) {
-      setQrDataUrl(null);
       return undefined;
     }
 
@@ -490,7 +486,7 @@ export default function CreateInvoiceCard() {
                 </code>
               </>
             ) : null}
-            {qrDataUrl ? (
+            {uri && qrDataUrl ? (
               <div className="relative mx-auto mt-2 h-[220px] w-[220px] rounded-2xl border border-stroke bg-white p-2">
                 <Image
                   className="h-full w-full rounded-xl border border-ink/10 bg-white"

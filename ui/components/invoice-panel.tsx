@@ -8,6 +8,7 @@ import { formatRelativeTime } from "./relative-time";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
 import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
+import { useBrowserOrigin } from "../lib/use-browser-origin";
 import {
   FIAT_CURRENCY_SUGGESTIONS,
   getCurrencyFlag,
@@ -145,9 +146,9 @@ function CreateInvoiceModal({
   >("account_default");
   const [qrLogoDataUrl, setQrLogoDataUrl] = useState<string | null>(null);
   const [copiedPublicInvoiceUrl, setCopiedPublicInvoiceUrl] = useState(false);
-  const [createInvoiceOrigin, setCreateInvoiceOrigin] = useState<string | null>(
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? null,
-  );
+  const browserOrigin = useBrowserOrigin();
+  const createInvoiceOrigin =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? browserOrigin;
   const {
     rate: usdRate,
     updatedAt: usdRateUpdatedAt,
@@ -159,13 +160,6 @@ function CreateInvoiceModal({
     status: fiatRateStatus,
     source: fiatRateSource,
   } = useXmrFiatRate(amountMode === "fiat" ? fiatCurrency : null);
-
-  useEffect(() => {
-    if (createInvoiceOrigin) {
-      return;
-    }
-    setCreateInvoiceOrigin(window.location.origin);
-  }, [createInvoiceOrigin]);
 
   useEffect(() => {
     if (!state.invoiceId) {
@@ -921,7 +915,21 @@ export default function InvoicePanel({
   const [archiveModalInvoiceId, setArchiveModalInvoiceId] = useState<
     string | null
   >(null);
-  const [searchInput, setSearchInput] = useState(searchQuery ?? "");
+  const normalizedSearchQuery = searchQuery ?? "";
+  const [searchDraft, setSearchDraft] = useState({
+    source: normalizedSearchQuery,
+    value: normalizedSearchQuery,
+  });
+  if (searchDraft.source !== normalizedSearchQuery) {
+    setSearchDraft({
+      source: normalizedSearchQuery,
+      value: normalizedSearchQuery,
+    });
+  }
+  const searchInput =
+    searchDraft.source === normalizedSearchQuery
+      ? searchDraft.value
+      : normalizedSearchQuery;
 
   const activeList = useMemo(() => {
     if (mode !== "tour") {
@@ -1006,10 +1014,6 @@ export default function InvoicePanel({
     }
     return list;
   }, [activeInvoices, mode, order, searchQuery, sort, statusFilter]);
-
-  useEffect(() => {
-    setSearchInput(searchQuery ?? "");
-  }, [searchQuery]);
 
   const buildInvoicesHref = (next: {
     q?: string;
@@ -1099,12 +1103,16 @@ export default function InvoicePanel({
       archiveState.archivedId &&
       expandedInvoiceId === archiveState.archivedId
     ) {
-      setExpandedInvoiceId(null);
-      setArchiveModalInvoiceId(null);
-      if (mode !== "tour") {
-        router.refresh();
-      }
+      const timeoutId = window.setTimeout(() => {
+        setExpandedInvoiceId(null);
+        setArchiveModalInvoiceId(null);
+        if (mode !== "tour") {
+          router.refresh();
+        }
+      }, 0);
+      return () => window.clearTimeout(timeoutId);
     }
+    return undefined;
   }, [archiveState.archivedId, expandedInvoiceId, mode, router]);
 
   const labelClass =
@@ -1206,7 +1214,12 @@ export default function InvoicePanel({
                 type="search"
                 value={searchInput}
                 placeholder="Invoice id, amount (XMR), subaddress, or metadata"
-                onChange={(event) => setSearchInput(event.target.value)}
+                onChange={(event) =>
+                  setSearchDraft({
+                    source: normalizedSearchQuery,
+                    value: event.target.value,
+                  })
+                }
               />
             </div>
             <div className="flex gap-2">

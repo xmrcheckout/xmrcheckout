@@ -39,10 +39,6 @@ export default function BtcpayCheckoutStyleSection({
     }
   }, [router, state.success]);
 
-  useEffect(() => {
-    setStyle(initialStyle);
-  }, [initialStyle]);
-
   return (
     <form action={formAction} className="grid gap-4">
       <div>

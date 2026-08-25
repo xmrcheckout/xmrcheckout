@@ -8,7 +8,6 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import RedirectResponse, StreamingResponse
-import requests
 from requests import RequestException
 from sqlalchemy import func, or_
 from sqlalchemy.sql import cast
@@ -60,6 +59,11 @@ from .security import (
     require_api_key,
 )
 from .webhooks import build_webhook_payload, dispatch_webhooks
+from .webhook_http import (
+    UnsafeWebhookUrl,
+    post_webhook_with_redirects,
+    validate_webhook_url,
+)
 from .qr_codes import ensure_invoice_qr_png, invoice_qr_url, resolve_qr_settings
 router = APIRouter()
 
@@ -680,6 +684,15 @@ def register_webhook(
         )
     _ensure_webhook_secret(db, user)
     url, events, event_urls = _resolve_webhook_payload(payload)
+    try:
+        for target_url in [url, *(event_urls or {}).values()]:
+            if target_url:
+                validate_webhook_url(target_url)
+    except UnsafeWebhookUrl as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
     webhook = Webhook(
         user_id=user.id,
         url=url,
@@ -782,14 +795,24 @@ def redeliver_webhook_delivery(
     status_code = None
     error_message = None
     try:
-        response = requests.post(
+        body = json.dumps(
+            payload,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+        response = post_webhook_with_redirects(
             delivery.url,
-            json=payload,
-            headers={"X-Webhook-Secret": webhook_secret},
+            data=body,
+            headers={
+                "Content-Type": "application/json",
+                "X-Webhook-Secret": webhook_secret,
+            },
             timeout=5,
         )
+        if response is None:
+            raise RequestException("Webhook redirect limit exceeded")
         status_code = response.status_code
-    except RequestException as exc:
+    except (RequestException, UnsafeWebhookUrl) as exc:
         error_message = str(exc)
 
     redelivery = WebhookDelivery(

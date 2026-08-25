@@ -30,6 +30,7 @@ from .security import (
     require_api_key,
 )
 from .subaddress_allocator import create_subaddress_for_user
+from .webhook_http import UnsafeWebhookUrl, validate_webhook_url
 from .webhooks import dispatch_webhooks
 from .qr_codes import ensure_invoice_qr_png, resolve_qr_settings
 
@@ -529,6 +530,13 @@ def create_webhook(
 ):
     _require_store(store_id, user)
     _validate_webhook_events(payload.authorizedEvents.specificEvents)
+    try:
+        validate_webhook_url(str(payload.url))
+    except UnsafeWebhookUrl as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        ) from exc
     secret = generate_webhook_secret()
     webhook = BtcpayWebhook(
         user_id=user.id,
@@ -589,6 +597,13 @@ def update_webhook(
     if payload.automaticRedelivery is not None:
         hook.automatic_redelivery = payload.automaticRedelivery
     if payload.url is not None:
+        try:
+            validate_webhook_url(str(payload.url))
+        except UnsafeWebhookUrl as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(exc),
+            ) from exc
         hook.url = str(payload.url)
     if payload.authorizedEvents is not None:
         hook.authorized_events = payload.authorizedEvents.model_dump()

@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+import json
 import logging
 import uuid
 from datetime import datetime
 
-import requests
 from requests import RequestException
 from sqlalchemy.orm import Session
 
 from .formatting import format_xmr_amount
 from .models import Invoice, User, Webhook, WebhookDelivery
 from .security import decrypt_secret, encrypt_secret, generate_webhook_secret
+from .webhook_http import UnsafeWebhookUrl, post_webhook_with_redirects
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,7 @@ def dispatch_webhooks(
     if user is not None:
         webhook_secret = _ensure_webhook_secret(db, user)
     payload = build_webhook_payload(event, invoice)
+    body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     deliveries: list[WebhookDelivery] = []
     user_uuid = uuid.UUID(user_id)
     for hook in hooks:
@@ -72,10 +74,19 @@ def dispatch_webhooks(
         status_code = None
         error_message = None
         try:
-            headers = {"X-Webhook-Secret": webhook_secret} if webhook_secret else None
-            response = requests.post(target_url, json=payload, headers=headers, timeout=5)
+            headers = {"Content-Type": "application/json"}
+            if webhook_secret:
+                headers["X-Webhook-Secret"] = webhook_secret
+            response = post_webhook_with_redirects(
+                target_url,
+                data=body,
+                headers=headers,
+                timeout=5,
+            )
+            if response is None:
+                raise RequestException("Webhook redirect limit exceeded")
             status_code = response.status_code
-        except RequestException as exc:
+        except (RequestException, UnsafeWebhookUrl) as exc:
             error_message = str(exc)
             logger.warning(
                 "Webhook delivery failed",

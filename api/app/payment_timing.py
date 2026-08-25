@@ -11,12 +11,46 @@ class TimestampedTransfer(Protocol):
     timestamp: int | None
 
 
+class ConfirmedTransfer(Protocol):
+    amount_atomic: int
+    confirmations: int
+
+
+class ClassifiedPayment(Protocol):
+    paid_after_expiry: bool
+
+
 @dataclass(frozen=True)
 class PaymentTiming:
     paid_after_expiry: bool
     paid_after_expiry_at: datetime | None
     threshold_reached_at: datetime
     used_detection_fallback: bool = False
+
+
+def effective_confirmations(
+    transfers: Sequence[ConfirmedTransfer],
+    required_atomic: int,
+) -> int:
+    """Return the confirmation depth that secures the full required amount."""
+    if required_atomic <= 0:
+        return 0
+    cumulative = 0
+    positive = sorted(
+        (transfer for transfer in transfers if transfer.amount_atomic > 0),
+        key=lambda transfer: max(0, transfer.confirmations),
+        reverse=True,
+    )
+    for transfer in positive:
+        cumulative += transfer.amount_atomic
+        if cumulative >= required_atomic:
+            return max(0, transfer.confirmations)
+    return 0
+
+
+def is_payment_after_expiry(payment: ClassifiedPayment) -> bool:
+    """Use the persisted on-chain timing classification as the authority."""
+    return bool(payment.paid_after_expiry)
 
 
 def classify_payment_timing(

@@ -20,6 +20,7 @@ from .config import QR_STORAGE_DIR
 from .db import get_db
 from .formatting import format_xmr_amount
 from .models import BtcpayWebhook, Invoice, InvoiceTransfer, User
+from .payment_timing import is_payment_after_expiry
 from .rates import get_xmr_rate
 from .security import (
     decrypt_api_key,
@@ -177,21 +178,9 @@ def _btcpay_additional_status(invoice: Invoice) -> str:
         return "PaidOver"
     if 0 < paid_atomic < required_atomic:
         return "PaidPartial"
-    if _after_expiration(invoice):
+    if is_payment_after_expiry(invoice):
         return "PaidLate"
     return "None"
-
-
-def _after_expiration(invoice: Invoice) -> bool:
-    expires_at = invoice.expires_at
-    detected_at = invoice.detected_at
-    if expires_at is None or detected_at is None:
-        return False
-    if expires_at.tzinfo is None:
-        expires_at = expires_at.replace(tzinfo=timezone.utc)
-    if detected_at.tzinfo is None:
-        detected_at = detected_at.replace(tzinfo=timezone.utc)
-    return detected_at > expires_at
 
 
 def _xmr_to_atomic(amount: Decimal) -> int:

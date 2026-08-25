@@ -5,7 +5,6 @@ import hmac
 import json
 import logging
 import time
-from datetime import datetime, timezone
 from urllib.parse import urljoin
 
 import requests
@@ -13,6 +12,7 @@ from requests import RequestException
 from sqlalchemy.orm import Session
 
 from .models import BtcpayWebhook, Invoice
+from .payment_timing import is_payment_after_expiry
 from .security import decrypt_secret
 
 logger = logging.getLogger(__name__)
@@ -126,22 +126,9 @@ def _build_payload(
         "manuallyMarked": manually_marked,
         "overPaid": False,
         "partiallyPaid": False,
-        "afterExpiration": _after_expiration(invoice),
+        "afterExpiration": is_payment_after_expiry(invoice),
         "metadata": invoice.metadata_json or {},
     }
-
-
-def _after_expiration(invoice: Invoice) -> bool:
-    expires_at = invoice.expires_at
-    detected_at = invoice.detected_at
-    if expires_at is None or detected_at is None:
-        return False
-    if expires_at.tzinfo is None:
-        expires_at = expires_at.replace(tzinfo=timezone.utc)
-    if detected_at.tzinfo is None:
-        detected_at = detected_at.replace(tzinfo=timezone.utc)
-    return detected_at > expires_at
-
 
 def _sign_payload(body: bytes, secret: str) -> str:
     return hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest()

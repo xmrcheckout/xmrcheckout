@@ -8,10 +8,10 @@ from unittest.mock import Mock, patch
 from fastapi import HTTPException
 from requests import RequestException
 
-from app import reconciler, reclassify_invoice_timing, routes
+from app import btcpay_routes, btcpay_webhooks, reconciler, reclassify_invoice_timing, routes
 from app.models import Invoice, InvoiceTransfer, SystemStatus, User
 from app.monero_service import MoneroWalletService, TransferDetail, WalletBackend
-from app.payment_timing import PaymentTiming, classify_payment_timing
+from app.payment_timing import PaymentTiming, classify_payment_timing, effective_confirmations
 
 
 class _FakeQuery:
@@ -77,6 +77,31 @@ def _pending_invoice(identifier, user_id):
 
 
 class ReconcileSummaryTests(unittest.TestCase):
+    def test_split_payment_waits_for_value_backed_confirmations(self):
+        user_id = "user-1"
+        invoice = _pending_invoice("split", user_id)
+        user = SimpleNamespace(
+            id=user_id,
+            payment_address="merchant-address",
+            view_key_encrypted="encrypted-view-key",
+        )
+        db = _FakeDb([invoice], user)
+        service = Mock()
+        service.get_transfers_for_address.return_value = [
+            TransferDetail("old", 500_000_000_000, 10, None, invoice.address),
+            TransferDetail("new", 500_000_000_000, 0, None, invoice.address),
+        ]
+
+        with (
+            patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "dispatch_webhooks"),
+            patch.object(reconciler, "dispatch_btcpay_webhooks"),
+        ):
+            reconciler._reconcile_invoices(service)
+
+        self.assertEqual(invoice.status, "payment_detected")
+        self.assertEqual(invoice.confirmations, 0)
+
     def test_reconcile_uses_onchain_time_for_late_detection(self):
         user_id = "user-1"
         expiry = datetime(2026, 8, 19, 7, 51, 58, tzinfo=timezone.utc)
@@ -254,6 +279,83 @@ class PaymentTimingTests(unittest.TestCase):
         )
 
         self.assertIsNone(timing)
+
+
+class EffectiveConfirmationTests(unittest.TestCase):
+    @staticmethod
+    def transfer(identifier, amount, confirmations):
+        return TransferDetail(identifier, amount, confirmations, None, None)
+
+    def test_single_transfer_uses_its_confirmation_depth(self):
+        result = effective_confirmations([self.transfer("one", 100, 4)], 100)
+        self.assertEqual(result, 4)
+
+    def test_split_payment_uses_depth_securing_full_amount(self):
+        result = effective_confirmations(
+            [self.transfer("old", 40, 12), self.transfer("new", 60, 1)],
+            100,
+        )
+        self.assertEqual(result, 1)
+
+    def test_unconfirmed_excess_does_not_reduce_fully_secured_amount(self):
+        result = effective_confirmations(
+            [self.transfer("paid", 100, 8), self.transfer("excess", 20, 0)],
+            100,
+        )
+        self.assertEqual(result, 8)
+
+    def test_underpayment_and_non_positive_transfers_return_zero(self):
+        result = effective_confirmations(
+            [
+                self.transfer("partial", 99, 10),
+                self.transfer("zero", 0, 20),
+                self.transfer("out", -100, 20),
+            ],
+            100,
+        )
+        self.assertEqual(result, 0)
+
+
+class BtcpayTimingTests(unittest.TestCase):
+    def test_on_time_payment_detected_after_expiry_stays_on_time(self):
+        invoice = SimpleNamespace(
+            id="invoice-one",
+            status="confirmed",
+            total_paid_atomic=100,
+            amount_xmr=Decimal("0.0000000001"),
+            paid_after_expiry=False,
+            metadata_json={},
+        )
+
+        payload = btcpay_webhooks._build_payload(
+            event_type="InvoiceSettled",
+            user_id="user-one",
+            invoice=invoice,
+            manually_marked=False,
+        )
+
+        self.assertFalse(payload["afterExpiration"])
+        self.assertEqual(btcpay_routes._btcpay_additional_status(invoice), "None")
+
+    def test_onchain_late_payment_is_reported_late(self):
+        invoice = SimpleNamespace(
+            id="invoice-one",
+            status="confirmed",
+            total_paid_atomic=100,
+            amount_xmr=Decimal("0.0000000001"),
+            paid_after_expiry=True,
+            metadata_json={},
+        )
+
+        payload = btcpay_webhooks._build_payload(
+            event_type="InvoiceSettled",
+            user_id="user-one",
+            invoice=invoice,
+            manually_marked=False,
+        )
+
+        self.assertTrue(payload["afterExpiration"])
+        self.assertEqual(btcpay_routes._btcpay_additional_status(invoice), "PaidLate")
 
 
 class OutageCatchupTests(unittest.TestCase):

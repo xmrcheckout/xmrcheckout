@@ -15,7 +15,7 @@ from .config import INVOICE_RECONCILE_INTERVAL_SECONDS, LATE_PAYMENT_LOOKBACK_HO
 from .db import SessionLocal
 from .models import Invoice, InvoiceTransfer, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail
-from .payment_timing import classify_payment_timing
+from .payment_timing import classify_payment_timing, effective_confirmations
 from .webhooks import dispatch_webhooks
 
 logger = logging.getLogger(__name__)
@@ -173,25 +173,24 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                     )
                     continue
                 total_atomic = 0
-                max_confirmations = 0
                 for transfer in transfers:
                     if transfer.amount_atomic <= 0:
                         continue
                     total_atomic += transfer.amount_atomic
-                    if transfer.confirmations > max_confirmations:
-                        max_confirmations = transfer.confirmations
+                required_atomic = _xmr_to_atomic(invoice.amount_xmr)
+                confirmations = effective_confirmations(transfers, required_atomic)
                 logger.debug(
                     "Invoice totals",
                     extra={
                         "invoice_id": str(invoice.id),
                         "received_atomic": total_atomic,
-                        "confirmations": max_confirmations,
+                        "confirmations": confirmations,
                     },
                 )
                 now = datetime.now(timezone.utc)
                 previous_confirmations = invoice.confirmations or 0
                 total_changed = invoice.total_paid_atomic != total_atomic
-                confirmations_changed = previous_confirmations != max_confirmations
+                confirmations_changed = previous_confirmations != confirmations
                 transfers_changed = _sync_invoice_transfers(
                     db,
                     invoice=invoice,
@@ -199,13 +198,12 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                 )
                 if total_changed or confirmations_changed or transfers_changed:
                     if confirmations_changed:
-                        invoice.confirmations = max_confirmations
+                        invoice.confirmations = confirmations
                     if total_changed:
                         invoice.total_paid_atomic = total_atomic
                     db.add(invoice)
                     db.commit()
                 succeeded += 1
-                required_atomic = _xmr_to_atomic(invoice.amount_xmr)
                 is_paid = total_atomic >= required_atomic
 
                 expires_at = invoice.expires_at
@@ -272,7 +270,7 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                     dispatch_btcpay_webhooks(
                         db, str(user.id), "InvoiceProcessing", invoice
                     )
-                if max_confirmations >= invoice.confirmation_target and invoice.status != "confirmed":
+                if confirmations >= invoice.confirmation_target and invoice.status != "confirmed":
                     logger.info(
                         "Invoice confirmed",
                         extra={"invoice_id": str(invoice.id), "user_id": str(user.id)},

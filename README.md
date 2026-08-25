@@ -96,6 +96,9 @@ docker compose up --build
 ```
 
 Open `https://localhost` for the UI (HTTP redirects to HTTPS).
+This starts the reconciler and the bundled wallet-rpc shards, so payment
+detection is available once the configured Monero daemon and wallets are
+synced.
 In the default Compose configuration, only `nginx` is published to the host. The API, Postgres, and wallet-rpc services are reachable only inside the Docker network.
 If you prefer not to run `nginx`, you can publish `ui` and `api` ports directly instead (you will also need to serve `qr/` at `/qr/` on your site URL).
 
@@ -135,12 +138,15 @@ timing is unavailable, detection time is used conservatively.
 4. Choose a wallet-rpc target and provision view-only wallets:
 - Use the bundled wallet-rpc containers:
   - Set `MONERO_WALLET_RPC_URLS=http://wallet-rpc-reconciler-1:18083,http://wallet-rpc-reconciler-2:18083,http://wallet-rpc-reconciler-3:18083`
+  - The bundled shards and reconciler start by default with the stack.
   - Each container uses its own deterministic wallet shard under
     `./wallets/reconciler-1`, `./wallets/reconciler-2`, or
     `./wallets/reconciler-3`. Keep the URL ordering stable because it defines
     which shard owns each view-only wallet.
 - Or point to an external wallet-rpc service:
   - Set `MONERO_WALLET_RPC_URLS`, `MONERO_WALLET_RPC_USER`, `MONERO_WALLET_RPC_PASSWORD`, and `MONERO_WALLET_RPC_WALLET_PASSWORD`
+  - The reconciler uses the configured external URLs. The bundled shards may
+    remain running but are not selected for invoice detection.
 
 5. Start the stack:
 
@@ -148,11 +154,16 @@ timing is unavailable, detection time is used conservatively.
 docker compose up --build -d
 ```
 
+This command starts the API, UI, reconciler, and bundled wallet-rpc shards.
+
 If you’re running the bundled `monerod` service:
 
 ```
 docker compose --profile local-daemon up --build -d
 ```
+
+The `local-daemon` profile adds `monerod`; payment detection services remain
+part of the default stack.
 
 ### Troubleshooting first payment detection
 

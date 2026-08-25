@@ -95,6 +95,30 @@ class ReconcileSummaryTests(unittest.TestCase):
         self.assertEqual(summary.succeeded, 1)
         self.assertEqual(summary.failed, 1)
 
+    def test_wallet_readiness_failure_skips_user_group_once(self):
+        user_id = "user-1"
+        invoices = [_pending_invoice("one", user_id), _pending_invoice("two", user_id)]
+        user = SimpleNamespace(
+            id=user_id,
+            payment_address="merchant-address",
+            view_key_encrypted="encrypted-view-key",
+        )
+        db = _FakeDb(invoices, user)
+        service = Mock()
+        service.ensure_wallet_ready.side_effect = HTTPException(
+            status_code=503,
+            detail="View-only wallet is still syncing",
+        )
+
+        with patch.object(reconciler, "SessionLocal", return_value=db):
+            summary = reconciler._reconcile_invoices(service)
+
+        self.assertEqual(summary.attempted, 2)
+        self.assertEqual(summary.succeeded, 0)
+        self.assertEqual(summary.failed, 2)
+        service.ensure_wallet_ready.assert_called_once_with(user)
+        service.get_transfers_for_address.assert_not_called()
+
 
 class ReconcilerStatusTests(unittest.TestCase):
     def test_recent_partial_failure_is_degraded(self):

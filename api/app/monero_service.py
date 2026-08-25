@@ -67,6 +67,7 @@ class WalletBackend:
     client: JSONRPCWallet
     url: str
     current_wallet: str | None = None
+    ready_wallet: str | None = None
 
 
 class MoneroWalletService:
@@ -189,17 +190,7 @@ class MoneroWalletService:
         user: User,
         address: str,
     ) -> tuple[int, int]:
-        view_key = decrypt_secret(user.view_key_encrypted)
-        wallet_name = self._wallet_name(user, user.payment_address, view_key)
-        backend = self._backend_for_wallet_name(wallet_name)
-        self._ensure_wallet_open(
-            backend=backend,
-            wallet_name=wallet_name,
-            payment_address=user.payment_address,
-            view_key=view_key,
-        )
-        self._ensure_daemon(backend)
-        self._ensure_wallet_synced(backend)
+        backend = self.ensure_wallet_ready(user)
         try:
             index_response = backend.client.raw_request(
                 "get_address_index",
@@ -246,11 +237,7 @@ class MoneroWalletService:
                 max_confirmations = confirmations
         return total_atomic, max_confirmations
 
-    def get_transfers_for_address(
-        self,
-        user: User,
-        address: str,
-    ) -> list[TransferDetail]:
+    def ensure_wallet_ready(self, user: User) -> WalletBackend:
         view_key = decrypt_secret(user.view_key_encrypted)
         wallet_name = self._wallet_name(user, user.payment_address, view_key)
         backend = self._backend_for_wallet_name(wallet_name)
@@ -262,6 +249,14 @@ class MoneroWalletService:
         )
         self._ensure_daemon(backend)
         self._ensure_wallet_synced(backend)
+        return backend
+
+    def get_transfers_for_address(
+        self,
+        user: User,
+        address: str,
+    ) -> list[TransferDetail]:
+        backend = self.ensure_wallet_ready(user)
         try:
             index_response = backend.client.raw_request(
                 "get_address_index",
@@ -374,6 +369,7 @@ class MoneroWalletService:
     ) -> None:
         if backend.current_wallet == wallet_name:
             return
+        backend.ready_wallet = None
         close_start = time.monotonic()
         try:
             backend.client.raw_request("close_wallet")
@@ -456,6 +452,8 @@ class MoneroWalletService:
             self._raise_wallet_rpc_error(exc)
 
     def _ensure_wallet_synced(self, backend: WalletBackend) -> None:
+        if backend.current_wallet and backend.ready_wallet == backend.current_wallet:
+            return
         daemon_height = self._daemon_height()
         if daemon_height is None:
             raise HTTPException(
@@ -472,6 +470,7 @@ class MoneroWalletService:
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="View-only wallet is still syncing",
             )
+        backend.ready_wallet = backend.current_wallet
 
     @staticmethod
     def _raise_wallet_rpc_error(exc: Exception) -> None:

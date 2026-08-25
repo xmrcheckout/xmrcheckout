@@ -146,6 +146,16 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                     extra={"user_id": str(user.id)},
                 )
                 continue
+            try:
+                service.ensure_wallet_ready(user)
+            except Exception as exc:
+                failed += len(user_invoices)
+                logger.warning(
+                    "Skipping user invoice checks because wallet is not ready",
+                    extra={"user_id": str(user.id), "invoice_count": len(user_invoices)},
+                )
+                logger.debug("Wallet readiness error: %s", exc)
+                continue
             for invoice in user_invoices:
                 try:
                     transfers = service.get_transfers_for_address(

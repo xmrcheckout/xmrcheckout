@@ -1,6 +1,8 @@
 FROM debian:bookworm-slim
 
-ARG MONERO_VERSION=0.18.4.6
+ARG MONERO_VERSION=0.18.5.1
+ARG MONERO_SHA256_X64=22a7dda7b0cb699fdd6b7674c3b4a4465b337cc98a54983523b759e1e7cc9958
+ARG MONERO_SHA256_ARMV8=c0caf042cb7c7b760f5ad6be188084b59352440b32990a78b8051497b9398dbc
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates curl bzip2 \
@@ -10,14 +12,17 @@ RUN set -eux; \
   arch="$(dpkg --print-architecture)"; \
   if [ "$arch" = "amd64" ]; then \
     monero_arch="x64"; \
+    monero_sha256="$MONERO_SHA256_X64"; \
   elif [ "$arch" = "arm64" ]; then \
     monero_arch="armv8"; \
+    monero_sha256="$MONERO_SHA256_ARMV8"; \
   else \
     echo "Unsupported architecture: $arch" >&2; \
     exit 1; \
   fi; \
   curl -fsSL -o /tmp/monero.tar.bz2 \
     "https://downloads.getmonero.org/cli/monero-linux-${monero_arch}-v${MONERO_VERSION}.tar.bz2"; \
+  echo "${monero_sha256}  /tmp/monero.tar.bz2" | sha256sum -c -; \
   tar -xjf /tmp/monero.tar.bz2 -C /tmp; \
   cp /tmp/monero-*/monerod /usr/local/bin/; \
   cp /tmp/monero-*/monero-wallet-rpc /usr/local/bin/; \

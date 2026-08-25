@@ -129,6 +129,16 @@ class ReconcilerStatusTests(unittest.TestCase):
         )
         self.assertEqual(routes._reconciler_state(row, now=now), "ok")
 
+    def test_recent_completion_keeps_long_cycle_available(self):
+        now = datetime.now(timezone.utc)
+        row = SystemStatus(
+            name="reconciler",
+            last_reconcile_started_at=now - timedelta(minutes=3),
+            last_reconcile_completed_at=now - timedelta(seconds=5),
+            last_reconcile_failed_invoices=0,
+        )
+        self.assertEqual(routes._reconciler_state(row, now=now), "ok")
+
 
 class WalletRecoverySafetyTests(unittest.TestCase):
     def test_new_wallet_generation_scans_from_height_zero(self):

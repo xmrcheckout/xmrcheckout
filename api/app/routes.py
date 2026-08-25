@@ -143,11 +143,16 @@ def _reconciler_state(
     if reconciler_status is None or reconciler_status.last_reconcile_started_at is None:
         return "unavailable"
     current_time = now or datetime.now(timezone.utc)
-    started_at = reconciler_status.last_reconcile_started_at
-    if started_at.tzinfo is None:
-        started_at = started_at.replace(tzinfo=timezone.utc)
+    activity_times = [reconciler_status.last_reconcile_started_at]
+    if reconciler_status.last_reconcile_completed_at is not None:
+        activity_times.append(reconciler_status.last_reconcile_completed_at)
+    normalized_activity_times = [
+        value if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
+        for value in activity_times
+    ]
+    latest_activity_at = max(normalized_activity_times)
     stale_after_seconds = max(INVOICE_RECONCILE_INTERVAL_SECONDS * 3, 90)
-    if current_time - started_at > timedelta(seconds=stale_after_seconds):
+    if current_time - latest_activity_at > timedelta(seconds=stale_after_seconds):
         return "unavailable"
     if (
         reconciler_status.last_reconcile_error

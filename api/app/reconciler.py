@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import time
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_DOWN
 
@@ -18,6 +19,23 @@ from .webhooks import dispatch_webhooks
 
 logger = logging.getLogger(__name__)
 MONERO_CONNECTIVITY_STATUS_NAME = "monero_connectivity"
+_UNSET = object()
+
+
+@dataclass(frozen=True)
+class ReconcileSummary:
+    attempted: int = 0
+    succeeded: int = 0
+    failed: int = 0
+
+
+def _configure_logging(level: int) -> None:
+    logging.basicConfig(level=level)
+    # The Monero client logs raw RPC parameters at DEBUG, including view keys
+    # and wallet passwords. Keep third-party transport logs above that level
+    # even when application debugging is enabled.
+    logging.getLogger("monero.backends.jsonrpc.wallet").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
 def main() -> None:
@@ -27,7 +45,7 @@ def main() -> None:
     except Exception:
         level_name = "INFO"
     level = getattr(logging, level_name.upper(), logging.INFO)
-    logging.basicConfig(level=level)
+    _configure_logging(level)
     while True:
         status_db: Session | None = None
         try:
@@ -37,15 +55,27 @@ def main() -> None:
             _safe_update_reconciler_status(
                 status_db,
                 started_at=datetime.now(timezone.utc),
-                completed_at=None,
-                error_message=None,
             )
-            _reconcile_invoices(service)
-            _safe_update_reconciler_status(
-                status_db,
-                completed_at=datetime.now(timezone.utc),
-                error_message=None,
-            )
+            summary = _reconcile_invoices(service)
+            if summary.failed:
+                _safe_update_reconciler_status(
+                    status_db,
+                    error_message=(
+                        f"{summary.failed} of {summary.attempted} invoice checks failed"
+                    ),
+                    attempted_invoices=summary.attempted,
+                    succeeded_invoices=summary.succeeded,
+                    failed_invoices=summary.failed,
+                )
+            else:
+                _safe_update_reconciler_status(
+                    status_db,
+                    completed_at=datetime.now(timezone.utc),
+                    error_message=None,
+                    attempted_invoices=summary.attempted,
+                    succeeded_invoices=summary.succeeded,
+                    failed_invoices=summary.failed,
+                )
         except Exception as exc:
             logger.exception("Invoice reconcile failed: %s", exc)
             if status_db is None:
@@ -53,7 +83,7 @@ def main() -> None:
             _safe_update_monero_connectivity_error(status_db)
             _safe_update_reconciler_status(
                 status_db,
-                error_message=str(exc),
+                error_message="Invoice detection cycle failed",
             )
         finally:
             if status_db is not None:
@@ -61,8 +91,11 @@ def main() -> None:
         time.sleep(INVOICE_RECONCILE_INTERVAL_SECONDS)
 
 
-def _reconcile_invoices(service: MoneroWalletService) -> None:
+def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
     db: Session = SessionLocal()
+    attempted = 0
+    succeeded = 0
+    failed = 0
     try:
         now = datetime.now(timezone.utc)
         late_cutoff = now - timedelta(hours=max(0, LATE_PAYMENT_LOOKBACK_HOURS))
@@ -83,8 +116,10 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
         )
         user_groups: dict[object, list[Invoice]] = {}
         for invoice in invoices:
+            attempted += 1
             if invoice.user_id is None:
-                logger.debug(
+                failed += 1
+                logger.warning(
                     "Skipping invoice without user",
                     extra={"invoice_id": str(invoice.id)},
                 )
@@ -98,13 +133,15 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
         for user_id, user_invoices in user_groups.items():
             user = db.query(User).filter(User.id == user_id).first()
             if user is None:
-                logger.debug(
+                failed += len(user_invoices)
+                logger.warning(
                     "Skipping invoices with missing user",
                     extra={"user_id": str(user_id)},
                 )
                 continue
             if not user.payment_address or not user.view_key_encrypted:
-                logger.debug(
+                failed += len(user_invoices)
+                logger.warning(
                     "Skipping invoices without payment address",
                     extra={"user_id": str(user.id)},
                 )
@@ -116,6 +153,7 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
                         address=invoice.address,
                     )
                 except Exception as exc:
+                    failed += 1
                     logger.error(
                         "Skipping invoice reconcile due to wallet RPC error: %s",
                         exc,
@@ -154,6 +192,7 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
                         invoice.total_paid_atomic = total_atomic
                     db.add(invoice)
                     db.commit()
+                succeeded += 1
                 required_atomic = _xmr_to_atomic(invoice.amount_xmr)
                 is_paid = total_atomic >= required_atomic
 
@@ -223,6 +262,11 @@ def _reconcile_invoices(service: MoneroWalletService) -> None:
                     dispatch_btcpay_webhooks(
                         db, str(user.id), "InvoicePaymentSettled", invoice
                     )
+        return ReconcileSummary(
+            attempted=attempted,
+            succeeded=succeeded,
+            failed=failed,
+        )
     finally:
         db.close()
 
@@ -286,7 +330,10 @@ def _update_reconciler_status(
     *,
     started_at: datetime | None = None,
     completed_at: datetime | None = None,
-    error_message: str | None = None,
+    error_message: str | None | object = _UNSET,
+    attempted_invoices: int | None = None,
+    succeeded_invoices: int | None = None,
+    failed_invoices: int | None = None,
 ) -> None:
     status_row = db.query(SystemStatus).filter(SystemStatus.name == "reconciler").first()
     if status_row is None:
@@ -295,7 +342,14 @@ def _update_reconciler_status(
         status_row.last_reconcile_started_at = started_at
     if completed_at is not None:
         status_row.last_reconcile_completed_at = completed_at
-    status_row.last_reconcile_error = error_message
+    if error_message is not _UNSET:
+        status_row.last_reconcile_error = error_message
+    if attempted_invoices is not None:
+        status_row.last_reconcile_attempted_invoices = attempted_invoices
+    if succeeded_invoices is not None:
+        status_row.last_reconcile_succeeded_invoices = succeeded_invoices
+    if failed_invoices is not None:
+        status_row.last_reconcile_failed_invoices = failed_invoices
     db.add(status_row)
     db.commit()
 
@@ -361,7 +415,10 @@ def _safe_update_reconciler_status(
     *,
     started_at: datetime | None = None,
     completed_at: datetime | None = None,
-    error_message: str | None = None,
+    error_message: str | None | object = _UNSET,
+    attempted_invoices: int | None = None,
+    succeeded_invoices: int | None = None,
+    failed_invoices: int | None = None,
 ) -> None:
     try:
         _update_reconciler_status(
@@ -369,6 +426,9 @@ def _safe_update_reconciler_status(
             started_at=started_at,
             completed_at=completed_at,
             error_message=error_message,
+            attempted_invoices=attempted_invoices,
+            succeeded_invoices=succeeded_invoices,
+            failed_invoices=failed_invoices,
         )
     except SQLAlchemyError:
         db.rollback()

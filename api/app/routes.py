@@ -101,9 +101,11 @@ def _status_response_from_rows(
         else "unknown"
     )
     daemon_height = monero_status.daemon_height if monero_status else None
+    reconciler_state = _reconciler_state(reconciler_status)
     return SystemStatusResponse(
         wallet_rpc=wallet_rpc,
         daemon=daemon,
+        reconciler=reconciler_state,
         daemon_height=daemon_height,
         invoice_reconcile_interval_seconds=INVOICE_RECONCILE_INTERVAL_SECONDS,
         last_reconcile_started_at=(
@@ -115,7 +117,46 @@ def _status_response_from_rows(
         last_reconcile_error=(
             reconciler_status.last_reconcile_error if reconciler_status else None
         ),
+        last_reconcile_attempted_invoices=(
+            int(reconciler_status.last_reconcile_attempted_invoices or 0)
+            if reconciler_status
+            else 0
+        ),
+        last_reconcile_succeeded_invoices=(
+            int(reconciler_status.last_reconcile_succeeded_invoices or 0)
+            if reconciler_status
+            else 0
+        ),
+        last_reconcile_failed_invoices=(
+            int(reconciler_status.last_reconcile_failed_invoices or 0)
+            if reconciler_status
+            else 0
+        ),
     )
+
+
+def _reconciler_state(
+    reconciler_status: SystemStatus | None,
+    *,
+    now: datetime | None = None,
+) -> str:
+    if reconciler_status is None or reconciler_status.last_reconcile_started_at is None:
+        return "unavailable"
+    current_time = now or datetime.now(timezone.utc)
+    started_at = reconciler_status.last_reconcile_started_at
+    if started_at.tzinfo is None:
+        started_at = started_at.replace(tzinfo=timezone.utc)
+    stale_after_seconds = max(INVOICE_RECONCILE_INTERVAL_SECONDS * 3, 90)
+    if current_time - started_at > timedelta(seconds=stale_after_seconds):
+        return "unavailable"
+    if (
+        reconciler_status.last_reconcile_error
+        or int(reconciler_status.last_reconcile_failed_invoices or 0) > 0
+    ):
+        return "degraded"
+    if reconciler_status.last_reconcile_completed_at is None:
+        return "unavailable"
+    return "ok"
 
 
 def _load_public_system_status(db: Session) -> SystemStatusResponse:

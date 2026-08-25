@@ -290,6 +290,27 @@ def startup():
             connection.execute(
                 text(
                     "ALTER TABLE system_status "
+                    "ADD COLUMN IF NOT EXISTS last_reconcile_attempted_invoices "
+                    "INTEGER NOT NULL DEFAULT 0"
+                )
+            )
+            connection.execute(
+                text(
+                    "ALTER TABLE system_status "
+                    "ADD COLUMN IF NOT EXISTS last_reconcile_succeeded_invoices "
+                    "INTEGER NOT NULL DEFAULT 0"
+                )
+            )
+            connection.execute(
+                text(
+                    "ALTER TABLE system_status "
+                    "ADD COLUMN IF NOT EXISTS last_reconcile_failed_invoices "
+                    "INTEGER NOT NULL DEFAULT 0"
+                )
+            )
+            connection.execute(
+                text(
+                    "ALTER TABLE system_status "
                     "ADD COLUMN IF NOT EXISTS wallet_rpc VARCHAR"
                 )
             )

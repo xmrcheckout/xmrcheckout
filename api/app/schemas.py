@@ -187,11 +187,15 @@ class InvoiceStatusResponse(BaseModel):
 class SystemStatusResponse(BaseModel):
     wallet_rpc: Literal["ok", "unreachable"]
     daemon: Literal["ok", "unreachable", "unknown"]
+    reconciler: Literal["ok", "degraded", "unavailable"]
     daemon_height: int | None = None
     invoice_reconcile_interval_seconds: int
     last_reconcile_started_at: datetime | None = None
     last_reconcile_completed_at: datetime | None = None
     last_reconcile_error: str | None = None
+    last_reconcile_attempted_invoices: int = 0
+    last_reconcile_succeeded_invoices: int = 0
+    last_reconcile_failed_invoices: int = 0
 
 
 class RateQuoteResponse(BaseModel):

@@ -15,6 +15,7 @@ from .config import INVOICE_RECONCILE_INTERVAL_SECONDS, LATE_PAYMENT_LOOKBACK_HO
 from .db import SessionLocal
 from .models import Invoice, InvoiceTransfer, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail
+from .payment_timing import classify_payment_timing
 from .webhooks import dispatch_webhooks
 
 logger = logging.getLogger(__name__)
@@ -99,7 +100,7 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
     failed = 0
     try:
         now = datetime.now(timezone.utc)
-        late_cutoff = now - timedelta(hours=max(0, LATE_PAYMENT_LOOKBACK_HOURS))
+        late_cutoff = _expired_invoice_cutoff(db, now=now)
         invoices = (
             db.query(Invoice)
             .filter(
@@ -235,19 +236,32 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                         )
                     continue
 
-                if is_paid and invoice.status in ("pending", "expired"):
+                payment_transition = is_paid and invoice.status in ("pending", "expired")
+                if is_paid:
+                    detection_time = invoice.detected_at or now
+                    timing = classify_payment_timing(
+                        transfers=transfers,
+                        required_atomic=required_atomic,
+                        expires_at=expires_at,
+                        detection_fallback_at=detection_time,
+                    )
+                    if timing is not None and (
+                        invoice.paid_after_expiry != timing.paid_after_expiry
+                        or invoice.paid_after_expiry_at != timing.paid_after_expiry_at
+                    ):
+                        invoice.paid_after_expiry = timing.paid_after_expiry
+                        invoice.paid_after_expiry_at = timing.paid_after_expiry_at
+                        db.add(invoice)
+                        db.commit()
+
+                if payment_transition:
                     logger.info(
                         "Invoice marked payment detected",
                         extra={"invoice_id": str(invoice.id), "user_id": str(user.id)},
                     )
-                    previous_status = invoice.status
                     invoice.status = "payment_detected"
                     if invoice.detected_at is None:
                         invoice.detected_at = now
-                    if previous_status == "expired" or (previous_status == "pending" and is_after_expiry):
-                        invoice.paid_after_expiry = True
-                        if invoice.paid_after_expiry_at is None:
-                            invoice.paid_after_expiry_at = now
                     db.add(invoice)
                     db.commit()
                     dispatch_webhooks(db, str(user.id), "invoice.payment_detected", invoice)
@@ -453,6 +467,25 @@ def _xmr_to_atomic(amount: Decimal) -> int:
         rounding=ROUND_DOWN
     )
     return int(quantized)
+
+
+def _expired_invoice_cutoff(db: Session, *, now: datetime) -> datetime:
+    lookback = timedelta(hours=max(0, LATE_PAYMENT_LOOKBACK_HOURS))
+    status_row = (
+        db.query(SystemStatus)
+        .filter(SystemStatus.name == "reconciler")
+        .first()
+    )
+    last_completed = status_row.last_reconcile_completed_at if status_row else None
+    if last_completed is None:
+        anchor = now
+    else:
+        if last_completed.tzinfo is None:
+            last_completed = last_completed.replace(tzinfo=timezone.utc)
+        else:
+            last_completed = last_completed.astimezone(timezone.utc)
+        anchor = min(last_completed, now)
+    return anchor - lookback
 
 
 if __name__ == "__main__":

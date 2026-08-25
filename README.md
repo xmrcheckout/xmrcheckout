@@ -113,6 +113,16 @@ cp .env.example .env
 - `SITE_URL` (public URL for the UI)
 - Monero view-only wallet settings (`MONERO_WALLET_RPC_*`)
 - `MONERO_DAEMON_URL` (choose one of the options below)
+- `LATE_PAYMENT_LOOKBACK_HOURS` keeps recently expired invoices eligible for
+  late-payment detection (default: `48`). After an outage, reconciliation
+  temporarily widens this window from the last fully successful cycle so an
+  availability gap does not create a blind spot.
+
+Late-payment classification uses the on-chain time when cumulative positive
+transfers first reach the invoice amount. `detected_at` remains the time the
+checkout observed the payment; `paid_after_expiry_at` records the on-chain
+threshold-crossing time for payments that arrived after expiry. If transfer
+timing is unavailable, detection time is used conservatively.
 
 3. Choose a Monero daemon source:
 - **Use a third-party daemon (default):**

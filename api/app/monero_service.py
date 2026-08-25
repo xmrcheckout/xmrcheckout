@@ -115,23 +115,15 @@ class MoneroWalletService:
                     "daemon_height": daemon_height,
                 }
 
-        if self._daemon_address:
-            try:
-                self._backends[0].client.raw_request(
-                    "set_daemon",
-                    {"address": self._daemon_address},
-                )
-            except RPCError as exc:
-                message = str(exc)
-                if "no connection to daemon" in message or "no_connection_to_daemon" in message:
-                    return {
-                        "wallet_rpc": "ok",
-                        "daemon": "unreachable",
-                        "daemon_height": daemon_height,
-                    }
+        if not self._daemon_address:
+            daemon_status = "unknown"
+        elif daemon_height is None:
+            daemon_status = "unreachable"
+        else:
+            daemon_status = "ok"
         return {
             "wallet_rpc": "ok",
-            "daemon": "ok" if self._daemon_address else "unknown",
+            "daemon": daemon_status,
             "daemon_height": daemon_height,
         }
 

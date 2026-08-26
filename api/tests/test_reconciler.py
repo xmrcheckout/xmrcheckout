@@ -777,7 +777,7 @@ class WalletRecoverySafetyTests(unittest.TestCase):
         self.assertEqual(context.exception.status_code, 503)
         client.raw_request.assert_not_called()
 
-    def test_new_wallet_generation_scans_from_height_zero(self):
+    def test_new_wallet_generation_uses_restore_height_lookback(self):
         client = Mock()
 
         def raw_request(method, params=None):
@@ -789,6 +789,7 @@ class WalletRecoverySafetyTests(unittest.TestCase):
         backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
         service = object.__new__(MoneroWalletService)
         service._wallet_dir = "/wallets"
+        service._daemon_height = Mock(return_value=2000)
 
         service._ensure_wallet_open(
             backend=backend,
@@ -800,7 +801,7 @@ class WalletRecoverySafetyTests(unittest.TestCase):
         generate_call = next(
             call for call in client.raw_request.call_args_list if call.args[0] == "generate_from_keys"
         )
-        self.assertEqual(generate_call.args[1]["restore_height"], 0)
+        self.assertEqual(generate_call.args[1]["restore_height"], 560)
 
     def test_debug_mode_does_not_enable_sensitive_transport_logs(self):
         reconciler._configure_logging(logging.DEBUG)

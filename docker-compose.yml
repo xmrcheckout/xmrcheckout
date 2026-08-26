@@ -1,3 +1,11 @@
+x-runtime-security: &runtime-security
+  init: true
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+
 services:
   nginx:
     build:
@@ -16,8 +24,12 @@ services:
         condition: service_started
     restart: unless-stopped
   api:
+    <<: *runtime-security
     build:
       context: ./api
+    user: "10001:10001"
+    group_add:
+      - "20000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       API_KEYS: ${API_KEYS}
@@ -36,14 +48,20 @@ services:
       GUNICORN_WORKERS: ${GUNICORN_WORKERS:-5}
     volumes:
       - ./qr:/qr
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=1777
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
   reconciler:
+    <<: *runtime-security
     build:
       context: ./api
+    user: "10001:10001"
     command: ["python", "-m", "app.reconciler"]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=1777
     environment:
       DATABASE_URL: ${DATABASE_URL}
       API_KEYS: ${API_KEYS}
@@ -80,11 +98,13 @@ services:
         max-file: "3"
     restart: unless-stopped
   monerod:
+    <<: *runtime-security
     build:
       context: ./docker/monero
       args:
         MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
     image: monero-local:${MONERO_VERSION:-0.18.5.1}
+    user: "10001:10001"
     entrypoint: ["monerod"]
     command:
       [
@@ -102,6 +122,9 @@ services:
       ]
     volumes:
       - monerod_data:/data
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=1777
+      - /home/monero:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=0700
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:18081/get_height >/dev/null || exit 1"]
       interval: 30s
@@ -111,11 +134,13 @@ services:
     restart: unless-stopped
     profiles: ["local-daemon"]
   wallet-rpc-reconciler-1:
+    <<: *runtime-security
     build:
       context: ./docker/monero
       args:
         MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
     image: monero-local:${MONERO_VERSION:-0.18.5.1}
+    user: "10001:10001"
     command:
       [
         "monero-wallet-rpc",
@@ -138,6 +163,9 @@ services:
       ]
     volumes:
       - ./wallets/reconciler-1:/wallets
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=1777
+      - /home/monero:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=0700
     healthcheck:
       test: ["CMD-SHELL", "curl -sS -o /dev/null -H 'Content-Type: application/json' --data '{\"jsonrpc\":\"2.0\",\"id\":\"health\",\"method\":\"get_version\"}' http://127.0.0.1:18083/json_rpc"]
       interval: 30s
@@ -151,11 +179,13 @@ services:
         max-file: "3"
     restart: unless-stopped
   wallet-rpc-reconciler-2:
+    <<: *runtime-security
     build:
       context: ./docker/monero
       args:
         MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
     image: monero-local:${MONERO_VERSION:-0.18.5.1}
+    user: "10001:10001"
     command:
       [
         "monero-wallet-rpc",
@@ -178,6 +208,9 @@ services:
       ]
     volumes:
       - ./wallets/reconciler-2:/wallets
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=1777
+      - /home/monero:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=0700
     healthcheck:
       test: ["CMD-SHELL", "curl -sS -o /dev/null -H 'Content-Type: application/json' --data '{\"jsonrpc\":\"2.0\",\"id\":\"health\",\"method\":\"get_version\"}' http://127.0.0.1:18083/json_rpc"]
       interval: 30s
@@ -191,11 +224,13 @@ services:
         max-file: "3"
     restart: unless-stopped
   wallet-rpc-reconciler-3:
+    <<: *runtime-security
     build:
       context: ./docker/monero
       args:
         MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
     image: monero-local:${MONERO_VERSION:-0.18.5.1}
+    user: "10001:10001"
     command:
       [
         "monero-wallet-rpc",
@@ -218,6 +253,9 @@ services:
       ]
     volumes:
       - ./wallets/reconciler-3:/wallets
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=1777
+      - /home/monero:rw,noexec,nosuid,nodev,uid=10001,gid=10001,mode=0700
     healthcheck:
       test: ["CMD-SHELL", "curl -sS -o /dev/null -H 'Content-Type: application/json' --data '{\"jsonrpc\":\"2.0\",\"id\":\"health\",\"method\":\"get_version\"}' http://127.0.0.1:18083/json_rpc"]
       interval: 30s
@@ -231,11 +269,13 @@ services:
         max-file: "3"
     restart: unless-stopped
   ui:
+    <<: *runtime-security
     build:
       context: ./ui
       args:
         DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
         NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
+    user: "1000:1000"
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://nginx/api}
       DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
@@ -244,15 +284,23 @@ services:
     depends_on:
       api:
         condition: service_started
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=1000,gid=1000,mode=1777
+      - /app/.next/cache:rw,noexec,nosuid,nodev,uid=1000,gid=1000,mode=0750
     restart: unless-stopped
   db:
+    <<: *runtime-security
     image: postgres:16-alpine
+    user: "70:70"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=70,gid=70,mode=1777
+      - /var/run/postgresql:rw,noexec,nosuid,nodev,uid=70,gid=70,mode=0750
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -260,8 +308,10 @@ services:
       timeout: 3s
       retries: 10
   db-backup:
+    <<: *runtime-security
     build:
       context: ./docker/pg_backup
+    user: "70:70"
     environment:
       POSTGRES_HOST: db
       POSTGRES_USER: ${POSTGRES_USER}
@@ -270,6 +320,8 @@ services:
       BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-7}
     volumes:
       - ./backups/postgres:/backups
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,uid=70,gid=70,mode=1777
     depends_on:
       db:
         condition: service_healthy

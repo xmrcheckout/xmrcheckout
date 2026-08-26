@@ -32,6 +32,12 @@ COPY entrypoint.sh /usr/local/bin/monero-wallet-rpc-entrypoint
 COPY repair-wallet-caches.sh /usr/local/bin/repair-wallet-caches
 RUN chmod +x /usr/local/bin/monero-wallet-rpc-entrypoint /usr/local/bin/repair-wallet-caches
 
+RUN groupadd --gid 10001 monero \
+  && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin monero \
+  && install -d -o 10001 -g 10001 -m 0700 /data
+
 EXPOSE 18081 18083
+
+USER 10001:10001
 
 ENTRYPOINT ["/usr/local/bin/monero-wallet-rpc-entrypoint"]

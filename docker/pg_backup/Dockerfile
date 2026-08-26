@@ -1,12 +1,14 @@
-FROM postgres:16-alpine
+FROM alpine:3.20
 
-RUN apk add --no-cache bash
+RUN addgroup -S -g 70 postgres \
+  && adduser -S -D -H -u 70 -G postgres postgres \
+  && apk add --no-cache bash postgresql16-client
 
 COPY backup.sh /usr/local/bin/backup.sh
-COPY pg_backup.cron /etc/cron.d/pg_backup
+COPY run-backup-loop.sh /usr/local/bin/run-backup-loop.sh
 
-RUN chmod +x /usr/local/bin/backup.sh \
-  && chmod 0644 /etc/cron.d/pg_backup \
-  && crontab /etc/cron.d/pg_backup
+RUN chmod 0755 /usr/local/bin/backup.sh /usr/local/bin/run-backup-loop.sh
 
-CMD ["crond", "-f", "-l", "8"]
+USER postgres
+
+CMD ["/usr/local/bin/run-backup-loop.sh"]

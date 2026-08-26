@@ -8,7 +8,7 @@ import time
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from .models import BtcpayWebhook, Invoice
+from .models import BtcpayWebhook, Invoice, InvoiceTransfer
 from .payment_timing import is_payment_after_expiry
 from .security import decrypt_secret
 from .webhook_http import (
@@ -17,6 +17,47 @@ from .webhook_http import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def payment_observation_evidence(
+    db: Session | None,
+    invoice: Invoice,
+) -> dict[str, object]:
+    """Build payment evidence for the BTCPay-compatible wire contract.
+
+    Evidence is derived only from persisted positive incoming transfers. A
+    missing database session is supported for isolated status tests; real
+    webhook dispatch always supplies one.
+    """
+    transfers = []
+    if db is not None:
+        transfers = (
+            db.query(InvoiceTransfer)
+            .filter(
+                InvoiceTransfer.invoice_id == invoice.id,
+                InvoiceTransfer.amount_atomic > 0,
+            )
+            .order_by(InvoiceTransfer.created_at.asc(), InvoiceTransfer.txid.asc())
+            .all()
+        )
+
+    observed_at = None
+    observation_times = [
+        transfer.updated_at or transfer.created_at
+        for transfer in transfers
+        if transfer.updated_at or transfer.created_at
+    ]
+    if observation_times:
+        observed_at = max(observation_times).isoformat()
+
+    return {
+        "confirmationsRequired": getattr(invoice, "confirmation_target", 0),
+        "confirmationsObserved": getattr(invoice, "confirmations", 0) or 0,
+        "transactionIds": [transfer.txid for transfer in transfers],
+        "observedAt": observed_at,
+        "observationSource": "xmrcheckout wallet-rpc",
+    }
+
 
 def dispatch_btcpay_webhooks(
     db: Session,
@@ -37,6 +78,7 @@ def dispatch_btcpay_webhooks(
     if not hooks:
         return
     payload = _build_payload(
+        db=db,
         event_type=event_type,
         user_id=user_id,
         invoice=invoice,
@@ -116,12 +158,13 @@ def _event_allowed(authorized_events: object, event_type: str) -> bool:
 
 def _build_payload(
     *,
+    db: Session | None = None,
     event_type: str,
     user_id: str,
     invoice: Invoice,
     manually_marked: bool,
 ) -> dict[str, object]:
-    return {
+    payload = {
         "type": event_type,
         "timestamp": int(time.time()),
         "storeId": user_id,
@@ -132,6 +175,9 @@ def _build_payload(
         "afterExpiration": is_payment_after_expiry(invoice),
         "metadata": invoice.metadata_json or {},
     }
+    payload.update(payment_observation_evidence(db, invoice))
+    return payload
+
 
 def _sign_payload(body: bytes, secret: str) -> str:
     return hmac.new(secret.encode("utf-8"), body, hashlib.sha256).hexdigest()

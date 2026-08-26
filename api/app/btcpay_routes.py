@@ -14,7 +14,7 @@ from .btcpay_schemas import (
     BtcpayWebhookCreate,
     BtcpayWebhookUpdate,
 )
-from .btcpay_webhooks import dispatch_btcpay_webhooks
+from .btcpay_webhooks import dispatch_btcpay_webhooks, payment_observation_evidence
 from .config import INVOICE_DEFAULT_EXPIRY_HOURS
 from .config import QR_STORAGE_DIR
 from .db import get_db
@@ -336,6 +336,7 @@ def create_invoice(
         "status": status_name,
         "additionalStatus": additional_status,
         "availableStatusesForManualMarking": ["Invalid"],
+        **payment_observation_evidence(db, invoice),
     }
 
 
@@ -389,6 +390,7 @@ def get_invoice(
         "status": status_name,
         "additionalStatus": additional_status,
         "availableStatusesForManualMarking": ["Invalid"],
+        **payment_observation_evidence(db, invoice),
     }
 
 

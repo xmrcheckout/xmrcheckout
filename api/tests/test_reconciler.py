@@ -1,5 +1,6 @@
 import logging
 import unittest
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from types import SimpleNamespace
@@ -22,10 +23,11 @@ from app.payment_timing import PaymentTiming, classify_payment_timing, effective
 
 
 class _FakeQuery:
-    def __init__(self, model, invoices, user):
+    def __init__(self, model, invoices, user, transfers):
         self.model = model
         self.invoices = invoices
         self.user = user
+        self.transfers = transfers
 
     def filter(self, *_args, **_kwargs):
         return self
@@ -37,25 +39,33 @@ class _FakeQuery:
         if self.model is Invoice:
             return self.invoices
         if self.model is InvoiceTransfer:
-            return []
+            return sorted(
+                (transfer for transfer in self.transfers if transfer.amount_atomic > 0),
+                key=lambda transfer: (transfer.created_at, transfer.txid),
+            )
         return []
 
     def first(self):
+        if self.model is Invoice:
+            return self.invoices[0] if self.invoices else None
         return self.user if self.model is User else None
 
 
 class _FakeDb:
-    def __init__(self, invoices, user):
+    def __init__(self, invoices, user, transfers=None):
         self.invoices = invoices
         self.user = user
+        self.transfers = transfers or []
+        self.deleted = []
 
     def query(self, model):
-        return _FakeQuery(model, self.invoices, self.user)
+        return _FakeQuery(model, self.invoices, self.user, self.transfers)
 
     def add(self, _value):
         return None
 
     def delete(self, _value):
+        self.deleted.append(_value)
         return None
 
     def commit(self):
@@ -63,6 +73,11 @@ class _FakeDb:
 
     def close(self):
         return None
+
+
+@contextmanager
+def _acquired_invoice_lock(_invoice_id):
+    yield True
 
 
 def _pending_invoice(identifier, user_id):
@@ -101,6 +116,7 @@ class ReconcileSummaryTests(unittest.TestCase):
 
         with (
             patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
             patch.object(reconciler, "dispatch_webhooks"),
             patch.object(reconciler, "dispatch_btcpay_webhooks"),
         ):
@@ -146,6 +162,7 @@ class ReconcileSummaryTests(unittest.TestCase):
 
         with (
             patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
             patch.object(reconciler, "dispatch_webhooks"),
             patch.object(reconciler, "dispatch_btcpay_webhooks"),
         ):
@@ -168,7 +185,10 @@ class ReconcileSummaryTests(unittest.TestCase):
         service = Mock()
         service.get_transfers_for_address.side_effect = [[], RuntimeError("rpc failed")]
 
-        with patch.object(reconciler, "SessionLocal", return_value=db):
+        with (
+            patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
+        ):
             summary = reconciler._reconcile_invoices(service)
 
         self.assertEqual(summary.attempted, 2)
@@ -190,7 +210,10 @@ class ReconcileSummaryTests(unittest.TestCase):
             detail="View-only wallet is still syncing",
         )
 
-        with patch.object(reconciler, "SessionLocal", return_value=db):
+        with (
+            patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
+        ):
             summary = reconciler._reconcile_invoices(service)
 
         self.assertEqual(summary.attempted, 2)
@@ -198,6 +221,50 @@ class ReconcileSummaryTests(unittest.TestCase):
         self.assertEqual(summary.failed, 2)
         service.ensure_wallet_ready.assert_called_once_with(user)
         service.get_transfers_for_address.assert_not_called()
+
+    def test_transient_transfer_read_is_retried(self):
+        service = Mock()
+        service.get_transfers_for_address.side_effect = [
+            HTTPException(status_code=503, detail="wallet busy"),
+            [TransferDetail("tx-one", 100, 1, None, "address-one")],
+        ]
+
+        with patch.object(reconciler.time, "sleep") as sleep:
+            transfers = reconciler._get_transfers_with_retry(
+                service,
+                user=SimpleNamespace(id="user-one"),
+                address="address-one",
+            )
+
+        self.assertEqual(len(transfers), 1)
+        self.assertEqual(service.get_transfers_for_address.call_count, 2)
+        sleep.assert_called_once_with(0.5)
+
+    def test_final_transfer_read_failure_preserves_stored_state(self):
+        invoice = _pending_invoice("failed", "user-one")
+        stored_transfer = SimpleNamespace(
+            txid="known-transfer",
+            amount_atomic=100,
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
+        )
+        db = _FakeDb([], None, [stored_transfer])
+        service = Mock()
+        service.get_transfers_for_address.side_effect = HTTPException(
+            status_code=502,
+            detail="malformed transfer response",
+        )
+
+        result = reconciler._reconcile_invoice(
+            db,
+            service,
+            SimpleNamespace(id="user-one"),
+            invoice,
+        )
+
+        self.assertFalse(result)
+        self.assertEqual(db.deleted, [])
+        self.assertIsNone(invoice.total_paid_atomic)
 
 
 class PaymentTimingTests(unittest.TestCase):
@@ -324,6 +391,99 @@ class EffectiveConfirmationTests(unittest.TestCase):
 
 
 class BtcpayTimingTests(unittest.TestCase):
+    def test_payment_observation_evidence_is_stable_and_positive_only(self):
+        observed_one = datetime(2026, 8, 26, 10, 0, tzinfo=timezone.utc)
+        observed_two = datetime(2026, 8, 26, 10, 1, tzinfo=timezone.utc)
+        invoice = SimpleNamespace(
+            id="invoice-one",
+            confirmation_target=3,
+            confirmations=2,
+        )
+        db = _FakeDb(
+            [],
+            None,
+            [
+                SimpleNamespace(
+                    txid="tx-b",
+                    amount_atomic=50,
+                    created_at=observed_two,
+                    updated_at=None,
+                ),
+                SimpleNamespace(
+                    txid="tx-a",
+                    amount_atomic=100,
+                    created_at=observed_one,
+                    updated_at=observed_two,
+                ),
+                SimpleNamespace(
+                    txid="ignored-negative",
+                    amount_atomic=-1,
+                    created_at=observed_two,
+                    updated_at=observed_two,
+                ),
+            ],
+        )
+
+        evidence = btcpay_webhooks.payment_observation_evidence(db, invoice)
+        payload = btcpay_webhooks._build_payload(
+            db=db,
+            event_type="InvoiceSettled",
+            user_id="user-one",
+            invoice=SimpleNamespace(
+                id="invoice-one",
+                status="confirmed",
+                amount_xmr=Decimal("0.0000000001"),
+                paid_after_expiry=False,
+                metadata_json={},
+                confirmation_target=3,
+                confirmations=2,
+            ),
+            manually_marked=False,
+        )
+
+        self.assertEqual(evidence["confirmationsRequired"], 3)
+        self.assertEqual(evidence["confirmationsObserved"], 2)
+        self.assertEqual(evidence["transactionIds"], ["tx-a", "tx-b"])
+        self.assertEqual(evidence["observedAt"], observed_two.isoformat())
+        self.assertEqual(evidence["observationSource"], "xmrcheckout wallet-rpc")
+        self.assertEqual(payload["transactionIds"], evidence["transactionIds"])
+
+    def test_invoice_get_response_exposes_empty_observation_evidence(self):
+        invoice_id = "00000000-0000-0000-0000-000000000001"
+        user = SimpleNamespace(id="user-one")
+        invoice = SimpleNamespace(
+            id=invoice_id,
+            user_id=user.id,
+            amount_xmr=Decimal("1"),
+            status="pending",
+            total_paid_atomic=0,
+            paid_after_expiry=False,
+            metadata_json={},
+            created_at=datetime.now(timezone.utc),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+            archived_at=None,
+            confirmation_target=1,
+            confirmations=0,
+        )
+        db = _FakeDb([invoice], user)
+        request = SimpleNamespace(
+            headers={},
+            url=SimpleNamespace(scheme="http"),
+        )
+
+        response = btcpay_routes.get_invoice(
+            user.id,
+            invoice_id,
+            request,
+            user=user,
+            db=db,
+        )
+
+        self.assertEqual(response["transactionIds"], [])
+        self.assertIsNone(response["observedAt"])
+        self.assertEqual(response["confirmationsRequired"], 1)
+        self.assertEqual(response["confirmationsObserved"], 0)
+
     def test_on_time_payment_detected_after_expiry_stays_on_time(self):
         invoice = SimpleNamespace(
             id="invoice-one",
@@ -442,6 +602,57 @@ class ReconcilerStatusTests(unittest.TestCase):
 
 
 class WalletRecoverySafetyTests(unittest.TestCase):
+    def test_invoice_lock_key_is_deterministic_and_distinct(self):
+        self.assertEqual(
+            reconciler._invoice_lock_key("invoice-one"),
+            reconciler._invoice_lock_key("invoice-one"),
+        )
+        self.assertNotEqual(
+            reconciler._invoice_lock_key("invoice-one"),
+            reconciler._invoice_lock_key("invoice-two"),
+        )
+
+    def test_invoice_advisory_lock_releases_dedicated_connection(self):
+        connection = Mock()
+        connection.execution_options.return_value = connection
+        lock_result = Mock()
+        lock_result.scalar.return_value = True
+        connection.execute.side_effect = [lock_result, Mock()]
+        engine = Mock()
+        engine.connect.return_value = connection
+
+        with patch.object(reconciler, "engine", engine):
+            with reconciler._invoice_advisory_lock("invoice-one") as acquired:
+                self.assertTrue(acquired)
+
+        self.assertEqual(connection.execute.call_count, 2)
+        connection.close.assert_called_once_with()
+
+    def test_held_invoice_advisory_lock_skips_work(self):
+        connection = Mock()
+        connection.execution_options.return_value = connection
+        lock_result = Mock()
+        lock_result.scalar.return_value = False
+        connection.execute.return_value = lock_result
+        engine = Mock()
+        engine.connect.return_value = connection
+
+        with patch.object(reconciler, "engine", engine):
+            with reconciler._invoice_advisory_lock("invoice-one") as acquired:
+                self.assertFalse(acquired)
+
+        connection.execute.assert_called_once()
+        connection.close.assert_called_once_with()
+
+    def test_malformed_transfer_response_is_not_treated_as_empty(self):
+        self.assertEqual(
+            MoneroWalletService._validated_transfer_lists({"in": [], "pool": []}),
+            ([], []),
+        )
+        with self.assertRaises(HTTPException) as context:
+            MoneroWalletService._validated_transfer_lists({"in": []})
+        self.assertEqual(context.exception.status_code, 502)
+
     def test_wallet_rpc_lock_is_released_after_operation(self):
         connection = Mock()
         connection.execution_options.return_value = connection

@@ -152,6 +152,8 @@ services:
         "--confirm-external-bind",
         "--daemon-address",
         "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "--daemon-ssl",
+        "disabled",
         "--rpc-login",
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
@@ -159,7 +161,7 @@ services:
         "--password",
         "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
         "--log-level",
-        "1"
+        "0"
       ]
     volumes:
       - ./wallets/reconciler-1:/wallets
@@ -197,6 +199,8 @@ services:
         "--confirm-external-bind",
         "--daemon-address",
         "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "--daemon-ssl",
+        "disabled",
         "--rpc-login",
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
@@ -204,7 +208,7 @@ services:
         "--password",
         "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
         "--log-level",
-        "1"
+        "0"
       ]
     volumes:
       - ./wallets/reconciler-2:/wallets
@@ -242,6 +246,8 @@ services:
         "--confirm-external-bind",
         "--daemon-address",
         "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "--daemon-ssl",
+        "disabled",
         "--rpc-login",
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
@@ -249,7 +255,7 @@ services:
         "--password",
         "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
         "--log-level",
-        "1"
+        "0"
       ]
     volumes:
       - ./wallets/reconciler-3:/wallets

@@ -423,16 +423,22 @@ class MoneroWalletService:
     ) -> tuple[list[object], list[object]]:
         """Validate a wallet-RPC transfer response before reconciling it.
 
-        A valid response may contain no transfers. Malformed responses are
-        rejected so callers preserve the last known invoice state instead of
-        interpreting an RPC/proxy failure as zero payment.
+        The wallet RPC omits empty transfer categories, and may return an
+        empty object when no transfers match the address filter. Malformed
+        responses are rejected so callers preserve the last known invoice
+        state instead of interpreting an RPC/proxy failure as zero payment.
         """
         if not isinstance(response, dict):
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,
                 detail="Monero wallet RPC returned a malformed transfer response",
             )
-        incoming = response.get("in")
+        if not set(response).issubset({"in", "out", "pending", "failed", "pool"}):
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Monero wallet RPC returned a malformed transfer response",
+            )
+        incoming = response.get("in", [])
         pool = response.get("pool", [])
         if not isinstance(incoming, list) or not isinstance(pool, list):
             raise HTTPException(

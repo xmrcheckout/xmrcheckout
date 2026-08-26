@@ -649,8 +649,18 @@ class WalletRecoverySafetyTests(unittest.TestCase):
             MoneroWalletService._validated_transfer_lists({"in": [], "pool": []}),
             ([], []),
         )
+        self.assertEqual(
+            MoneroWalletService._validated_transfer_lists({"in": []}),
+            ([], []),
+        )
         with self.assertRaises(HTTPException) as context:
-            MoneroWalletService._validated_transfer_lists({"in": []})
+            MoneroWalletService._validated_transfer_lists({"in": [], "pool": {}})
+        self.assertEqual(context.exception.status_code, 502)
+        with self.assertRaises(HTTPException) as context:
+            MoneroWalletService._validated_transfer_lists({"pool": []})
+        self.assertEqual(context.exception.status_code, 502)
+        with self.assertRaises(HTTPException) as context:
+            MoneroWalletService._validated_transfer_lists({"in": {}})
         self.assertEqual(context.exception.status_code, 502)
 
     def test_wallet_rpc_lock_is_released_after_operation(self):

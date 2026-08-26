@@ -433,7 +433,7 @@ class MoneroWalletService:
                 detail="Monero wallet RPC returned a malformed transfer response",
             )
         incoming = response.get("in")
-        pool = response.get("pool")
+        pool = response.get("pool", [])
         if not isinstance(incoming, list) or not isinstance(pool, list):
             raise HTTPException(
                 status_code=status.HTTP_502_BAD_GATEWAY,

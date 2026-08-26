@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import dataclass
 import hashlib
 import logging
@@ -12,19 +13,45 @@ from monero.backends.jsonrpc.exceptions import RPCError
 import requests
 from requests import RequestException
 from requests.auth import HTTPDigestAuth
+from sqlalchemy import text
 
 from .config import (
     MONERO_DAEMON_URL,
+    MONERO_WALLET_READY_POLL_INTERVAL_SECONDS,
+    MONERO_WALLET_READY_TIMEOUT_SECONDS,
+    MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS,
     MONERO_WALLET_RPC_PASSWORD,
     MONERO_WALLET_RPC_URLS,
     MONERO_WALLET_RPC_USER,
     MONERO_WALLET_RPC_WALLET_PASSWORD,
     MONERO_WALLET_RPC_WALLET_DIR,
 )
+from .db import engine
 from .models import User
 from .security import decrypt_secret
 
 logger = logging.getLogger(__name__)
+
+
+def _wallet_rpc_lock_key(url: str) -> int:
+    digest = hashlib.sha256(f"xmrcheckout:wallet-rpc:{url}".encode("utf-8")).digest()
+    value = int.from_bytes(digest[:8], byteorder="big", signed=False)
+    return value - (1 << 64) if value >= (1 << 63) else value
+
+
+def wallet_error_summary(exc: Exception) -> str:
+    if isinstance(exc, HTTPException):
+        return str(exc.detail)[:240]
+    if isinstance(exc, RPCError):
+        error = getattr(exc, "error", None)
+        if isinstance(error, dict):
+            code = error.get("code", "unknown")
+            message = str(error.get("message", "RPC request failed"))
+            return f"RPC code={code} message={message[:180]}"
+        return "RPC request failed"
+    if isinstance(exc, RequestException):
+        return f"{type(exc).__name__}: request failed"
+    return f"{type(exc).__name__}: operation failed"
 
 
 def _normalize_daemon_address(value: str | None) -> str | None:
@@ -66,6 +93,7 @@ class TransferDetail:
 class WalletBackend:
     client: JSONRPCWallet
     url: str
+    lock_key: int | None = None
     current_wallet: str | None = None
     ready_wallet: str | None = None
 
@@ -94,14 +122,76 @@ class MoneroWalletService:
                 client.session.auth = HTTPDigestAuth(
                     MONERO_WALLET_RPC_USER, MONERO_WALLET_RPC_PASSWORD
                 )
-            self._backends.append(WalletBackend(client=client, url=url))
+            self._backends.append(
+                WalletBackend(
+                    client=client,
+                    url=url,
+                    lock_key=_wallet_rpc_lock_key(url),
+                )
+            )
         self._daemon_url = _normalize_daemon_url(MONERO_DAEMON_URL)
         self._daemon_address = _normalize_daemon_address(MONERO_DAEMON_URL)
         self._wallet_dir = MONERO_WALLET_RPC_WALLET_DIR.strip()
+        self._lock_timeout_seconds = max(0.0, MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS)
+        self._ready_timeout_seconds = max(0.0, MONERO_WALLET_READY_TIMEOUT_SECONDS)
+        self._ready_poll_interval_seconds = max(
+            0.0, MONERO_WALLET_READY_POLL_INTERVAL_SECONDS
+        )
 
     def begin_reconcile_cycle(self) -> None:
         for backend in self._backends:
             backend.ready_wallet = None
+
+    @contextmanager
+    def _wallet_rpc_lock(self, backend: WalletBackend, *, operation: str):
+        lock_key = backend.lock_key or _wallet_rpc_lock_key(backend.url)
+        timeout_seconds = max(
+            0.0,
+            getattr(self, "_lock_timeout_seconds", MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS),
+        )
+        deadline = time.monotonic() + timeout_seconds
+        connection = engine.connect().execution_options(isolation_level="AUTOCOMMIT")
+        acquired = False
+        try:
+            while True:
+                acquired = bool(
+                    connection.execute(
+                        text("SELECT pg_try_advisory_lock(:lock_key)"),
+                        {"lock_key": lock_key},
+                    ).scalar()
+                )
+                if acquired:
+                    break
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    logger.warning(
+                        "Wallet RPC lock timeout backend=%s operation=%s timeout_seconds=%.1f",
+                        backend.url,
+                        operation,
+                        timeout_seconds,
+                    )
+                    raise HTTPException(
+                        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                        detail="Monero wallet RPC is busy",
+                    )
+                time.sleep(min(0.1, remaining))
+            try:
+                yield
+            finally:
+                try:
+                    connection.execute(
+                        text("SELECT pg_advisory_unlock(:lock_key)"),
+                        {"lock_key": lock_key},
+                    )
+                except Exception:
+                    logger.warning(
+                        "Wallet RPC lock release failed backend=%s operation=%s",
+                        backend.url,
+                        operation,
+                        exc_info=True,
+                    )
+        finally:
+            connection.close()
 
     def get_status(self) -> dict[str, str | int | None]:
         daemon_height = self._daemon_height()
@@ -132,84 +222,134 @@ class MoneroWalletService:
         view_key = decrypt_secret(user.view_key_encrypted)
         wallet_name = self._wallet_name(user, user.payment_address, view_key)
         backend = self._backend_for_wallet_name(wallet_name)
-        start_wallet = time.monotonic()
-        self._ensure_wallet_open(
-            backend=backend,
-            wallet_name=wallet_name,
-            payment_address=user.payment_address,
-            view_key=view_key,
-        )
-        wallet_elapsed = time.monotonic() - start_wallet
-        start_daemon = time.monotonic()
-        self._ensure_daemon(backend)
-        daemon_elapsed = time.monotonic() - start_daemon
+        with self._wallet_rpc_lock(backend, operation="create_subaddress"):
+            start_wallet = time.monotonic()
+            self._ensure_wallet_open(
+                backend=backend,
+                wallet_name=wallet_name,
+                payment_address=user.payment_address,
+                view_key=view_key,
+            )
+            wallet_elapsed = time.monotonic() - start_wallet
+            start_daemon = time.monotonic()
+            self._ensure_daemon(backend)
+            daemon_elapsed = time.monotonic() - start_daemon
 
-        start_create = time.monotonic()
-        try:
-            response = backend.client.raw_request(
-                "create_address",
-                {"account_index": 0, "label": label},
+            start_create = time.monotonic()
+            try:
+                response = backend.client.raw_request(
+                    "create_address",
+                    {"account_index": 0, "label": label},
+                )
+            except (RPCError, RequestException) as exc:
+                self._raise_wallet_rpc_error(exc)
+            create_elapsed = time.monotonic() - start_create
+            address = response.get("address")
+            if not address:
+                raise HTTPException(
+                    status_code=status.HTTP_502_BAD_GATEWAY,
+                    detail="Monero wallet RPC did not return a subaddress",
+                )
+            start_store = time.monotonic()
+            try:
+                backend.client.raw_request("store")
+            except RPCError:
+                # Storing can fail if the wallet RPC is in an odd state; the
+                # subaddress is still valid, but we prefer to surface issues later.
+                pass
+            store_elapsed = time.monotonic() - start_store
+            total_elapsed = time.monotonic() - start_total
+            logger.info(
+                "create_subaddress timing wallet=%.3fs daemon=%.3fs create=%.3fs store=%.3fs total=%.3fs",
+                wallet_elapsed,
+                daemon_elapsed,
+                create_elapsed,
+                store_elapsed,
+                total_elapsed,
             )
-        except (RPCError, RequestException) as exc:
-            self._raise_wallet_rpc_error(exc)
-        create_elapsed = time.monotonic() - start_create
-        address = response.get("address")
-        if not address:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail="Monero wallet RPC did not return a subaddress",
+            return SubaddressResult(
+                address=address,
+                address_index=response.get("address_index"),
             )
-        start_store = time.monotonic()
-        try:
-            backend.client.raw_request("store")
-        except RPCError:
-            # Storing can fail if the wallet RPC is in an odd state; the
-            # subaddress is still valid, but we prefer to surface issues later.
-            pass
-        store_elapsed = time.monotonic() - start_store
-        total_elapsed = time.monotonic() - start_total
-        logger.info(
-            "create_subaddress timing wallet=%.3fs daemon=%.3fs create=%.3fs store=%.3fs total=%.3fs",
-            wallet_elapsed,
-            daemon_elapsed,
-            create_elapsed,
-            store_elapsed,
-            total_elapsed,
-        )
-        return SubaddressResult(
-            address=address,
-            address_index=response.get("address_index"),
-        )
 
     def get_received_atomic(
         self,
         user: User,
         address: str,
     ) -> tuple[int, int]:
-        backend = self.ensure_wallet_ready(user)
-        try:
-            index_response = backend.client.raw_request(
-                "get_address_index",
-                {"address": address},
+        view_key = decrypt_secret(user.view_key_encrypted)
+        wallet_name = self._wallet_name(user, user.payment_address, view_key)
+        backend = self._backend_for_wallet_name(wallet_name)
+        with self._wallet_rpc_lock(backend, operation="get_received_atomic"):
+            self._ensure_wallet_ready_locked(
+                backend=backend,
+                wallet_name=wallet_name,
+                payment_address=user.payment_address,
+                view_key=view_key,
             )
-        except (RPCError, RequestException) as exc:
-            self._raise_wallet_rpc_error(exc)
-        index = index_response.get("index") if isinstance(index_response, dict) else None
-        major = index.get("major") if isinstance(index, dict) else None
-        minor = index.get("minor") if isinstance(index, dict) else None
-        if major is None or minor is None:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail="Monero wallet RPC did not return an address index",
+            return self._get_received_atomic_locked(backend, address)
+
+    def ensure_wallet_ready(self, user: User) -> WalletBackend:
+        view_key = decrypt_secret(user.view_key_encrypted)
+        wallet_name = self._wallet_name(user, user.payment_address, view_key)
+        backend = self._backend_for_wallet_name(wallet_name)
+        with self._wallet_rpc_lock(backend, operation="ensure_wallet_ready"):
+            self._ensure_wallet_ready_locked(
+                backend=backend,
+                wallet_name=wallet_name,
+                payment_address=user.payment_address,
+                view_key=view_key,
             )
+        return backend
+
+    def get_transfers_for_address(
+        self,
+        user: User,
+        address: str,
+    ) -> list[TransferDetail]:
+        view_key = decrypt_secret(user.view_key_encrypted)
+        wallet_name = self._wallet_name(user, user.payment_address, view_key)
+        backend = self._backend_for_wallet_name(wallet_name)
+        with self._wallet_rpc_lock(backend, operation="get_transfers_for_address"):
+            self._ensure_wallet_ready_locked(
+                backend=backend,
+                wallet_name=wallet_name,
+                payment_address=user.payment_address,
+                view_key=view_key,
+            )
+            return self._get_transfers_for_address_locked(backend, address)
+
+    def _ensure_wallet_ready_locked(
+        self,
+        *,
+        backend: WalletBackend,
+        wallet_name: str,
+        payment_address: str,
+        view_key: str,
+    ) -> None:
+        self._ensure_wallet_open(
+            backend=backend,
+            wallet_name=wallet_name,
+            payment_address=payment_address,
+            view_key=view_key,
+        )
+        self._ensure_daemon(backend)
+        self._ensure_wallet_synced(backend)
+
+    def _get_received_atomic_locked(
+        self,
+        backend: WalletBackend,
+        address: str,
+    ) -> tuple[int, int]:
+        index = self._get_address_index(backend, address)
         try:
             transfers = backend.client.raw_request(
                 "get_transfers",
                 {
                     "in": True,
                     "pool": True,
-                    "account_index": major,
-                    "subaddr_indices": [minor],
+                    "account_index": index[0],
+                    "subaddr_indices": [index[1]],
                 },
             )
         except (RPCError, RequestException) as exc:
@@ -233,41 +373,12 @@ class MoneroWalletService:
                 max_confirmations = confirmations
         return total_atomic, max_confirmations
 
-    def ensure_wallet_ready(self, user: User) -> WalletBackend:
-        view_key = decrypt_secret(user.view_key_encrypted)
-        wallet_name = self._wallet_name(user, user.payment_address, view_key)
-        backend = self._backend_for_wallet_name(wallet_name)
-        self._ensure_wallet_open(
-            backend=backend,
-            wallet_name=wallet_name,
-            payment_address=user.payment_address,
-            view_key=view_key,
-        )
-        self._ensure_daemon(backend)
-        self._ensure_wallet_synced(backend)
-        return backend
-
-    def get_transfers_for_address(
+    def _get_transfers_for_address_locked(
         self,
-        user: User,
+        backend: WalletBackend,
         address: str,
     ) -> list[TransferDetail]:
-        backend = self.ensure_wallet_ready(user)
-        try:
-            index_response = backend.client.raw_request(
-                "get_address_index",
-                {"address": address},
-            )
-        except (RPCError, RequestException) as exc:
-            self._raise_wallet_rpc_error(exc)
-        index = index_response.get("index") if isinstance(index_response, dict) else None
-        major = index.get("major") if isinstance(index, dict) else None
-        minor = index.get("minor") if isinstance(index, dict) else None
-        if major is None or minor is None:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail="Monero wallet RPC did not return an address index",
-            )
+        major, minor = self._get_address_index(backend, address)
         try:
             transfers = backend.client.raw_request(
                 "get_transfers",
@@ -307,6 +418,24 @@ class MoneroWalletService:
                 )
             )
         return details
+
+    def _get_address_index(self, backend: WalletBackend, address: str) -> tuple[int, int]:
+        try:
+            index_response = backend.client.raw_request(
+                "get_address_index",
+                {"address": address},
+            )
+        except (RPCError, RequestException) as exc:
+            self._raise_wallet_rpc_error(exc)
+        index = index_response.get("index") if isinstance(index_response, dict) else None
+        major = index.get("major") if isinstance(index, dict) else None
+        minor = index.get("minor") if isinstance(index, dict) else None
+        if major is None or minor is None:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Monero wallet RPC did not return an address index",
+            )
+        return int(major), int(minor)
 
     @staticmethod
     def _rpc_error_message(exc: RPCError) -> str:
@@ -363,9 +492,7 @@ class MoneroWalletService:
         payment_address: str,
         view_key: str,
     ) -> None:
-        if backend.current_wallet == wallet_name:
-            return
-        if backend.current_wallet is None and self._adopt_open_wallet(
+        if self._adopt_open_wallet(
             backend,
             wallet_name=wallet_name,
             payment_address=payment_address,
@@ -484,33 +611,51 @@ class MoneroWalletService:
     def _ensure_wallet_synced(self, backend: WalletBackend) -> None:
         if backend.current_wallet and backend.ready_wallet == backend.current_wallet:
             return
-        daemon_height = self._daemon_height()
-        if daemon_height is None:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Monero daemon height is unavailable",
-            )
-        try:
-            response = backend.client.session.post(
-                f"{backend.url.rstrip('/')}/json_rpc",
-                json={"jsonrpc": "2.0", "id": "height", "method": "get_height"},
-                timeout=5,
-            )
-            response.raise_for_status()
-            payload = response.json()
-        except (RequestException, ValueError) as exc:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Monero wallet RPC is busy or unreachable",
-            ) from exc
-        result = payload.get("result") if isinstance(payload, dict) else None
-        wallet_height = result.get("height") if isinstance(result, dict) else None
-        if not isinstance(wallet_height, int) or wallet_height < daemon_height:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="View-only wallet is still syncing",
-            )
-        backend.ready_wallet = backend.current_wallet
+        timeout_seconds = max(
+            0.0,
+            getattr(self, "_ready_timeout_seconds", MONERO_WALLET_READY_TIMEOUT_SECONDS),
+        )
+        poll_interval = max(
+            0.0,
+            getattr(
+                self,
+                "_ready_poll_interval_seconds",
+                MONERO_WALLET_READY_POLL_INTERVAL_SECONDS,
+            ),
+        )
+        deadline = time.monotonic() + timeout_seconds
+        while True:
+            daemon_height = self._daemon_height()
+            if daemon_height is None:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Monero daemon height is unavailable",
+                )
+            try:
+                response = backend.client.session.post(
+                    f"{backend.url.rstrip('/')}/json_rpc",
+                    json={"jsonrpc": "2.0", "id": "height", "method": "get_height"},
+                    timeout=5,
+                )
+                response.raise_for_status()
+                payload = response.json()
+            except (RequestException, ValueError) as exc:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Monero wallet RPC is busy or unreachable",
+                ) from exc
+            result = payload.get("result") if isinstance(payload, dict) else None
+            wallet_height = result.get("height") if isinstance(result, dict) else None
+            if isinstance(wallet_height, int) and wallet_height >= daemon_height:
+                backend.ready_wallet = backend.current_wallet
+                return
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="View-only wallet is still syncing",
+                )
+            time.sleep(min(poll_interval, remaining))
 
     @staticmethod
     def _raise_wallet_rpc_error(exc: Exception) -> None:

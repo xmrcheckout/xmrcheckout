@@ -8,7 +8,14 @@ from unittest.mock import Mock, patch
 from fastapi import HTTPException
 from requests import RequestException
 
-from app import btcpay_routes, btcpay_webhooks, reconciler, reclassify_invoice_timing, routes
+from app import (
+    btcpay_routes,
+    btcpay_webhooks,
+    monero_service,
+    reconciler,
+    reclassify_invoice_timing,
+    routes,
+)
 from app.models import Invoice, InvoiceTransfer, SystemStatus, User
 from app.monero_service import MoneroWalletService, TransferDetail, WalletBackend
 from app.payment_timing import PaymentTiming, classify_payment_timing, effective_confirmations
@@ -435,6 +442,45 @@ class ReconcilerStatusTests(unittest.TestCase):
 
 
 class WalletRecoverySafetyTests(unittest.TestCase):
+    def test_wallet_rpc_lock_is_released_after_operation(self):
+        connection = Mock()
+        connection.execution_options.return_value = connection
+        lock_result = Mock()
+        lock_result.scalar.return_value = True
+        connection.execute.side_effect = [lock_result, Mock()]
+        engine = Mock()
+        engine.connect.return_value = connection
+        service = object.__new__(MoneroWalletService)
+        service._lock_timeout_seconds = 1
+        backend = WalletBackend(client=Mock(), url="http://wallet-rpc:18083")
+
+        with patch.object(monero_service, "engine", engine):
+            with service._wallet_rpc_lock(backend, operation="test"):
+                pass
+
+        self.assertEqual(connection.execute.call_count, 2)
+        connection.close.assert_called_once_with()
+
+    def test_wallet_rpc_lock_timeout_returns_service_unavailable(self):
+        connection = Mock()
+        connection.execution_options.return_value = connection
+        lock_result = Mock()
+        lock_result.scalar.return_value = False
+        connection.execute.return_value = lock_result
+        engine = Mock()
+        engine.connect.return_value = connection
+        service = object.__new__(MoneroWalletService)
+        service._lock_timeout_seconds = 0
+        backend = WalletBackend(client=Mock(), url="http://wallet-rpc:18083")
+
+        with patch.object(monero_service, "engine", engine):
+            with self.assertRaises(HTTPException) as context:
+                with service._wallet_rpc_lock(backend, operation="test"):
+                    pass
+
+        self.assertEqual(context.exception.status_code, 503)
+        connection.close.assert_called_once_with()
+
     def test_status_check_does_not_call_wallet_dependent_rpc(self):
         client = Mock()
         backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
@@ -469,6 +515,28 @@ class WalletRecoverySafetyTests(unittest.TestCase):
             "result": {"address": "merchant-address"}
         }
         backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+
+        service._ensure_wallet_open(
+            backend=backend,
+            wallet_name="user-wallet",
+            payment_address="merchant-address",
+            view_key="view-key",
+        )
+
+        self.assertEqual(backend.current_wallet, "user-wallet")
+        client.raw_request.assert_not_called()
+
+    def test_external_wallet_change_invalidates_local_wallet_cache(self):
+        client = Mock()
+        client.session.post.return_value.json.return_value = {
+            "result": {"address": "merchant-address"}
+        }
+        backend = WalletBackend(
+            client=client,
+            url="http://wallet-rpc:18083",
+            current_wallet="user-wallet",
+        )
         service = object.__new__(MoneroWalletService)
 
         service._ensure_wallet_open(
@@ -539,6 +607,7 @@ class WalletRecoverySafetyTests(unittest.TestCase):
         backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
         service = object.__new__(MoneroWalletService)
         service._daemon_height = Mock(return_value=100)
+        service._ready_timeout_seconds = 0
 
         with self.assertRaises(HTTPException) as context:
             service._ensure_wallet_synced(backend)
@@ -648,6 +717,23 @@ class WalletSyncSafetyTests(unittest.TestCase):
         self.assertEqual(second.current_wallet, "wallet-two")
         self.assertIsNone(first.ready_wallet)
         self.assertIsNone(second.ready_wallet)
+
+    def test_wallet_sync_waits_for_wallet_to_catch_up(self):
+        client = Mock()
+        client.session.post.return_value.json.side_effect = [
+            {"result": {"height": 90}},
+            {"result": {"height": 100}},
+        ]
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._daemon_height = Mock(return_value=100)
+        service._ready_timeout_seconds = 1
+        service._ready_poll_interval_seconds = 0
+
+        service._ensure_wallet_synced(backend)
+
+        self.assertEqual(client.session.post.call_count, 2)
+        self.assertEqual(backend.ready_wallet, backend.current_wallet)
 
 
 if __name__ == "__main__":

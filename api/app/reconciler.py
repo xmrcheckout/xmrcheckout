@@ -14,7 +14,7 @@ from .btcpay_webhooks import dispatch_btcpay_webhooks
 from .config import INVOICE_RECONCILE_INTERVAL_SECONDS, LATE_PAYMENT_LOOKBACK_HOURS
 from .db import SessionLocal
 from .models import Invoice, InvoiceTransfer, SystemStatus, User
-from .monero_service import MoneroWalletService, TransferDetail
+from .monero_service import MoneroWalletService, TransferDetail, wallet_error_summary
 from .payment_timing import classify_payment_timing, effective_confirmations
 from .webhooks import dispatch_webhooks
 
@@ -153,10 +153,11 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
             except Exception as exc:
                 failed += len(user_invoices)
                 logger.warning(
-                    "Skipping user invoice checks because wallet is not ready",
-                    extra={"user_id": str(user.id), "invoice_count": len(user_invoices)},
+                    "Skipping user invoice checks because wallet is not ready user_id=%s invoice_count=%d error=%s",
+                    user.id,
+                    len(user_invoices),
+                    wallet_error_summary(exc),
                 )
-                logger.debug("Wallet readiness error: %s", exc)
                 continue
             for invoice in user_invoices:
                 try:
@@ -166,10 +167,11 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                     )
                 except Exception as exc:
                     failed += 1
-                    logger.error(
-                        "Skipping invoice reconcile due to wallet RPC error: %s",
-                        exc,
-                        extra={"invoice_id": str(invoice.id), "user_id": str(user.id)},
+                    logger.warning(
+                        "Skipping invoice reconcile due to wallet RPC error invoice_id=%s user_id=%s error=%s",
+                        invoice.id,
+                        user.id,
+                        wallet_error_summary(exc),
                     )
                     continue
                 total_atomic = 0

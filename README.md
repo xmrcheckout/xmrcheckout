@@ -4,11 +4,11 @@
 
 # xmrcheckout.com
 
-Non-custodial Monero checkout software for merchants who want customers to pay their own wallet directly.
+Monero checkout software for merchants who want payments sent to their own wallet.
 
-xmrcheckout is open source and self-hostable. It creates XMR invoices, shows a hosted payment page, watches for incoming transactions with view-only wallet access, and sends status updates through the API or webhooks.
+xmrcheckout is open source and self-hostable. It creates XMR invoices, shows a hosted payment page, watches for incoming transactions, and sends status updates through the API or webhooks.
 
-The app is view-only. It does not ask for spend keys, sign transactions, or move funds on behalf of users.
+It uses a wallet address and private view key for detection. It never asks for spend keys, signs transactions, or moves funds.
 
 ## Contents
 
@@ -24,9 +24,9 @@ The app is view-only. It does not ask for spend keys, sign transactions, or move
 
 ## Who it's for
 
-Use xmrcheckout when you want Monero payments to go straight to your wallet, with invoice status handled by software you control.
+Use xmrcheckout when you want invoice status handled by software you control.
 
-It fits merchants who need a hosted checkout page, teams that want API and webhook updates for an existing order flow, and operators who prefer view-only invoice detection.
+It fits merchants who need a hosted checkout page, teams that want API and webhook updates for an existing order flow, and operators who prefer self-hosted infrastructure.
 
 ## How it works
 
@@ -36,16 +36,11 @@ Typical flow:
 3. The reconciler checks the wallet and daemon for matching incoming payments.
 4. Your store reads invoice status through the API or receives webhook events.
 
-Out of scope:
-- Custody, refunds, or fund movement.
-- Acting as an intermediary between customer and merchant.
-- Fiat rails in the core system.
-
 ## Wallet access and fund flow
 
 Funds move from the customer to the merchant wallet. xmrcheckout watches for the payment and reports what it sees.
 
-You keep spend authority. Configure the app with a wallet address and private view key only. If a setup path asks for spend authority, stop and fix the configuration before using it.
+Configure the app with a wallet address and private view key only. If a setup path asks for spend authority, stop and fix the configuration before using it.
 
 ## Repository layout
 
@@ -189,7 +184,7 @@ If an invoice stays at `0` confirmations or never moves out of `Awaiting funds`,
 - `Current daemon height` is visible and keeps increasing
 - `Last successful reconcile` is recent
 
-2. Open the public invoice page and confirm the same health indicators are present there. If block height is unavailable, the node path is broken before invoice detection can work.
+2. Open System health and confirm the wallet RPC, daemon, block height, and reconciliation indicators are healthy. If block height is unavailable, the node path is broken before invoice detection can work.
 
 3. If the bundled wallet-rpc containers keep restarting, inspect their logs:
 

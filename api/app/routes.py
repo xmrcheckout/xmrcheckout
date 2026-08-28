@@ -229,6 +229,10 @@ def _is_donation_invoice(invoice: Invoice) -> bool:
     return isinstance(metadata, dict) and metadata.get("origin") == "donation"
 
 
+def _merchant_invoice_filter():
+    return func.coalesce(Invoice.metadata_json["origin"].as_string(), "") != "donation"
+
+
 def _get_checkout_continue_url(invoice: Invoice) -> str | None:
     metadata = invoice.metadata_json or {}
     if not isinstance(metadata, dict):
@@ -298,9 +302,10 @@ def _resolve_webhook_payload(
 def _invoice_url(invoice: Invoice, request: Request) -> str:
     proto = request.headers.get("x-forwarded-proto", request.url.scheme)
     host = request.headers.get("x-forwarded-host", request.headers.get("host", ""))
+    path_prefix = "/donate" if _is_donation_invoice(invoice) else "/invoice"
     if not host:
-        return f"/invoice/{invoice.id}"
-    return f"{proto}://{host}/invoice/{invoice.id}"
+        return f"{path_prefix}/{invoice.id}"
+    return f"{proto}://{host}{path_prefix}/{invoice.id}"
 
 
 def _qr_url(invoice: Invoice, request: Request) -> str:
@@ -1181,7 +1186,10 @@ def list_invoices_for_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User API key required",
         )
-    query = db.query(Invoice).filter(Invoice.user_id == user.id)
+    query = db.query(Invoice).filter(
+        Invoice.user_id == user.id,
+        _merchant_invoice_filter(),
+    )
     if not include_archived:
         query = query.filter(Invoice.archived_at.is_(None))
     if status_filter:
@@ -1233,7 +1241,10 @@ def list_invoices_for_user(
         .all()
     )
     invoice_items = [_invoice_response(invoice, request) for invoice in items]
-    total_query = db.query(func.count(Invoice.id)).filter(Invoice.user_id == user.id)
+    total_query = db.query(func.count(Invoice.id)).filter(
+        Invoice.user_id == user.id,
+        _merchant_invoice_filter(),
+    )
     if not include_archived:
         total_query = total_query.filter(Invoice.archived_at.is_(None))
     if status_filter:
@@ -1292,7 +1303,10 @@ def export_invoices_csv(
             detail="User API key required",
         )
 
-    query = db.query(Invoice).filter(Invoice.user_id == user.id)
+    query = db.query(Invoice).filter(
+        Invoice.user_id == user.id,
+        _merchant_invoice_filter(),
+    )
     if not include_archived:
         query = query.filter(Invoice.archived_at.is_(None))
     if status_filter:
@@ -1414,6 +1428,7 @@ def get_invoice_for_user(
             Invoice.id == invoice_id,
             Invoice.user_id == user.id,
             Invoice.archived_at.is_(None),
+            _merchant_invoice_filter(),
         )
         .first()
     )
@@ -1447,6 +1462,7 @@ def archive_invoice_for_user(
             Invoice.id == invoice_id,
             Invoice.user_id == user.id,
             Invoice.archived_at.is_(None),
+            _merchant_invoice_filter(),
         )
         .first()
     )

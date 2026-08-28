@@ -21,6 +21,7 @@ export default function SiteHeader({
     { href: "/invoice", label: "Check Invoice" },
     ...(includeTour ? [{ href: "/tour", label: "Tour" }] : []),
     { href: "/docs", label: "Documentation" },
+    { href: "/guides", label: "Guides" },
     { href: "/faq", label: "FAQ" },
     ...(donationsEnabled ? [{ href: "/donate", label: "Donate" }] : []),
     ...(isAuthenticated ? [{ href: "/dashboard", label: "Dashboard" }] : []),

@@ -88,6 +88,14 @@ export default function IntegrationsPage() {
           </Link>
         </div>
 
+        <p className="mt-4 max-w-3xl text-sm text-ink-soft">
+          Need the whole integration path first? Read the{" "}
+          <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">
+            Monero API and webhook guide
+          </Link>{" "}
+          for authentication, invoice status, and delivery handling.
+        </p>
+
         <nav
           className="sticky top-3 z-10 mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur"
           aria-label="Recipe languages"

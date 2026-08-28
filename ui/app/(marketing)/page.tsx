@@ -341,6 +341,14 @@ export default async function MarketingHomePage({
             Start with the hosted payment page. Add API calls, webhook events,
             or BTCPay-compatible routes after the checkout flow is working.
           </p>
+          <div className="home-actions" aria-label="Guide links">
+            <Link className="home-doc-link" href="/guides/self-hosted-monero-checkout">
+              Read the self-hosting guide
+            </Link>
+            <Link className="home-doc-link" href="/guides/monero-payment-api-webhooks">
+              Read the API guide
+            </Link>
+          </div>
         </div>
         <div className="integration-lines" aria-label="Example integration events">
           <code>POST /api/core/invoices</code>

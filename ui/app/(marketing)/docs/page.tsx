@@ -618,6 +618,19 @@ export default function DocsPage() {
           </span>
         </div>
 
+        <aside className="mt-5 rounded-surface border border-stroke bg-sand/60 px-5 py-4 text-sm text-ink-soft sm:px-6">
+          <span className="font-semibold text-ink">New to the setup?</span>{" "}
+          Read the{" "}
+          <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/self-hosted-monero-checkout">
+            self-hosting guide
+          </Link>{" "}
+          or follow the{" "}
+          <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">
+            API and webhook guide
+          </Link>
+          .
+        </aside>
+
         <nav
           className="sticky top-3 z-10 mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur sm:flex"
           aria-label="Documentation sections"

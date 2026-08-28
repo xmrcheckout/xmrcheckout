@@ -264,6 +264,13 @@ const faqItems: FaqItem[] = [
           <Link className="underline underline-offset-4" href="/docs">
             Documentation
           </Link>{" "}
+          or the{" "}
+          <Link
+            className="underline underline-offset-4"
+            href="/guides/self-hosted-monero-checkout"
+          >
+            self-hosting guide
+          </Link>{" "}
           for setup and integration details.
         </p>
       </>

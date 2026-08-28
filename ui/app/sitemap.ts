@@ -24,6 +24,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
     },
     {
+      url: `${normalizedSiteUrl}/guides`,
+      lastModified,
+    },
+    {
+      url: `${normalizedSiteUrl}/guides/self-hosted-monero-checkout`,
+      lastModified,
+    },
+    {
+      url: `${normalizedSiteUrl}/guides/monero-payment-api-webhooks`,
+      lastModified,
+    },
+    {
       url: `${normalizedSiteUrl}/faq`,
       lastModified,
     },

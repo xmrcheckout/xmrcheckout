@@ -4,7 +4,7 @@
 
 # XMR Checkout
 
-[Website](https://xmrcheckout.com) · [Interactive tour](https://xmrcheckout.com/tour) · [API documentation](https://xmrcheckout.com/docs) · [Integration recipes](https://xmrcheckout.com/docs/integrations) · [FAQ](https://xmrcheckout.com/faq)
+[Website](https://xmrcheckout.com) · [Interactive tour](https://xmrcheckout.com/tour) · [API documentation](https://xmrcheckout.com/docs) · [Integration recipes](https://xmrcheckout.com/docs/integrations) · [Guides](https://xmrcheckout.com/guides) · [FAQ](https://xmrcheckout.com/faq)
 
 Self-hosted Monero checkout software for merchants who want payments sent to their own wallet.
 
@@ -47,12 +47,12 @@ Configure the app with a wallet address and private view key only. If a setup pa
 
 ## Documentation and guides
 
-The [XMR Checkout website](https://xmrcheckout.com) includes the [interactive tour](https://xmrcheckout.com/tour), [API documentation](https://xmrcheckout.com/docs), [integration recipes](https://xmrcheckout.com/docs/integrations), and [FAQ](https://xmrcheckout.com/faq).
+The [XMR Checkout website](https://xmrcheckout.com) includes the [interactive tour](https://xmrcheckout.com/tour), [API documentation](https://xmrcheckout.com/docs), [integration recipes](https://xmrcheckout.com/docs/integrations), [guides](https://xmrcheckout.com/guides), and [FAQ](https://xmrcheckout.com/faq).
 
-Two guide topics are planned for the project website:
+The guides cover the two common paths into the project:
 
-- **How to Run a Self-Hosted Monero Checkout:** deployment, view-only wallet setup, invoice pages, and safe payment detection.
-- **Integrating the Monero Payment API and Webhooks:** invoice creation, public status polling, webhook verification, and integration examples.
+- [How to Run a Self-Hosted Monero Checkout](https://xmrcheckout.com/guides/self-hosted-monero-checkout): deployment, view-only wallet setup, invoice pages, and safe payment detection.
+- [Integrating the Monero Payment API and Webhooks](https://xmrcheckout.com/guides/monero-payment-api-webhooks): invoice creation, public status polling, webhook verification, and integration examples.
 
 ## Repository layout
 

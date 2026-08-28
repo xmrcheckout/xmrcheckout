@@ -1188,44 +1188,46 @@ export default function InvoicePanel({
 
   return (
     <section className="grid gap-6" aria-labelledby="invoice-panel-title">
-      <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
-        <div className="max-w-2xl">
-          <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
-            Invoices
-          </p>
-          <h1
-            className="mt-1 font-sans text-3xl font-semibold leading-tight"
-            id="invoice-panel-title"
-          >
-            Invoice activity
-          </h1>
-          <p className="mt-2 text-ink-soft">
-            Create invoices, follow confirmations, and open a row when you need
-            the raw details.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link className={secondaryButton} href={archivedToggleHref}>
-            {includeArchived ? "Hide archived" : "Show archived"}
-          </Link>
-          {csvExportHref ? (
-            <a className={secondaryButton} href={csvExportHref}>
-              Export CSV
-            </a>
-          ) : (
-            <button
-              className={secondaryButton}
-              type="button"
-              disabled
-              title="Tour mode only"
+      <header className="border-b border-stroke pb-6 lg:overflow-x-auto">
+        <div className="flex flex-wrap items-end justify-between gap-5 lg:min-w-[68rem] lg:flex-nowrap">
+          <div className="max-w-2xl">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
+              Invoices
+            </p>
+            <h1
+              className="mt-1 font-sans text-3xl font-semibold leading-tight"
+              id="invoice-panel-title"
             >
-              Export CSV
+              Invoice activity
+            </h1>
+            <p className="mt-2 text-ink-soft">
+              Create invoices, follow confirmations, and open a row when you need
+              the raw details.
+            </p>
+          </div>
+          <div className="flex min-w-0 flex-wrap items-center gap-3 lg:min-w-max lg:shrink-0 lg:flex-nowrap">
+            <Link className={secondaryButton} href={archivedToggleHref}>
+              {includeArchived ? "Hide archived" : "Show archived"}
+            </Link>
+            {csvExportHref ? (
+              <a className={secondaryButton} href={csvExportHref}>
+                Export CSV
+              </a>
+            ) : (
+              <button
+                className={secondaryButton}
+                type="button"
+                disabled
+                title="Tour mode only"
+              >
+                Export CSV
+              </button>
+            )}
+            <button className={primaryButton} type="button" onClick={openCreate}>
+              Create invoice
             </button>
-          )}
-          <button className={primaryButton} type="button" onClick={openCreate}>
-            Create invoice
-          </button>
+          </div>
         </div>
       </header>
       <div className="grid gap-4">
@@ -1660,7 +1662,7 @@ export default function InvoicePanel({
                             </span>
                           </td>
                           <td className="px-4 py-3 align-top">
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex min-w-max flex-nowrap gap-2">
                               {mode !== "tour" ? (
                                 <Link
                                   className={smallSecondaryButton}

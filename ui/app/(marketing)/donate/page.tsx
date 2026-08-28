@@ -25,7 +25,7 @@ export default function DonatePage() {
         title="Support continued XMR Checkout development."
       />
 
-      <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+      <section className="mt-6 max-w-3xl">
         <div className="rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-7">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />
@@ -42,20 +42,6 @@ export default function DonatePage() {
             <DonationForm />
           </div>
         </div>
-
-        <aside className="self-start rounded-surface border border-cream/15 bg-ink p-6 text-cream shadow-soft sm:p-7">
-          <p className="text-sm font-semibold text-cream/65">Payment routing</p>
-          <h2 className="mt-2 font-sans text-2xl font-semibold">
-            The donation goes to the founder wallet.
-          </h2>
-          <div className="mt-6 grid gap-5 border-t border-cream/15 pt-5 text-sm text-cream/75">
-            <p>
-              XMR Checkout only detects the payment with view-only access and
-              cannot move funds. USD values are optional references; the request
-              is defined in XMR.
-            </p>
-          </div>
-        </aside>
       </section>
     </main>
   );

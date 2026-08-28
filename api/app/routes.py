@@ -1174,6 +1174,7 @@ def list_invoices_for_user(
     limit: int = Query(default=50, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     status_filter: str | None = Query(default=None, alias="status"),
+    active_only: bool = Query(default=False, alias="active_only"),
     include_archived: bool = Query(default=False, alias="include_archived"),
     q: str | None = Query(default=None),
     sort: str = Query(default="created_at"),
@@ -1194,6 +1195,10 @@ def list_invoices_for_user(
         query = query.filter(Invoice.archived_at.is_(None))
     if status_filter:
         query = query.filter(Invoice.status == status_filter)
+    if active_only:
+        query = query.filter(
+            Invoice.status.in_(["pending", "payment_detected", "confirmed"])
+        )
     if q:
         needle = q.strip()
         if needle:
@@ -1242,6 +1247,10 @@ def list_invoices_for_user(
         total_query = total_query.filter(Invoice.archived_at.is_(None))
     if status_filter:
         total_query = total_query.filter(Invoice.status == status_filter)
+    if active_only:
+        total_query = total_query.filter(
+            Invoice.status.in_(["pending", "payment_detected", "confirmed"])
+        )
     if q:
         needle = q.strip()
         if needle:
@@ -1276,6 +1285,7 @@ def list_invoices_for_user(
 def export_invoices_csv(
     include_archived: bool = Query(default=False, alias="include_archived"),
     status_filter: str | None = Query(default=None, alias="status"),
+    active_only: bool = Query(default=False, alias="active_only"),
     q: str | None = Query(default=None),
     sort: str = Query(default="created_at"),
     order: str = Query(default="desc"),
@@ -1296,6 +1306,10 @@ def export_invoices_csv(
         query = query.filter(Invoice.archived_at.is_(None))
     if status_filter:
         query = query.filter(Invoice.status == status_filter)
+    if active_only:
+        query = query.filter(
+            Invoice.status.in_(["pending", "payment_detected", "confirmed"])
+        )
     if q:
         needle = q.strip()
         if needle:

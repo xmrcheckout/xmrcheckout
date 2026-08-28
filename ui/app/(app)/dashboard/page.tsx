@@ -35,6 +35,7 @@ const invoiceStatuses = [
 type DashboardTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
 type InvoiceStatus = (typeof invoiceStatuses)[number];
+type InvoiceStatusFilter = InvoiceStatus | "active" | "all";
 
 type DashboardSearchParams = Record<string, string | string[] | undefined>;
 type InvoiceSummary = {
@@ -186,11 +187,23 @@ export default async function DashboardPage({
   const invoiceSearchQuery = activeTab === "invoices" ? (queryValue ?? "") : "";
   const statusParam = resolvedSearchParams?.status;
   const statusValue = Array.isArray(statusParam) ? statusParam[0] : statusParam;
-  const invoiceStatusFilter: InvoiceStatus | "all" =
-    activeTab === "invoices" &&
-    invoiceStatuses.includes(statusValue as InvoiceStatus)
-      ? (statusValue as InvoiceStatus)
-      : "all";
+  const invoiceStatusFilter: InvoiceStatusFilter =
+    activeTab !== "invoices"
+      ? "all"
+      : statusValue === "all"
+        ? "all"
+        : statusValue === "active" ||
+            invoiceStatuses.includes(statusValue as InvoiceStatus)
+          ? (statusValue as InvoiceStatusFilter)
+          : includeArchived
+            ? "all"
+            : "active";
+  const pageParam = resolvedSearchParams?.page;
+  const pageValue = Array.isArray(pageParam) ? pageParam[0] : pageParam;
+  const invoicePage =
+    activeTab === "invoices" && pageValue && /^\d+$/.test(pageValue)
+      ? Math.max(1, Number.parseInt(pageValue, 10))
+      : 1;
   const sortParam = resolvedSearchParams?.sort;
   const sortValue = Array.isArray(sortParam) ? sortParam[0] : sortParam;
   const invoiceSort =
@@ -209,9 +222,10 @@ export default async function DashboardPage({
   let webhooksData: WebhookSummary[] = [];
   let webhookHistory: WebhookDeliverySummary[] = [];
 
-  const invoiceLimit = 100;
+  const invoicePageSize = 25;
+  const invoiceLimit = activeTab === "invoices" ? invoicePageSize : 100;
   let invoicesData: { items: InvoiceSummary[]; total: number } | null = null;
-  let offset = 0;
+  let offset = activeTab === "invoices" ? (invoicePage - 1) * invoiceLimit : 0;
   let total = 0;
   const items: InvoiceSummary[] = [];
   do {
@@ -224,7 +238,9 @@ export default async function DashboardPage({
     if (invoiceSearchQuery) {
       invoiceUrl.searchParams.set("q", invoiceSearchQuery);
     }
-    if (invoiceStatusFilter !== "all") {
+    if (invoiceStatusFilter === "active") {
+      invoiceUrl.searchParams.set("active_only", "true");
+    } else if (invoiceStatusFilter !== "all") {
       invoiceUrl.searchParams.set("status", invoiceStatusFilter);
     }
     if (invoiceSort) {
@@ -252,7 +268,7 @@ export default async function DashboardPage({
     total = data.total;
     items.push(...data.items);
     offset += invoiceLimit;
-  } while (offset < total);
+  } while (activeTab !== "invoices" && offset < total);
   invoicesData = { items, total };
 
   if (activeTab === "webhooks" && activeWebhookTab === "settings") {
@@ -741,6 +757,9 @@ export default async function DashboardPage({
               statusFilter={invoiceStatusFilter}
               sort={invoiceSort}
               order={invoiceOrder}
+              page={invoicePage}
+              pageSize={invoicePageSize}
+              total={invoicesData?.total ?? 0}
               defaultConfirmationTarget={
                 profileData?.default_confirmation_target ?? 1
               }

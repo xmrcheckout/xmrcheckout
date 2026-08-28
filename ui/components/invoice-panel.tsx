@@ -48,10 +48,13 @@ type InvoicePanelProps = {
   activeInvoices: InvoiceItem[];
   includeArchived: boolean;
   searchQuery: string;
-  statusFilter: InvoiceItem["status"] | "all";
+  statusFilter: InvoiceItem["status"] | "active" | "all";
   sort: string;
   order: string;
   defaultConfirmationTarget: number;
+  page?: number;
+  pageSize?: number;
+  total?: number;
 };
 
 const initialState: InvoiceState = {
@@ -99,9 +102,10 @@ const formatTimestamp = (value: string | null) => {
 };
 
 const invoiceStatusOptions: {
-  value: InvoiceItem["status"] | "all";
+  value: InvoiceItem["status"] | "active" | "all";
   label: string;
 }[] = [
+  { value: "active", label: "Active" },
   { value: "all", label: "All" },
   { value: "pending", label: "Awaiting funds" },
   { value: "payment_detected", label: "Detected" },
@@ -910,6 +914,9 @@ export default function InvoicePanel({
   sort,
   order,
   defaultConfirmationTarget,
+  page = 1,
+  pageSize = 25,
+  total = activeInvoices.length,
 }: InvoicePanelProps) {
   const router = useRouter();
   const normalizedBasePath = basePath.replace(/\/+$/, "") || "/";
@@ -969,8 +976,13 @@ export default function InvoicePanel({
         return haystack.includes(normalizedQuery);
       });
     }
-    if (statusFilter !== "all") {
+    if (statusFilter !== "all" && statusFilter !== "active") {
       list = list.filter((invoice) => invoice.status === statusFilter);
+    }
+    if (statusFilter === "active") {
+      list = list.filter((invoice) =>
+        ["pending", "payment_detected", "confirmed"].includes(invoice.status),
+      );
     }
 
     const statusRank: Record<InvoiceItem["status"], number> = {
@@ -1030,7 +1042,8 @@ export default function InvoicePanel({
     sort?: string;
     order?: string;
     includeArchived?: boolean;
-    status?: InvoiceItem["status"] | "all";
+    status?: InvoiceItem["status"] | "active" | "all";
+    page?: number;
   }) => {
     const params = new URLSearchParams();
     params.set("tab", "invoices");
@@ -1054,10 +1067,15 @@ export default function InvoicePanel({
     if (nextOrder) {
       params.set("order", nextOrder);
     }
+    const nextPage = next.page ?? 1;
+    if (nextPage > 1) {
+      params.set("page", nextPage.toString());
+    }
     return `${normalizedBasePath}?${params.toString()}`;
   };
   const archivedToggleHref = buildInvoicesHref({
     includeArchived: !includeArchived,
+    status: includeArchived ? "active" : "all",
   });
 
   const csvExportHref = (() => {
@@ -1072,7 +1090,9 @@ export default function InvoicePanel({
     if (trimmed) {
       params.set("q", trimmed);
     }
-    if (statusFilter !== "all") {
+    if (statusFilter === "active") {
+      params.set("active_only", "true");
+    } else if (statusFilter !== "all") {
       params.set("status", statusFilter);
     }
     if (sort) {
@@ -1162,6 +1182,9 @@ export default function InvoicePanel({
   const applySearch = () => {
     router.push(buildInvoicesHref({ q: searchInput }));
   };
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const resultStart = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const resultEnd = Math.min(page * pageSize, total);
 
   return (
     <section className="grid gap-6" aria-labelledby="invoice-panel-title">
@@ -1808,6 +1831,40 @@ export default function InvoicePanel({
                 </tbody>
               </table>
             </div>
+            {mode !== "tour" ? (
+              <nav
+                className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-4"
+                aria-label="Invoice pages"
+              >
+                <p className="text-sm text-ink-soft">
+                  Showing {resultStart}-{resultEnd} of {total} invoice
+                  {total === 1 ? "" : "s"}
+                </p>
+                {totalPages > 1 ? (
+                  <div className="flex items-center gap-2">
+                    {page > 1 ? (
+                      <Link
+                        className={smallSecondaryButton}
+                        href={buildInvoicesHref({ page: page - 1 })}
+                      >
+                        Previous
+                      </Link>
+                    ) : null}
+                    <span className="px-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft">
+                      Page {page} of {totalPages}
+                    </span>
+                    {page < totalPages ? (
+                      <Link
+                        className={smallSecondaryButton}
+                        href={buildInvoicesHref({ page: page + 1 })}
+                      >
+                        Next
+                      </Link>
+                    ) : null}
+                  </div>
+                ) : null}
+              </nav>
+            ) : null}
           </>
         )}
       </div>

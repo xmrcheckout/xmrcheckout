@@ -7,9 +7,6 @@ import DonationStatusActions from "../../../../components/donation-status-action
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
 import { formatRelativeTime } from "../../../../components/relative-time";
-import StatusBadge, {
-  type StatusTone,
-} from "../../../../components/status-badge";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
 import { areDonationsEnabled } from "../../../../lib/donations";
 
@@ -35,22 +32,6 @@ type InvoiceStatusResponse = {
   expires_at: string | null;
   detected_at: string | null;
   confirmed_at: string | null;
-};
-
-const formatStatus = (status: InvoiceStatus) => {
-  if (status === "payment_detected") {
-    return "Payment detected";
-  }
-  if (status === "pending") {
-    return "Awaiting funds";
-  }
-  if (status === "confirmed") {
-    return "Confirmed";
-  }
-  if (status === "invalid") {
-    return "Invalid";
-  }
-  return "Expired";
 };
 
 const statusDescription = (
@@ -81,14 +62,6 @@ const formatTimestamp = (value: string | null) => {
     label: new Date(value).toLocaleString(),
     relative: formatRelativeTime(value),
   };
-};
-
-const statusTones: Record<InvoiceStatus, StatusTone> = {
-  pending: "pending",
-  payment_detected: "detected",
-  confirmed: "success",
-  expired: "error",
-  invalid: "error",
 };
 
 export default async function DonateStatusDetailPage({
@@ -144,7 +117,6 @@ export default async function DonateStatusDetailPage({
   }
 
   const invoice = (await response.json()) as InvoiceStatusResponse;
-  const statusLabel = formatStatus(invoice.status);
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
   const hasDetectedPayment =
@@ -198,25 +170,6 @@ export default async function DonateStatusDetailPage({
           confirmations,
         )}
         eyebrow="Direct-to-wallet donation"
-        facts={[
-          {
-            label: "Current status",
-            value: (
-              <StatusBadge
-                label={statusLabel}
-                tone={statusTones[invoice.status]}
-              />
-            ),
-          },
-          {
-            label: "Confirmations",
-            value: `${confirmations}/${confirmationTarget}`,
-          },
-          {
-            label: "Expires",
-            value: expiresTimestamp.label,
-          },
-        ]}
         id="donation-request-title"
         title="Make a donation"
       />

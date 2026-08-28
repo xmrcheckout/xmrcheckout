@@ -63,11 +63,6 @@ export default function IntegrationsPage() {
                 fulfill your order when the invoice is confirmed.
               </p>
             }
-            facts={[
-              { label: "Recipes", value: "6 paths" },
-              { label: "Transport", value: "REST + JSON" },
-              { label: "Secrets", value: "Server-side" },
-            ]}
           />
         </section>
 

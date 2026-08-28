@@ -39,11 +39,6 @@ export default function InvoiceStatusPage() {
               This public view never requests wallet credentials.
             </p>
           }
-          facts={[
-            { label: "Access", value: "No sign-in" },
-            { label: "Detection", value: "View only" },
-            { label: "Funds", value: "Merchant wallet" },
-          ]}
         />
 
         <section className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.8fr)] lg:items-start">

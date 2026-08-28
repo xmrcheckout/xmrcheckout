@@ -96,9 +96,7 @@ const faqItems: FaqItem[] = [
     answer: (
       <>
         <p className="text-ink-soft">
-          Setup is explicit: provide your primary address and secret view key,
-          then create invoices via the dashboard or API. We never request spend
-          keys or signing access.
+          After signing in, create invoices from the dashboard or API.
         </p>
       </>
     ),
@@ -173,8 +171,7 @@ const faqItems: FaqItem[] = [
       <>
         <p className="text-ink-soft">
           The main differences are scope, custody model, and data collection:
-          XMR Checkout is Monero-only, does not require an account or email, and
-          uses view-only access for payment detection.
+          XMR Checkout is Monero-only and does not require an account or email.
         </p>
         <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
           <li>
@@ -188,10 +185,6 @@ const faqItems: FaqItem[] = [
           <li>
             <span className="font-semibold text-ink">No custody:</span> payments
             go directly to your wallet.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">View-only by design:</span>{" "}
-            we never ask for spend keys.
           </li>
           <li>
             <span className="font-semibold text-ink">Clear failure modes:</span>{" "}
@@ -307,11 +300,6 @@ export default function FaqPage() {
               to the merchant wallet.
             </p>
           }
-          facts={[
-            { label: "Custody", value: "Merchant wallet" },
-            { label: "Access", value: "View-only" },
-            { label: "Spend keys", value: "Never requested" },
-          ]}
         />
       </section>
 

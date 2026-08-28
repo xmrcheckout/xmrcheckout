@@ -590,11 +590,6 @@ export default function DocsPage() {
                 requested.
               </p>
             }
-            facts={[
-              { label: "Wallet access", value: "View-only" },
-              { label: "Invoice unit", value: "XMR" },
-              { label: "API format", value: "REST + JSON" },
-            ]}
           />
         </section>
 
@@ -654,17 +649,15 @@ export default function DocsPage() {
                 Create and check an invoice.
               </h2>
             </div>
-            <StatusBadge label="View-only setup" tone="success" />
           </header>
           <ol className="grid divide-y divide-stroke border-y border-stroke bg-white/60 md:grid-cols-3 md:divide-x md:divide-y-0">
             <li className="min-w-0 px-5 py-5 sm:px-6">
               <span className="font-mono text-xs text-ink-soft">01</span>
               <p className="mt-2 font-semibold text-ink">
-                Sign in with view-only wallet data
+                Sign in
               </p>
               <p className="mt-1 text-sm text-ink-soft">
-                Use your primary address and secret view key to retrieve an API
-                key.
+                Use the sign-in form to retrieve an API key.
               </p>
             </li>
             <li className="min-w-0 px-5 py-5 sm:px-6">

@@ -181,8 +181,8 @@ export default async function MarketingHomePage({
           <p className="home-kicker">Monero checkout for merchants</p>
           <h1 id="home-hero-title">Accept Monero with your own wallet.</h1>
           <p className="home-lead">
-            Create a payment request, let the customer pay your wallet, and get
-            a clear update when incoming XMR is detected.
+            Create a payment request and get a clear update when incoming XMR is
+            detected.
           </p>
           <div className="home-actions" aria-label="Primary actions">
             <Link className="home-button home-button-primary" href="/tour">
@@ -194,11 +194,6 @@ export default async function MarketingHomePage({
             <Link className="home-doc-link" href="/docs">
               Read the docs
             </Link>
-          </div>
-          <div className="home-proof-strip" aria-label="Wallet access summary">
-            <span>View key only</span>
-            <span>No spend authority</span>
-            <span>Customer pays your wallet</span>
           </div>
         </div>
 
@@ -276,7 +271,7 @@ export default async function MarketingHomePage({
           <li>
             <span>02</span>
             <div>
-              <h3>Customer pays your wallet</h3>
+              <h3>Customer pays</h3>
               <p>The hosted page shows the exact amount, address, QR, and wallet URI.</p>
             </div>
           </li>
@@ -284,7 +279,7 @@ export default async function MarketingHomePage({
             <span>03</span>
             <div>
               <h3>XMR is detected</h3>
-              <p>The software watches the chain with view-only wallet access.</p>
+              <p>The software watches the chain for the expected payment.</p>
             </div>
           </li>
           <li>
@@ -302,18 +297,19 @@ export default async function MarketingHomePage({
           <p className="home-kicker">Wallet access</p>
           <h2 id="home-wallet-title">Your wallet receives the XMR.</h2>
           <p>
-            Connect a primary address and secret view key for incoming invoice
-            monitoring. Spend keys stay in your wallet.
+            Payments go directly to your Monero wallet. Connect a primary
+            address and secret view key to monitor incoming invoices; spend
+            keys stay with you.
           </p>
         </div>
         <div className="home-wallet-table">
           <div>
             <h3>Merchant wallet</h3>
-            <p>Customer payments go straight to your Monero address.</p>
+            <p>Use the wallet you already control.</p>
           </div>
           <div>
             <h3>View-only monitoring</h3>
-            <p>The app checks invoice status and confirmation progress.</p>
+            <p>Check invoice status and confirmation progress.</p>
           </div>
           <div>
             <h3>Store updates</h3>

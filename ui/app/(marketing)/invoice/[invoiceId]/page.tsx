@@ -6,9 +6,6 @@ import InvoiceStatusActions from "../../../../components/invoice-status-actions"
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
 import { formatRelativeTime } from "../../../../components/relative-time";
-import StatusBadge, {
-  type StatusTone,
-} from "../../../../components/status-badge";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
 
 export const dynamic = "force-dynamic";
@@ -37,90 +34,6 @@ type InvoiceStatusResponse = {
   detected_at: string | null;
   confirmed_at: string | null;
 };
-type SystemStatusResponse = {
-  wallet_rpc: "ok" | "unreachable";
-  daemon: "ok" | "unreachable" | "unknown";
-  reconciler: "ok" | "degraded" | "unavailable";
-  daemon_height: number | null;
-  invoice_reconcile_interval_seconds: number;
-  last_reconcile_started_at: string | null;
-  last_reconcile_completed_at: string | null;
-  last_reconcile_error: string | null;
-  last_reconcile_attempted_invoices: number;
-  last_reconcile_succeeded_invoices: number;
-  last_reconcile_failed_invoices: number;
-};
-
-const walletRpcBadge = (systemStatus: SystemStatusResponse | null) => {
-  if (!systemStatus) {
-    return {
-      label: "Wallet RPC unavailable",
-      tone: "pending" as StatusTone,
-    };
-  }
-  if (systemStatus.wallet_rpc === "ok") {
-    return {
-      label: "Wallet RPC ok",
-      tone: "success" as StatusTone,
-    };
-  }
-  return {
-    label: "Wallet RPC down",
-    tone: "error" as StatusTone,
-  };
-};
-
-const daemonBadge = (systemStatus: SystemStatusResponse | null) => {
-  if (!systemStatus) {
-    return {
-      label: "Daemon unavailable",
-      tone: "pending" as StatusTone,
-    };
-  }
-  if (systemStatus.daemon === "ok") {
-    return {
-      label: "Daemon connected",
-      tone: "success" as StatusTone,
-    };
-  }
-  if (systemStatus.daemon === "unknown") {
-    return {
-      label: "Daemon not configured",
-      tone: "pending" as StatusTone,
-    };
-  }
-  return {
-    label: "Daemon down",
-    tone: "error" as StatusTone,
-  };
-};
-
-const reconcilerBadge = (systemStatus: SystemStatusResponse | null) => {
-  if (!systemStatus || systemStatus.reconciler === "unavailable") {
-    return { label: "Detection unavailable", tone: "pending" as StatusTone };
-  }
-  if (systemStatus.reconciler === "ok") {
-    return { label: "Detection healthy", tone: "success" as StatusTone };
-  }
-  return { label: "Detection degraded", tone: "error" as StatusTone };
-};
-
-const formatStatus = (status: InvoiceStatus) => {
-  if (status === "payment_detected") {
-    return "Payment detected";
-  }
-  if (status === "pending") {
-    return "Awaiting funds";
-  }
-  if (status === "confirmed") {
-    return "Confirmed";
-  }
-  if (status === "invalid") {
-    return "Invalid";
-  }
-  return "Expired";
-};
-
 const statusDescription = (
   status: InvoiceStatus,
   confirmationTarget: number,
@@ -151,29 +64,18 @@ const formatTimestamp = (value: string | null) => {
   };
 };
 
-const statusTones: Record<InvoiceStatus, StatusTone> = {
-  pending: "pending",
-  payment_detected: "detected",
-  confirmed: "success",
-  expired: "error",
-  invalid: "error",
-};
-
 export default async function InvoiceStatusDetailPage({
   params,
 }: {
   params: Promise<{ invoiceId: string }>;
 }) {
   const { invoiceId } = await params;
-  const [response, systemStatusResponse] = await Promise.all([
-    fetch(
-      `${apiBaseUrl}/api/core/public/invoice/${encodeURIComponent(invoiceId)}`,
-      {
-        cache: "no-store",
-      },
-    ),
-    fetch(`${apiBaseUrl}/api/core/public/system/status`, { cache: "no-store" }),
-  ]);
+  const response = await fetch(
+    `${apiBaseUrl}/api/core/public/invoice/${encodeURIComponent(invoiceId)}`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (response.status === 404) {
     return (
@@ -214,10 +116,6 @@ export default async function InvoiceStatusDetailPage({
   }
 
   const invoice = (await response.json()) as InvoiceStatusResponse;
-  const systemStatus = systemStatusResponse.ok
-    ? ((await systemStatusResponse.json()) as SystemStatusResponse)
-    : null;
-  const statusLabel = formatStatus(invoice.status);
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
   const hasDetectedPayment =
@@ -263,12 +161,6 @@ export default async function InvoiceStatusDetailPage({
 
   const createdTimestamp = formatTimestamp(invoice.created_at);
   const expiresTimestamp = formatTimestamp(invoice.expires_at);
-  const lastReconcileCompleted = formatTimestamp(
-    systemStatus?.last_reconcile_completed_at ?? null,
-  );
-  const walletStatusBadge = walletRpcBadge(systemStatus);
-  const daemonStatusBadge = daemonBadge(systemStatus);
-  const reconcilerStatusBadge = reconcilerBadge(systemStatus);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
@@ -280,25 +172,6 @@ export default async function InvoiceStatusDetailPage({
           confirmations,
         )}
         eyebrow="Direct-to-wallet invoice"
-        facts={[
-          {
-            label: "Current status",
-            value: (
-              <StatusBadge
-                label={statusLabel}
-                tone={statusTones[invoice.status]}
-              />
-            ),
-          },
-          {
-            label: "Confirmations",
-            value: `${confirmations}/${confirmationTarget}`,
-          },
-          {
-            label: "Expires",
-            value: expiresTimestamp.label,
-          },
-        ]}
         id="payment-request-title"
         title="Payment request"
       />
@@ -320,7 +193,7 @@ export default async function InvoiceStatusDetailPage({
               <p className="text-xs font-semibold text-ink-soft">
                 Invoice context
               </p>
-              <h2 className="mt-1 text-lg font-semibold">Detection details</h2>
+              <h2 className="mt-1 text-lg font-semibold">Invoice details</h2>
             </div>
             <StatusRefreshButton label="Refresh" />
           </div>
@@ -345,64 +218,24 @@ export default async function InvoiceStatusDetailPage({
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold text-ink-soft">
-                  Block height
-                </dt>
-                <dd className="mt-1 text-sm font-semibold">
-                  {systemStatus?.daemon_height?.toLocaleString() ??
-                    "Unavailable"}
+                <dt className="text-xs font-semibold text-ink-soft">Expires</dt>
+                <dd
+                  className="mt-1 text-sm font-semibold"
+                  title={expiresTimestamp.relative ?? undefined}
+                >
+                  {expiresTimestamp.label}
                 </dd>
               </div>
             </div>
-          </dl>
-
-          <details className="border-t border-stroke px-5 py-4">
-            <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-              Detection health
-            </summary>
-            <div className="mt-4 grid gap-4">
-              <div className="flex flex-wrap gap-2">
-                <StatusBadge
-                  label={walletStatusBadge.label}
-                  tone={walletStatusBadge.tone}
-                />
-                <StatusBadge
-                  label={daemonStatusBadge.label}
-                  tone={daemonStatusBadge.tone}
-                />
-                <StatusBadge
-                  label={reconcilerStatusBadge.label}
-                  tone={reconcilerStatusBadge.tone}
-                />
-              </div>
-              <dl className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <dt className="text-xs font-semibold text-ink-soft">
-                    Detection poll
-                  </dt>
-                  <dd className="mt-1 font-semibold">
-                    {systemStatus?.invoice_reconcile_interval_seconds ?? 30}s
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-semibold text-ink-soft">
-                    Last scan
-                  </dt>
-                  <dd
-                    className="mt-1 font-semibold"
-                    title={lastReconcileCompleted.relative ?? undefined}
-                  >
-                    {lastReconcileCompleted.label}
-                  </dd>
-                </div>
-              </dl>
-              {systemStatus?.last_reconcile_error ? (
-                <p className="border-l-2 border-red-400 pl-3 text-sm text-red-700">
-                  Detection error: {systemStatus.last_reconcile_error}
-                </p>
-              ) : null}
+            <div className="py-3">
+              <dt className="text-xs font-semibold text-ink-soft">
+                Confirmations
+              </dt>
+              <dd className="mt-1 text-sm font-semibold">
+                {confirmations}/{confirmationTarget}
+              </dd>
             </div>
-          </details>
+          </dl>
 
           <p className="border-t border-stroke bg-sand/50 px-5 py-4 text-xs leading-relaxed text-ink-soft">
             This status page is public. Anyone with the link can view the

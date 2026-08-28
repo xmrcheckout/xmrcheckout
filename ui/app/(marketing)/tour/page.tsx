@@ -406,15 +406,10 @@ export default async function TourPage({
           title="Explore a merchant checkout workspace with simulated activity."
           description={
             <p>
-              Customer payments go directly to the merchant wallet. Spend
-              authority stays outside this software.
+              Inspect invoice activity, webhooks, and simulated state without
+              connecting a wallet.
             </p>
           }
-          facts={[
-            { label: "Data", value: "Simulated only" },
-            { label: "Wallet", value: "Not connected" },
-            { label: "Storage", value: "Nothing saved" },
-          ]}
         />
       </section>
 
@@ -423,10 +418,6 @@ export default async function TourPage({
           activeValue={activeTab}
           ariaLabel="Tour sections"
           items={tourNavItems}
-          title="Tour sections"
-          description="Move through the same views a merchant uses to monitor checkout activity."
-          footerTitle="Direct to merchant"
-          footerDescription="The tour changes presentation only. It cannot connect a wallet or move funds."
         />
 
         <div className="min-w-0">
@@ -450,10 +441,6 @@ export default async function TourPage({
                   >
                     Merchant activity at a glance
                   </h1>
-                  <p className="mt-2 text-ink-soft">
-                    Follow invoice state, confirmation progress, and webhook
-                    delivery from one operational view.
-                  </p>
                 </div>
                 <Link
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-ink bg-ink px-4 py-2 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"

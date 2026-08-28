@@ -1532,8 +1532,8 @@ export default function InvoicePanel({
                   <col className="w-[24%]" />
                   <col className="w-[14%]" />
                   <col className="w-[16%]" />
-                  <col className="w-[11%]" />
-                  <col className="w-[35%]" />
+                  <col className="w-[15%]" />
+                  <col className="w-[31%]" />
                 </colgroup>
                 <thead className="bg-sand/40">
                   <tr className="border-b border-stroke">
@@ -1558,7 +1558,7 @@ export default function InvoicePanel({
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       <Link
-                        className="underline underline-offset-4"
+                        className="block max-w-full break-words underline underline-offset-4"
                         href={sortHref("confirmations")}
                       >
                         Confirmations{sortIndicator("confirmations")}

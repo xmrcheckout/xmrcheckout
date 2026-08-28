@@ -36,7 +36,6 @@ export default function InvoiceStatusPage() {
           description={
             <p>
               Paste an invoice id to see detection and confirmation progress.
-              This public view never requests wallet credentials.
             </p>
           }
         />
@@ -60,8 +59,8 @@ export default function InvoiceStatusPage() {
               Find an invoice
             </h2>
             <p className="mt-2 text-ink-soft">
-              Anyone with the invoice id can view its current state. No changes
-              can be made from this page.
+              Anyone with the invoice id can view its current state. This public
+              page does not request wallet credentials or allow changes.
             </p>
             <div className="mt-6">
               <InvoiceStatusLookup />

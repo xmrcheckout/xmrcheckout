@@ -71,8 +71,8 @@ export default function SystemHealthPanel({ status }: SystemHealthPanelProps) {
             Is payment detection keeping up?
           </h1>
           <p className="mt-2 text-ink-soft">
-            A focused view of the read-only services that observe payments and
-            relay invoice events. This page never controls funds.
+            A focused view of services that observe payments and relay invoice
+            events.
           </p>
         </div>
         <StatusRefreshButton label="Refresh health" />

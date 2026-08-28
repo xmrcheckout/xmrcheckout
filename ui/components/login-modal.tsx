@@ -73,13 +73,13 @@ export default function LoginModal() {
               className="h-2 w-2 rounded-full bg-monero"
               aria-hidden="true"
             />
-            View-only setup
+            Wallet connection
           </p>
           <h3
             id="login-title"
             className="mt-1 font-sans text-lg font-semibold leading-tight"
           >
-            Connect your wallet for payment detection.
+            Connect a wallet for payment detection.
           </h3>
         </div>
         <button
@@ -98,13 +98,9 @@ export default function LoginModal() {
         >
           <p className="font-semibold text-ink">Before you continue</p>
           <p className="mt-1">
-            Your primary address identifies the dashboard. Your secret view
-            key lets XMR Checkout detect incoming invoice payments. It is
-            encrypted at rest, cannot spend from your wallet, and is the
-            maximum permission this software asks for.
-          </p>
-          <p className="mt-1 font-semibold text-ink">
-            Never paste a spend key here.
+            Use your primary address and secret view key. The key is encrypted
+            at rest and only enables incoming payment detection. Never paste a
+            spend key.
           </p>
         </div>
         <LoginForm />

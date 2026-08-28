@@ -40,7 +40,7 @@ export default async function MarketingLayout({
       <footer className="site-footer site-footer-dark">
         <div className="site-footer-copy">
           <p>
-            xmrcheckout.com - Non-custodial Monero checkout software. Open source. Self-hostable.
+            xmrcheckout.com - Open source. Self-hostable.
           </p>
           <p>
             <Link

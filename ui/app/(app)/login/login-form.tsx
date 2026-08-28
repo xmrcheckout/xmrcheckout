@@ -196,8 +196,7 @@ export default function LoginForm() {
           </button>
         </div>
         <p className="text-xs leading-relaxed text-ink-soft">
-          Paste the 64-character secret view key, not a spend key. This allows
-          detection only.
+          Paste the 64-character secret view key.
         </p>
       </div>
       {validationStatus === "checking" ? (

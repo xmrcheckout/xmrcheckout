@@ -17,7 +17,7 @@ export default function AppLayout({
       {children}
       <footer className="site-footer">
         <div className="site-footer-copy">
-          <p>xmrcheckout.com - Non-custodial Monero checkout software.</p>
+          <p>xmrcheckout.com - Open source. Self-hostable.</p>
           <p>
             <Link
               className="underline underline-offset-4"

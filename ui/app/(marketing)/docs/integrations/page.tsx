@@ -221,8 +221,8 @@ export default function IntegrationsPage() {
           >
             <p className="text-ink-soft">
               Use the official WooCommerce Greenfield plugin with the
-              compatibility endpoints. Keys remain view-only, and invoices stay
-              non-custodial.
+              compatibility endpoints using the standard XMR Checkout access
+              model.
             </p>
           </RecipeHeader>
           <details className="group grid gap-6 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">

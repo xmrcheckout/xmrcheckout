@@ -40,7 +40,7 @@ const endpointGroups = [
         method: "POST",
         path: "/api/core/auth/login",
         description:
-          "Exchange a primary address and secret view key for an API key and webhook secret.",
+          "Exchange the required wallet details for an API key and webhook secret.",
       },
     ],
   },

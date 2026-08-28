@@ -1340,16 +1340,16 @@ summary:focus-visible {
   grid-template-columns: minmax(0, 0.8fr) minmax(280px, 0.6fr);
   align-items: center;
   margin-inline: -6vw;
-  border-block: 1px solid rgba(16, 18, 23, 0.18);
-  background: var(--ink);
+  border-block: 1px solid rgba(16, 18, 23, 0.08);
+  background: rgba(248, 242, 233, 0.38);
   box-shadow: none;
-  color: var(--cream);
+  color: var(--ink);
   padding: clamp(2rem, 4vw, 3.2rem) 6vw;
 }
 
 .home-integration .home-kicker,
 .home-integration p {
-  color: rgba(248, 242, 233, 0.76);
+  color: var(--ink-soft);
 }
 
 .integration-lines {
@@ -1359,10 +1359,10 @@ summary:focus-visible {
 }
 
 .integration-lines code {
-  border: 1px solid rgba(248, 242, 233, 0.16);
+  border: 1px solid rgba(16, 18, 23, 0.14);
   border-radius: 0.55rem;
-  background: rgba(248, 242, 233, 0.08);
-  color: var(--cream);
+  background: rgba(16, 18, 23, 0.06);
+  color: var(--ink);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 0.92rem;
   overflow-wrap: anywhere;

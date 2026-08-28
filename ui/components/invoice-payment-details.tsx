@@ -17,6 +17,7 @@ type InvoicePaymentDetailsProps = {
   confirmationTarget: number;
   qrLogoMode?: "monero" | "none" | "custom" | null;
   qrLogoDataUrl?: string | null;
+  enableFiatEstimate?: boolean;
 };
 
 const buildMoneroUri = (address: string, amount: string) => {
@@ -33,13 +34,14 @@ export default function InvoicePaymentDetails({
   confirmationTarget,
   qrLogoMode,
   qrLogoDataUrl,
+  enableFiatEstimate = true,
 }: InvoicePaymentDetailsProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const {
     rate: usdRate,
     updatedAt: usdRateUpdatedAt,
     source: usdRateSource,
-  } = useXmrUsdRate();
+  } = useXmrUsdRate(enableFiatEstimate);
   const isInvalid = status === "invalid";
   const isExpired = status === "expired";
   const canSendPayment = status === "pending";

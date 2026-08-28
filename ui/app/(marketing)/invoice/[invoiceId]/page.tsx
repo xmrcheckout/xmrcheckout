@@ -51,7 +51,7 @@ const statusDescription = (
   if (status === "invalid") {
     return "Invoice marked invalid. Do not send payment.";
   }
-  return "Invoice expired before detection. Create a new invoice if needed.";
+  return "This invoice has expired. Do not send payment. Contact the merchant to request a new invoice.";
 };
 
 const formatTimestamp = (value: string | null) => {

@@ -130,7 +130,7 @@ export default function InvoicePaymentDetails({
   const heading = isInvalid
     ? "Invoice marked invalid. Do not send payment."
     : isExpired
-      ? "Invoice expired before detection."
+      ? "Invoice expired. Do not send payment."
       : hasDetectedPayment
         ? status === "confirmed"
           ? `Payment confirmed on-chain at ${confirmationLabel}.`
@@ -163,7 +163,8 @@ export default function InvoicePaymentDetails({
         </div>
         {isInvalid || isExpired ? (
           <p className="mt-4 border-l-2 border-red-300 pl-3 text-sm font-semibold text-red-100">
-            Do not send payment for this invoice state.
+            This invoice is no longer valid. Contact the merchant to request a
+            new invoice.
           </p>
         ) : shouldPromptPayment ? (
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-cream/70">
@@ -208,19 +209,21 @@ export default function InvoicePaymentDetails({
             </div>
           ) : null}
 
-          <div className="mt-6 border-t border-stroke pt-5">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold text-ink-soft">
-                Payment address
+          {!isInvalid && !isExpired ? (
+            <div className="mt-6 border-t border-stroke pt-5">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold text-ink-soft">
+                  Payment address
+                </p>
+                {showCopyActions ? (
+                  <CopyIconButton value={address} label="Copy payment address" />
+                ) : null}
+              </div>
+              <p className="mt-3 break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink sm:text-sm">
+                {address}
               </p>
-              {showCopyActions ? (
-                <CopyIconButton value={address} label="Copy payment address" />
-              ) : null}
             </div>
-            <p className="mt-3 break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink sm:text-sm">
-              {address}
-            </p>
-          </div>
+          ) : null}
 
           {showPaymentUri ? (
             <details className="mt-5 border-t border-stroke pt-5">
@@ -284,8 +287,10 @@ export default function InvoicePaymentDetails({
             </>
           ) : (
             <p className="mt-4 border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
-              {isInvalid || isExpired
-                ? "Payment entry is unavailable for this invoice state."
+              {isExpired
+                ? "This invoice is no longer valid. Contact the merchant to request a new invoice."
+                : isInvalid
+                  ? "Payment entry is unavailable for this invoice state."
                 : "The QR code is available while the invoice is awaiting funds."}
             </p>
           )}

@@ -77,7 +77,7 @@ const statusMessage = (
     return "Invoice marked invalid. Do not send payment.";
   }
   if (status === "expired") {
-    return "Invoice expired. Do not send payment.";
+    return "Invoice expired. Do not send payment. Contact the merchant to request a new invoice.";
   }
   if (status === "confirmed") {
     return `Payment confirmed at ${confirmationTarget} confirmations.`;
@@ -352,15 +352,26 @@ export default function BtcpayClassicCheckout({
       </div>
 
       <div className="border-t border-stroke px-6 py-5">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-xs font-semibold text-ink-soft">Address</p>
-          {canSendPayment ? (
-            <CopyIconButton value={address} label="Copy payment address" />
-          ) : null}
-        </div>
-        <p className="mt-3 break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink">
-          {address}
-        </p>
+        {canSendPayment ? (
+          <>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-semibold text-ink-soft">Address</p>
+              <CopyIconButton value={address} label="Copy payment address" />
+            </div>
+            <p className="mt-3 break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink">
+              {address}
+            </p>
+          </>
+        ) : status === "expired" ? (
+          <p className="border-l-2 border-red-400 pl-3 text-sm leading-relaxed text-red-700">
+            This invoice is no longer valid. Contact the merchant to request a
+            new invoice.
+          </p>
+        ) : (
+          <p className="border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
+            Payment entry is unavailable for this invoice state.
+          </p>
+        )}
       </div>
 
       <details className="group border-t border-stroke px-6 py-5">

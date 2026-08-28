@@ -1868,10 +1868,6 @@ export default function InvoicePanel({
           </>
         )}
       </div>
-      <div className="border-l-2 border-sage pl-4 text-sm font-semibold text-ink">
-        We never hold funds. All payments move from the customer to your wallet.
-      </div>
-
       {isCreateOpen ? (
         <>
           <CreateInvoiceModal

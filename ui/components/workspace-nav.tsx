@@ -12,10 +12,10 @@ type WorkspaceNavProps = {
   activeValue: string;
   ariaLabel: string;
   items: WorkspaceNavItem[];
-  title: string;
-  description: string;
-  footerTitle: string;
-  footerDescription: string;
+  title?: string;
+  description?: string;
+  footerTitle?: string;
+  footerDescription?: string;
   mobileColumns?: 2 | 3;
   showIndexes?: boolean;
 };
@@ -36,10 +36,12 @@ export default function WorkspaceNav({
 
   return (
     <aside className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-      <div className="mb-5 hidden border-b border-stroke pb-5 lg:block">
-        <p className="font-sans text-sm font-semibold text-ink">{title}</p>
-        <p className="mt-1 text-sm text-ink-soft">{description}</p>
-      </div>
+      {title && description ? (
+        <div className="mb-5 hidden border-b border-stroke pb-5 lg:block">
+          <p className="font-sans text-sm font-semibold text-ink">{title}</p>
+          <p className="mt-1 text-sm text-ink-soft">{description}</p>
+        </div>
+      ) : null}
       <nav
         className={`grid gap-2 lg:grid-cols-1 ${mobileGridClass}`}
         aria-label={ariaLabel}
@@ -86,10 +88,12 @@ export default function WorkspaceNav({
           );
         })}
       </nav>
-      <div className="mt-6 hidden border-l-2 border-sage pl-4 lg:block">
-        <p className="text-sm font-semibold text-ink">{footerTitle}</p>
-        <p className="mt-1 text-sm text-ink-soft">{footerDescription}</p>
-      </div>
+      {footerTitle && footerDescription ? (
+        <div className="mt-6 hidden border-l-2 border-sage pl-4 lg:block">
+          <p className="text-sm font-semibold text-ink">{footerTitle}</p>
+          <p className="mt-1 text-sm text-ink-soft">{footerDescription}</p>
+        </div>
+      ) : null}
     </aside>
   );
 }

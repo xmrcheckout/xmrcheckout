@@ -1188,46 +1188,44 @@ export default function InvoicePanel({
 
   return (
     <section className="grid gap-6" aria-labelledby="invoice-panel-title">
-      <header className="border-b border-stroke pb-6 lg:overflow-x-auto">
-        <div className="flex flex-wrap items-end justify-between gap-5 lg:min-w-[68rem] lg:flex-nowrap">
-          <div className="max-w-2xl">
-            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
-              Invoices
-            </p>
-            <h1
-              className="mt-1 font-sans text-3xl font-semibold leading-tight"
-              id="invoice-panel-title"
+      <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
+        <div className="max-w-2xl">
+          <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
+            Invoices
+          </p>
+          <h1
+            className="mt-1 font-sans text-3xl font-semibold leading-tight"
+            id="invoice-panel-title"
+          >
+            Invoice activity
+          </h1>
+          <p className="mt-2 text-ink-soft">
+            Create invoices, follow confirmations, and open a row when you need
+            the raw details.
+          </p>
+        </div>
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
+          <Link className={secondaryButton} href={archivedToggleHref}>
+            {includeArchived ? "Hide archived" : "Show archived"}
+          </Link>
+          {csvExportHref ? (
+            <a className={secondaryButton} href={csvExportHref}>
+              Export CSV
+            </a>
+          ) : (
+            <button
+              className={secondaryButton}
+              type="button"
+              disabled
+              title="Tour mode only"
             >
-              Invoice activity
-            </h1>
-            <p className="mt-2 text-ink-soft">
-              Create invoices, follow confirmations, and open a row when you need
-              the raw details.
-            </p>
-          </div>
-          <div className="flex min-w-0 flex-wrap items-center gap-3 lg:min-w-max lg:shrink-0 lg:flex-nowrap">
-            <Link className={secondaryButton} href={archivedToggleHref}>
-              {includeArchived ? "Hide archived" : "Show archived"}
-            </Link>
-            {csvExportHref ? (
-              <a className={secondaryButton} href={csvExportHref}>
-                Export CSV
-              </a>
-            ) : (
-              <button
-                className={secondaryButton}
-                type="button"
-                disabled
-                title="Tour mode only"
-              >
-                Export CSV
-              </button>
-            )}
-            <button className={primaryButton} type="button" onClick={openCreate}>
-              Create invoice
+              Export CSV
             </button>
-          </div>
+          )}
+          <button className={primaryButton} type="button" onClick={openCreate}>
+            Create invoice
+          </button>
         </div>
       </header>
       <div className="grid gap-4">
@@ -1528,8 +1526,15 @@ export default function InvoicePanel({
                 );
               })}
             </div>
-            <div className="hidden overflow-x-auto rounded-surface border border-stroke bg-card shadow-soft lg:block">
-              <table className="w-full border-collapse text-left text-sm">
+            <div className="hidden overflow-hidden rounded-surface border border-stroke bg-card shadow-soft lg:block">
+              <table className="w-full table-fixed border-collapse text-left text-sm">
+                <colgroup>
+                  <col className="w-[24%]" />
+                  <col className="w-[14%]" />
+                  <col className="w-[16%]" />
+                  <col className="w-[11%]" />
+                  <col className="w-[35%]" />
+                </colgroup>
                 <thead className="bg-sand/40">
                   <tr className="border-b border-stroke">
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
@@ -1560,22 +1565,6 @@ export default function InvoicePanel({
                       </Link>
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                      <Link
-                        className="underline underline-offset-4"
-                        href={sortHref("created_at")}
-                      >
-                        Created{sortIndicator("created_at")}
-                      </Link>
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                      <Link
-                        className="underline underline-offset-4"
-                        href={sortHref("expires_at")}
-                      >
-                        Expires{sortIndicator("expires_at")}
-                      </Link>
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Actions
                     </th>
                   </tr>
@@ -1596,23 +1585,27 @@ export default function InvoicePanel({
                         <tr
                           className={`border-b border-stroke transition-colors hover:bg-white/70 ${invoice.archived_at ? "bg-ink/5" : ""}`}
                         >
-                          <td className="w-[36%] max-w-[360px] px-4 py-3 align-top">
-                            <div className="grid gap-1 text-left">
+                          <td className="min-w-0 px-4 py-3 align-top">
+                            <div className="grid min-w-0 gap-1 text-left">
                               {mode === "tour" ? (
-                                <span className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4">
+                                <span
+                                  className="block truncate font-mono text-xs text-ink underline underline-offset-4"
+                                  title={invoice.id}
+                                >
                                   {invoice.id}
                                 </span>
                               ) : (
                                 <Link
-                                  className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4"
+                                  className="block truncate font-mono text-xs text-ink underline underline-offset-4"
                                   href={`/invoice/${invoice.id}`}
                                   target="_blank"
                                   rel="noreferrer"
+                                  title={invoice.id}
                                 >
                                   {invoice.id}
                                 </Link>
                               )}
-                              <span className="break-words text-xs text-ink-soft/80">
+                              <span className="truncate text-xs text-ink-soft/80">
                                 {invoice.address.slice(0, 18)}…
                                 {invoice.address.slice(-10)}
                               </span>
@@ -1629,12 +1622,12 @@ export default function InvoicePanel({
                               ) : null}
                             </div>
                           </td>
-                          <td className="px-4 py-3 align-top whitespace-nowrap font-mono text-base font-semibold text-ink">
+                          <td className="px-4 py-3 align-top whitespace-nowrap font-mono text-sm font-semibold text-ink">
                             {formatXmrAmount(invoice.amount_xmr)} XMR
                           </td>
-                          <td className="px-4 py-3 align-top whitespace-nowrap">
+                          <td className="px-4 py-3 align-top">
                             <StatusBadge
-                              className="whitespace-nowrap"
+                              className="px-2 py-1 leading-tight"
                               label={formatStatus(invoice.status)}
                               tone={statusTone(invoice.status)}
                             />
@@ -1643,26 +1636,8 @@ export default function InvoicePanel({
                             {invoice.confirmations ?? 0}/
                             {invoice.confirmation_target}
                           </td>
-                          <td className="px-4 py-3 align-top whitespace-nowrap text-xs font-semibold text-ink-soft">
-                            <span
-                              title={
-                                formatTimestamp(invoice.created_at)
-                              }
-                            >
-                              {formatTimestamp(invoice.created_at)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 align-top whitespace-nowrap text-xs font-semibold text-ink-soft">
-                            <span
-                              title={
-                                formatTimestamp(invoice.expires_at)
-                              }
-                            >
-                              {formatTimestamp(invoice.expires_at)}
-                            </span>
-                          </td>
                           <td className="px-4 py-3 align-top">
-                            <div className="flex min-w-max flex-nowrap gap-2">
+                            <div className="flex min-w-0 flex-wrap gap-2">
                               {mode !== "tour" ? (
                                 <Link
                                   className={smallSecondaryButton}
@@ -1695,7 +1670,7 @@ export default function InvoicePanel({
                         </tr>
                         {isExpanded ? (
                           <tr className="border-b border-stroke">
-                            <td className="px-4 py-4" colSpan={7}>
+                            <td className="px-4 py-4" colSpan={5}>
                               <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   <div className="grid gap-2">

@@ -113,7 +113,7 @@ export default function SystemHealthPanel({ status }: SystemHealthPanelProps) {
             },
           ].map((item) => (
             <div
-              className="flex items-center justify-between gap-3 rounded-card border border-stroke bg-cream/60 px-4 py-3 sm:block"
+              className="flex items-center justify-between gap-3 rounded-xl border border-stroke bg-cream/60 px-4 py-3 sm:block"
               key={item.label}
             >
               <dt className="text-sm font-semibold text-ink-soft">{item.label}</dt>
@@ -140,7 +140,7 @@ export default function SystemHealthPanel({ status }: SystemHealthPanelProps) {
           </div>
           <Link
             className="text-sm font-semibold text-ink underline underline-offset-4"
-            href="/docs#operations"
+            href="/docs#concepts"
           >
             Read operations docs
           </Link>

@@ -529,14 +529,28 @@ export default async function DashboardPage({
               value:
                 activeTab === "overview"
                   ? walletStatusBadge.label
-                  : "See overview",
+                  : (
+                      <Link
+                        className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
+                        href="/dashboard?tab=overview"
+                      >
+                        View overview
+                      </Link>
+                    ),
             },
             {
               label: "Daemon",
               value:
                 activeTab === "overview"
                   ? daemonStatusBadge.label
-                  : "See overview",
+                  : (
+                      <Link
+                        className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
+                        href="/dashboard?tab=overview"
+                      >
+                        View overview
+                      </Link>
+                    ),
             },
           ]}
         />
@@ -1035,7 +1049,7 @@ export default async function DashboardPage({
                     }`}
                     href={`/dashboard?tab=webhooks&webhook_tab=${tab}`}
                   >
-                    {tab}
+                    {tab === "settings" ? "Settings" : "History"}
                   </Link>
                 ))}
               </nav>

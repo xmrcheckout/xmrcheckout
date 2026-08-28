@@ -7,6 +7,7 @@ import {
   type WebhookSecretState,
 } from "../app/(app)/dashboard/actions";
 import SecretCard from "./secret-card";
+import ConfirmSubmitButton from "./confirm-submit-button";
 
 const initialState = (webhookSecret: string | null): WebhookSecretState => ({
   webhookSecret,
@@ -44,12 +45,11 @@ export default function WebhookSecretSection({
         </p>
       ) : null}
       <form action={formAction} className="flex justify-end">
-        <button
-          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
-          type="submit"
-        >
-          Reset webhook secret
-        </button>
+        <ConfirmSubmitButton
+          label="Reset webhook secret"
+          confirmLabel="Reset and replace secret"
+          description="This changes the signing secret for future webhook deliveries. Update every receiver before relying on new signatures."
+        />
       </form>
     </div>
   );

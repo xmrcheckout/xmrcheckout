@@ -7,6 +7,7 @@ import {
   type ApiKeyState,
 } from "../app/(app)/dashboard/actions";
 import ApiKeyCard from "./api-key-card";
+import ConfirmSubmitButton from "./confirm-submit-button";
 
 const initialState = (apiKey: string): ApiKeyState => ({
   apiKey,
@@ -32,12 +33,11 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
         </p>
       ) : null}
       <form action={formAction} className="flex justify-end">
-        <button
-          className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
-          type="submit"
-        >
-          Reset API key
-        </button>
+        <ConfirmSubmitButton
+          label="Reset API key"
+          confirmLabel="Reset and replace key"
+          description="This immediately invalidates the current API key and may stop existing integrations until they are updated."
+        />
       </form>
     </div>
   );

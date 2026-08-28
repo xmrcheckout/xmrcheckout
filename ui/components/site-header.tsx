@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { logoutAction } from "../app/(app)/dashboard/actions";
 import { LoginTrigger } from "./login-modal";
+import MobileNav from "./mobile-nav";
 import NavLink from "./nav-link";
 
 type SiteHeaderProps = {
@@ -62,12 +63,7 @@ export default function SiteHeader({
       <nav className="nav desktop-nav" aria-label="Primary navigation">
         {renderNavigation()}
       </nav>
-      <details className="mobile-nav">
-        <summary aria-label="Open navigation menu">Menu</summary>
-        <nav className="mobile-nav-panel" aria-label="Mobile navigation">
-          {renderNavigation()}
-        </nav>
-      </details>
+      <MobileNav>{renderNavigation()}</MobileNav>
     </header>
   );
 }

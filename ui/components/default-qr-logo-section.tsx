@@ -176,7 +176,7 @@ export default function DefaultQrLogoSection({
             className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             type="submit"
           >
-            Save
+            Save QR logo preference
           </button>
         </div>
       </form>

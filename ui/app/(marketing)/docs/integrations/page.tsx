@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import PageIntroBand from "../../../../components/page-intro-band";
+import CopyCodeBlock from "../../../../components/copy-code-block";
 
 export const metadata: Metadata = {
   title: "Integration Recipes",
@@ -16,7 +17,7 @@ const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
 const publicApiBaseUrl = `${normalizedSiteUrl}/api/core`;
 
 const codeBlockClass =
-  "max-w-full overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-5 text-xs leading-relaxed text-cream shadow-soft sm:px-6";
+  "max-w-full overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-5 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6";
 
 const sectionCardClass =
   "rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-7";
@@ -80,7 +81,7 @@ export default function IntegrationsPage() {
         </div>
 
         <nav
-          className="mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card p-2 shadow-soft"
+          className="sticky top-3 z-10 mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur"
           aria-label="Recipe languages"
         >
           {[
@@ -229,6 +230,16 @@ export default function IntegrationsPage() {
               non-custodial.
             </p>
           </RecipeHeader>
+          <details className="group grid gap-6 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>View setup and compatibility code</span>
+              <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
+                Expand
+              </span>
+              <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
+                Collapse
+              </span>
+            </summary>
           <div className="grid gap-6 lg:grid-cols-2">
             <div className={sectionCardClass}>
               <h3 className="font-sans font-semibold text-xl">Setup steps</h3>
@@ -284,14 +295,15 @@ export default function IntegrationsPage() {
               </ul>
             </div>
           </div>
-          <pre className={codeBlockClass}>
+          <CopyCodeBlock className={codeBlockClass}>
             <code>{`# Verify compatibility endpoints
 export XMRCHECKOUT_BTCPAY_URL="${normalizedSiteUrl}/api/v1"
 export XMRCHECKOUT_API_KEY="xmrcheckout_..."
 
 curl -sS "$XMRCHECKOUT_BTCPAY_URL/stores" \\
   -H "Authorization: token $XMRCHECKOUT_API_KEY"`}</code>
-          </pre>
+          </CopyCodeBlock>
+          </details>
         </section>
 
         <section
@@ -304,9 +316,18 @@ curl -sS "$XMRCHECKOUT_BTCPAY_URL/stores" \\
               Create an invoice, then poll status until it is confirmed.
             </p>
           </RecipeHeader>
-
+          <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>View curl examples</span>
+              <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
+                Expand
+              </span>
+              <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
+                Collapse
+              </span>
+            </summary>
           <div className="grid gap-4">
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`# 1) Create invoice
 export XMRCHECKOUT_API_BASE_URL="${publicApiBaseUrl}"
 export XMRCHECKOUT_API_KEY="xmrcheckout_..."
@@ -319,9 +340,9 @@ curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
     "confirmation_target": 2,
     "metadata": { "order_id": "ORDER-1234" }
   }'`}</code>
-            </pre>
+            </CopyCodeBlock>
 
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`# 1b) Create invoice from fiat (non-binding conversion)
 curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
   -H "Authorization: ApiKey $XMRCHECKOUT_API_KEY" \\
@@ -332,15 +353,16 @@ curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\
     "confirmation_target": 2,
     "metadata": { "order_id": "ORDER-1234" }
   }'`}</code>
-            </pre>
+            </CopyCodeBlock>
 
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`# 2) Poll public status (no auth)
 export INVOICE_ID="uuid-from-response"
 
 curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
-            </pre>
+            </CopyCodeBlock>
           </div>
+          </details>
         </section>
 
         <section
@@ -355,9 +377,18 @@ curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
               webhooks with Express.
             </p>
           </RecipeHeader>
-
+          <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>View Node.js examples</span>
+              <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
+                Expand
+              </span>
+              <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
+                Collapse
+              </span>
+            </summary>
           <div className="grid gap-4">
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`// create-invoice.mjs
 const API_BASE_URL = process.env.XMRCHECKOUT_API_BASE_URL;
 const API_KEY = process.env.XMRCHECKOUT_API_KEY;
@@ -383,9 +414,9 @@ export async function createInvoice({ amountXmr, orderId }) {
 
   return await response.json(); // includes invoice_url
 }`}</code>
-            </pre>
+            </CopyCodeBlock>
 
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`// webhook-server.mjs
 import express from "express";
 
@@ -414,8 +445,9 @@ app.post("/xmrcheckout/webhook", (req, res) => {
 app.listen(3001, () => {
   console.log("Listening on http://localhost:3001/xmrcheckout/webhook");
 });`}</code>
-            </pre>
+            </CopyCodeBlock>
           </div>
+          </details>
         </section>
 
         <section
@@ -428,9 +460,18 @@ app.listen(3001, () => {
               Minimal create-invoice example and a webhook receiver endpoint.
             </p>
           </RecipeHeader>
-
+          <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>View PHP examples</span>
+              <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
+                Expand
+              </span>
+              <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
+                Collapse
+              </span>
+            </summary>
           <div className="grid gap-4">
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`<?php
 // create_invoice.php
 
@@ -462,9 +503,9 @@ if ($body === false || $status < 200 || $status >= 300) {
 
 $invoice = json_decode($body, true);
 echo $invoice["invoice_url"];`}</code>
-            </pre>
+            </CopyCodeBlock>
 
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`<?php
 // webhook.php
 
@@ -486,8 +527,9 @@ if ($event === "invoice.confirmed" && $orderId) {
 }
 
 http_response_code(204);`}</code>
-            </pre>
+            </CopyCodeBlock>
           </div>
+          </details>
         </section>
 
         <section
@@ -502,9 +544,18 @@ http_response_code(204);`}</code>
               webhooks with FastAPI.
             </p>
           </RecipeHeader>
-
+          <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>View Python examples</span>
+              <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
+                Expand
+              </span>
+              <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
+                Collapse
+              </span>
+            </summary>
           <div className="grid gap-4">
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`# create_invoice.py
 import os
 import requests
@@ -525,9 +576,9 @@ response = requests.post(
 response.raise_for_status()
 invoice = response.json()
 print(invoice["invoice_url"])`}</code>
-            </pre>
+            </CopyCodeBlock>
 
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`# webhook_server.py
 import os
 from fastapi import FastAPI, Header, HTTPException
@@ -550,8 +601,9 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
         pass
 
     return None`}</code>
-            </pre>
+            </CopyCodeBlock>
           </div>
+          </details>
         </section>
 
         <section
@@ -566,9 +618,18 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
               webhooks with a standard handler.
             </p>
           </RecipeHeader>
-
+          <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <span>View Go examples</span>
+              <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
+                Expand
+              </span>
+              <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
+                Collapse
+              </span>
+            </summary>
           <div className="grid gap-4">
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>
                 {`// create_invoice.go
 package main
@@ -628,9 +689,9 @@ func main() {
   fmt.Println(invoice.InvoiceURL)
 }`}
               </code>
-            </pre>
+            </CopyCodeBlock>
 
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>
                 {`// webhook_server.go
 package main
@@ -683,8 +744,9 @@ func main() {
   _ = http.ListenAndServe(":3001", nil)
 }`}
               </code>
-            </pre>
+            </CopyCodeBlock>
           </div>
+          </details>
         </section>
       </div>
     </main>

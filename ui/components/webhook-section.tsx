@@ -80,6 +80,10 @@ export default function WebhookSection({
             Select the invoice events to relay and optionally route events to
             separate URLs.
           </p>
+          <p className="mt-2 border-l-2 border-sage bg-sage/5 px-3 py-2 text-sm text-ink-soft">
+            All invoice events are selected by default. Clear any event you do
+            not need to reduce delivery volume.
+          </p>
         </div>
         <div className="grid gap-2">
           <label
@@ -99,7 +103,8 @@ export default function WebhookSection({
             Used for any selected event without a specific override URL.
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
+        <fieldset className="grid gap-4 md:grid-cols-2">
+          <legend className="sr-only">Invoice events to relay</legend>
           {webhookEvents.map(({ event, key, label }) => (
             <div
               key={event}
@@ -123,7 +128,7 @@ export default function WebhookSection({
               />
             </div>
           ))}
-        </div>
+        </fieldset>
         {createState.error ? (
           <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
             {createState.error}

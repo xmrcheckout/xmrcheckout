@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
-import { formatRelativeTime } from "./relative-time";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
 import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
@@ -91,7 +90,11 @@ const formatTimestamp = (value: string | null) => {
   if (!value) {
     return "-";
   }
-  return new Date(value).toLocaleString();
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(new Date(value));
 };
 
 const invoiceStatusOptions: {
@@ -1340,11 +1343,17 @@ export default function InvoicePanel({
                       </span>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-stroke pt-3 text-xs font-semibold text-ink-soft">
-                      <p title={formatTimestamp(invoice.created_at)}>
-                        Created {formatRelativeTime(invoice.created_at) ?? "-"}
+                      <p
+                        suppressHydrationWarning
+                        title={formatTimestamp(invoice.created_at)}
+                      >
+                        Created {formatTimestamp(invoice.created_at)}
                       </p>
-                      <p title={formatTimestamp(invoice.expires_at)}>
-                        Expires {formatRelativeTime(invoice.expires_at) ?? "-"}
+                      <p
+                        suppressHydrationWarning
+                        title={formatTimestamp(invoice.expires_at)}
+                      >
+                        Expires {formatTimestamp(invoice.expires_at)}
                       </p>
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -1384,8 +1393,7 @@ export default function InvoicePanel({
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
-                                formatRelativeTime(invoice.created_at) ??
-                                undefined
+                                formatTimestamp(invoice.created_at)
                               }
                             >
                               {formatTimestamp(invoice.created_at)}
@@ -1396,8 +1404,7 @@ export default function InvoicePanel({
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
-                                formatRelativeTime(invoice.detected_at) ??
-                                undefined
+                                formatTimestamp(invoice.detected_at)
                               }
                             >
                               {formatTimestamp(invoice.detected_at)}
@@ -1408,8 +1415,7 @@ export default function InvoicePanel({
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
-                                formatRelativeTime(invoice.confirmed_at) ??
-                                undefined
+                                formatTimestamp(invoice.confirmed_at)
                               }
                             >
                               {formatTimestamp(invoice.confirmed_at)}
@@ -1420,8 +1426,7 @@ export default function InvoicePanel({
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
-                                formatRelativeTime(invoice.expires_at) ??
-                                undefined
+                                formatTimestamp(invoice.expires_at)
                               }
                             >
                               {formatTimestamp(invoice.expires_at)}
@@ -1445,8 +1450,7 @@ export default function InvoicePanel({
                               <p
                                 className="text-sm font-semibold text-ink"
                                 title={
-                                  formatRelativeTime(invoice.archived_at) ??
-                                  undefined
+                                  formatTimestamp(invoice.archived_at)
                                 }
                               >
                                 {formatTimestamp(invoice.archived_at)}
@@ -1459,9 +1463,7 @@ export default function InvoicePanel({
                               <p
                                 className="text-sm font-semibold text-ink"
                                 title={
-                                  formatRelativeTime(
-                                    invoice.paid_after_expiry_at,
-                                  ) ?? undefined
+                                  formatTimestamp(invoice.paid_after_expiry_at)
                                 }
                               >
                                 {formatTimestamp(invoice.paid_after_expiry_at)}
@@ -1620,8 +1622,7 @@ export default function InvoicePanel({
                           <td className="px-4 py-3 align-top whitespace-nowrap text-xs font-semibold text-ink-soft">
                             <span
                               title={
-                                formatRelativeTime(invoice.created_at) ??
-                                undefined
+                                formatTimestamp(invoice.created_at)
                               }
                             >
                               {formatTimestamp(invoice.created_at)}
@@ -1630,8 +1631,7 @@ export default function InvoicePanel({
                           <td className="px-4 py-3 align-top whitespace-nowrap text-xs font-semibold text-ink-soft">
                             <span
                               title={
-                                formatRelativeTime(invoice.expires_at) ??
-                                undefined
+                                formatTimestamp(invoice.expires_at)
                               }
                             >
                               {formatTimestamp(invoice.expires_at)}
@@ -1679,9 +1679,7 @@ export default function InvoicePanel({
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
-                                        formatRelativeTime(
-                                          invoice.created_at,
-                                        ) ?? undefined
+                                        formatTimestamp(invoice.created_at)
                                       }
                                     >
                                       {formatTimestamp(invoice.created_at)}
@@ -1692,9 +1690,7 @@ export default function InvoicePanel({
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
-                                        formatRelativeTime(
-                                          invoice.detected_at,
-                                        ) ?? undefined
+                                        formatTimestamp(invoice.detected_at)
                                       }
                                     >
                                       {formatTimestamp(invoice.detected_at)}
@@ -1705,9 +1701,7 @@ export default function InvoicePanel({
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
-                                        formatRelativeTime(
-                                          invoice.confirmed_at,
-                                        ) ?? undefined
+                                        formatTimestamp(invoice.confirmed_at)
                                       }
                                     >
                                       {formatTimestamp(invoice.confirmed_at)}
@@ -1718,9 +1712,7 @@ export default function InvoicePanel({
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
-                                        formatRelativeTime(
-                                          invoice.expires_at,
-                                        ) ?? undefined
+                                        formatTimestamp(invoice.expires_at)
                                       }
                                     >
                                       {formatTimestamp(invoice.expires_at)}
@@ -1750,9 +1742,7 @@ export default function InvoicePanel({
                                       <p
                                         className="text-sm font-semibold text-ink"
                                         title={
-                                          formatRelativeTime(
-                                            invoice.archived_at,
-                                          ) ?? undefined
+                                          formatTimestamp(invoice.archived_at)
                                         }
                                       >
                                         {formatTimestamp(invoice.archived_at)}
@@ -1767,9 +1757,9 @@ export default function InvoicePanel({
                                       <p
                                         className="text-sm font-semibold text-ink"
                                         title={
-                                          formatRelativeTime(
+                                          formatTimestamp(
                                             invoice.paid_after_expiry_at,
-                                          ) ?? undefined
+                                          )
                                         }
                                       >
                                         {formatTimestamp(

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 
 import PageIntroBand from "../../../components/page-intro-band";
+import CopyCodeBlock from "../../../components/copy-code-block";
 import StatusBadge from "../../../components/status-badge";
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ const methodStyles: Record<string, string> = {
 };
 
 const codeBlockClass =
-  "max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
+  "max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
 
 const endpointGroups = [
   {
@@ -610,7 +611,7 @@ export default function DocsPage() {
         </div>
 
         <nav
-          className="mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card p-2 shadow-soft sm:flex"
+          className="sticky top-3 z-10 mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur sm:flex"
           aria-label="Documentation sections"
         >
           {[
@@ -710,7 +711,7 @@ export default function DocsPage() {
                 </a>
               </div>
             </div>
-            <pre className={codeBlockClass}>
+            <CopyCodeBlock className={codeBlockClass}>
               <code>{`POST /api/core/invoices
 Authorization: ApiKey <api_key>
 Content-Type: application/json
@@ -720,7 +721,7 @@ Content-Type: application/json
   "confirmation_target": 2,
   "metadata": { "order_id": "ORDER-1234" }
 }`}</code>
-            </pre>
+            </CopyCodeBlock>
           </div>
         </section>
 
@@ -755,7 +756,7 @@ Content-Type: application/json
               tone="neutral"
             />
           </div>
-          <pre
+          <CopyCodeBlock
             className={`${codeBlockClass} m-4 lg:m-0 lg:rounded-none lg:border-0 lg:shadow-none`}
           >
             <code>{`POST /api/core/invoices
@@ -769,7 +770,7 @@ Content-Type: application/json
   "checkout_continue_url": "https://merchant.example/thanks",
   "metadata": { "order_id": "ORDER-1234" }
 }`}</code>
-          </pre>
+          </CopyCodeBlock>
         </section>
 
         <section

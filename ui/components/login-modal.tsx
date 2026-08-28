@@ -60,8 +60,8 @@ export default function LoginModal() {
   return (
     <AccessibleDialog
       id="login-modal"
-      aria-labelledby="login-title"
-      aria-describedby="login-description"
+      ariaLabelledBy="login-title"
+      ariaDescribedBy="login-description"
       initialFocusSelector="#payment_address"
       onClose={closeModal}
       panelClassName="max-h-[calc(100dvh-1.5rem)] sm:w-[min(500px,94vw)]"

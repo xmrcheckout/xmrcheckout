@@ -14,12 +14,41 @@ const crimsonPro = Crimson_Pro({
   variable: "--font-serif",
 });
 
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost"
+).replace(/\/+$/, "");
+const siteName = "XMR Checkout";
+const siteDescription =
+  "Accept Monero with your own wallet using self-hosted invoice pages, view-only payment detection, APIs, and webhooks.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "XMR Checkout | Home",
+    default: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
     template: "XMR Checkout | %s",
   },
-  description: "Non-custodial Monero checkout with view-only detection.",
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName,
+    title: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary",
+    title: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
+    description: siteDescription,
+  },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteName,
+  url: siteUrl,
+  description: siteDescription,
 };
 
 export default function RootLayout({
@@ -29,7 +58,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${crimsonPro.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </body>
     </html>
   );
 }

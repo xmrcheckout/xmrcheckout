@@ -7,7 +7,20 @@ import CopyCodeBlock from "../../../components/copy-code-block";
 import StatusBadge from "../../../components/status-badge";
 
 export const metadata: Metadata = {
-  title: "Docs",
+  title: "Monero Payment API Documentation",
+  description:
+    "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
+  alternates: {
+    canonical: "/docs",
+  },
+  openGraph: {
+    type: "website",
+    url: "/docs",
+    siteName: "XMR Checkout",
+    title: "Monero Payment API Documentation | XMR Checkout",
+    description:
+      "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
+  },
 };
 
 const apiBaseUrl =

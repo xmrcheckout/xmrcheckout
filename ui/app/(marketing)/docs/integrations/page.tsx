@@ -6,7 +6,20 @@ import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
 
 export const metadata: Metadata = {
-  title: "Integration Recipes",
+  title: "Monero Checkout Integration Recipes",
+  description:
+    "Practical integration recipes for connecting Monero invoices, public payment pages, and webhooks to your store.",
+  alternates: {
+    canonical: "/docs/integrations",
+  },
+  openGraph: {
+    type: "website",
+    url: "/docs/integrations",
+    siteName: "XMR Checkout",
+    title: "Monero Checkout Integration Recipes | XMR Checkout",
+    description:
+      "Practical integration recipes for connecting Monero invoices, public payment pages, and webhooks to your store.",
+  },
 };
 
 const siteUrl =

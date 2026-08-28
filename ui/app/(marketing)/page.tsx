@@ -5,7 +5,22 @@ import { redirect } from "next/navigation";
 import { LoginTrigger } from "../../components/login-modal";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: {
+    absolute: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
+  },
+  description:
+    "Accept Monero with your own wallet. XMR Checkout provides self-hosted invoice pages, view-only payment detection, APIs, and webhooks.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "XMR Checkout",
+    title: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
+    description:
+      "Accept Monero with your own wallet. XMR Checkout provides self-hosted invoice pages, view-only payment detection, APIs, and webhooks.",
+  },
 };
 
 const previewQrModules = [

@@ -290,6 +290,7 @@ services:
       args:
         DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
         NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
+        NEXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost}
     user: "1000:1000"
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://nginx/api}

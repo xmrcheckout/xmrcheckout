@@ -5,9 +5,20 @@ import PageIntroBand from "../../../components/page-intro-band";
 import { areDonationsEnabled } from "../../../lib/donations";
 
 export const metadata: Metadata = {
-  title: "FAQ",
+  title: "Monero Checkout FAQ",
   description:
     "Frequently asked questions about XMR Checkout: non-custodial Monero invoices with view-only detection.",
+  alternates: {
+    canonical: "/faq",
+  },
+  openGraph: {
+    type: "website",
+    url: "/faq",
+    siteName: "XMR Checkout",
+    title: "Monero Checkout FAQ | XMR Checkout",
+    description:
+      "Frequently asked questions about XMR Checkout: non-custodial Monero invoices with view-only detection.",
+  },
 };
 
 const donationsEnabled = areDonationsEnabled();

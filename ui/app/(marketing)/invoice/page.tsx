@@ -4,7 +4,20 @@ import InvoiceStatusLookup from "../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../components/page-intro-band";
 
 export const metadata: Metadata = {
-  title: "Invoice Status",
+  title: "Monero Invoice Status Lookup",
+  description:
+    "Check Monero invoice detection and confirmation progress using a public invoice ID.",
+  alternates: {
+    canonical: "/invoice",
+  },
+  openGraph: {
+    type: "website",
+    url: "/invoice",
+    siteName: "XMR Checkout",
+    title: "Monero Invoice Status Lookup | XMR Checkout",
+    description:
+      "Check Monero invoice detection and confirmation progress using a public invoice ID.",
+  },
 };
 
 const statusPath = [

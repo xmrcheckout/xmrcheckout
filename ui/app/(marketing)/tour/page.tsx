@@ -10,7 +10,20 @@ import WebhookSection from "../../../components/webhook-section";
 import WorkspaceNav from "../../../components/workspace-nav";
 
 export const metadata: Metadata = {
-  title: "Tour",
+  title: "Monero Checkout Tour",
+  description:
+    "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
+  alternates: {
+    canonical: "/tour",
+  },
+  openGraph: {
+    type: "website",
+    url: "/tour",
+    siteName: "XMR Checkout",
+    title: "Monero Checkout Tour | XMR Checkout",
+    description:
+      "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
+  },
 };
 
 const tabs = ["overview", "invoices", "invoice", "webhooks"] as const;

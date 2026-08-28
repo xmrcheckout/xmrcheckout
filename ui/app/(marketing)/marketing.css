@@ -199,7 +199,7 @@ summary:focus-visible {
   width: 100%;
   max-width: 90rem;
   margin-inline: auto;
-  padding: 2rem 6vw 1rem;
+  padding: 2rem max(1.5rem, 4vw) 1rem;
 }
 
 .brand {
@@ -255,6 +255,10 @@ summary:focus-visible {
   gap: 1.6rem;
   font-size: 0.95rem;
   align-items: center;
+}
+
+.desktop-nav {
+  margin-left: auto;
 }
 
 .nav a,
@@ -2024,7 +2028,7 @@ summary:focus-visible {
   }
 
   .home-page {
-    gap: 3rem;
+    gap: 2.5rem;
     padding: 0 6vw;
   }
 
@@ -2038,8 +2042,8 @@ summary:focus-visible {
   .home-hero {
     align-items: start;
     min-height: 0;
-    padding-top: 2.4rem;
-    padding-bottom: 3.4rem;
+    padding-top: 2rem;
+    padding-bottom: 2.8rem;
   }
 
   .home-hero h1 {
@@ -2071,6 +2075,12 @@ summary:focus-visible {
 
   .console-topbar {
     display: grid;
+  }
+
+  .console-customer,
+  .console-merchant {
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .console-merchant {

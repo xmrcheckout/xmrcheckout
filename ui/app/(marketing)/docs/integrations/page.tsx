@@ -17,7 +17,7 @@ const normalizedSiteUrl = siteUrl.replace(/\/+$/, "");
 const publicApiBaseUrl = `${normalizedSiteUrl}/api/core`;
 
 const codeBlockClass =
-  "max-w-full overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-5 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6";
+  "min-w-0 max-w-full overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-5 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6";
 
 const sectionCardClass =
   "rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-7";

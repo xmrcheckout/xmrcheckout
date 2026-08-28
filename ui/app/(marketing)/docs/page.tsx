@@ -29,7 +29,7 @@ const methodStyles: Record<string, string> = {
 };
 
 const codeBlockClass =
-  "max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
+  "min-w-0 max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
 
 const endpointGroups = [
   {

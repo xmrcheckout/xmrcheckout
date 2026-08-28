@@ -28,7 +28,7 @@ export default function CopyCodeBlock({
   };
 
   return (
-    <div className="relative min-w-0">
+    <div className="relative min-w-0 max-w-full overflow-hidden">
       <pre ref={codeRef} className={className}>
         {children}
       </pre>

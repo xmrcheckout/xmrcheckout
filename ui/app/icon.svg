@@ -1,17 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <title>XMR Checkout</title>
   <rect width="64" height="64" rx="14" fill="#101217" />
-  <circle cx="32" cy="32" r="23" fill="#f26822" />
   <path
-    fill="#1f2430"
-    d="M9 34a23 23 0 0 0 46 0v7H45v-9L32 44 19 32v9H9z"
+    fill="#f8f2e9"
+    d="M12 11h27l13 13v29H12z"
   />
+  <path
+    fill="#b9d8e9"
+    d="M39 11v14h13z"
+  />
+  <path
+    fill="#1f4a70"
+    d="M18 24h8v8h-8zM31 24h8v8h-8zM18 37h8v8h-8zM31 37h8v8h-8z"
+  />
+  <path
+    fill="none"
+    stroke="#69b6dc"
+    stroke-linecap="round"
+    stroke-width="3"
+    d="M18 50h21"
+  />
+  <circle cx="45" cy="43" r="13" fill="#f26822" />
   <path
     fill="none"
     stroke="#f8f2e9"
     stroke-linecap="round"
     stroke-linejoin="round"
-    stroke-width="6"
-    d="M18 40V24l14 13 14-13v16"
+    stroke-width="4"
+    d="m38 43 5 5 10-11"
   />
 </svg>

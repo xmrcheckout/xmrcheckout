@@ -1564,7 +1564,7 @@ export default function InvoicePanel({
                         Confirmations{sortIndicator("confirmations")}
                       </Link>
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                    <th className="border-l border-stroke px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Actions
                     </th>
                   </tr>
@@ -1636,7 +1636,7 @@ export default function InvoicePanel({
                             {invoice.confirmations ?? 0}/
                             {invoice.confirmation_target}
                           </td>
-                          <td className="px-4 py-3 align-top">
+                          <td className="border-l border-stroke px-4 py-3 align-top">
                             <div className="flex min-w-0 flex-wrap gap-2">
                               {mode !== "tour" ? (
                                 <Link

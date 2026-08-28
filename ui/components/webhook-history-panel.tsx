@@ -61,9 +61,11 @@ export default function WebhookHistoryPanel({
     <div className="grid gap-5">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-stroke pb-4">
         <div>
-          <h2 className="font-sans text-xl font-semibold">Delivery attempts</h2>
+          <h2 className="font-sans text-xl font-semibold">
+            Webhook delivery attempts
+          </h2>
           <p className="mt-1 text-sm text-ink-soft">
-            Inspect responses and retry failed relay attempts explicitly.
+            Inspect responses and explicitly retry failed webhook deliveries.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

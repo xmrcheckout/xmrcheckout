@@ -348,54 +348,32 @@ export default async function DashboardPage({
   const confirmedCount = allInvoices.filter(
     (invoice) => invoice.status === "confirmed",
   ).length;
-  const expiredOrInvalidCount = allInvoices.filter(
-    (invoice) => invoice.status === "expired" || invoice.status === "invalid",
-  ).length;
   const failedWebhookCount = webhookHistory.filter(
     (delivery) =>
       delivery.http_status === null || (delivery.http_status ?? 0) >= 400,
   ).length;
-  const needsAttentionItems = [
-    ...allInvoices
-      .filter((invoice) => invoice.status === "payment_detected")
-      .slice(0, 3)
-      .map((invoice) => ({
-        title: invoice.id,
-        detail: `${invoice.confirmations ?? 0}/${invoice.confirmation_target} confirmations reached.`,
-        href: `/invoice/${invoice.id}`,
-        category: "Invoice",
-        dotClass: "bg-monero",
-      })),
-    ...allInvoices
-      .filter(
-        (invoice) =>
-          invoice.status === "expired" || invoice.status === "invalid",
-      )
-      .slice(0, 3)
-      .map((invoice) => ({
-        title: invoice.id,
-        detail: `${formatStatus(invoice.status)} invoice needs merchant review.`,
-        href: `/invoice/${invoice.id}`,
-        category: "Invoice",
-        dotClass: "bg-red-500",
-      })),
-    ...webhookHistory
-      .filter(
-        (delivery) =>
-          delivery.http_status === null || (delivery.http_status ?? 0) >= 400,
-      )
-      .slice(0, 3)
-      .map((delivery) => ({
-        title: delivery.event,
-        detail:
-          delivery.http_status === null
-            ? "Webhook delivery did not receive a response."
-            : `Webhook returned HTTP ${delivery.http_status}.`,
-        href: "/dashboard?tab=webhooks&webhook_tab=history",
-        category: "Webhook",
-        dotClass: "bg-red-500",
-      })),
-  ].slice(0, 5);
+  const recentInvoiceItems = allInvoices.slice(0, 5).map((invoice) => ({
+    title: invoice.id,
+    detail: `Created ${new Date(invoice.created_at).toLocaleString()}`,
+    href: `/invoice/${invoice.id}`,
+    status: formatStatus(invoice.status),
+    tone:
+      invoice.status === "confirmed"
+        ? ("success" as StatusTone)
+        : invoice.status === "payment_detected"
+          ? ("detected" as StatusTone)
+          : invoice.status === "pending"
+            ? ("pending" as StatusTone)
+            : ("error" as StatusTone),
+    dotClass:
+      invoice.status === "confirmed"
+        ? "bg-sage"
+        : invoice.status === "payment_detected"
+          ? "bg-monero"
+          : invoice.status === "pending"
+            ? "bg-clay"
+            : "bg-red-500",
+  }));
   const recentActivityItems = webhookHistory.slice(0, 4).map((delivery) => ({
     title: delivery.event,
     detail:
@@ -532,28 +510,30 @@ export default async function DashboardPage({
               <div className="grid gap-4 xl:grid-cols-2">
                 <section
                   className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft"
-                  aria-labelledby="needs-attention-title"
+                  aria-labelledby="recent-invoices-title"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <h2
                         className="font-sans text-xl font-semibold"
-                        id="needs-attention-title"
+                        id="recent-invoices-title"
                       >
-                        Needs attention
+                        Recent invoices
                       </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Review these items before fulfilling orders.
+                        Latest merchant invoices and their current status.
                       </p>
                     </div>
-                    <StatusBadge
-                      label={`${expiredOrInvalidCount} expired or invalid`}
-                      tone={expiredOrInvalidCount > 0 ? "error" : "neutral"}
-                    />
+                    <Link
+                      className="text-sm font-semibold text-ink underline underline-offset-4"
+                      href="/dashboard?tab=invoices"
+                    >
+                      View all
+                    </Link>
                   </div>
                   <div className="mt-4">
-                    {needsAttentionItems.length > 0 ? (
-                      needsAttentionItems.map((item) => (
+                    {recentInvoiceItems.length > 0 ? (
+                      recentInvoiceItems.map((item) => (
                         <Link
                           className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-stroke py-3 first:border-t-0 first:pt-0 last:pb-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                           href={item.href}
@@ -568,7 +548,7 @@ export default async function DashboardPage({
                               <p className="break-all font-mono text-sm font-semibold text-ink">
                                 {item.title}
                               </p>
-                              <StatusBadge label={item.category} />
+                              <StatusBadge label={item.status} tone={item.tone} />
                             </div>
                             <p className="mt-1 text-sm text-ink-soft">
                               {item.detail}
@@ -578,7 +558,7 @@ export default async function DashboardPage({
                       ))
                     ) : (
                       <p className="text-sm text-ink-soft">
-                        No invoices or webhook deliveries need review.
+                        No invoices created yet.
                       </p>
                     )}
                   </div>
@@ -594,10 +574,10 @@ export default async function DashboardPage({
                         className="font-sans text-xl font-semibold"
                         id="recent-activity-title"
                       >
-                        Recent webhook activity
+                        Recent webhook deliveries
                       </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Latest delivery attempts for invoice events.
+                        Latest attempts to send invoice events to your configured endpoints.
                       </p>
                     </div>
                     <Link
@@ -667,7 +647,7 @@ export default async function DashboardPage({
                   className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft transition hover:border-ink/40 hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href="/dashboard?tab=webhooks"
                 >
-                  <p className="text-sm font-semibold text-ink-soft">Event relay</p>
+                  <p className="text-sm font-semibold text-ink-soft">Webhook endpoints</p>
                   <p className="mt-2 font-sans text-xl font-semibold">
                     {webhooksData.length === 0
                       ? "No endpoints configured"

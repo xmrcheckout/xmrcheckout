@@ -9,8 +9,10 @@ import DefaultConfirmationTargetSection from "../../../components/default-confir
 import DefaultQrLogoSection from "../../../components/default-qr-logo-section";
 import InvoicePanel from "../../../components/invoice-panel";
 import PageIntroBand from "../../../components/page-intro-band";
-import { formatRelativeTime } from "../../../components/relative-time";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
+import SystemHealthPanel, {
+  type SystemStatusSummary,
+} from "../../../components/system-health-panel";
 import WebhookHistoryPanel from "../../../components/webhook-history-panel";
 import WebhookSecretSection from "../../../components/webhook-secret-section";
 import WebhookSection from "../../../components/webhook-section";
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
-const tabs = ["overview", "invoices", "webhooks", "profile"] as const;
+const tabs = ["overview", "invoices", "webhooks", "profile", "health"] as const;
 const webhookTabs = ["settings", "history"] as const;
 const invoiceStatuses = [
   "pending",
@@ -83,19 +85,6 @@ type ProfileSummary = {
   btcpay_checkout_style?: "standard" | "btcpay_classic";
   created_at: string;
 };
-type SystemStatusSummary = {
-  wallet_rpc: "ok" | "unreachable";
-  daemon: "ok" | "unreachable" | "unknown";
-  reconciler: "ok" | "degraded" | "unavailable";
-  daemon_height: number | null;
-  invoice_reconcile_interval_seconds: number;
-  last_reconcile_started_at: string | null;
-  last_reconcile_completed_at: string | null;
-  last_reconcile_error: string | null;
-  last_reconcile_attempted_invoices: number;
-  last_reconcile_succeeded_invoices: number;
-  last_reconcile_failed_invoices: number;
-};
 
 const dashboardNavItems = [
   {
@@ -126,51 +115,14 @@ const dashboardNavItems = [
     label: "Profile",
     detail: "Credentials and defaults",
   },
+  {
+    value: "health",
+    href: "/dashboard?tab=health",
+    index: "05",
+    label: "System health",
+    detail: "Detection and connectivity",
+  },
 ];
-
-const walletRpcBadge = (systemStatus: SystemStatusSummary | null) => {
-  if (!systemStatus) {
-    return {
-      tone: "pending" as StatusTone,
-      label: "Unavailable",
-    };
-  }
-  if (systemStatus.wallet_rpc === "ok") {
-    return {
-      tone: "success" as StatusTone,
-      label: "Connected",
-    };
-  }
-  return {
-    tone: "error" as StatusTone,
-    label: "Down",
-  };
-};
-
-const daemonBadge = (systemStatus: SystemStatusSummary | null) => {
-  if (!systemStatus) {
-    return {
-      tone: "pending" as StatusTone,
-      label: "Unavailable",
-    };
-  }
-  if (systemStatus.daemon === "ok") {
-    return {
-      tone: "success" as StatusTone,
-      label: "Connected",
-    };
-  }
-  if (systemStatus.daemon === "unknown") {
-    return {
-      tone: "neutral" as StatusTone,
-      label: "Not configured",
-    };
-  }
-  return {
-    tone: "error" as StatusTone,
-    label: "Down",
-  };
-};
 
 const reconcilerBadge = (systemStatus: SystemStatusSummary | null) => {
   if (!systemStatus || systemStatus.reconciler === "unavailable") {
@@ -303,10 +255,7 @@ export default async function DashboardPage({
   } while (offset < total);
   invoicesData = { items, total };
 
-  if (
-    activeTab === "overview" ||
-    (activeTab === "webhooks" && activeWebhookTab === "settings")
-  ) {
+  if (activeTab === "webhooks" && activeWebhookTab === "settings") {
     const response = await fetch(`${apiBaseUrl}/api/core/webhooks`, {
       headers: {
         Authorization: `ApiKey ${apiKey}`,
@@ -344,11 +293,7 @@ export default async function DashboardPage({
   let profileData: ProfileSummary | null = null;
   let systemStatus: SystemStatusSummary | null = null;
 
-  if (
-    activeTab === "overview" ||
-    activeTab === "profile" ||
-    activeTab === "invoices"
-  ) {
+  if (activeTab === "profile" || activeTab === "invoices") {
     const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
       headers: {
         Authorization: `ApiKey ${apiKey}`,
@@ -362,7 +307,7 @@ export default async function DashboardPage({
       profileData = (await response.json()) as ProfileSummary;
     }
   }
-  if (activeTab === "overview") {
+  if (activeTab === "overview" || activeTab === "health") {
     const response = await fetch(
       `${apiBaseUrl}/api/core/public/system/status`,
       {
@@ -460,12 +405,7 @@ export default async function DashboardPage({
         ? "bg-red-500"
         : "bg-sage",
   }));
-  const walletStatusBadge = walletRpcBadge(systemStatus);
-  const daemonStatusBadge = daemonBadge(systemStatus);
   const reconcilerStatusBadge = reconcilerBadge(systemStatus);
-  const lastReconcileCompleted = systemStatus?.last_reconcile_completed_at
-    ? formatRelativeTime(systemStatus.last_reconcile_completed_at)
-    : null;
   const subTabBaseClass =
     "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2";
   const subTabActiveClass =
@@ -525,30 +465,37 @@ export default async function DashboardPage({
           facts={[
             { label: "Access", value: "View only" },
             {
-              label: "Wallet RPC",
+              label: "Detection",
               value:
-                activeTab === "overview"
-                  ? walletStatusBadge.label
+                activeTab === "overview" || activeTab === "health"
+                  ? reconcilerStatusBadge.label
                   : (
                       <Link
                         className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
-                        href="/dashboard?tab=overview"
+                        href="/dashboard?tab=health"
                       >
-                        View overview
+                        View health
                       </Link>
                     ),
             },
             {
-              label: "Daemon",
+              label: "System health",
               value:
-                activeTab === "overview"
-                  ? daemonStatusBadge.label
+                activeTab === "overview" || activeTab === "health"
+                  ? (
+                      <Link
+                        className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
+                        href="/dashboard?tab=health"
+                      >
+                        Open details
+                      </Link>
+                    )
                   : (
                       <Link
                         className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
-                        href="/dashboard?tab=overview"
+                        href="/dashboard?tab=health"
                       >
-                        View overview
+                        View health
                       </Link>
                     ),
             },
@@ -739,169 +686,51 @@ export default async function DashboardPage({
                 </section>
               </div>
 
-              <section
-                className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft"
-                aria-labelledby="connectivity-title"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4 px-5 py-4 sm:px-6">
-                  <div>
-                    <h2
-                      className="font-sans text-xl font-semibold"
-                      id="connectivity-title"
-                    >
-                      Monero connectivity
-                    </h2>
-                    <p className="mt-1 text-sm text-ink-soft">
-                      Detection depends on the wallet RPC and daemon remaining
-                      available.
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Link
+                  className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft transition hover:border-ink/40 hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  href="/dashboard?tab=health"
+                >
+                  <p className="text-sm font-semibold text-ink-soft">System health</p>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                    <p className="font-sans text-xl font-semibold">
+                      {reconcilerStatusBadge.label}
                     </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
                     <StatusBadge
-                      label={`Wallet RPC: ${walletStatusBadge.label}`}
-                      tone={walletStatusBadge.tone}
-                    />
-                    <StatusBadge
-                      label={`Daemon: ${daemonStatusBadge.label}`}
-                      tone={daemonStatusBadge.tone}
-                    />
-                    <StatusBadge
-                      label={`Detection: ${reconcilerStatusBadge.label}`}
+                      label="Open details"
                       tone={reconcilerStatusBadge.tone}
                     />
                   </div>
-                </div>
-                <dl className="grid border-y border-stroke bg-white/60 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x xl:divide-stroke">
-                  {[
-                    {
-                      label: "Daemon height",
-                      value:
-                        systemStatus?.daemon_height?.toLocaleString() ??
-                        "Unavailable",
-                    },
-                    {
-                      label: "Detection interval",
-                      value: `${systemStatus?.invoice_reconcile_interval_seconds ?? 30}s`,
-                    },
-                    {
-                      label: "Last successful check",
-                      value: lastReconcileCompleted ?? "Not yet recorded",
-                    },
-                    {
-                      label: "Latest invoice checks",
-                      value: systemStatus
-                        ? `${systemStatus.last_reconcile_succeeded_invoices}/${systemStatus.last_reconcile_attempted_invoices} successful`
-                        : "Unavailable",
-                    },
-                  ].map((item) => (
-                    <div
-                      className="border-t border-stroke px-5 py-4 first:border-t-0 sm:[&:nth-child(2)]:border-t-0 xl:border-t-0"
-                      key={item.label}
-                    >
-                      <dt className="text-xs font-semibold text-ink-soft">
-                        {item.label}
-                      </dt>
-                      <dd className="mt-1 break-words font-mono text-sm font-semibold text-ink">
-                        {item.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-                <div className="grid gap-3 px-5 py-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
-                  <p className="text-sm text-ink-soft">
-                    If a payment stays at 0 confirmations, verify that the
-                    daemon height continues to advance.
+                  <p className="mt-2 text-sm text-ink-soft">
+                    Check the services that observe payments when confirmation
+                    appears delayed.
                   </p>
-                  <div className="min-w-0 lg:border-l lg:border-stroke lg:pl-5">
-                    <p className="text-xs font-semibold text-ink-soft">
-                      Primary address
-                    </p>
-                    <code className="mt-1 block break-all text-xs text-ink">
-                      {profileData?.payment_address ?? "Unavailable"}
-                    </code>
-                  </div>
-                </div>
-                {systemStatus?.last_reconcile_error ? (
-                  <p className="border-t border-red-200 bg-red-50 px-5 py-3 text-sm text-red-700 sm:px-6">
-                    Last detection error: {systemStatus.last_reconcile_error}
+                </Link>
+                <Link
+                  className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft transition hover:border-ink/40 hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  href="/dashboard?tab=webhooks"
+                >
+                  <p className="text-sm font-semibold text-ink-soft">Event relay</p>
+                  <p className="mt-2 font-sans text-xl font-semibold">
+                    {webhooksData.length === 0
+                      ? "No endpoints configured"
+                      : `${webhooksData.length} endpoint${webhooksData.length === 1 ? "" : "s"}`}
                   </p>
-                ) : null}
-              </section>
-
-              <section
-                className="rounded-surface border border-ink bg-ink p-5 text-cream shadow-card sm:p-6"
-                aria-labelledby="webhook-summary-title"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="flex items-center gap-2 text-sm font-semibold text-cream/70">
-                      <span
-                        className="h-2.5 w-2.5 rounded-full bg-sage"
-                        aria-hidden="true"
-                      />
-                      Event relay
-                    </p>
-                    <h2
-                      className="mt-1 font-sans text-xl font-semibold"
-                      id="webhook-summary-title"
-                    >
-                      Webhook endpoints
-                    </h2>
-                  </div>
-                  <Link
-                    className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream/30 bg-cream/10 px-4 py-2 text-sm font-semibold text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/70"
-                    href="/dashboard?tab=webhooks"
-                  >
-                    Open webhooks
-                  </Link>
-                </div>
-                {webhooksData.length === 0 ? (
-                  <p className="mt-4 border-t border-cream/20 pt-4 text-sm text-cream/70">
-                    No webhook endpoints are configured. Invoice status remains
-                    available through the public read endpoint.
+                  <p className="mt-2 text-sm text-ink-soft">
+                    Review configured destinations and delivery history.
                   </p>
-                ) : (
-                  <div className="mt-4 divide-y divide-cream/20 border-t border-cream/20">
-                    {webhooksData.map((webhook) => (
-                      <div
-                        className="grid gap-3 py-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
-                        key={webhook.id}
-                      >
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span
-                              className={`h-2 w-2 rounded-full ${
-                                webhook.active ? "bg-sage" : "bg-cream/40"
-                              }`}
-                              aria-hidden="true"
-                            />
-                            <span className="text-xs font-semibold text-cream/60">
-                              {webhook.active ? "Active" : "Paused"}
-                            </span>
-                          </div>
-                          <code className="mt-1 block break-all text-sm text-cream">
-                            {webhook.url || "Per-event URLs only"}
-                          </code>
-                        </div>
-                        <div className="min-w-0 lg:border-l lg:border-cream/20 lg:pl-5">
-                          <p className="text-xs font-semibold text-cream/60">
-                            Relayed events
-                          </p>
-                          <p className="mt-1 break-words font-mono text-sm leading-relaxed text-cream/90">
-                            {webhook.events.join("  /  ")}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
+                </Link>
+              </div>
 
               <p className="border-l-2 border-sage pl-4 text-sm font-semibold text-ink">
                 We never hold funds. All payments move from the customer to your
                 wallet.
               </p>
             </section>
+          ) : null}
+
+          {activeTab === "health" ? (
+            <SystemHealthPanel status={systemStatus} />
           ) : null}
 
           {activeTab === "invoices" ? (

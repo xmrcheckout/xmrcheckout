@@ -2,11 +2,13 @@
   <img src="ui/public/logo.png" width="120" alt="XMR Checkout logo" />
 </p>
 
-# xmrcheckout.com
+# XMR Checkout
 
-Monero checkout software for merchants who want payments sent to their own wallet.
+[Website](https://xmrcheckout.com) · [Interactive tour](https://xmrcheckout.com/tour) · [API documentation](https://xmrcheckout.com/docs) · [Integration recipes](https://xmrcheckout.com/docs/integrations) · [FAQ](https://xmrcheckout.com/faq)
 
-xmrcheckout is open source and self-hostable. It creates XMR invoices, shows a hosted payment page, watches for incoming transactions, and sends status updates through the API or webhooks.
+Self-hosted Monero checkout software for merchants who want payments sent to their own wallet.
+
+XMR Checkout is open source and self-hostable. It creates XMR invoices, shows a hosted payment page, watches for incoming transactions, and sends status updates through the API or webhooks.
 
 It uses a wallet address and private view key for detection. It never asks for spend keys, signs transactions, or moves funds.
 
@@ -15,6 +17,7 @@ It uses a wallet address and private view key for detection. It never asks for s
 - [Who it's for](#who-its-for)
 - [How it works](#how-it-works)
 - [Wallet access and fund flow](#wallet-access-and-fund-flow)
+- [Documentation and guides](#documentation-and-guides)
 - [Repository layout](#repository-layout)
 - [Screenshots](#screenshots)
 - [Quick start](#quick-start)
@@ -24,7 +27,7 @@ It uses a wallet address and private view key for detection. It never asks for s
 
 ## Who it's for
 
-Use xmrcheckout when you want invoice status handled by software you control.
+Use XMR Checkout when you want invoice status handled by software you control.
 
 It fits merchants who need a hosted checkout page, teams that want API and webhook updates for an existing order flow, and operators who prefer self-hosted infrastructure.
 
@@ -38,9 +41,18 @@ Typical flow:
 
 ## Wallet access and fund flow
 
-Funds move from the customer to the merchant wallet. xmrcheckout watches for the payment and reports what it sees.
+Funds move from the customer to the merchant wallet. XMR Checkout watches for the payment and reports what it sees.
 
 Configure the app with a wallet address and private view key only. If a setup path asks for spend authority, stop and fix the configuration before using it.
+
+## Documentation and guides
+
+The [XMR Checkout website](https://xmrcheckout.com) includes the [interactive tour](https://xmrcheckout.com/tour), [API documentation](https://xmrcheckout.com/docs), [integration recipes](https://xmrcheckout.com/docs/integrations), and [FAQ](https://xmrcheckout.com/faq).
+
+Two guide topics are planned for the project website:
+
+- **How to Run a Self-Hosted Monero Checkout:** deployment, view-only wallet setup, invoice pages, and safe payment detection.
+- **Integrating the Monero Payment API and Webhooks:** invoice creation, public status polling, webhook verification, and integration examples.
 
 ## Repository layout
 

@@ -219,6 +219,26 @@ def startup():
             connection.execute(
                 text(
                     "ALTER TABLE users "
+                    "ADD COLUMN IF NOT EXISTS invoice_creation_window_started_at "
+                    "TIMESTAMP WITH TIME ZONE"
+                )
+            )
+            connection.execute(
+                text(
+                    "ALTER TABLE users "
+                    "ADD COLUMN IF NOT EXISTS invoice_creation_count "
+                    "INTEGER NOT NULL DEFAULT 0"
+                )
+            )
+            connection.execute(
+                text(
+                    "UPDATE users SET invoice_creation_count = 0 "
+                    "WHERE invoice_creation_count IS NULL"
+                )
+            )
+            connection.execute(
+                text(
+                    "ALTER TABLE users "
                     "ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()"
                 )
             )

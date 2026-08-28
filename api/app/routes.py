@@ -26,6 +26,7 @@ from .config import (
 )
 from .db import get_db
 from .formatting import format_xmr_amount
+from .invoice_limits import reserve_invoice_creation
 from .models import Invoice, ProfileHistory, SystemStatus, User, Webhook, WebhookDelivery
 from monero.address import Address, IntegratedAddress, SubAddress
 from .rates import UnsupportedCurrencyError, get_xmr_rate
@@ -497,22 +498,11 @@ def create_donation_invoice(
     user = _get_founder_user(db)
     expires_at = _donation_invoice_expiry()
     active_limit = min(max(1, DONATION_ACTIVE_INVOICE_LIMIT), MAX_SUBADDRESS_INDEX)
-    now = datetime.now(timezone.utc)
-    active_count = (
-        db.query(func.count(Invoice.id))
-        .filter(
-            Invoice.user_id == user.id,
-            Invoice.status.in_(["pending", "payment_detected"]),
-            or_(Invoice.expires_at.is_(None), Invoice.expires_at > now),
-        )
-        .scalar()
-        or 0
+    user = reserve_invoice_creation(
+        db,
+        user=user,
+        active_limit=active_limit,
     )
-    if active_count >= active_limit:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Donation traffic is high. Try again soon.",
-        )
     resolved_amount, warnings, _ = _resolve_invoice_amount(
         db,
         user=user,
@@ -1140,6 +1130,7 @@ def create_invoice_for_user(
             checkout = {}
         checkout = {**checkout, "continue_url": str(payload.checkout_continue_url)}
         metadata = {**(metadata if isinstance(metadata, dict) else {}), "checkout": checkout}
+    user = reserve_invoice_creation(db, user=user)
     address, subaddress_index = create_subaddress_for_user(db, user=user)
     invoice = Invoice(
         user_id=user.id,

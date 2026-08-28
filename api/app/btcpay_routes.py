@@ -19,6 +19,7 @@ from .config import INVOICE_DEFAULT_EXPIRY_HOURS
 from .config import QR_STORAGE_DIR
 from .db import get_db
 from .formatting import format_xmr_amount
+from .invoice_limits import reserve_invoice_creation
 from .models import BtcpayWebhook, Invoice, InvoiceTransfer, User
 from .payment_timing import is_payment_after_expiry
 from .rates import get_xmr_rate
@@ -290,6 +291,7 @@ def create_invoice(
         if user.default_qr_logo == "custom" and user.default_qr_logo_data_url:
             qr["logo_data_url"] = user.default_qr_logo_data_url
         metadata["qr"] = qr
+    user = reserve_invoice_creation(db, user=user)
     address, subaddress_index = create_subaddress_for_user(db, user=user)
     invoice = Invoice(
         user_id=user.id,

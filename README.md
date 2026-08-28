@@ -115,6 +115,11 @@ cp .env.example .env
   late-payment detection (default: `48`). After an outage, reconciliation
   temporarily widens this window from the last fully successful cycle so an
   availability gap does not create a blind spot.
+- Invoice creation is protected by per-user limits: `INVOICE_ACTIVE_LIMIT`
+  (default `100` active invoices), `INVOICE_CREATION_RATE_LIMIT` (default
+  `60` creations), and `INVOICE_CREATION_RATE_WINDOW_SECONDS` (default
+  `60`). These checks are atomic across API workers; raise them deliberately
+  for higher-volume integrations.
 
 Late-payment classification uses the on-chain time when cumulative positive
 transfers first reach the invoice amount. `detected_at` remains the time the

@@ -318,15 +318,12 @@ export default function FaqPage() {
               </p>
             </div>
             <div className="grid gap-1.5 p-3">
-              {faqGroups.map((group, index) => (
+              {faqGroups.map((group) => (
                 <a
-                  className="inline-flex min-h-10 shrink-0 items-center gap-3 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  className="inline-flex min-h-10 shrink-0 items-center rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href={`#${group.id}`}
                   key={group.id}
                 >
-                  <span className="font-mono text-xs text-ink-soft/70">
-                    0{index + 1}
-                  </span>
                   {group.label}
                 </a>
               ))}
@@ -335,7 +332,7 @@ export default function FaqPage() {
         </nav>
 
         <div className="min-w-0 space-y-8">
-          {faqGroups.map((group, index) => {
+          {faqGroups.map((group) => {
             const items = faqItems.filter((item) => item.category === group.id);
 
             return (
@@ -352,7 +349,7 @@ export default function FaqPage() {
                         className={`h-2.5 w-2.5 rounded-full ${group.accentClass}`}
                         aria-hidden="true"
                       />
-                      Topic 0{index + 1}
+                      Questions
                     </p>
                     <h2
                       className="mt-1 font-sans text-2xl font-semibold"

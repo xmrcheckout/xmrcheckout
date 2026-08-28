@@ -293,17 +293,25 @@ function CreateInvoiceModal({
     (qrLogoMode === "custom" && !qrLogoDataUrl);
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
-      <div className="flex max-h-[85vh] w-full max-w-3xl flex-col rounded-surface border border-stroke bg-white shadow-deep">
+    <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-6 sm:py-10">
+      <div
+        className="flex max-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col rounded-surface border border-stroke bg-card shadow-deep sm:max-h-[85vh]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-invoice-title"
+      >
         <span className="sr-only" role="status" aria-live="polite">
           {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : ""}
         </span>
-        <div className="flex flex-wrap items-start justify-between gap-4 p-8 pb-0">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stroke px-5 py-5 sm:px-7 sm:py-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
               Create invoice
             </p>
-            <h2 className="mt-2 font-sans font-semibold text-2xl">
+            <h2
+              className="mt-1 font-sans text-xl font-semibold sm:text-2xl"
+              id="create-invoice-title"
+            >
               Create a new invoice
             </h2>
             {mode === "tour" ? (
@@ -318,13 +326,13 @@ function CreateInvoiceModal({
         </div>
 
         <form
-          className="flex min-h-0 flex-1 flex-col gap-6 px-8 pb-8 pt-6"
+          className="flex min-h-0 flex-1 flex-col gap-6 px-5 pb-5 pt-5 sm:px-7 sm:pb-7 sm:pt-6"
           action={formAction}
         >
           {state.invoiceId ? (
             <div className="grid gap-4">
               {publicInvoiceUrl ? (
-                <div className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
+                <div className="rounded-2xl border border-stroke bg-cream/70 p-5 shadow-soft">
                   <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                     Invoice created
                   </p>
@@ -1280,31 +1288,39 @@ export default function InvoicePanel({
                 return (
                   <div
                     key={invoice.id}
-                    className={`rounded-surface border border-stroke bg-white/70 p-4 shadow-soft ${
+                    className={`rounded-xl border border-stroke bg-card p-4 shadow-soft transition-colors hover:border-ink/30 sm:p-5 ${
                       invoice.archived_at ? "bg-ink/5" : ""
                     }`}
                   >
-                    <div className="grid gap-1 text-left">
-                      {mode === "tour" ? (
-                        <span className="w-fit font-mono text-xs text-ink underline underline-offset-4">
-                          {invoice.id}
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0 grid gap-1 text-left">
+                        {mode === "tour" ? (
+                          <span className="w-fit break-all font-mono text-xs font-semibold text-ink underline underline-offset-4">
+                            {invoice.id}
+                          </span>
+                        ) : (
+                          <Link
+                            className="w-fit break-all font-mono text-xs font-semibold text-ink underline underline-offset-4"
+                            href={`/invoice/${invoice.id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {invoice.id}
+                          </Link>
+                        )}
+                        <span className="truncate text-xs text-ink-soft">
+                          {invoice.address.slice(0, 18)}…
+                          {invoice.address.slice(-10)}
                         </span>
-                      ) : (
-                        <Link
-                          className="w-fit font-mono text-xs text-ink underline underline-offset-4"
-                          href={`/invoice/${invoice.id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {invoice.id}
-                        </Link>
-                      )}
-                      <span className="text-xs text-ink-soft">
-                        {invoice.address.slice(0, 18)}…
-                        {invoice.address.slice(-10)}
-                      </span>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className={labelClass}>Amount</p>
+                        <p className="mt-1 whitespace-nowrap font-mono text-lg font-semibold text-ink">
+                          {formatXmrAmount(invoice.amount_xmr)} XMR
+                        </p>
+                      </div>
                     </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
                       {invoice.archived_at ? (
                         <StatusBadge label="Archived" />
                       ) : null}
@@ -1318,45 +1334,20 @@ export default function InvoicePanel({
                         label={formatStatus(invoice.status)}
                         tone={statusTone(invoice.status)}
                       />
+                      <span className="ml-auto text-xs font-semibold text-ink-soft">
+                        {invoice.confirmations ?? 0}/
+                        {invoice.confirmation_target} confirmations
+                      </span>
                     </div>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      <div className="grid gap-1">
-                        <p className={labelClass}>Amount</p>
-                        <p className="text-sm font-semibold text-ink">
-                          {formatXmrAmount(invoice.amount_xmr)} XMR
-                        </p>
-                      </div>
-                      <div className="grid gap-1">
-                        <p className={labelClass}>Confirmations</p>
-                        <p className="text-sm font-semibold text-ink">
-                          {invoice.confirmations ?? 0}/
-                          {invoice.confirmation_target}
-                        </p>
-                      </div>
-                      <div className="grid gap-1">
-                        <p className={labelClass}>Created</p>
-                        <p
-                          className="text-sm font-semibold text-ink"
-                          title={
-                            formatRelativeTime(invoice.created_at) ?? undefined
-                          }
-                        >
-                          {formatTimestamp(invoice.created_at)}
-                        </p>
-                      </div>
-                      <div className="grid gap-1">
-                        <p className={labelClass}>Expires</p>
-                        <p
-                          className="text-sm font-semibold text-ink"
-                          title={
-                            formatRelativeTime(invoice.expires_at) ?? undefined
-                          }
-                        >
-                          {formatTimestamp(invoice.expires_at)}
-                        </p>
-                      </div>
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-stroke pt-3 text-xs font-semibold text-ink-soft">
+                      <p title={formatTimestamp(invoice.created_at)}>
+                        Created {formatRelativeTime(invoice.created_at) ?? "-"}
+                      </p>
+                      <p title={formatTimestamp(invoice.expires_at)}>
+                        Expires {formatRelativeTime(invoice.expires_at) ?? "-"}
+                      </p>
                     </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap gap-2">
                       {mode !== "tour" ? (
                         <Link
                           className={smallSecondaryButton}
@@ -1511,9 +1502,9 @@ export default function InvoicePanel({
                 );
               })}
             </div>
-            <div className="hidden overflow-x-auto rounded-surface border border-stroke bg-white/70 shadow-soft lg:block">
+            <div className="hidden overflow-x-auto rounded-surface border border-stroke bg-card shadow-soft lg:block">
               <table className="w-full border-collapse text-left text-sm">
-                <thead className="bg-white/60">
+                <thead className="bg-sand/40">
                   <tr className="border-b border-stroke">
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       Invoice
@@ -1577,9 +1568,9 @@ export default function InvoicePanel({
                     return (
                       <Fragment key={invoice.id}>
                         <tr
-                          className={`border-b border-stroke ${invoice.archived_at ? "bg-ink/5" : ""}`}
+                          className={`border-b border-stroke transition-colors hover:bg-white/70 ${invoice.archived_at ? "bg-ink/5" : ""}`}
                         >
-                          <td className="max-w-[320px] px-4 py-3 align-top">
+                          <td className="w-[36%] max-w-[360px] px-4 py-3 align-top">
                             <div className="grid gap-1 text-left">
                               {mode === "tour" ? (
                                 <span className="w-fit break-words font-mono text-xs text-ink underline underline-offset-4">
@@ -1595,7 +1586,7 @@ export default function InvoicePanel({
                                   {invoice.id}
                                 </Link>
                               )}
-                              <span className="break-words text-xs text-ink-soft">
+                              <span className="break-words text-xs text-ink-soft/80">
                                 {invoice.address.slice(0, 18)}…
                                 {invoice.address.slice(-10)}
                               </span>
@@ -1612,7 +1603,7 @@ export default function InvoicePanel({
                               ) : null}
                             </div>
                           </td>
-                          <td className="px-4 py-3 align-top font-semibold text-ink whitespace-nowrap">
+                          <td className="px-4 py-3 align-top whitespace-nowrap font-mono text-base font-semibold text-ink">
                             {formatXmrAmount(invoice.amount_xmr)} XMR
                           </td>
                           <td className="px-4 py-3 align-top whitespace-nowrap">
@@ -1626,7 +1617,7 @@ export default function InvoicePanel({
                             {invoice.confirmations ?? 0}/
                             {invoice.confirmation_target}
                           </td>
-                          <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
+                          <td className="px-4 py-3 align-top whitespace-nowrap text-xs font-semibold text-ink-soft">
                             <span
                               title={
                                 formatRelativeTime(invoice.created_at) ??
@@ -1636,7 +1627,7 @@ export default function InvoicePanel({
                               {formatTimestamp(invoice.created_at)}
                             </span>
                           </td>
-                          <td className="px-4 py-3 align-top text-xs font-semibold text-ink whitespace-nowrap">
+                          <td className="px-4 py-3 align-top whitespace-nowrap text-xs font-semibold text-ink-soft">
                             <span
                               title={
                                 formatRelativeTime(invoice.expires_at) ??
@@ -1848,13 +1839,21 @@ export default function InvoicePanel({
 
       {archiveModalInvoiceId ? (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
-          <div className="w-full max-w-lg rounded-surface border border-stroke bg-white p-8 shadow-deep">
+          <div
+            className="max-h-[calc(100vh-3rem)] w-full max-w-lg overflow-y-auto rounded-surface border border-stroke bg-card p-5 shadow-deep sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="archive-invoice-title"
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                   Archive invoice
                 </p>
-                <h2 className="mt-2 font-sans font-semibold text-2xl">
+                <h2
+                  className="mt-1 font-sans text-xl font-semibold sm:text-2xl"
+                  id="archive-invoice-title"
+                >
                   Archive this invoice?
                 </h2>
                 <p className="mt-2 text-sm text-ink-soft">

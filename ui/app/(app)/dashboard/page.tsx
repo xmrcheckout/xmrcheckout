@@ -513,6 +513,7 @@ export default async function DashboardPage({
       >
         <PageIntroBand
           as="p"
+          compact={activeTab !== "overview"}
           eyebrow="Merchant workspace"
           title="Monitor checkout activity without spend authority."
           description={

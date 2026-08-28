@@ -7,6 +7,7 @@ export type PageIntroFact = {
 
 type PageIntroBandProps = {
   as?: "h1" | "p";
+  compact?: boolean;
   description: ReactNode;
   eyebrow: string;
   facts?: PageIntroFact[];
@@ -17,6 +18,7 @@ type PageIntroBandProps = {
 
 export default function PageIntroBand({
   as = "h1",
+  compact = false,
   description,
   eyebrow,
   facts = [],
@@ -44,7 +46,7 @@ export default function PageIntroBand({
         }`}
       >
         <div
-          className={`px-5 py-6 sm:px-7 sm:py-7 ${
+          className={`${compact ? "px-4 py-4 sm:px-5 sm:py-5" : "px-5 py-6 sm:px-7 sm:py-7"} ${
             facts.length > 0
               ? isInk
                 ? "border-b border-cream/20 lg:border-b-0 lg:border-r"
@@ -64,13 +66,13 @@ export default function PageIntroBand({
             {eyebrow}
           </p>
           <Title
-            className="mt-2 max-w-4xl font-sans text-[clamp(1.8rem,1.6rem+1vw,2.7rem)] font-semibold leading-tight"
+            className={`${compact ? "mt-1 max-w-4xl text-[clamp(1.35rem,1.2rem+0.8vw,2rem)]" : "mt-2 max-w-4xl text-[clamp(1.8rem,1.6rem+1vw,2.7rem)]"} font-sans font-semibold leading-tight`}
             id={id}
           >
             {title}
           </Title>
           <div
-            className={`mt-3 max-w-3xl text-[1rem] leading-relaxed ${
+            className={`${compact ? "mt-2 max-w-2xl text-sm" : "mt-3 max-w-3xl text-[1rem]"} leading-relaxed ${
               isInk ? "text-cream/70" : "text-ink-soft"
             }`}
           >
@@ -89,7 +91,7 @@ export default function PageIntroBand({
           >
             {facts.map((fact) => (
               <div
-                className="min-w-0 px-3 py-5 sm:px-5 lg:py-7"
+                className={`${compact ? "min-w-0 px-3 py-3 sm:px-4 lg:py-4" : "min-w-0 px-3 py-5 sm:px-5 lg:py-7"}`}
                 key={fact.label}
               >
                 <dt

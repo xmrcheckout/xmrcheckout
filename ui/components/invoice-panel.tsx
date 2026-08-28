@@ -12,6 +12,7 @@ import {
   FIAT_CURRENCY_SUGGESTIONS,
   getCurrencyFlag,
 } from "../lib/fiat-currencies";
+import AccessibleDialog from "./accessible-dialog";
 import StatusBadge, { type StatusTone } from "./status-badge";
 
 import {
@@ -296,13 +297,12 @@ function CreateInvoiceModal({
     (qrLogoMode === "custom" && !qrLogoDataUrl);
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-6 sm:py-10">
-      <div
-        className="flex max-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col rounded-surface border border-stroke bg-card shadow-deep sm:max-h-[85vh]"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="create-invoice-title"
-      >
+    <AccessibleDialog
+      ariaLabelledBy="create-invoice-title"
+      initialFocusSelector="#wizard_amount_mode"
+      onClose={onClose}
+      panelClassName="flex max-h-[calc(100dvh-0.75rem)] max-w-3xl flex-col rounded-t-[1.2rem] bg-cream sm:max-h-[85vh] sm:rounded-surface"
+    >
         <span className="sr-only" role="status" aria-live="polite">
           {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : ""}
         </span>
@@ -896,8 +896,7 @@ function CreateInvoiceModal({
             </>
           )}
         </form>
-      </div>
-    </div>
+    </AccessibleDialog>
   );
 }
 
@@ -1828,62 +1827,59 @@ export default function InvoicePanel({
       ) : null}
 
       {archiveModalInvoiceId ? (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 px-4 py-10">
-          <div
-            className="max-h-[calc(100vh-3rem)] w-full max-w-lg overflow-y-auto rounded-surface border border-stroke bg-card p-5 shadow-deep sm:p-8"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="archive-invoice-title"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                  Archive invoice
-                </p>
-                <h2
-                  className="mt-1 font-sans text-xl font-semibold sm:text-2xl"
-                  id="archive-invoice-title"
-                >
-                  Archive this invoice?
-                </h2>
-                <p className="mt-2 text-sm text-ink-soft">
-                  Archived invoices stay available in the archive list.
-                </p>
-                {mode === "tour" ? (
-                  <p className="mt-2 text-sm font-semibold text-ink-soft">
-                    Tour mode: no changes are saved.
-                  </p>
-                ) : null}
-              </div>
-              <button
-                className={secondaryButton}
-                type="button"
-                onClick={closeArchiveModal}
+        <AccessibleDialog
+          ariaLabelledBy="archive-invoice-title"
+          onClose={closeArchiveModal}
+          panelClassName="max-h-[calc(100dvh-1.5rem)] max-w-lg p-5 sm:rounded-surface sm:p-8"
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
+                Archive invoice
+              </p>
+              <h2
+                className="mt-1 font-sans text-xl font-semibold sm:text-2xl"
+                id="archive-invoice-title"
               >
-                Close
-              </button>
+                Archive this invoice?
+              </h2>
+              <p className="mt-2 text-sm text-ink-soft">
+                Archived invoices stay available in the archive list.
+              </p>
+              {mode === "tour" ? (
+                <p className="mt-2 text-sm font-semibold text-ink-soft">
+                  Tour mode: no changes are saved.
+                </p>
+              ) : null}
             </div>
-            <div className="mt-6 flex flex-wrap justify-end gap-3">
-              <button
-                className={secondaryButton}
-                type="button"
-                onClick={closeArchiveModal}
-              >
-                Cancel
-              </button>
-              <form action={archiveAction}>
-                <input
-                  type="hidden"
-                  name="invoice_id"
-                  value={archiveModalInvoiceId}
-                />
-                <button className={primaryButton} type="submit">
-                  Archive invoice
-                </button>
-              </form>
-            </div>
+            <button
+              className={secondaryButton}
+              type="button"
+              onClick={closeArchiveModal}
+            >
+              Close
+            </button>
           </div>
-        </div>
+          <div className="mt-6 flex flex-wrap justify-end gap-3">
+            <button
+              className={secondaryButton}
+              type="button"
+              onClick={closeArchiveModal}
+            >
+              Cancel
+            </button>
+            <form action={archiveAction}>
+              <input
+                type="hidden"
+                name="invoice_id"
+                value={archiveModalInvoiceId}
+              />
+              <button className={primaryButton} type="submit">
+                Archive invoice
+              </button>
+            </form>
+          </div>
+        </AccessibleDialog>
       ) : null}
     </section>
   );

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import LoginForm from "../app/(app)/login/login-form";
+import AccessibleDialog from "./accessible-dialog";
 
 const loginParam = "login";
 
@@ -44,8 +45,6 @@ export default function LoginModal() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isOpen = searchParams.get(loginParam) === "1";
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const closeModal = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -54,130 +53,62 @@ export default function LoginModal() {
     router.replace(query ? `${pathname}?${query}` : pathname);
   }, [pathname, router, searchParams]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    previousFocusRef.current =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-
-    window.requestAnimationFrame(() => {
-      const firstField =
-        modalRef.current?.querySelector<HTMLElement>("#payment_address");
-      firstField?.focus();
-    });
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeModal();
-        return;
-      }
-      if (event.key !== "Tab" || !modalRef.current) {
-        return;
-      }
-
-      const focusable = Array.from(
-        modalRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((element) => !element.hasAttribute("hidden"));
-
-      if (focusable.length === 0) {
-        event.preventDefault();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-
-      if (event.shiftKey && active === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-      previousFocusRef.current?.focus();
-      previousFocusRef.current = null;
-    };
-  }, [closeModal, isOpen]);
-
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div
-      className="fixed inset-0 z-40 grid place-items-center overflow-y-auto px-3 py-3 sm:px-4 sm:py-4"
+    <AccessibleDialog
       id="login-modal"
-      role="dialog"
-      aria-modal="true"
       aria-labelledby="login-title"
       aria-describedby="login-description"
+      initialFocusSelector="#payment_address"
+      onClose={closeModal}
+      panelClassName="max-h-[calc(100dvh-1.5rem)] sm:w-[min(500px,94vw)]"
     >
-      <div
-        className="absolute inset-0 bg-ink/60 backdrop-blur"
-        onClick={closeModal}
-      />
-      <div
-        ref={modalRef}
-        className="relative max-h-[calc(100dvh-1.5rem)] w-[min(500px,94vw)] overflow-y-auto rounded-surface border border-ink/20 bg-card shadow-deep"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex items-start justify-between gap-3 border-b border-cream/20 bg-ink px-4 py-4 text-cream sm:px-5">
-          <div>
-            <p className="flex items-center gap-2 text-xs font-semibold text-cream/70">
-              <span
-                className="h-2 w-2 rounded-full bg-monero"
-                aria-hidden="true"
-              />
-              View-only setup
-            </p>
-            <h3
-              id="login-title"
-              className="mt-1 font-sans font-semibold text-lg leading-tight"
-            >
-              Connect your wallet for payment detection.
-            </h3>
-          </div>
-          <button
-            className="shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
-            type="button"
-            onClick={closeModal}
-            aria-label="Close login modal"
+      <div className="flex items-start justify-between gap-3 border-b border-cream/20 bg-ink px-4 py-4 text-cream sm:px-5">
+        <div>
+          <p className="flex items-center gap-2 text-xs font-semibold text-cream/70">
+            <span
+              className="h-2 w-2 rounded-full bg-monero"
+              aria-hidden="true"
+            />
+            View-only setup
+          </p>
+          <h3
+            id="login-title"
+            className="mt-1 font-sans text-lg font-semibold leading-tight"
           >
-            Close
-          </button>
+            Connect your wallet for payment detection.
+          </h3>
         </div>
-        <div className="p-4 sm:p-5">
-          <div
-            id="login-description"
-            className="border-l-2 border-sage pl-3 text-xs leading-relaxed text-ink-soft sm:text-sm"
-          >
-            <p className="font-semibold text-ink">Before you continue</p>
-            <p className="mt-1">
-              Your primary address identifies the dashboard. Your secret view
-              key lets XMR Checkout detect incoming invoice payments. It is
-              encrypted at rest, cannot spend from your wallet, and is the
-              maximum permission this software asks for.
-            </p>
-            <p className="mt-1 font-semibold text-ink">
-              Never paste a spend key here.
-            </p>
-          </div>
-          <LoginForm />
-        </div>
+        <button
+          className="shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
+          type="button"
+          onClick={closeModal}
+          aria-label="Close login modal"
+        >
+          Close
+        </button>
       </div>
-    </div>
+      <div className="p-4 sm:p-5">
+        <div
+          id="login-description"
+          className="border-l-2 border-sage pl-3 text-xs leading-relaxed text-ink-soft sm:text-sm"
+        >
+          <p className="font-semibold text-ink">Before you continue</p>
+          <p className="mt-1">
+            Your primary address identifies the dashboard. Your secret view
+            key lets XMR Checkout detect incoming invoice payments. It is
+            encrypted at rest, cannot spend from your wallet, and is the
+            maximum permission this software asks for.
+          </p>
+          <p className="mt-1 font-semibold text-ink">
+            Never paste a spend key here.
+          </p>
+        </div>
+        <LoginForm />
+      </div>
+    </AccessibleDialog>
   );
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 export type WorkspaceNavItem = {
   value: string;
   href: string;
-  index: string;
+  index?: string;
   label: string;
   detail: string;
 };
@@ -17,6 +17,7 @@ type WorkspaceNavProps = {
   footerTitle: string;
   footerDescription: string;
   mobileColumns?: 2 | 3;
+  showIndexes?: boolean;
 };
 
 export default function WorkspaceNav({
@@ -28,6 +29,7 @@ export default function WorkspaceNav({
   footerTitle,
   footerDescription,
   mobileColumns = 3,
+  showIndexes = true,
 }: WorkspaceNavProps) {
   const mobileGridClass =
     mobileColumns === 2 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3";
@@ -56,16 +58,18 @@ export default function WorkspaceNav({
               }`}
               href={item.href}
             >
-              <span
-                className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg border font-mono text-xs font-semibold sm:grid ${
-                  isActive
-                    ? "border-cream/25 bg-cream/10 text-cream"
-                    : "border-clay/40 bg-clay/10 text-ink"
-                }`}
-                aria-hidden="true"
-              >
-                {item.index}
-              </span>
+              {showIndexes && item.index ? (
+                <span
+                  className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg border font-mono text-xs font-semibold sm:grid ${
+                    isActive
+                      ? "border-cream/25 bg-cream/10 text-cream"
+                      : "border-clay/40 bg-clay/10 text-ink"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {item.index}
+                </span>
+              ) : null}
               <span className="min-w-0">
                 <span className="block truncate text-xs font-semibold sm:text-sm">
                   {item.label}

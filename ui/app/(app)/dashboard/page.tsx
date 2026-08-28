@@ -8,7 +8,6 @@ import BtcpayCheckoutStyleSection from "../../../components/btcpay-checkout-styl
 import DefaultConfirmationTargetSection from "../../../components/default-confirmation-target-section";
 import DefaultQrLogoSection from "../../../components/default-qr-logo-section";
 import InvoicePanel from "../../../components/invoice-panel";
-import PageIntroBand from "../../../components/page-intro-band";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import SystemHealthPanel, {
   type SystemStatusSummary,
@@ -91,35 +90,30 @@ const dashboardNavItems = [
   {
     value: "overview",
     href: "/dashboard?tab=overview",
-    index: "01",
     label: "Overview",
     detail: "Activity and connectivity",
   },
   {
     value: "invoices",
     href: "/dashboard?tab=invoices",
-    index: "02",
     label: "Invoices",
     detail: "Create and review invoices",
   },
   {
     value: "webhooks",
     href: "/dashboard?tab=webhooks",
-    index: "03",
     label: "Webhooks",
     detail: "Endpoints and delivery history",
   },
   {
     value: "profile",
     href: "/dashboard?tab=profile",
-    index: "04",
     label: "Profile",
     detail: "Credentials and defaults",
   },
   {
     value: "health",
     href: "/dashboard?tab=health",
-    index: "05",
     label: "System health",
     detail: "Detection and connectivity",
   },
@@ -463,61 +457,42 @@ export default async function DashboardPage({
 
   return (
     <main className="px-[6vw] pb-16 pt-8 text-ink">
-      <section
-        className="mx-auto w-full max-w-7xl"
-        aria-label="Merchant workspace status"
+      <header
+        className="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-4 border-b border-stroke pb-5"
+        aria-label="Dashboard header"
       >
-        <PageIntroBand
-          as="p"
-          compact={activeTab !== "overview"}
-          eyebrow="Merchant workspace"
-          title="Monitor checkout activity without spend authority."
-          description={
-            <p>
-              Payments move from each customer to your wallet. This workspace
-              only observes invoice state and relays events you configure.
-            </p>
-          }
-          facts={[
-            { label: "Access", value: "View only" },
-            {
-              label: "Detection",
-              value:
-                activeTab === "overview" || activeTab === "health"
-                  ? reconcilerStatusBadge.label
-                  : (
-                      <Link
-                        className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
-                        href="/dashboard?tab=health"
-                      >
-                        View health
-                      </Link>
-                    ),
-            },
-            {
-              label: "System health",
-              value:
-                activeTab === "overview" || activeTab === "health"
-                  ? (
-                      <Link
-                        className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
-                        href="/dashboard?tab=health"
-                      >
-                        Open details
-                      </Link>
-                    )
-                  : (
-                      <Link
-                        className="underline decoration-cream/50 underline-offset-2 hover:decoration-cream"
-                        href="/dashboard?tab=health"
-                      >
-                        View health
-                      </Link>
-                    ),
-            },
-          ]}
-        />
-      </section>
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold text-ink-soft">Dashboard</p>
+          <p className="mt-1 font-sans text-2xl font-semibold leading-tight sm:text-3xl">
+            Merchant workspace
+          </p>
+          <p className="mt-2 text-sm text-ink-soft sm:text-base">
+            Observe invoice activity, event delivery, and payment detection.
+          </p>
+        </div>
+        <Link
+          className="inline-flex min-h-10 items-center gap-2 rounded-full border border-stroke bg-white/70 px-3.5 py-2 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
+          href="/dashboard?tab=health"
+          aria-label="Open system health"
+        >
+          <span
+            className={`h-2 w-2 rounded-full ${
+              reconcilerStatusBadge.tone === "success"
+                ? "bg-sage"
+                : reconcilerStatusBadge.tone === "error"
+                  ? "bg-red-500"
+                  : "bg-amber-500"
+            }`}
+            aria-hidden="true"
+          />
+          <span>
+            {activeTab === "overview" || activeTab === "health"
+              ? `Health · ${reconcilerStatusBadge.label}`
+              : "System health"}
+          </span>
+          <span aria-hidden="true">→</span>
+        </Link>
+      </header>
 
       <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
         <WorkspaceNav
@@ -529,6 +504,7 @@ export default async function DashboardPage({
           footerTitle="Direct to merchant"
           footerDescription="This software detects payments. It cannot sign transactions or move funds."
           mobileColumns={2}
+          showIndexes={false}
         />
 
         <div className="min-w-0">

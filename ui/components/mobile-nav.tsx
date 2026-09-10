@@ -16,6 +16,15 @@ export default function MobileNav({ children }: MobileNavProps) {
     setOpen((current) => !current);
   };
 
+  const handleNavigationClick = (event: MouseEvent<HTMLElement>) => {
+    if (!(event.target instanceof Element)) return;
+
+    const item = event.target.closest("a[href], button");
+    if (item && event.currentTarget.contains(item)) {
+      setOpen(false);
+    }
+  };
+
   return (
     <details className="mobile-nav" open={open}>
       <summary
@@ -30,6 +39,7 @@ export default function MobileNav({ children }: MobileNavProps) {
         id="mobile-navigation"
         className="mobile-nav-panel"
         aria-label="Mobile navigation"
+        onClick={handleNavigationClick}
       >
         {children}
       </nav>

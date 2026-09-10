@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 
+import PendingSubmitButton from "../../../components/pending-submit-button";
+
 import { loginAction, type LoginState } from "./actions";
 
 const initialState: LoginState = { error: null };
@@ -105,6 +107,10 @@ export default function LoginForm() {
 
   return (
     <form className="mt-4 grid gap-3" action={formAction}>
+      <details className="text-sm text-ink-soft">
+        <summary className="cursor-pointer underline underline-offset-4">Where do I find these?</summary>
+        <p className="mt-2">In your Monero wallet, open the address or key settings and copy your primary address and secret view key. Names vary by wallet. Never provide your recovery seed or private spend key.</p>
+      </details>
       <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
           <label
@@ -125,13 +131,15 @@ export default function LoginForm() {
                   fill="currentColor"
                 />
               </svg>
-              Valid
+              Format looks correct
             </span>
           ) : null}
         </div>
         <textarea
           className="min-h-[72px] w-full resize-none rounded-xl border border-stroke bg-white/80 px-3 py-2.5 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
           id="payment_address"
+          aria-describedby="address-help login-feedback"
+          aria-invalid={validationStatus === "invalid"}
           name="payment_address"
           rows={2}
           autoComplete="off"
@@ -143,7 +151,7 @@ export default function LoginForm() {
             setValidationMessage(null);
           }}
         />
-        <p className="text-xs leading-relaxed text-ink-soft">
+        <p id="address-help" className="text-xs leading-relaxed text-ink-soft">
           Use the 95-character primary address that starts with 4. Subaddresses
           and integrated addresses are not used for dashboard access.
         </p>
@@ -168,7 +176,7 @@ export default function LoginForm() {
                   fill="currentColor"
                 />
               </svg>
-              Valid
+              Format looks correct
             </span>
           ) : null}
         </div>
@@ -176,6 +184,8 @@ export default function LoginForm() {
           <input
             className="min-h-[42px] w-full rounded-xl border border-stroke bg-white/80 px-3 py-2.5 pr-20 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
             id="view_key"
+            aria-describedby="view-key-help login-feedback"
+            aria-invalid={validationStatus === "invalid"}
             name="view_key"
             type={isViewKeyVisible ? "text" : "password"}
             autoComplete="off"
@@ -195,38 +205,40 @@ export default function LoginForm() {
             {isViewKeyVisible ? "Hide" : "Show"}
           </button>
         </div>
-        <p className="text-xs leading-relaxed text-ink-soft">
+        <p id="view-key-help" className="text-xs leading-relaxed text-ink-soft">
           Paste the 64-character secret view key.
         </p>
       </div>
-      {validationStatus === "checking" ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-amber-700">
-          Checking address and view key
-        </p>
-      ) : null}
-      {validationStatus === "valid" ? (
-        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-emerald-700">
-          Address and view key match
-        </p>
-      ) : null}
-      {validationStatus === "invalid" || validationStatus === "error" ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-          {validationMessage}
-        </p>
-      ) : null}
-      {state.error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-          {state.error}
-        </p>
-      ) : null}
+      <div id="login-feedback" role="status" aria-live="polite" aria-atomic="true">
+        {validationStatus === "checking" ? (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-amber-700">
+            Checking address and view key
+          </p>
+        ) : null}
+        {validationStatus === "valid" ? (
+          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-emerald-700">
+            Address and view key match
+          </p>
+        ) : null}
+        {validationStatus === "invalid" || validationStatus === "error" ? (
+          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+            {validationMessage}
+          </p>
+        ) : null}
+        {state.error ? (
+          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+            {state.error}
+          </p>
+        ) : null}
+      </div>
       <div className="flex items-center justify-end">
-        <button
+        <PendingSubmitButton
           className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none"
-          type="submit"
+          pendingLabel="Connecting…"
           disabled={!canSubmit}
         >
           Sign in
-        </button>
+        </PendingSubmitButton>
       </div>
     </form>
   );

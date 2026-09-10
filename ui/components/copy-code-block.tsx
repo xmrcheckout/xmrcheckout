@@ -13,22 +13,28 @@ export default function CopyCodeBlock({
   className,
 }: CopyCodeBlockProps) {
   const codeRef = useRef<HTMLPreElement>(null);
+  const [copyFailed, setCopyFailed] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     const code = codeRef.current?.textContent ?? "";
 
+    setCopyFailed(false);
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
       setCopied(false);
+      setCopyFailed(true);
     }
   };
 
   return (
     <div className="relative min-w-0 max-w-full overflow-hidden">
+      <p role="status" aria-live="polite" className={copyFailed ? "p-3 text-sm text-red-700" : "sr-only"}>
+        {copyFailed ? "Could not copy. Select and copy the text manually." : copied ? "Code copied to clipboard" : ""}
+      </p>
       <pre ref={codeRef} className={className}>
         {children}
       </pre>

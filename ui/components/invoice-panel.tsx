@@ -1,5 +1,7 @@
 "use client";
 
+import PendingSubmitButton from "./pending-submit-button";
+
 import Link from "next/link";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
@@ -153,6 +155,7 @@ function CreateInvoiceModal({
     "account_default" | "monero" | "none" | "custom"
   >("account_default");
   const [qrLogoDataUrl, setQrLogoDataUrl] = useState<string | null>(null);
+  const [copyFailed, setCopyFailed] = useState(false);
   const [copiedPublicInvoiceUrl, setCopiedPublicInvoiceUrl] = useState(false);
   const browserOrigin = useBrowserOrigin();
   const createInvoiceOrigin =
@@ -273,12 +276,14 @@ function CreateInvoiceModal({
     if (!publicInvoiceUrl) {
       return;
     }
+    setCopyFailed(false);
     try {
       await navigator.clipboard.writeText(publicInvoiceUrl);
       setCopiedPublicInvoiceUrl(true);
       window.setTimeout(() => setCopiedPublicInvoiceUrl(false), 2000);
     } catch {
       setCopiedPublicInvoiceUrl(false);
+      setCopyFailed(true);
     }
   };
 
@@ -308,7 +313,7 @@ function CreateInvoiceModal({
       panelClassName="flex max-h-[calc(100dvh-0.75rem)] max-w-3xl flex-col rounded-t-[1.2rem] bg-cream sm:max-h-[85vh] sm:rounded-surface"
     >
         <span className="sr-only" role="status" aria-live="polite">
-          {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : ""}
+          {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : state.invoiceId ? "Invoice created" : ""}
         </span>
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stroke px-5 py-5 sm:px-7 sm:py-6">
           <div>
@@ -368,6 +373,7 @@ function CreateInvoiceModal({
                       {publicInvoiceUrl}
                     </Link>
                   </p>
+                  {copyFailed ? <p role="alert" className="break-all text-sm text-red-700">Could not copy. Select and copy the text manually.</p> : null}
                   <div className="mt-4 flex flex-wrap gap-3">
                     <button
                       className={secondaryButton}
@@ -396,7 +402,7 @@ function CreateInvoiceModal({
               ) : null}
 
               {state.error ? (
-                <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
                   {state.error}
                 </p>
               ) : null}
@@ -874,7 +880,7 @@ function CreateInvoiceModal({
                   </div>
 
                   {state.error ? (
-                    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                    <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
                       {state.error}
                     </p>
                   ) : null}
@@ -889,13 +895,13 @@ function CreateInvoiceModal({
                 >
                   Cancel
                 </button>
-                <button
+                <PendingSubmitButton
                   className={primaryButton}
-                  type="submit"
+                  pendingLabel="Creating invoice…"
                   disabled={createDisabled}
                 >
                   Create invoice
-                </button>
+                </PendingSubmitButton>
               </div>
             </>
           )}
@@ -1787,7 +1793,7 @@ export default function InvoicePanel({
                                   ) : null}
                                   {archiveState.error &&
                                   archiveModalInvoiceId === invoice.id ? (
-                                    <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+                                    <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
                                       {archiveState.error}
                                     </p>
                                   ) : null}

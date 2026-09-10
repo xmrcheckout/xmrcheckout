@@ -13,20 +13,27 @@ export default function CopyIconButton({
   label,
   className,
 }: CopyIconButtonProps) {
+  const [copyFailed, setCopyFailed] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
+    setCopyFailed(false);
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
       setCopied(false);
+      setCopyFailed(true);
     }
   };
 
   return (
     <>
+      {copyFailed ? <div className="min-w-0 text-sm text-red-700" role="alert">
+        <p>Could not copy. Select and copy the text manually.</p>
+        <code className="block break-all select-text">{value}</code>
+      </div> : null}
       <span className="sr-only" role="status" aria-live="polite">
         {copied ? `${label} copied to clipboard` : ""}
       </span>

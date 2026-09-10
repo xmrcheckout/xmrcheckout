@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import BtcpayModalBridge from "../../../components/btcpay-modal-bridge";
 import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
 import InvoicePaymentDetails from "../../../components/invoice-payment-details";
-import InvoiceStatusAutoRefresh from "../../../components/invoice-status-auto-refresh";
+import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../components/invoice-status-auto-refresh";
 import { formatRelativeTime } from "../../../components/relative-time";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import StatusRefreshButton from "../../../components/status-refresh-button";
@@ -163,13 +163,28 @@ export default async function BtcpayModalInvoicePage({
       {
         cache: "no-store",
       },
-    ),
-    fetch(`${apiBaseUrl}/api/core/public/system/status`, { cache: "no-store" }),
+    ).catch(() => new Response(null, { status: 503 })),
+    fetch(`${apiBaseUrl}/api/core/public/system/status`, { cache: "no-store" }).catch(() => new Response(null, { status: 503 })),
   ]);
+
+  const invoice = response.ok
+    ? (await response.json().catch(() => null)) as InvoiceStatusResponse | null
+    : null;
+  const retrievedAt = invoice ? new Date().toISOString() : undefined;
+  const statusMessage = invoice
+    ? `${invoice.status === "pending" ? "Awaiting funds" : invoice.status.replaceAll("_", " ")}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    : "";
 
   if (response.status === 404) {
     return (
+      <InvoiceStatusAutoRefresh
+      key={invoiceId}
+      retrievedAt={retrievedAt}
+      error={!invoice}
+      statusMessage={statusMessage}
+    >
       <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
+        <InvoiceRefreshFeedback />
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
           <header className="bg-ink px-6 py-5 text-cream">
@@ -190,13 +205,20 @@ export default async function BtcpayModalInvoicePage({
           </div>
         </section>
       </main>
+    </InvoiceStatusAutoRefresh>
     );
   }
 
-  if (!response.ok) {
+  if (!response.ok || !invoice) {
     return (
+      <InvoiceStatusAutoRefresh
+      key={invoiceId}
+      retrievedAt={retrievedAt}
+      error={!invoice}
+      statusMessage={statusMessage}
+    >
       <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
-        <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
+        <InvoiceRefreshFeedback />
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
           <header className="bg-ink px-6 py-5 text-cream">
             <p className="flex items-center gap-2 text-sm font-semibold text-cream/70">
@@ -216,12 +238,12 @@ export default async function BtcpayModalInvoicePage({
           </div>
         </section>
       </main>
+    </InvoiceStatusAutoRefresh>
     );
   }
 
-  const invoice = (await response.json()) as InvoiceStatusResponse;
   const systemStatus = systemStatusResponse.ok
-    ? ((await systemStatusResponse.json()) as SystemStatusResponse)
+    ? ((await systemStatusResponse.json().catch(() => null)) as SystemStatusResponse | null)
     : null;
   const statusLabel = formatStatus(invoice.status);
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
@@ -249,8 +271,14 @@ export default async function BtcpayModalInvoicePage({
     Boolean(invoice.checkout_continue_available);
 
   return (
-    <main className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
-      <InvoiceStatusAutoRefresh intervalMs={30000} />
+    <InvoiceStatusAutoRefresh
+      key={invoiceId}
+      retrievedAt={retrievedAt}
+      error={!invoice}
+      statusMessage={statusMessage}
+    >
+      <main className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
+      <InvoiceRefreshFeedback />
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       {useClassicCheckout ? (
         <div className="mx-auto grid max-w-md gap-5">
@@ -279,6 +307,7 @@ export default async function BtcpayModalInvoicePage({
             quote={invoice.quote ?? null}
             status={invoice.status}
             confirmationTarget={confirmationTarget}
+            confirmations={confirmations}
             redirectUrl={invoice.btcpay_redirect_url ?? null}
             redirectAutomatically={
               invoice.btcpay_redirect_automatically ?? null
@@ -313,6 +342,7 @@ export default async function BtcpayModalInvoicePage({
             hasDetectedPayment={hasDetectedPayment}
             status={invoice.status}
             confirmationTarget={confirmationTarget}
+            confirmations={confirmations}
             qrLogoMode={invoice.qr_logo ?? "monero"}
             qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
           />
@@ -443,5 +473,6 @@ export default async function BtcpayModalInvoicePage({
         </div>
       )}
     </main>
+    </InvoiceStatusAutoRefresh>
   );
 }

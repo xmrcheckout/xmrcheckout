@@ -25,7 +25,7 @@ export async function loginAction(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ payment_address: paymentAddress, view_key: viewKey }),
     cache: "no-store",
-  });
+  }).catch(() => new Response(null, { status: 503 }));
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);

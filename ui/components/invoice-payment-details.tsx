@@ -15,6 +15,7 @@ type InvoicePaymentDetailsProps = {
   hasDetectedPayment: boolean;
   status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
   confirmationTarget: number;
+  confirmations: number;
   qrLogoMode?: "monero" | "none" | "custom" | null;
   qrLogoDataUrl?: string | null;
   enableFiatEstimate?: boolean;
@@ -32,10 +33,12 @@ export default function InvoicePaymentDetails({
   hasDetectedPayment,
   status,
   confirmationTarget,
+  confirmations,
   qrLogoMode,
   qrLogoDataUrl,
   enableFiatEstimate = true,
 }: InvoicePaymentDetailsProps) {
+  const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const {
     rate: usdRate,
@@ -90,11 +93,13 @@ export default function InvoicePaymentDetails({
       .then((url) => {
         if (active) {
           setQrDataUrl(url ?? null);
+          setQrFailed(!url);
         }
       })
       .catch(() => {
         if (active) {
           setQrDataUrl(null);
+          setQrFailed(true);
         }
       });
     return () => {
@@ -136,7 +141,7 @@ export default function InvoicePaymentDetails({
       : hasDetectedPayment
         ? status === "confirmed"
           ? `Payment confirmed on-chain at ${confirmationLabel}.`
-          : "Payment detected. Confirmations are in progress."
+          : `Payment detected. ${confirmations}/${confirmationTarget} confirmations.`
         : "Send the exact amount to this address.";
   const showCopyActions = canSendPayment;
   const showPaymentUri = canSendPayment;
@@ -240,12 +245,7 @@ export default function InvoicePaymentDetails({
                 <p className="break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink">
                   {uri}
                 </p>
-                {shouldPromptPayment ? (
-                  <p className="text-sm leading-relaxed text-ink-soft">
-                    This page updates automatically after the payment is
-                    detected on-chain.
-                  </p>
-                ) : null}
+
               </div>
             </details>
           ) : null}
@@ -253,7 +253,7 @@ export default function InvoicePaymentDetails({
 
         <div className="grid content-center justify-items-center bg-sand/60 px-5 py-6 sm:px-7">
           <p className="justify-self-start text-xs font-semibold text-ink-soft lg:justify-self-center">
-            Scan with a Monero wallet
+            {canSendPayment ? "Scan with a Monero wallet" : status === "payment_detected" ? "Confirmation progress" : status === "confirmed" ? "Payment complete" : "Payment unavailable"}
           </p>
           {canSendPayment && qrDataUrl ? (
             <>
@@ -280,12 +280,7 @@ export default function InvoicePaymentDetails({
                   </div>
                 ) : null}
               </div>
-              <a
-                className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
-                href={uri}
-              >
-                Open wallet
-              </a>
+
             </>
           ) : (
             <p className="mt-4 border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
@@ -293,9 +288,23 @@ export default function InvoicePaymentDetails({
                 ? "This invoice is no longer valid. Contact the merchant to request a new invoice."
                 : isInvalid
                   ? "Payment entry is unavailable for this invoice state."
-                : "The QR code is available while the invoice is awaiting funds."}
+                : status === "payment_detected"
+                  ? `${confirmations}/${confirmationTarget} confirmations. No further payment is requested. Waiting for confirmations.`
+                  : status === "confirmed"
+                    ? "The confirmation target has been reached. No further payment is requested."
+                    : qrFailed
+                      ? "QR code could not be generated. Copy the payment address and exact amount into your wallet."
+                      : "QR code is loading. You can also copy the payment address and exact amount into your wallet."}
             </p>
           )}
+          {canSendPayment ? (
+              <a
+                className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                href={uri}
+              >
+                Open wallet
+              </a>
+          ) : null}
         </div>
       </div>
     </section>

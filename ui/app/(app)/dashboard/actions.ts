@@ -310,11 +310,11 @@ export async function createInvoiceAction(
           : null,
     }),
     cache: "no-store",
-  });
+  }).catch(() => new Response(null, { status: 503 }));
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to create invoice.";
+    const message = detail?.detail ?? "Could not confirm invoice creation. Check the invoice list before trying again.";
     return {
       error: message,
       invoiceId: null,

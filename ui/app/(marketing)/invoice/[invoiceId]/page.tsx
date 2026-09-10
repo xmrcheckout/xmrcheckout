@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import InvoicePaymentDetails from "../../../../components/invoice-payment-details";
-import InvoiceStatusAutoRefresh from "../../../../components/invoice-status-auto-refresh";
+import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../../components/invoice-status-auto-refresh";
 import InvoiceStatusActions from "../../../../components/invoice-status-actions";
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
@@ -75,11 +75,26 @@ export default async function InvoiceStatusDetailPage({
     {
       cache: "no-store",
     },
-  );
+  ).catch(() => new Response(null, { status: 503 }));
+
+  const invoice = response.ok
+    ? (await response.json().catch(() => null)) as InvoiceStatusResponse | null
+    : null;
+  const retrievedAt = invoice ? new Date().toISOString() : undefined;
+  const statusMessage = invoice
+    ? `${invoice.status === "pending" ? "Awaiting funds" : invoice.status.replaceAll("_", " ")}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    : "";
 
   if (response.status === 404) {
     return (
+      <InvoiceStatusAutoRefresh
+      key={invoiceId}
+      retrievedAt={retrievedAt}
+      error={!invoice}
+      statusMessage={statusMessage}
+    >
       <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+        <InvoiceRefreshFeedback />
         <PageIntroBand
           description="The invoice id does not match a known invoice. Check the id and try again."
           eyebrow="Invoice lookup"
@@ -93,12 +108,20 @@ export default async function InvoiceStatusDetailPage({
           </div>
         </section>
       </main>
+    </InvoiceStatusAutoRefresh>
     );
   }
 
-  if (!response.ok) {
+  if (!response.ok || !invoice) {
     return (
+      <InvoiceStatusAutoRefresh
+      key={invoiceId}
+      retrievedAt={retrievedAt}
+      error={!invoice}
+      statusMessage={statusMessage}
+    >
       <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+        <InvoiceRefreshFeedback />
         <PageIntroBand
           description="We could not load this invoice status. Refresh the page or try again later."
           eyebrow="Invoice lookup"
@@ -112,10 +135,10 @@ export default async function InvoiceStatusDetailPage({
           </div>
         </section>
       </main>
+    </InvoiceStatusAutoRefresh>
     );
   }
 
-  const invoice = (await response.json()) as InvoiceStatusResponse;
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
   const hasDetectedPayment =
@@ -163,8 +186,14 @@ export default async function InvoiceStatusDetailPage({
   const expiresTimestamp = formatTimestamp(invoice.expires_at);
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
-      <InvoiceStatusAutoRefresh intervalMs={30000} />
+    <InvoiceStatusAutoRefresh
+      key={invoiceId}
+      retrievedAt={retrievedAt}
+      error={!invoice}
+      statusMessage={statusMessage}
+    >
+      <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+      <InvoiceRefreshFeedback />
       <PageIntroBand
         description={statusDescription(
           invoice.status,
@@ -183,6 +212,7 @@ export default async function InvoiceStatusDetailPage({
           hasDetectedPayment={hasDetectedPayment}
           status={invoice.status}
           confirmationTarget={confirmationTarget}
+            confirmations={confirmations}
           qrLogoMode={invoice.qr_logo ?? "monero"}
           qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
         />
@@ -281,5 +311,6 @@ export default async function InvoiceStatusDetailPage({
         <InvoiceStatusActions />
       </section>
     </main>
+    </InvoiceStatusAutoRefresh>
   );
 }

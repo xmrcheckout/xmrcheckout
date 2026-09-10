@@ -78,6 +78,7 @@ export default function TourInvoicePreview({
           }
           status={invoice.status}
           confirmationTarget={invoice.confirmation_target}
+          confirmations={confirmations}
           enableFiatEstimate={false}
         />
 

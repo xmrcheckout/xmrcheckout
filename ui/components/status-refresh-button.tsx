@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useTransition } from "react";
+import { useInvoiceRefresh } from "./invoice-status-auto-refresh";
 
 type StatusRefreshButtonProps = {
   label?: string;
@@ -13,12 +14,13 @@ export default function StatusRefreshButton({
   className = "",
 }: StatusRefreshButtonProps) {
   const router = useRouter();
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const shared = useInvoiceRefresh();
+  const [localPending, startTransition] = useTransition();
+  const isRefreshing = shared?.pending ?? localPending;
 
   const handleRefresh = () => {
-    setIsRefreshing(true);
-    router.refresh();
-    setTimeout(() => setIsRefreshing(false), 500);
+    if (shared) shared.refresh();
+    else startTransition(() => router.refresh());
   };
 
   return (
@@ -31,7 +33,7 @@ export default function StatusRefreshButton({
     >
       <svg
         aria-hidden="true"
-        className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
+        className={`h-3.5 w-3.5 ${isRefreshing ? "motion-safe:animate-spin" : ""}`}
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

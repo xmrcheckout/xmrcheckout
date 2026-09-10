@@ -60,7 +60,7 @@ export default function InvoiceStatusLookup({
       </div>
       {compact ? null : (
         <p className="text-sm text-ink-soft">
-          Read-only status view. Refresh the page to see new detections.
+          Read-only status view. The invoice page checks for updates every 30 seconds.
         </p>
       )}
       {error ? (

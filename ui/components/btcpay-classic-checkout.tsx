@@ -29,6 +29,7 @@ type BtcpayClassicCheckoutProps = {
   quote: QuotePayload | null;
   status: InvoiceStatus;
   confirmationTarget: number;
+  confirmations: number;
   redirectUrl: string | null;
   redirectAutomatically: boolean | null;
   orderId: string | null;
@@ -98,6 +99,7 @@ export default function BtcpayClassicCheckout({
   quote,
   status,
   confirmationTarget,
+  confirmations,
   redirectUrl,
   redirectAutomatically,
   orderId,
@@ -105,6 +107,7 @@ export default function BtcpayClassicCheckout({
   qrLogoMode,
   qrLogoDataUrl,
 }: BtcpayClassicCheckoutProps) {
+  const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const formattedAmount = useMemo(
     () => formatXmrAmount(amountXmr),
@@ -172,11 +175,13 @@ export default function BtcpayClassicCheckout({
       .then((url) => {
         if (active) {
           setQrDataUrl(url ?? null);
+          setQrFailed(!url);
         }
       })
       .catch(() => {
         if (active) {
           setQrDataUrl(null);
+          setQrFailed(true);
         }
       });
     return () => {
@@ -301,7 +306,7 @@ export default function BtcpayClassicCheckout({
           <StatusBadge label={statusLabel} tone={statusTone} />
         </div>
         <p className="mt-2 text-sm text-cream/70">
-          {statusMessage(status, confirmationTarget)}
+          {status === "payment_detected" ? `Payment detected. ${confirmations}/${confirmationTarget} confirmations.` : statusMessage(status, confirmationTarget)}
         </p>
         <div className="mt-3 flex items-start justify-center gap-3">
           <p className="break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.3rem)] font-semibold leading-tight">
@@ -345,8 +350,12 @@ export default function BtcpayClassicCheckout({
         ) : (
           <p className="rounded-xl border border-stroke bg-cream/70 px-4 py-3 text-sm font-semibold text-ink-soft">
             {canSendPayment
-              ? "QR is loading. Use the payment address below if it does not appear."
-              : "Payment entry is unavailable for this invoice state."}
+              ? qrFailed
+                ? "QR code could not be generated. Copy the payment address and exact amount into your wallet."
+                : "QR code is loading. You can also copy the payment address and exact amount into your wallet."
+              : status === "payment_detected"
+                ? `${confirmations}/${confirmationTarget} confirmations. No further payment is requested. Waiting for confirmations.`
+                : statusMessage(status, confirmationTarget)}
           </p>
         )}
       </div>
@@ -369,7 +378,7 @@ export default function BtcpayClassicCheckout({
           </p>
         ) : (
           <p className="border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
-            Payment entry is unavailable for this invoice state.
+            {status === "payment_detected" ? "No further payment is requested. Waiting for confirmations." : "Invoice marked invalid. Do not send payment."}
           </p>
         )}
       </div>

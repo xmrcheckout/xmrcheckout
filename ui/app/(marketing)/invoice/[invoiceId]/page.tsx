@@ -85,21 +85,14 @@ export default async function InvoiceStatusDetailPage({
     ? `${invoice.status === "pending" ? "Awaiting funds" : invoice.status.replaceAll("_", " ")}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
     : "";
 
-  if (response.status === 404) {
+  if (response.status === 404 || response.status === 422) {
     return (
-      <InvoiceStatusAutoRefresh
-      key={invoiceId}
-      retrievedAt={retrievedAt}
-      error={!invoice}
-      statusMessage={statusMessage}
-    >
       <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
-        <InvoiceRefreshFeedback />
         <PageIntroBand
-          description="The invoice id does not match a known invoice. Check the id and try again."
+          description={response.status === 422 ? "Enter the complete invoice ID in UUID format and try again." : "The invoice id does not match a known invoice. Check the id and try again."}
           eyebrow="Invoice lookup"
           id="invoice-not-found"
-          title="Invoice not found"
+          title={response.status === 422 ? "Invalid invoice ID" : "Invoice not found"}
         />
         <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
           <h2 className="text-lg font-semibold">Check another invoice</h2>
@@ -108,7 +101,6 @@ export default async function InvoiceStatusDetailPage({
           </div>
         </section>
       </main>
-    </InvoiceStatusAutoRefresh>
     );
   }
 

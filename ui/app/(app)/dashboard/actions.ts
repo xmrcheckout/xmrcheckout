@@ -362,7 +362,11 @@ export async function resetApiKeyAction(
     },
     body: JSON.stringify({ reset_api_key: true }),
     cache: "no-store",
-  });
+  }).catch(() => null);
+
+  if (!response || response.status >= 500) {
+    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Sign in again to retrieve the current credentials before retrying or updating integrations." };
+  }
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
@@ -370,9 +374,9 @@ export async function resetApiKeyAction(
     return { apiKey: _prevState.apiKey, error: message };
   }
 
-  const data = (await response.json()) as { api_key?: string | null };
-  if (!data.api_key) {
-    return { apiKey: _prevState.apiKey, error: "API key reset did not return a key." };
+  const data = (await response.json().catch(() => null)) as { api_key?: string | null } | null;
+  if (!data?.api_key) {
+    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Sign in again to retrieve the current credentials before retrying or updating integrations." };
   }
   
   // Update the cookie with the new API key
@@ -406,7 +410,11 @@ export async function resetWebhookSecretAction(
     },
     body: JSON.stringify({ reset_webhook_secret: true }),
     cache: "no-store",
-  });
+  }).catch(() => null);
+
+  if (!response || response.status >= 500) {
+    return { webhookSecret: _prevState.webhookSecret, error: "Could not confirm the webhook secret reset. Sign in again to retrieve the current credentials before retrying or updating integrations." };
+  }
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
@@ -414,11 +422,11 @@ export async function resetWebhookSecretAction(
     return { webhookSecret: _prevState.webhookSecret, error: message };
   }
 
-  const data = (await response.json()) as { webhook_secret?: string | null };
-  if (!data.webhook_secret) {
+  const data = (await response.json().catch(() => null)) as { webhook_secret?: string | null } | null;
+  if (!data?.webhook_secret) {
     return {
       webhookSecret: _prevState.webhookSecret,
-      error: "Webhook secret reset did not return a secret.",
+      error: "Could not confirm the webhook secret reset. Sign in again to retrieve the current credentials before retrying or updating integrations.",
     };
   }
 

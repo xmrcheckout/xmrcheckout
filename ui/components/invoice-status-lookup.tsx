@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 type InvoiceStatusLookupProps = {
   initialValue?: string;
@@ -13,6 +13,8 @@ export default function InvoiceStatusLookup({
   compact = false,
 }: InvoiceStatusLookupProps) {
   const router = useRouter();
+  const inputId = useId();
+  const errorId = useId();
   const [invoiceId, setInvoiceId] = useState(initialValue);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,8 +25,12 @@ export default function InvoiceStatusLookup({
       setError("Enter an invoice id to continue.");
       return;
     }
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed)) {
+      setError("Enter the complete invoice ID in UUID format.");
+      return;
+    }
     setError(null);
-    router.push(`/invoice/${trimmed}`);
+    router.push(`/invoice/${encodeURIComponent(trimmed)}`);
   };
 
   return (
@@ -34,18 +40,20 @@ export default function InvoiceStatusLookup({
     >
       <label
         className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
-        htmlFor="invoice_id"
+        htmlFor={inputId}
       >
         Invoice ID
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <input
-          className="min-h-12 min-w-[220px] flex-1 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
-          id="invoice_id"
+          className="min-h-12 w-full min-w-0 flex-1 basis-full sm:basis-0 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+          id={inputId}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
           name="invoice_id"
           type="text"
           value={invoiceId}
-          onChange={(event) => setInvoiceId(event.target.value)}
+          onChange={(event) => { setInvoiceId(event.target.value); setError(null); }}
           placeholder="e.g. 9d2f2b3c-8a77-4c2b-b9d4-..."
           autoComplete="off"
           spellCheck={false}
@@ -66,6 +74,7 @@ export default function InvoiceStatusLookup({
       {error ? (
         <p
           className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
+          id={errorId}
           role="alert"
         >
           {error}

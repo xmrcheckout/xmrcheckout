@@ -1378,7 +1378,7 @@ def export_invoices_csv(
             if metadata is None:
                 metadata_value = ""
             else:
-                metadata_value = str(metadata)
+                metadata_value = json.dumps(metadata, ensure_ascii=False)
             writer.writerow(
                 [
                     str(invoice.id),

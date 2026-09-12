@@ -28,7 +28,7 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
     <div className="grid gap-4">
       <ApiKeyCard apiKey={state.apiKey} />
       {state.error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
           {state.error}
         </p>
       ) : null}

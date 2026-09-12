@@ -80,13 +80,17 @@ export default async function MarketingHomePage({
           <div className="console-topbar">
             <h2 id="example-journey-title">Example invoice journey — simulated</h2>
           </div>
-          <div className="home-flow-actors" aria-label="People and systems in the flow">
-            {["Merchant", "Customer", "Integration"].map((role) => (
-              <div className={`home-flow-actor home-flow-actor-${role.toLowerCase()}`} key={role}>
-                <span className="home-flow-icon"><FlowIcon role={role} /></span>
-                <span>{role === "Integration" ? "Store" : role}</span>
-              </div>
-            ))}
+          <div className="home-circular-flow" aria-label="Circular flow between merchant, customer, and store">
+            <svg className="home-flow-connectors" viewBox="0 0 360 250" aria-hidden="true">
+              <defs><marker id="flow-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker></defs>
+              <path d="M104 75 C132 35 206 35 245 74" />
+              <path d="M277 105 C295 148 272 193 224 207" />
+              <path d="M159 207 C108 220 66 180 78 125" />
+            </svg>
+            <div className="home-flow-center"><strong>XMR</strong><span>checkout</span></div>
+            <div className="home-flow-node home-flow-node-merchant"><span className="home-flow-icon"><FlowIcon role="Merchant" /></span><strong>Merchant</strong><small>creates invoice</small></div>
+            <div className="home-flow-node home-flow-node-customer"><span className="home-flow-icon"><FlowIcon role="Customer" /></span><strong>Customer</strong><small>pays wallet</small></div>
+            <div className="home-flow-node home-flow-node-store"><span className="home-flow-icon"><FlowIcon role="Integration" /></span><strong>Store</strong><small>gets update</small></div>
           </div>
           <ol className="home-journey">
             {exampleJourney.map((step, index) => (

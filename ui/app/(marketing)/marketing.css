@@ -2232,6 +2232,73 @@ summary:focus-visible {
   padding: 0.85rem 1.25rem 0.25rem;
 }
 
+.home-circular-flow {
+  position: relative;
+  min-height: 16rem;
+  margin: 0.5rem 1rem 0;
+}
+
+.home-flow-connectors {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.home-flow-connectors path {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+  marker-end: url(#flow-arrow);
+}
+
+.home-flow-connectors marker path {
+  fill: var(--ink-soft);
+  stroke: none;
+}
+
+.home-flow-center,
+.home-flow-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.home-flow-center {
+  top: 50%;
+  left: 50%;
+  width: 5.2rem;
+  height: 5.2rem;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.home-flow-center strong { font-size: 1.1rem; letter-spacing: 0.08em; }
+.home-flow-center span { font-size: 0.65rem; opacity: 0.75; }
+
+.home-flow-node {
+  width: 5.8rem;
+  min-height: 4.7rem;
+  gap: 0.12rem;
+  border: 1px solid var(--stroke);
+  border-radius: 1rem;
+  background: var(--cream);
+  box-shadow: 0 5px 12px rgba(16, 18, 23, 0.07);
+  color: var(--ink);
+}
+
+.home-flow-node strong { font-size: 0.78rem; }
+.home-flow-node small { color: var(--ink-soft); font-size: 0.62rem; }
+.home-flow-node-merchant { top: 0; left: 0; border-color: var(--clay); }
+.home-flow-node-customer { top: 0; right: 0; border-color: var(--sage); }
+.home-flow-node-store { bottom: 0; left: 50%; transform: translateX(-50%); border-color: var(--ink); }
+
 .home-flow-actor {
   display: flex;
   align-items: center;
@@ -2316,6 +2383,8 @@ summary:focus-visible {
   .home-flow-actors {
     padding-inline: 1rem;
   }
+
+  .home-circular-flow { min-height: 15rem; margin-inline: 0.25rem; }
 }
 
 .home-journey p,

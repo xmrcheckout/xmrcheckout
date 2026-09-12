@@ -90,7 +90,7 @@ export default async function MarketingHomePage({
               <path d="M88 260 C35 220 25 145 75 105" />
               <path d="M92 78 C105 62 112 57 125 50" />
             </svg>
-            <div className="home-flow-center"><Image src="/logo.png" alt="XMR Checkout" width={64} height={64} /><span>checkout</span></div>
+            <div className="home-flow-center"><Image src="/logo.png" alt="XMR Checkout" width={64} height={64} /></div>
             {exampleJourney.map((step, index) => (
               <div className={`home-flow-node home-flow-node-${index + 1}`} key={step.title}>
                 <span className="home-flow-step">{index + 1}</span>
@@ -99,18 +99,6 @@ export default async function MarketingHomePage({
               </div>
             ))}
           </div>
-          <ol className="home-journey">
-            {exampleJourney.map((step, index) => (
-              <li key={step.title} data-role={step.role.toLowerCase()}>
-                <span aria-hidden="true">0{index + 1}</span>
-                <div>
-                  <div className="home-journey-meta"><span>{step.role}</span><span aria-hidden="true">{index < exampleJourney.length - 1 ? "→" : "✓"}</span></div>
-                  <h3>{step.title}</h3>
-                  <p>{step.detail}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
           <p className="home-journey-note">Store notifications require integration. No payment is requested in this example.</p>
         </div>
       </section>

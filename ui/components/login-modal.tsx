@@ -79,7 +79,7 @@ export default function LoginModal() {
             id="login-title"
             className="mt-1 font-sans text-lg font-semibold leading-tight"
           >
-            Connect a wallet for payment detection.
+            Connect your wallet to create invoices.
           </h3>
         </div>
         <button
@@ -98,9 +98,10 @@ export default function LoginModal() {
         >
           <p className="font-semibold text-ink">Before you continue</p>
           <p className="mt-1">
-            Use your primary address and secret view key. The key is encrypted
-            at rest and only enables incoming payment detection. Never paste a
-            spend key.
+            This instance receives your primary address and private view key to
+            detect incoming payments. The key is encrypted at rest. Payments go
+            directly to your wallet; this access cannot spend funds. Never submit
+            a spend key or recovery seed.
           </p>
         </div>
         <LoginForm />

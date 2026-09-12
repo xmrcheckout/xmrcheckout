@@ -2212,3 +2212,69 @@ summary:focus-visible {
   overflow-x: auto;
   overflow-wrap: normal;
 }
+
+.home-entry-note {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.home-journey {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 1.25rem;
+}
+
+.home-journey li {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+}
+
+.home-journey li + li {
+  border-top: 1px solid var(--stroke);
+}
+
+.home-journey li > span {
+  color: var(--ink-soft);
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.home-journey h3,
+.checkout-console .console-topbar h2,
+.home-integration h3 {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.home-journey p,
+.home-journey-note {
+  color: var(--ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0.25rem 0 0;
+}
+
+.home-journey-note {
+  padding: 0.75rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--stroke);
+}
+
+.home-page,
+.home-page > section,
+.home-page > section > * {
+  min-width: 0;
+}
+
+.home-page {
+  overflow-wrap: anywhere;
+}
+
+.home-page .home-kicker,
+.home-process li > span {
+  color: var(--ink-soft);
+}

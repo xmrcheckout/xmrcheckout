@@ -424,12 +424,12 @@ export default async function TourPage({
       >
         <PageIntroBand
           as="p"
-          eyebrow="Tour workspace"
-          title="Explore a merchant checkout workspace with simulated activity."
+          eyebrow="Demo workspace"
+          title="See how Monero checkout works."
           description={
             <p>
-              Inspect invoice activity, webhooks, and simulated state without
-              connecting a wallet.
+              Explore sample invoices, customer checkout pages, and store notifications.
+              All activity is simulated; no wallet connection or payment is required.
             </p>
           }
         />

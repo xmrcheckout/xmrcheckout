@@ -19,7 +19,7 @@ export default function SiteHeader({
 }: SiteHeaderProps) {
   const links = [
     { href: "/invoice", label: "Check Invoice" },
-    ...(includeTour ? [{ href: "/tour", label: "Tour" }] : []),
+    ...(includeTour ? [{ href: "/tour", label: "Demo" }] : []),
     { href: "/docs", label: "Documentation" },
     { href: "/guides", label: "Guides" },
     { href: "/faq", label: "FAQ" },

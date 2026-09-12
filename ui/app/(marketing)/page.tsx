@@ -6,10 +6,10 @@ import { LoginTrigger } from "../../components/login-modal";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
+    absolute: "Accept Monero Directly into Your Wallet | XMR Checkout",
   },
   description:
-    "Accept Monero with your own wallet. XMR Checkout provides self-hosted invoice pages, view-only payment detection, APIs, and webhooks.",
+    "Create invoices, share customer checkout pages, and track Monero payments directly to your wallet. Open-source, self-hostable software with APIs and webhooks.",
   alternates: {
     canonical: "/",
   },
@@ -17,167 +17,19 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "XMR Checkout",
-    title: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
+    title: "Accept Monero Directly into Your Wallet | XMR Checkout",
     description:
-      "Accept Monero with your own wallet. XMR Checkout provides self-hosted invoice pages, view-only payment detection, APIs, and webhooks.",
+      "Create invoices, share customer checkout pages, and track Monero payments directly to your wallet. Open-source, self-hostable software with APIs and webhooks.",
   },
 };
 
-const previewQrModules = [
-  [10, 1],
-  [12, 1],
-  [15, 1],
-  [18, 1],
-  [9, 2],
-  [11, 2],
-  [14, 2],
-  [17, 2],
-  [19, 2],
-  [10, 3],
-  [13, 3],
-  [15, 3],
-  [18, 3],
-  [9, 4],
-  [12, 4],
-  [16, 4],
-  [19, 4],
-  [10, 5],
-  [14, 5],
-  [17, 5],
-  [9, 6],
-  [11, 6],
-  [15, 6],
-  [18, 6],
-  [1, 10],
-  [3, 10],
-  [5, 10],
-  [8, 10],
-  [11, 10],
-  [13, 10],
-  [16, 10],
-  [20, 10],
-  [23, 10],
-  [26, 10],
-  [2, 11],
-  [6, 11],
-  [9, 11],
-  [12, 11],
-  [15, 11],
-  [18, 11],
-  [21, 11],
-  [25, 11],
-  [1, 12],
-  [4, 12],
-  [7, 12],
-  [10, 12],
-  [14, 12],
-  [17, 12],
-  [20, 12],
-  [24, 12],
-  [27, 12],
-  [3, 13],
-  [6, 13],
-  [8, 13],
-  [11, 13],
-  [13, 13],
-  [16, 13],
-  [19, 13],
-  [22, 13],
-  [25, 13],
-  [2, 14],
-  [5, 14],
-  [9, 14],
-  [12, 14],
-  [15, 14],
-  [18, 14],
-  [21, 14],
-  [24, 14],
-  [27, 14],
-  [1, 15],
-  [4, 15],
-  [7, 15],
-  [10, 15],
-  [13, 15],
-  [17, 15],
-  [20, 15],
-  [23, 15],
-  [26, 15],
-  [2, 16],
-  [5, 16],
-  [8, 16],
-  [11, 16],
-  [14, 16],
-  [18, 16],
-  [21, 16],
-  [25, 16],
-  [3, 17],
-  [6, 17],
-  [9, 17],
-  [12, 17],
-  [16, 17],
-  [19, 17],
-  [22, 17],
-  [27, 17],
-  [1, 18],
-  [5, 18],
-  [8, 18],
-  [11, 18],
-  [15, 18],
-  [18, 18],
-  [21, 18],
-  [24, 18],
-  [26, 18],
-  [10, 20],
-  [13, 20],
-  [16, 20],
-  [19, 20],
-  [9, 21],
-  [12, 21],
-  [15, 21],
-  [18, 21],
-  [10, 22],
-  [14, 22],
-  [17, 22],
-  [20, 22],
-  [9, 23],
-  [11, 23],
-  [15, 23],
-  [19, 23],
-  [10, 24],
-  [13, 24],
-  [16, 24],
-  [18, 24],
-  [9, 25],
-  [12, 25],
-  [15, 25],
-  [20, 25],
-] as const;
-
-function FinderPattern({ x, y }: { x: number; y: number }) {
-  return (
-    <g>
-      <rect x={x} y={y} width="7" height="7" rx="0.5" />
-      <rect x={x + 1} y={y + 1} width="5" height="5" fill="#ffffff" rx="0.35" />
-      <rect x={x + 2} y={y + 2} width="3" height="3" rx="0.2" />
-    </g>
-  );
-}
-
-function PreviewQr() {
-  return (
-    <div className="console-qr" aria-hidden="true">
-      <svg viewBox="0 0 29 29" focusable="false">
-        <rect width="29" height="29" fill="#ffffff" />
-        <FinderPattern x={1} y={1} />
-        <FinderPattern x={21} y={1} />
-        <FinderPattern x={1} y={21} />
-        {previewQrModules.map(([x, y]) => (
-          <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" rx="0.08" />
-        ))}
-      </svg>
-    </div>
-  );
-}
+const exampleJourney = [
+  { title: "Create an invoice", detail: "Merchant · Choose the XMR amount and confirmation target." },
+  { title: "Customer opens checkout", detail: "Customer · Review the amount and pay your wallet using the address or QR code." },
+  { title: "Payment detected", detail: "Merchant · Incoming XMR is detected; confirmations are still pending." },
+  { title: "Confirmation target reached", detail: "Merchant · The invoice shows the required confirmations have been reached." },
+  { title: "Store notified", detail: "Integration · A configured webhook reports the confirmed invoice to your store." },
+];
 
 export default async function MarketingHomePage({
   searchParams,
@@ -194,166 +46,79 @@ export default async function MarketingHomePage({
       <section className="home-hero" aria-labelledby="home-hero-title">
         <div className="home-hero-copy">
           <p className="home-kicker">Monero checkout for merchants</p>
-          <h1 id="home-hero-title">Accept Monero with your own wallet.</h1>
+          <h1 id="home-hero-title">Accept Monero directly into your wallet.</h1>
           <p className="home-lead">
-            Create a payment request and get a clear update when incoming XMR is
-            detected.
+            Create invoices, share a customer checkout page, and track incoming
+            payments and confirmations. Connect your store through APIs and webhooks.
           </p>
           <div className="home-actions" aria-label="Primary actions">
             <Link className="home-button home-button-primary" href="/tour">
-              Try the tour
+              Explore the demo
             </Link>
             <LoginTrigger className="home-button home-button-secondary">
               Connect view-only wallet
             </LoginTrigger>
-            <Link className="home-doc-link" href="/docs">
-              Read the docs
-            </Link>
           </div>
+          <p className="home-entry-note">Simulated payments. No wallet required for the demo.</p>
+          <p className="home-entry-note">
+            Connect your wallet to this instance using your primary address and
+            private view key. Payments go directly to your wallet.
+          </p>
         </div>
 
-        <div className="checkout-console" aria-label="Checkout preview">
+        <div className="checkout-console" aria-labelledby="example-journey-title">
           <div className="console-topbar">
-            <span>Payment request preview</span>
-            <strong>View key only</strong>
+            <h2 id="example-journey-title">Example invoice journey — simulated</h2>
           </div>
-          <div className="console-grid">
-            <section className="console-customer" aria-label="Customer payment view">
-              <div className="console-section-header">
-                <p>Invoice 9F2A-18</p>
-                <span>Awaiting funds</span>
-              </div>
-              <div className="console-amount">
-                <strong>0.125000 XMR</strong>
-                <span>Due before 14:30 UTC. Wallet fee is separate.</span>
-              </div>
-              <div className="console-payment">
-                <PreviewQr />
-                <div className="console-address">
-                  <span>Your wallet address</span>
-                  <code>48xmr...7f2a</code>
-                  <span className="console-open-wallet">Open wallet</span>
-                </div>
-              </div>
-            </section>
-
-            <section className="console-merchant" aria-label="Merchant status view">
-              <div className="console-section-header">
-                <p>Store status</p>
-                <span>Detected</span>
-              </div>
-              <div className="console-status-row">
-                <div>
-                  <strong>1 / 2</strong>
-                  <span>confirmations</span>
-                </div>
-                <div className="console-progress" aria-hidden="true">
-                  <span></span>
-                </div>
-              </div>
-              <div className="console-events">
-                <div>
-                  <span>Last checked</span>
-                  <strong>18:22 UTC</strong>
-                </div>
-                <div>
-                  <span>invoice.payment_detected</span>
-                  <strong>sent to store</strong>
-                </div>
-                <div>
-                  <span>invoice.confirmed</span>
-                  <strong>waiting for target</strong>
-                </div>
-              </div>
-            </section>
-          </div>
+          <ol className="home-journey">
+            {exampleJourney.map((step, index) => (
+              <li key={step.title}>
+                <span aria-hidden="true">0{index + 1}</span>
+                <div><h3>{step.title}</h3><p>{step.detail}</p></div>
+              </li>
+            ))}
+          </ol>
+          <p className="home-journey-note">Store notifications require integration. No payment is requested in this example.</p>
         </div>
       </section>
 
       <section className="home-process" aria-labelledby="home-process-title">
         <div>
-          <p className="home-kicker">Merchant flow</p>
-          <h2 id="home-process-title">From payment request to detected XMR.</h2>
+          <p className="home-kicker">Customer checkout</p>
+          <h2 id="home-process-title">Give customers a clear way to pay.</h2>
         </div>
         <ol>
-          <li>
-            <span>01</span>
-            <div>
-              <h3>Create a payment request</h3>
-              <p>Enter the XMR amount, optional reference, and confirmation target.</p>
-            </div>
-          </li>
-          <li>
-            <span>02</span>
-            <div>
-              <h3>Customer pays</h3>
-              <p>The hosted page shows the exact amount, address, QR, and wallet URI.</p>
-            </div>
-          </li>
-          <li>
-            <span>03</span>
-            <div>
-              <h3>XMR is detected</h3>
-              <p>The software watches the chain for the expected payment.</p>
-            </div>
-          </li>
-          <li>
-            <span>04</span>
-            <div>
-              <h3>Your store updates</h3>
-              <p>Use polling or webhooks when the confirmation target is reached.</p>
-            </div>
-          </li>
+          <li><span>01</span><div><h3>Create and share an invoice</h3><p>Set the amount in XMR and share the customer checkout page.</p></div></li>
+          <li><span>02</span><div><h3>Give customers the payment details</h3><p>The page shows the exact amount, wallet address, QR code, and a link to open a wallet. Network fees are separate.</p></div></li>
+          <li><span>03</span><div><h3>Show confirmation progress</h3><p>Customers can follow payment detection and progress toward your confirmation target.</p></div></li>
         </ol>
       </section>
 
       <section className="home-wallet" aria-labelledby="home-wallet-title">
         <div className="home-wallet-copy">
           <p className="home-kicker">Wallet access</p>
-          <h2 id="home-wallet-title">Your wallet receives the XMR.</h2>
-          <p>
-            Payments go directly to your Monero wallet. Connect a primary
-            address and secret view key to monitor incoming invoices; spend
-            keys stay with you.
-          </p>
+          <h2 id="home-wallet-title">Track payments. Keep control of your wallet.</h2>
+          <p>Payments go directly from the customer to your Monero wallet. XMR Checkout observes incoming payments; the software cannot spend your funds.</p>
         </div>
         <div className="home-wallet-table">
-          <div>
-            <h3>Merchant wallet</h3>
-            <p>Use the wallet you already control.</p>
-          </div>
-          <div>
-            <h3>View-only monitoring</h3>
-            <p>Check invoice status and confirmation progress.</p>
-          </div>
-          <div>
-            <h3>Store updates</h3>
-            <p>Polling and webhooks notify your store when invoices are detected or confirmed.</p>
-          </div>
+          <div><h3>Your wallet receives the XMR</h3><p>Use the wallet you already control.</p></div>
+          <div><h3>View-only access</h3><p>Your primary address and private view key enable incoming payment detection. Never submit a spend key or recovery seed.</p></div>
+          <div><h3>Your confirmation target</h3><p>Choose how many confirmations an invoice requires. Payment detection and reaching that target are separate states.</p></div>
         </div>
       </section>
 
       <section className="home-integration" aria-labelledby="home-integration-title">
         <div>
-          <p className="home-kicker">Integrations</p>
-          <h2 id="home-integration-title">Connect your store when you are ready.</h2>
-          <p>
-            Start with the hosted payment page. Add API calls, webhook events,
-            or BTCPay-compatible routes after the checkout flow is working.
-          </p>
-          <div className="home-actions" aria-label="Guide links">
-            <Link className="home-doc-link" href="/guides/self-hosted-monero-checkout">
-              Read the self-hosting guide
-            </Link>
-            <Link className="home-doc-link" href="/guides/monero-payment-api-webhooks">
-              Read the API guide
-            </Link>
+          <p className="home-kicker">Getting started</p>
+          <h2 id="home-integration-title">Start here. Integrate when you’re ready.</h2>
+          <p>Connect your wallet to this instance to create invoices and share customer checkout pages. Add API calls or configure webhooks when you want your store to receive invoice updates.</p>
+          <div className="home-actions" aria-label="Getting started links">
+            <LoginTrigger className="home-button home-button-primary">Connect view-only wallet</LoginTrigger>
+            <Link className="home-doc-link" href="/guides/monero-payment-api-webhooks">Read the API guide</Link>
           </div>
         </div>
-        <div className="integration-lines" aria-label="Example integration events">
-          <code>POST /api/core/invoices</code>
-          <code>invoice.payment_detected</code>
-          <code>invoice.confirmed</code>
+        <div className="home-wallet-table">
+          <div><h3>Prefer your own infrastructure?</h3><p>XMR Checkout is open source and self-hostable. Deploy your own instance before connecting your wallet there.</p><Link className="home-doc-link" href="/guides/self-hosted-monero-checkout">Self-host XMR Checkout</Link></div>
         </div>
       </section>
     </main>

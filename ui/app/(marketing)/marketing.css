@@ -192,6 +192,8 @@ summary:focus-visible {
 
 .site-header {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   justify-content: space-between;
   align-items: center;
   position: relative;
@@ -252,6 +254,8 @@ summary:focus-visible {
 
 .nav {
   display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
   gap: 1.6rem;
   font-size: 0.95rem;
   align-items: center;
@@ -331,7 +335,11 @@ summary:focus-visible {
   right: 0;
   top: calc(100% + 0.7rem);
   display: grid;
-  width: min(19rem, calc(100vw - 12vw));
+  width: min(19rem, calc(100vw - max(3rem, 8vw)));
+  grid-template-columns: minmax(0, 1fr);
+  max-height: 70dvh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
   gap: 0.35rem;
   border: 1px solid var(--stroke);
   border-radius: 0.9rem;
@@ -1999,10 +2007,18 @@ summary:focus-visible {
 
   .mobile-nav {
     display: block;
+    margin-left: auto;
   }
 
   .brand {
     gap: 0.55rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .brand .name {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .brand-logo {

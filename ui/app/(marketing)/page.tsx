@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -81,16 +82,22 @@ export default async function MarketingHomePage({
             <h2 id="example-journey-title">Example invoice journey — simulated</h2>
           </div>
           <div className="home-circular-flow" aria-label="Circular flow between merchant, customer, and store">
-            <svg className="home-flow-connectors" viewBox="0 0 480 300" aria-hidden="true">
+            <svg className="home-flow-connectors" viewBox="0 0 480 320" aria-hidden="true">
               <defs><marker id="flow-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker></defs>
-              <path d="M140 92 C180 32 300 32 340 92" />
-              <path d="M370 130 C410 195 340 260 290 270" />
-              <path d="M190 270 C140 260 70 195 110 130" />
+              <path d="M125 83 C174 25 300 25 355 78" />
+              <path d="M405 105 C455 145 440 225 390 260" />
+              <path d="M340 292 C275 320 200 320 140 292" />
+              <path d="M88 260 C35 220 25 145 75 105" />
+              <path d="M92 78 C105 62 112 57 125 50" />
             </svg>
-            <div className="home-flow-center"><strong>XMR</strong><span>checkout</span></div>
-            <div className="home-flow-node home-flow-node-merchant"><span className="home-flow-step">1</span><span className="home-flow-icon"><FlowIcon role="Merchant" /></span><strong>Merchant</strong><small>creates invoice</small></div>
-            <div className="home-flow-node home-flow-node-customer"><span className="home-flow-step">2</span><span className="home-flow-icon"><FlowIcon role="Customer" /></span><strong>Customer</strong><small>pays wallet</small></div>
-            <div className="home-flow-node home-flow-node-store"><span className="home-flow-step">3</span><span className="home-flow-icon"><FlowIcon role="Integration" /></span><strong>Store</strong><small>gets update</small></div>
+            <div className="home-flow-center"><Image src="/logo.png" alt="XMR Checkout" width={64} height={64} /><span>checkout</span></div>
+            {exampleJourney.map((step, index) => (
+              <div className={`home-flow-node home-flow-node-${index + 1}`} key={step.title}>
+                <span className="home-flow-step">{index + 1}</span>
+                <span className="home-flow-icon"><FlowIcon role={step.role} /></span>
+                <strong>{step.title}</strong><small>{step.role}</small>
+              </div>
+            ))}
           </div>
           <ol className="home-journey">
             {exampleJourney.map((step, index) => (

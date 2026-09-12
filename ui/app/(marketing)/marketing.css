@@ -2234,7 +2234,7 @@ summary:focus-visible {
 
 .home-circular-flow {
   position: relative;
-  min-height: 20rem;
+  min-height: 22rem;
   margin: 0.5rem 1rem 0;
 }
 
@@ -2270,8 +2270,8 @@ summary:focus-visible {
 .home-flow-center {
   top: 50%;
   left: 50%;
-  width: 6.4rem;
-  height: 6.4rem;
+  width: 6.8rem;
+  height: 6.8rem;
   transform: translate(-50%, -50%);
   border: 1px solid var(--ink);
   border-radius: 50%;
@@ -2279,7 +2279,7 @@ summary:focus-visible {
   color: var(--cream);
 }
 
-.home-flow-center strong { font-size: 1.1rem; letter-spacing: 0.08em; }
+.home-flow-center img { width: 3.5rem; height: 3.5rem; object-fit: contain; }
 .home-flow-center span { font-size: 0.65rem; opacity: 0.75; }
 
 .home-flow-node {
@@ -2295,9 +2295,11 @@ summary:focus-visible {
 
 .home-flow-node strong { font-size: 0.78rem; }
 .home-flow-node small { color: var(--ink-soft); font-size: 0.62rem; }
-.home-flow-node-merchant { top: 0; left: 0; border-color: var(--clay); }
-.home-flow-node-customer { top: 0; right: 0; border-color: var(--sage); }
-.home-flow-node-store { bottom: 0; left: 50%; transform: translateX(-50%); border-color: var(--ink); }
+.home-flow-node-1 { top: 0; left: 50%; transform: translateX(-50%); border-color: var(--clay); }
+.home-flow-node-2 { top: 4.2rem; right: 0; border-color: var(--sage); }
+.home-flow-node-3 { bottom: 0.2rem; right: 9%; border-color: var(--clay); }
+.home-flow-node-4 { bottom: 0.2rem; left: 9%; border-color: var(--clay); }
+.home-flow-node-5 { top: 4.2rem; left: 0; border-color: var(--ink); }
 
 .home-flow-step {
   position: absolute;
@@ -2394,7 +2396,7 @@ summary:focus-visible {
     padding-inline: 1rem;
   }
 
-  .home-circular-flow { min-height: 17rem; margin-inline: 0.25rem; }
+  .home-circular-flow { min-height: 19rem; margin-inline: 0.25rem; }
   .home-flow-node { width: 6.4rem; min-height: 5.7rem; }
 }
 

@@ -2234,7 +2234,7 @@ summary:focus-visible {
 
 .home-circular-flow {
   position: relative;
-  min-height: 16rem;
+  min-height: 20rem;
   margin: 0.5rem 1rem 0;
 }
 
@@ -2270,8 +2270,8 @@ summary:focus-visible {
 .home-flow-center {
   top: 50%;
   left: 50%;
-  width: 5.2rem;
-  height: 5.2rem;
+  width: 6.4rem;
+  height: 6.4rem;
   transform: translate(-50%, -50%);
   border: 1px solid var(--ink);
   border-radius: 50%;
@@ -2283,8 +2283,8 @@ summary:focus-visible {
 .home-flow-center span { font-size: 0.65rem; opacity: 0.75; }
 
 .home-flow-node {
-  width: 5.8rem;
-  min-height: 4.7rem;
+  width: 7.5rem;
+  min-height: 6.2rem;
   gap: 0.12rem;
   border: 1px solid var(--stroke);
   border-radius: 1rem;
@@ -2298,6 +2298,16 @@ summary:focus-visible {
 .home-flow-node-merchant { top: 0; left: 0; border-color: var(--clay); }
 .home-flow-node-customer { top: 0; right: 0; border-color: var(--sage); }
 .home-flow-node-store { bottom: 0; left: 50%; transform: translateX(-50%); border-color: var(--ink); }
+
+.home-flow-step {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.55rem;
+  color: var(--ink-soft);
+  font-family: monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
 
 .home-flow-actor {
   display: flex;
@@ -2384,7 +2394,8 @@ summary:focus-visible {
     padding-inline: 1rem;
   }
 
-  .home-circular-flow { min-height: 15rem; margin-inline: 0.25rem; }
+  .home-circular-flow { min-height: 17rem; margin-inline: 0.25rem; }
+  .home-flow-node { width: 6.4rem; min-height: 5.7rem; }
 }
 
 .home-journey p,

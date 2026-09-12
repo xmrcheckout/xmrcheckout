@@ -31,6 +31,16 @@ const exampleJourney = [
   { role: "Integration", title: "Store notified", detail: "Configured webhook reports invoice" },
 ];
 
+function FlowIcon({ role }: { role: string }) {
+  if (role === "Customer") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3" /><path d="M5 21c.6-4 2.9-6 7-6s6.4 2 7 6" /></svg>;
+  }
+  if (role === "Integration") {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M7 8h10M7 12h3m2 0h5M7 16h10" /></svg>;
+  }
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" /><path d="M8 20v-6h8v6M2 20h20" /></svg>;
+}
+
 export default async function MarketingHomePage({
   searchParams,
 }: {
@@ -70,12 +80,20 @@ export default async function MarketingHomePage({
           <div className="console-topbar">
             <h2 id="example-journey-title">Example invoice journey — simulated</h2>
           </div>
+          <div className="home-flow-actors" aria-label="People and systems in the flow">
+            {["Merchant", "Customer", "Integration"].map((role) => (
+              <div className={`home-flow-actor home-flow-actor-${role.toLowerCase()}`} key={role}>
+                <span className="home-flow-icon"><FlowIcon role={role} /></span>
+                <span>{role === "Integration" ? "Store" : role}</span>
+              </div>
+            ))}
+          </div>
           <ol className="home-journey">
             {exampleJourney.map((step, index) => (
               <li key={step.title} data-role={step.role.toLowerCase()}>
                 <span aria-hidden="true">0{index + 1}</span>
                 <div>
-                  <div className="home-journey-meta"><span>{step.role}</span><span aria-hidden="true">→</span></div>
+                  <div className="home-journey-meta"><span>{step.role}</span><span aria-hidden="true">{index < exampleJourney.length - 1 ? "→" : "✓"}</span></div>
                   <h3>{step.title}</h3>
                   <p>{step.detail}</p>
                 </div>

@@ -61,7 +61,7 @@ export default async function MarketingHomePage({
           </div>
           <p className="home-entry-note">Simulated payments. No wallet required for the demo.</p>
           <p className="home-entry-note">
-            Connect your wallet to this instance using your primary address and
+            Connect your wallet using your primary address and
             private view key. Payments go directly to your wallet.
           </p>
         </div>

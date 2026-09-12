@@ -2230,6 +2230,16 @@ summary:focus-visible {
   grid-template-columns: 1.5rem minmax(0, 1fr);
   gap: 0.75rem;
   padding: 0.85rem 0;
+  border-left: 3px solid var(--clay);
+  padding-left: 0.8rem;
+}
+
+.home-journey li[data-role="customer"] {
+  border-left-color: var(--sage);
+}
+
+.home-journey li[data-role="integration"] {
+  border-left-color: var(--ink);
 }
 
 .home-journey li + li {
@@ -2249,6 +2259,17 @@ summary:focus-visible {
   font-size: 1rem;
   line-height: 1.4;
   margin: 0;
+}
+
+.home-journey-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .home-journey p,

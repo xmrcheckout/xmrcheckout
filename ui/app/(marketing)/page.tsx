@@ -24,11 +24,11 @@ export const metadata: Metadata = {
 };
 
 const exampleJourney = [
-  { title: "Create an invoice", detail: "Merchant · Choose the XMR amount and confirmation target." },
-  { title: "Customer opens checkout", detail: "Customer · Review the amount and pay your wallet using the address or QR code." },
-  { title: "Payment detected", detail: "Merchant · Incoming XMR is detected; confirmations are still pending." },
-  { title: "Confirmation target reached", detail: "Merchant · The invoice shows the required confirmations have been reached." },
-  { title: "Store notified", detail: "Integration · A configured webhook reports the confirmed invoice to your store." },
+  { role: "Merchant", title: "Create an invoice", detail: "Set amount + confirmation target" },
+  { role: "Customer", title: "Open checkout", detail: "Review amount + pay wallet" },
+  { role: "Merchant", title: "Payment detected", detail: "Incoming XMR is found" },
+  { role: "Merchant", title: "Target reached", detail: "Required confirmations complete" },
+  { role: "Integration", title: "Store notified", detail: "Configured webhook reports invoice" },
 ];
 
 export default async function MarketingHomePage({
@@ -72,9 +72,13 @@ export default async function MarketingHomePage({
           </div>
           <ol className="home-journey">
             {exampleJourney.map((step, index) => (
-              <li key={step.title}>
+              <li key={step.title} data-role={step.role.toLowerCase()}>
                 <span aria-hidden="true">0{index + 1}</span>
-                <div><h3>{step.title}</h3><p>{step.detail}</p></div>
+                <div>
+                  <div className="home-journey-meta"><span>{step.role}</span><span aria-hidden="true">→</span></div>
+                  <h3>{step.title}</h3>
+                  <p>{step.detail}</p>
+                </div>
               </li>
             ))}
           </ol>

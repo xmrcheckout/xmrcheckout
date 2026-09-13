@@ -3,11 +3,11 @@
 import { useId, useState } from "react";
 
 const steps = [
-  { title: "Create invoice", role: "Merchant", detail: "Set the amount in XMR and choose a confirmation target. Share the customer checkout page, or connect it to your store.", note: "An invoice describes a payment. Your wallet stays under your control.", x: 59, y: 22 },
-  { title: "Open checkout", role: "Customer", detail: "Review the exact XMR amount and merchant address. Scan the QR code or open a Monero wallet from the checkout page. Network fees are separate.", note: "The customer chooses when to send from their own wallet.", x: 8, y: 43 },
+  { title: "Create invoice", role: "Merchant", detail: "Set the amount in XMR and choose a confirmation target. Share the customer checkout page, or connect it to your store.", note: "An invoice describes a payment. Your wallet stays under your control.", x: 8, y: 12 },
+  { title: "Open checkout", role: "Customer", detail: "Review the exact XMR amount and merchant address. Scan the QR code or open a Monero wallet from the checkout page. Network fees are separate.", note: "The customer chooses when to send from their own wallet.", x: 93, y: 43 },
   { title: "Pay merchant", role: "Customer → merchant wallet", detail: "The customer sends XMR directly to the merchant’s wallet. XMR Checkout does not receive or forward the funds.", note: "The payment path goes directly from one wallet to the other.", x: 48, y: 56 },
   { title: "Payment detected", role: "XMR Checkout · view-only", detail: "View-only observation identifies the incoming payment. Checkout displays confirmation progress while the merchant’s target is awaited.", note: "No further payment is requested while waiting for confirmations.", x: 31, y: 77 },
-  { title: "Target reached", role: "Merchant", detail: "When the required confirmation count is reached, the invoice becomes confirmed. The customer and merchant can see the updated status.", note: "Confirmation time varies. An invoice target does not override wallet unlock rules.", x: 92, y: 58 },
+  { title: "Target reached", role: "Merchant", detail: "When the required confirmation count is reached, the invoice becomes confirmed. The customer and merchant can see the updated status.", note: "Confirmation time varies. An invoice target does not override wallet unlock rules.", x: 8, y: 58 },
   { title: "Store notified", role: "Store · optional integration", detail: "A configured webhook reports the invoice update to your store. Your integration decides how to update the order.", note: "Notifications require integration and can also report earlier invoice updates.", x: 93, y: 87 },
 ];
 
@@ -33,12 +33,12 @@ export function InvoiceJourney() {
           <ellipse cx="300" cy="217" rx="271" ry="149" fill={`url(#${id}-ground)`}/>
           {/* Information paths are distinct from the direct wallet payment. */}
           <g fill="none" stroke="#5d7a6a" strokeWidth="2" strokeDasharray="5 6" markerEnd={`url(#${id}-arrow)`}>
-            <path className="journey-route journey-route-invoice" d="M366 91C280 43 203 49 144 96"/>
-            <path className="journey-route journey-route-observe" d="M459 211Q427 255 350 285"/>
+            <path className="journey-route journey-route-invoice" d="M246 91C319 43 385 49 453 96"/>
+            <path className="journey-route journey-route-observe" d="M149 211Q160 255 245 285"/>
             <path className="journey-route journey-route-store" d="M380 310Q401 310 422 315"/>
           </g>
           {/* Customer in a relaxed standing pose */}
-          <g className="journey-actor journey-customer">
+          <g className="journey-actor journey-customer" transform="translate(405 -5) scale(.9)">
             <ellipse cx="104" cy="256" rx="49" ry="17" fill="#101217" opacity=".08"/>
             <path d="m76 198 25 1-6 48-17 0Z" fill="#28333b"/><path d="m104 198 25-1 7 50-18 1Z" fill="#394751"/>
             <path d="m77 244 19 0 0 10-32 0q-3-7 13-10M117 245h19l12 8q2 5-30 3Z" fill="#101217"/>
@@ -49,9 +49,9 @@ export function InvoiceJourney() {
             <path d="M76 145 67 177 71 199" fill="none" stroke="#dba781" strokeWidth="12" strokeLinecap="round"/>
             <path d="M123 145 136 176 130 200" fill="none" stroke="#c18c69" strokeWidth="12" strokeLinecap="round"/>
           </g>
-          <text x="103" y="286" className="journey-art-label" textAnchor="middle">Customer</text>
+          <text x="493" y="30" className="journey-art-label" textAnchor="middle">Customer</text>
           {/* Merchant workstation, portrait, and wallet */}
-          <g className="journey-actor journey-merchant">
+          <g className="journey-actor journey-merchant" transform="translate(-325 0)">
             <ellipse cx="455" cy="206" rx="97" ry="18" fill="#101217" opacity=".08"/>
             <path d="m374 171 140-8 37 20-147 13Z" fill="#dbc3a2"/><path d="m404 196 147-13v8l-147 14-30-24v-10Z" fill="#b99771"/>
             <path d="m392 192 0 36M536 194v25" stroke="#8a735b" strokeWidth="6"/>
@@ -74,15 +74,14 @@ export function InvoiceJourney() {
               <rect x="37" y="-5" width="21" height="15" rx="4" fill="#8c4c2b"/><circle cx="44" cy="2" r="2" fill="#f8f2e9"/>
             </g>
           </g>
-          <text x="456" y="30" className="journey-art-label" textAnchor="middle">Merchant</text>
-          <path className="journey-route journey-route-payment" d="M157 180Q292 203 438 190" fill="none" stroke="#b65b25" strokeWidth="3" markerEnd={`url(#${id}-arrow)`}/>
+          <text x="131" y="30" className="journey-art-label" textAnchor="middle">Merchant</text>
+          <path className="journey-route journey-route-payment" d="M445 180Q310 203 187 190" fill="none" stroke="#b65b25" strokeWidth="3" markerEnd={`url(#${id}-arrow)`}/>
           <g className="journey-art-caption"><rect x="221" y="161" width="151" height="25" rx="12" fill="#f8f2e9"/><text x="296" y="178" textAnchor="middle">XMR · directly to wallet</text></g>
           {/* View-only observation station */}
           <g className="journey-actor journey-observer" transform="translate(219 280)">
             <ellipse cx="77" cy="62" rx="69" ry="12" fill="#101217" opacity=".07"/>
             <rect width="154" height="58" rx="14" fill="#101217"/>
-            <circle cx="25" cy="27" r="13" fill="#f26822"/>
-            <path d="m16 29 0-9 9 9 9-9v14h-7v-6l-2 2-2-2v6h-7" fill="#fff"/>
+            <image href="/logo.png" x="7" y="10" width="38" height="38" preserveAspectRatio="xMidYMid meet"/>
             <text x="47" y="25" fill="#f8f2e9" fontSize="11" fontWeight="600">XMR Checkout</text>
             <text x="47" y="42" fill="#c7d5cb" fontSize="10">View-only access</text>
           </g>

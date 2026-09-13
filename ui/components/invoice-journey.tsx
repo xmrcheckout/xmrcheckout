@@ -19,7 +19,7 @@ export function InvoiceJourney() {
 
   return (
     <div className="checkout-console invoice-journey" aria-labelledby={`${id}-title`}>
-      <div className="console-topbar"><h2 id={`${id}-title`}>Example invoice journey — simulated</h2></div>
+      <div className="console-topbar"><h2 id={`${id}-title`}>A simulated invoice journey</h2></div>
       <div className="journey-scene" data-step={active + 1}>
         <svg viewBox="0 0 600 390" role="img" aria-labelledby={`${id}-art-title`}>
           <title id={`${id}-art-title`}>A customer pays the merchant’s wallet directly. XMR Checkout observes the payment and can optionally send invoice updates to a connected store.</title>

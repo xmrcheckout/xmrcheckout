@@ -53,10 +53,13 @@ export default async function MarketingHomePage({
               Connect view-only wallet
             </LoginTrigger>
           </div>
-          <p className="home-entry-note">Simulated payments. No wallet required for the demo.</p>
           <p className="home-entry-note">
-            Connect your wallet using your primary address and
-            private view key. Payments go directly to your wallet.
+            <strong>Exploring the demo?</strong> All payments are simulated. No wallet connection is needed.
+          </p>
+          <p className="home-entry-note">
+            <strong>Ready to accept payments?</strong> Connect your wallet using
+            your primary address and private view key. Customer payments go
+            directly to your wallet.
           </p>
         </div>
 

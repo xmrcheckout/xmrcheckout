@@ -43,7 +43,7 @@ export default async function MarketingHomePage({
           <h1 id="home-hero-title">Accept Monero directly into your wallet.</h1>
           <p className="home-lead">
             Create invoices, share a customer checkout page, and track incoming
-            payments and confirmations. Connect your store through APIs and webhooks.
+            payments and confirmations. Optionally connect your store through APIs and webhooks.
           </p>
           <div className="home-actions" aria-label="Primary actions">
             <Link className="home-button home-button-primary" href="/tour">
@@ -95,7 +95,7 @@ export default async function MarketingHomePage({
         <div>
           <p className="home-kicker">Getting started</p>
           <h2 id="home-integration-title">Start here. Integrate when you’re ready.</h2>
-          <p>Connect your wallet to this instance to create invoices and share customer checkout pages. Add API calls or configure webhooks when you want your store to receive invoice updates.</p>
+          <p>Connect your wallet to this instance to create invoices and share customer checkout pages. A store connection is optional; add API calls or configure webhooks only if you want your store to receive invoice updates.</p>
           <div className="home-actions" aria-label="Getting started links">
             <LoginTrigger className="home-button home-button-primary">Connect view-only wallet</LoginTrigger>
             <Link className="home-doc-link" href="/guides/monero-payment-api-webhooks">Read the API guide</Link>

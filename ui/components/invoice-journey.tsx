@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 
 const steps = [
-  { title: "Create invoice", role: "Merchant", detail: "Set the amount in XMR and choose a confirmation target. Share the customer checkout page, or connect it to your store.", note: "An invoice describes a payment. Your wallet stays under your control.", x: 8, y: 12 },
+  { title: "Create invoice", role: "Merchant", detail: "Set the amount in XMR and choose a confirmation target. Share the customer checkout page. Connecting a store is optional.", note: "An invoice describes a payment. Your wallet stays under your control.", x: 8, y: 12 },
   { title: "Open checkout", role: "Customer", detail: "Review the exact XMR amount and merchant address. Scan the QR code or open a Monero wallet from the checkout page. Network fees are separate.", note: "The customer chooses when to send from their own wallet.", x: 93, y: 43 },
   { title: "Pay merchant", role: "Customer → merchant wallet", detail: "The customer sends XMR directly to the merchant’s wallet. XMR Checkout does not receive or forward the funds.", note: "The payment path goes directly from one wallet to the other.", x: 48, y: 56 },
   { title: "Payment detected", role: "XMR Checkout · view-only", detail: "View-only observation identifies the incoming payment. Checkout displays confirmation progress while the merchant’s target is awaited.", note: "No further payment is requested while waiting for confirmations.", x: 31, y: 77 },
@@ -22,7 +22,7 @@ export function InvoiceJourney() {
       <div className="console-topbar"><h2 id={`${id}-title`}>Example invoice journey — simulated</h2></div>
       <div className="journey-scene" data-step={active + 1}>
         <svg viewBox="0 0 600 390" role="img" aria-labelledby={`${id}-art-title`}>
-          <title id={`${id}-art-title`}>A customer pays the merchant’s wallet directly. XMR Checkout observes the payment and sends invoice updates to the connected store.</title>
+          <title id={`${id}-art-title`}>A customer pays the merchant’s wallet directly. XMR Checkout observes the payment and can optionally send invoice updates to a connected store.</title>
           <defs>
             <linearGradient id={`${id}-ground`} x2="0" y2="1"><stop stopColor="#f1e5d2" stopOpacity="0"/><stop offset="1" stopColor="#e8d8bf"/></linearGradient>
             <linearGradient id={`${id}-screen`} x2="1" y2="1"><stop stopColor="#323c49"/><stop offset="1" stopColor="#101217"/></linearGradient>
@@ -110,7 +110,7 @@ export function InvoiceJourney() {
         <p className="journey-detail-role">{String(active + 1).padStart(2, "0")} / 06 <span>{step.role}</span></p>
         <h3>{step.title}</h3><p>{step.detail}</p><p className="journey-detail-note">{step.note}</p>
       </div>
-      <p className="home-journey-note">Illustrative steps only. No payment is requested. Store notifications require integration.</p>
+      <p className="home-journey-note">Illustrative steps only. No payment is requested. Connecting a store is optional; notifications require an integration.</p>
     </div>
   );
 }

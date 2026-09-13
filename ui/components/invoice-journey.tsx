@@ -110,7 +110,6 @@ export function InvoiceJourney() {
         <p className="journey-detail-role">{String(active + 1).padStart(2, "0")} / 06 <span>{step.role}</span></p>
         <h3>{step.title}</h3><p>{step.detail}</p><p className="journey-detail-note">{step.note}</p>
       </div>
-      <p className="home-journey-note">Illustrative steps only. No payment is requested. Connecting a store is optional; notifications require an integration.</p>
     </div>
   );
 }

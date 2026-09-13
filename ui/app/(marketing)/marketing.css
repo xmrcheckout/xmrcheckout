@@ -901,7 +901,7 @@ summary:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(520px, 1fr);
   gap: clamp(2rem, 4vw, 4rem);
-  align-items: center;
+  align-items: start;
   min-height: min(700px, calc(100vh - 5rem));
   margin-inline: -6vw;
   overflow: clip;
@@ -2256,7 +2256,7 @@ summary:focus-visible {
 }
 
 /* Interactive illustration: all activity remains simulated. */
-.invoice-journey { font-family: var(--font-sans), sans-serif; }
+.invoice-journey { font-family: var(--font-sans), sans-serif; margin-top: 0; }
 .journey-scene { position: relative; background: radial-gradient(ellipse at 50% 35%, #fffaf2, #f1e5d2); }
 .journey-scene > svg { display: block; width: 100%; height: auto; }
 .journey-art-label { fill: var(--ink); font-size: 14px; font-weight: 600; }

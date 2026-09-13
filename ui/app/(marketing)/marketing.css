@@ -901,7 +901,7 @@ summary:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 0.72fr) minmax(520px, 1fr);
   gap: clamp(2rem, 4vw, 4rem);
-  align-items: start;
+  align-items: stretch;
   min-height: min(700px, calc(100vh - 5rem));
   margin-inline: -6vw;
   overflow: clip;
@@ -927,6 +927,7 @@ summary:focus-visible {
 
 .home-hero-copy {
   display: grid;
+  align-content: space-between;
   gap: 1.25rem;
   max-width: 38rem;
 }
@@ -2060,6 +2061,10 @@ summary:focus-visible {
     min-height: 0;
     padding-top: 2rem;
     padding-bottom: 2.8rem;
+  }
+
+  .home-hero-copy {
+    align-content: normal;
   }
 
   .home-hero h1 {

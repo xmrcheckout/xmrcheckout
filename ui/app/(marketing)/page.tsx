@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+import { InvoiceJourney } from "../../components/invoice-journey";
 
 import { LoginTrigger } from "../../components/login-modal";
 
@@ -23,24 +24,6 @@ export const metadata: Metadata = {
       "Create invoices, share customer checkout pages, and track Monero payments directly to your wallet. Open-source, self-hostable software with APIs and webhooks.",
   },
 };
-
-const exampleJourney = [
-  { role: "Merchant", title: "Create an invoice", detail: "Set amount + confirmation target" },
-  { role: "Customer", title: "Open checkout", detail: "Review amount + pay wallet" },
-  { role: "Merchant", title: "Payment detected", detail: "Incoming XMR is found" },
-  { role: "Merchant", title: "Target reached", detail: "Required confirmations complete" },
-  { role: "Integration", title: "Store notified", detail: "Configured webhook reports invoice" },
-];
-
-function FlowIcon({ role }: { role: string }) {
-  if (role === "Customer") {
-    return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3" /><path d="M5 21c.6-4 2.9-6 7-6s6.4 2 7 6" /></svg>;
-  }
-  if (role === "Integration") {
-    return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M7 8h10M7 12h3m2 0h5M7 16h10" /></svg>;
-  }
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11" /><path d="M8 20v-6h8v6M2 20h20" /></svg>;
-}
 
 export default async function MarketingHomePage({
   searchParams,
@@ -77,30 +60,7 @@ export default async function MarketingHomePage({
           </p>
         </div>
 
-        <div className="checkout-console" aria-labelledby="example-journey-title">
-          <div className="console-topbar">
-            <h2 id="example-journey-title">Example invoice journey — simulated</h2>
-          </div>
-          <div className="home-circular-flow" aria-label="Circular flow between merchant, customer, and store">
-            <svg className="home-flow-connectors" viewBox="0 0 480 320" aria-hidden="true">
-              <defs><marker id="flow-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" /></marker></defs>
-              <path d="M125 83 C174 25 300 25 355 78" />
-              <path d="M405 105 C455 145 440 225 390 260" />
-              <path d="M340 292 C275 320 200 320 140 292" />
-              <path d="M88 260 C35 220 25 145 75 105" />
-              <path d="M92 78 C105 62 112 57 125 50" />
-            </svg>
-            <div className="home-flow-center"><Image src="/logo.png" alt="XMR Checkout" width={64} height={64} /></div>
-            {exampleJourney.map((step, index) => (
-              <div className={`home-flow-node home-flow-node-${index + 1}`} key={step.title}>
-                <span className="home-flow-step">{index + 1}</span>
-                <span className="home-flow-icon"><FlowIcon role={step.role} /></span>
-                <strong>{step.title}</strong><small>{step.role}</small>
-              </div>
-            ))}
-          </div>
-          <p className="home-journey-note">Store notifications require integration. No payment is requested in this example.</p>
-        </div>
+        <InvoiceJourney />
       </section>
 
       <section className="home-process" aria-labelledby="home-process-title">

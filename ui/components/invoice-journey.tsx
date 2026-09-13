@@ -5,7 +5,7 @@ import { useId, useState } from "react";
 const steps = [
   { title: "Create invoice", role: "Merchant", detail: "Set the amount in XMR and choose a confirmation target. Share the customer checkout page. Connecting a store is optional.", note: "An invoice describes a payment. Your wallet stays under your control.", x: 8, y: 12 },
   { title: "Open checkout", role: "Customer", detail: "Review the exact XMR amount and merchant address. Scan the QR code or open a Monero wallet from the checkout page. Network fees are separate.", note: "The customer chooses when to send from their own wallet.", x: 93, y: 43 },
-  { title: "Pay merchant", role: "Customer → merchant wallet", detail: "The customer sends XMR directly to the merchant’s wallet. XMR Checkout does not receive or forward the funds.", note: "The payment path goes directly from one wallet to the other.", x: 48, y: 56 },
+  { title: "Pay merchant", role: "Customer → merchant invoice subaddress", detail: "The customer sends XMR directly to the merchant’s invoice subaddress. XMR Checkout does not receive or forward the funds.", note: "The subaddress identifies this invoice within the merchant’s wallet.", x: 48, y: 56 },
   { title: "Payment detected", role: "XMR Checkout · view-only", detail: "View-only observation identifies the incoming payment. Checkout displays confirmation progress while the merchant’s target is awaited.", note: "No further payment is requested while waiting for confirmations.", x: 31, y: 77 },
   { title: "Target reached", role: "Merchant", detail: "When the required confirmation count is reached, the invoice becomes confirmed. The customer and merchant can see the updated status.", note: "Confirmation time varies. An invoice target does not override wallet unlock rules.", x: 8, y: 58 },
   { title: "Store notified", role: "Store · optional integration", detail: "A configured webhook reports the invoice update to your store. Your integration decides how to update the order.", note: "Notifications require integration and can also report earlier invoice updates.", x: 93, y: 87 },
@@ -76,7 +76,7 @@ export function InvoiceJourney() {
           </g>
           <text x="131" y="30" className="journey-art-label" textAnchor="middle">Merchant</text>
           <path className="journey-route journey-route-payment" d="M445 180Q310 203 187 190" fill="none" stroke="#b65b25" strokeWidth="3" markerEnd={`url(#${id}-arrow)`}/>
-          <g className="journey-art-caption"><rect x="221" y="161" width="151" height="25" rx="12" fill="#f8f2e9"/><text x="296" y="178" textAnchor="middle">XMR · directly to wallet</text></g>
+          <g className="journey-art-caption"><rect x="221" y="161" width="151" height="25" rx="12" fill="#f8f2e9"/><text x="296" y="178" textAnchor="middle">XMR · via invoice subaddress</text></g>
           {/* View-only observation station */}
           <g className="journey-actor journey-observer" transform="translate(219 280)">
             <ellipse cx="77" cy="62" rx="69" ry="12" fill="#101217" opacity=".07"/>

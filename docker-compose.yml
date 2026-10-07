@@ -111,8 +111,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
-    image: monero-local:${MONERO_VERSION:-0.18.5.1}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
+    image: monero-local:${MONERO_VERSION:-0.18.5.3}
     user: "10001:10001"
     entrypoint: ["monerod"]
     command:
@@ -147,8 +147,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
-    image: monero-local:${MONERO_VERSION:-0.18.5.1}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
+    image: monero-local:${MONERO_VERSION:-0.18.5.3}
     user: "10001:10001"
     command:
       [
@@ -167,8 +167,6 @@ services:
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
         "${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}",
-        "--password",
-        "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
         "--log-level",
         "0"
       ]
@@ -194,8 +192,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
-    image: monero-local:${MONERO_VERSION:-0.18.5.1}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
+    image: monero-local:${MONERO_VERSION:-0.18.5.3}
     user: "10001:10001"
     command:
       [
@@ -214,8 +212,6 @@ services:
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
         "${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}",
-        "--password",
-        "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
         "--log-level",
         "0"
       ]
@@ -241,8 +237,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.1}
-    image: monero-local:${MONERO_VERSION:-0.18.5.1}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
+    image: monero-local:${MONERO_VERSION:-0.18.5.3}
     user: "10001:10001"
     command:
       [
@@ -261,8 +257,6 @@ services:
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
         "${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}",
-        "--password",
-        "${MONERO_WALLET_RPC_WALLET_PASSWORD}",
         "--log-level",
         "0"
       ]

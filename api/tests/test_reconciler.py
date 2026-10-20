@@ -267,6 +267,68 @@ class ReconcileSummaryTests(unittest.TestCase):
         self.assertIsNone(invoice.total_paid_atomic)
 
 
+class TransferPreservationTests(unittest.TestCase):
+    def test_empty_response_preserves_stored_transfers(self):
+        stored = SimpleNamespace(txid="previously-detected")
+        invoice = _pending_invoice("invoice-one", "user-one")
+        db = _FakeDb([invoice], None, transfers=[])
+        db.query = Mock()
+        db.query.return_value.filter.return_value.all.return_value = [stored]
+
+        changed = reconciler._sync_invoice_transfers(
+            db, invoice=invoice, transfers=[]
+        )
+
+        self.assertFalse(changed)
+        self.assertEqual(db.deleted, [])
+
+    def test_nonempty_response_still_prunes_missing_transfers(self):
+        stale = SimpleNamespace(txid="no-longer-returned")
+        existing = SimpleNamespace(
+            txid="still-returned",
+            amount_atomic=100,
+            confirmations=2,
+            timestamp=123,
+            address="invoice-address",
+        )
+        invoice = _pending_invoice("invoice-one", "user-one")
+        db = _FakeDb([invoice], None, transfers=[])
+        db.query = Mock()
+        db.query.return_value.filter.return_value.all.return_value = [stale, existing]
+
+        changed = reconciler._sync_invoice_transfers(
+            db,
+            invoice=invoice,
+            transfers=[TransferDetail("still-returned", 100, 2, 123, "invoice-address")],
+        )
+
+        self.assertTrue(changed)
+        self.assertEqual(db.deleted, [stale])
+
+    def test_nonempty_response_updates_existing_transfer(self):
+        existing = SimpleNamespace(
+            txid="still-returned",
+            amount_atomic=100,
+            confirmations=1,
+            timestamp=123,
+            address="invoice-address",
+        )
+        invoice = _pending_invoice("invoice-one", "user-one")
+        db = _FakeDb([invoice], None, transfers=[])
+        db.query = Mock()
+        db.query.return_value.filter.return_value.all.return_value = [existing]
+
+        changed = reconciler._sync_invoice_transfers(
+            db,
+            invoice=invoice,
+            transfers=[TransferDetail("still-returned", 100, 3, 123, "invoice-address")],
+        )
+
+        self.assertTrue(changed)
+        self.assertEqual(existing.confirmations, 3)
+        self.assertEqual(db.deleted, [])
+
+
 class PaymentTimingTests(unittest.TestCase):
     expiry = datetime(2026, 8, 19, 7, 51, 58, tzinfo=timezone.utc)
 

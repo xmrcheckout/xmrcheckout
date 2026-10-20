@@ -96,7 +96,7 @@ def dispatch_btcpay_webhooks(
                 "Content-Type": "application/json",
                 "User-Agent": "xmrcheckout-btcpay-webhook/1.0",
             }
-            # Retry up to 3 times with backoff on transient failures
+            # Retry up to 3 times with backoff on transient failures.
             last_response = None
             for attempt in range(3):
                 try:
@@ -104,7 +104,7 @@ def dispatch_btcpay_webhooks(
                         hook.url,
                         data=body,
                         headers=headers,
-                        timeout=5,
+                        timeout=10,
                     )
                     if last_response is not None and last_response.status_code < 500:
                         break
@@ -134,7 +134,7 @@ def dispatch_btcpay_webhooks(
                 exc,
                 extra={"webhook_id": str(hook.id), "event": event_type, "url": hook.url},
             )
-        except UnsafeWebhookUrl as exc:
+        except UnsafeWebhookUrl:
             logger.warning(
                 "BTCPay webhook delivery failed",
                 extra={"webhook_id": str(hook.id), "event": event_type},

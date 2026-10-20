@@ -796,30 +796,40 @@ class WalletRecoverySafetyTests(unittest.TestCase):
         client.raw_request.assert_not_called()
 
     def test_new_wallet_generation_uses_restore_height_lookback(self):
-        client = Mock()
+        for daemon_height, expected_restore_height in (
+            (2000, 560),
+            (1440, 0),
+            (1000, 0),
+            (None, 0),
+        ):
+            with self.subTest(daemon_height=daemon_height):
+                client = Mock()
 
-        def raw_request(method, params=None):
-            if method == "open_wallet":
-                raise RequestException("cache missing")
-            return {}
+                def raw_request(method, params=None):
+                    if method == "open_wallet":
+                        raise RequestException("cache missing")
+                    return {}
 
-        client.raw_request.side_effect = raw_request
-        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
-        service = object.__new__(MoneroWalletService)
-        service._wallet_dir = "/wallets"
-        service._daemon_height = Mock(return_value=2000)
+                client.raw_request.side_effect = raw_request
+                backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+                service = object.__new__(MoneroWalletService)
+                service._wallet_dir = "/wallets"
+                service._daemon_height = Mock(return_value=daemon_height)
 
-        service._ensure_wallet_open(
-            backend=backend,
-            wallet_name="user-wallet",
-            payment_address="merchant-address",
-            view_key="view-key",
-        )
+                service._ensure_wallet_open(
+                    backend=backend,
+                    wallet_name="user-wallet",
+                    payment_address="merchant-address",
+                    view_key="view-key",
+                )
 
-        generate_call = next(
-            call for call in client.raw_request.call_args_list if call.args[0] == "generate_from_keys"
-        )
-        self.assertEqual(generate_call.args[1]["restore_height"], 560)
+                generate_call = next(
+                    call for call in client.raw_request.call_args_list
+                    if call.args[0] == "generate_from_keys"
+                )
+                self.assertEqual(
+                    generate_call.args[1]["restore_height"], expected_restore_height
+                )
 
     def test_debug_mode_does_not_enable_sensitive_transport_logs(self):
         reconciler._configure_logging(logging.DEBUG)

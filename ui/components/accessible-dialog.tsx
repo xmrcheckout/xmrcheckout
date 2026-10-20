@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 type AccessibleDialogProps = {
@@ -18,6 +18,8 @@ type AccessibleDialogProps = {
 const focusableSelector =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+const emptySubscribe = () => () => {};
+
 export default function AccessibleDialog({
   ariaDescribedBy,
   ariaLabelledBy,
@@ -28,10 +30,20 @@ export default function AccessibleDialog({
   onClose,
   panelClassName = "",
 }: AccessibleDialogProps) {
+  // Match the server's empty render before mounting the portal in the browser.
+  const isHydrated = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
   const panelRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
     previousFocusRef.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -91,9 +103,9 @@ export default function AccessibleDialog({
       previousFocusRef.current?.focus();
       previousFocusRef.current = null;
     };
-  }, [initialFocusSelector, onClose]);
+  }, [initialFocusSelector, isHydrated, onClose]);
 
-  if (typeof document === "undefined") {
+  if (!isHydrated) {
     return null;
   }
 

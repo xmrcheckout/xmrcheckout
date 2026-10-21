@@ -111,8 +111,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
-    image: monero-local:${MONERO_VERSION:-0.18.5.3}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.4}
+    image: monero-local:${MONERO_VERSION:-0.18.5.4}
     user: "10001:10001"
     entrypoint: ["monerod"]
     command:
@@ -147,8 +147,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
-    image: monero-local:${MONERO_VERSION:-0.18.5.3}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.4}
+    image: monero-local:${MONERO_VERSION:-0.18.5.4}
     user: "10001:10001"
     command:
       [
@@ -192,8 +192,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
-    image: monero-local:${MONERO_VERSION:-0.18.5.3}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.4}
+    image: monero-local:${MONERO_VERSION:-0.18.5.4}
     user: "10001:10001"
     command:
       [
@@ -237,8 +237,8 @@ services:
     build:
       context: ./docker/monero
       args:
-        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.3}
-    image: monero-local:${MONERO_VERSION:-0.18.5.3}
+        MONERO_VERSION: ${MONERO_VERSION:-0.18.5.4}
+    image: monero-local:${MONERO_VERSION:-0.18.5.4}
     user: "10001:10001"
     command:
       [

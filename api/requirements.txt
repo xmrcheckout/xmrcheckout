@@ -1,4 +1,6 @@
 fastapi==0.141.1
+# Reject compromised eMudhra certificate chains in Requests.
+certifi>=2026.10.19
 gunicorn==23.0.0
 uvicorn[standard]==0.30.6
 SQLAlchemy==2.0.36

@@ -111,6 +111,9 @@ If you prefer not to run `nginx`, you can publish `ui` and `api` ports directly 
 
 ## Self-hosted deployment (Docker Compose)
 
+See [UI request protection](nginx/REQUEST_PROTECTION.md) for multipart validation,
+POST rate limits, trusted ingress configuration, verification, and rollback.
+
 1. Copy the environment template and fill in required values:
 
 ```

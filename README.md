@@ -291,7 +291,7 @@ You will run:
 
 - Postgres 16+
 - Python 3.12+
-- Node.js 20+ (for the UI)
+- Node.js 24 LTS (for the UI)
 - A Monero daemon endpoint (`MONERO_DAEMON_URL`) and at least one `monero-wallet-rpc` instance reachable by the API
 
 ### 2. Configure environment variables
@@ -352,6 +352,7 @@ export NEXT_PUBLIC_SITE_URL="${SITE_URL:-http://127.0.0.1:3000}"
 export NEXT_PUBLIC_DONATIONS_ENABLED="${DONATIONS_ENABLED:-false}"
 
 npm run build
+npm prune --omit=dev
 npm run start -- -p 3000 -H 127.0.0.1
 ```
 

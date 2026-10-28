@@ -1,0 +1,24 @@
+# XMR Checkout
+
+> Open-source, self-hostable Monero checkout software. Create XMR invoices, provide customer checkout pages, detect incoming payments, and report invoice status through APIs and webhooks.
+
+Payments go directly from the customer to the merchant's wallet. Merchants retain control of their funds. Wallet access is limited to a wallet address and private view key; XMR Checkout never requests private spend keys, signs transactions, or moves funds.
+
+Invoices are defined in XMR. Any fiat-denominated inputs or reference rates provide non-binding estimates only, with no rate locks or guaranteed fiat outcomes. Payment detection and confirmation tracking depend on wallet and daemon availability and synchronization.
+
+## Documentation
+
+- [Overview](https://xmrcheckout.com/): Product capabilities and the checkout workflow.
+- [API documentation](https://xmrcheckout.com/docs): Authentication, invoice creation, public invoice status, confirmation tracking, and webhooks.
+- [Integration recipes](https://xmrcheckout.com/docs/integrations): Examples for connecting checkout to merchant applications.
+- [FAQ](https://xmrcheckout.com/faq): Wallet access, payment detection, confirmations, and self-hosting.
+
+## Guides
+
+- [Self-hosted Monero checkout](https://xmrcheckout.com/guides/self-hosted-monero-checkout): Deployment, view-only wallet setup, invoice pages, and payment detection.
+- [Monero payment API and webhooks](https://xmrcheckout.com/guides/monero-payment-api-webhooks): Invoice creation, public status polling, and webhook verification.
+
+## Optional
+
+- [Interactive tour](https://xmrcheckout.com/tour): A simulated checkout walkthrough.
+- [Source code and deployment instructions](https://github.com/xmrcheckout/xmrcheckout): Repository, setup requirements, and operational documentation.

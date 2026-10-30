@@ -87,6 +87,7 @@ class TransferDetail:
     confirmations: int
     timestamp: int | None
     address: str | None
+    height: int | None = None
 
 
 @dataclass
@@ -319,6 +320,28 @@ class MoneroWalletService:
             )
             return self._get_transfers_for_address_locked(backend, address)
 
+    def snapshot_address(self, user: User, address: str) -> tuple[int, list[TransferDetail]]:
+        """Refresh and snapshot under the wallet lock before reissuing an address."""
+        view_key = decrypt_secret(user.view_key_encrypted)
+        wallet_name = self._wallet_name(user, user.payment_address, view_key)
+        backend = self._backend_for_wallet_name(wallet_name)
+        with self._wallet_rpc_lock(backend, operation="snapshot_address"):
+            backend.ready_wallet = None
+            self._ensure_wallet_ready_locked(
+                backend=backend, wallet_name=wallet_name,
+                payment_address=user.payment_address, view_key=view_key,
+            )
+            backend.client.raw_request("refresh")
+            height = self._daemon_height()
+            if type(height) is not int or height <= 0:
+                raise HTTPException(503, "Monero daemon height is unavailable")
+            transfers = self._get_transfers_for_address_locked(backend, address, strict=True)
+            # Never advance the cutoff beyond the wallet's actual scan coverage.
+            wallet_height = backend.client.raw_request("get_height").get("height")
+            if type(wallet_height) is not int or wallet_height < height:
+                raise HTTPException(503, "View-only wallet is still syncing")
+            return height - 1, transfers
+
     def _ensure_wallet_ready_locked(
         self,
         *,
@@ -376,6 +399,8 @@ class MoneroWalletService:
         self,
         backend: WalletBackend,
         address: str,
+        *,
+        strict: bool = False,
     ) -> list[TransferDetail]:
         major, minor = self._get_address_index(backend, address)
         try:
@@ -391,6 +416,17 @@ class MoneroWalletService:
         except (RPCError, RequestException) as exc:
             self._raise_wallet_rpc_error(exc)
         incoming, pool = self._validated_transfer_lists(transfers)
+        if strict:
+            for item in [*incoming, *pool]:
+                if (not isinstance(item, dict)
+                    or not isinstance(item.get("txid"), str) or not item["txid"]
+                    or type(item.get("amount")) is not int or item["amount"] < 0
+                    or type(item.get("confirmations", 0)) is not int
+                    or item.get("confirmations", 0) < 0):
+                    raise HTTPException(502, "Incomplete incoming transfer snapshot")
+            for item in incoming:
+                if type(item.get("height")) is not int or item["height"] <= 0:
+                    raise HTTPException(502, "Incomplete confirmed transfer snapshot")
         details: list[TransferDetail] = []
         seen_txids: set[str] = set()
         for item in [*incoming, *pool]:
@@ -412,6 +448,7 @@ class MoneroWalletService:
                     amount_atomic=amount_atomic,
                     confirmations=confirmations,
                     timestamp=timestamp_value,
+                    height=item.get("height") if type(item.get("height")) is int else None,
                     address=item.get("address") if isinstance(item.get("address"), str) else None,
                 )
             )

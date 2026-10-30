@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from .btcpay_webhooks import dispatch_btcpay_webhooks
 from .config import INVOICE_RECONCILE_INTERVAL_SECONDS, LATE_PAYMENT_LOOKBACK_HOURS
 from .db import SessionLocal, engine
-from .models import Invoice, InvoiceTransfer, SystemStatus, User
+from .models import Invoice, InvoiceTransfer, SubaddressAllocation, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail, wallet_error_summary
 from .payment_timing import classify_payment_timing, effective_confirmations
 from .webhooks import dispatch_webhooks
@@ -165,10 +165,10 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                 )
                 continue
             for invoice in user_invoices:
-                with _invoice_advisory_lock(invoice.id) as acquired:
+                with _invoice_advisory_lock(f"allocation:{user.id}") as acquired:
                     if not acquired:
                         logger.info(
-                            "Skipping invoice already being reconciled",
+                            "Skipping invoice while merchant allocation or detection is busy",
                             extra={"invoice_id": str(invoice.id)},
                         )
                         continue
@@ -191,6 +191,14 @@ def _reconcile_invoice(
     user: User,
     invoice: Invoice,
 ) -> bool:
+    allocations = db.query(SubaddressAllocation).filter(
+        SubaddressAllocation.user_id == user.id,
+        SubaddressAllocation.address == invoice.address,
+    ).order_by(SubaddressAllocation.generation.desc()).all()
+    allocation = allocations[0] if allocations else None
+    if allocation is not None and allocation.invoice_id != invoice.id:
+        # A newer allocation owns future observations; preserve older invoice history.
+        return True
     try:
         transfers = _get_transfers_with_retry(
             service,
@@ -206,6 +214,11 @@ def _reconcile_invoice(
         )
         return False
 
+    previous_exclusions = list(allocation.excluded_txids) if allocation is not None else []
+    transfers = eligible_allocation_transfers(allocation, transfers)
+    if allocation is not None and allocation.excluded_txids != previous_exclusions:
+        db.add(allocation)
+        db.commit()
     total_atomic = sum(
         transfer.amount_atomic
         for transfer in transfers
@@ -312,6 +325,33 @@ def _reconcile_invoice(
         dispatch_btcpay_webhooks(db, str(user.id), "InvoiceSettled", invoice)
         dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaymentSettled", invoice)
     return True
+
+
+def eligible_allocation_transfers(
+    allocation: SubaddressAllocation | None, transfers: list[TransferDetail],
+) -> list[TransferDetail]:
+    if allocation is None or allocation.cutoff_height is None:
+        return transfers
+    excluded = set(allocation.excluded_txids)
+    eligible = []
+    for transfer in transfers:
+        if transfer.txid in excluded:
+            continue
+        height = transfer.height
+        if (type(height) is int and height < 0) or (
+            transfer.confirmations > 0 and (type(height) is not int or height <= 0)
+        ):
+            logger.warning("Holding transfer with invalid block height invoice_id=%s txid=%s",
+                           allocation.invoice_id, transfer.txid)
+            continue
+        if type(height) is int and height > 0 and height <= allocation.cutoff_height:
+            # Remember newly discovered history even if it later moves above the
+            # cutoff during a chain reorganization.
+            excluded.add(transfer.txid)
+            allocation.excluded_txids = sorted(excluded)
+            continue
+        eligible.append(transfer)
+    return eligible
 
 
 def _get_transfers_with_retry(

@@ -292,8 +292,10 @@ def create_invoice(
             qr["logo_data_url"] = user.default_qr_logo_data_url
         metadata["qr"] = qr
     user = reserve_invoice_creation(db, user=user)
-    address, subaddress_index = create_subaddress_for_user(db, user=user)
+    invoice_id = uuid.uuid4()
+    address, subaddress_index = create_subaddress_for_user(db, user=user, invoice_id=invoice_id)
     invoice = Invoice(
+        id=invoice_id,
         user_id=user.id,
         wallet_address=user.payment_address,
         address=address,

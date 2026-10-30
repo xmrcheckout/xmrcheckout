@@ -513,8 +513,10 @@ def create_donation_invoice(
         user=user,
         requested_amount_xmr=payload.amount_xmr,
     )
-    address, subaddress_index = create_subaddress_for_user(db, user=user)
+    invoice_id = uuid.uuid4()
+    address, subaddress_index = create_subaddress_for_user(db, user=user, invoice_id=invoice_id)
     invoice = Invoice(
+        id=invoice_id,
         user_id=user.id,
         wallet_address=user.payment_address,
         address=address,
@@ -1136,8 +1138,10 @@ def create_invoice_for_user(
         checkout = {**checkout, "continue_url": str(payload.checkout_continue_url)}
         metadata = {**(metadata if isinstance(metadata, dict) else {}), "checkout": checkout}
     user = reserve_invoice_creation(db, user=user)
-    address, subaddress_index = create_subaddress_for_user(db, user=user)
+    invoice_id = uuid.uuid4()
+    address, subaddress_index = create_subaddress_for_user(db, user=user, invoice_id=invoice_id)
     invoice = Invoice(
+        id=invoice_id,
         user_id=user.id,
         wallet_address=user.payment_address,
         address=address,

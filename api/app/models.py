@@ -162,3 +162,19 @@ class SystemStatus(Base):
     daemon_height = Column(Integer, nullable=True)
     checked_at = Column(DateTime(timezone=True), nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class SubaddressAllocation(Base):
+    __tablename__ = "subaddress_allocations"
+    __table_args__ = (
+        UniqueConstraint("user_id", "address", "generation", name="uq_subaddress_generation"),
+    )
+
+    invoice_id = Column(UUID(as_uuid=True), primary_key=True)
+    user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    address = Column(String, nullable=False, index=True)
+    subaddress_index = Column(Integer, nullable=False)
+    generation = Column(Integer, nullable=False)
+    cutoff_height = Column(BigInteger, nullable=True)
+    excluded_txids = Column(JSON, nullable=False)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())

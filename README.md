@@ -136,6 +136,42 @@ cp .env.example .env
   `60`). These checks are atomic across API workers; raise them deliberately
   for higher-volume integrations.
 
+### Invoice address reuse
+
+Each merchant uses the existing pool of up to 100 invoice subaddresses in account
+0. Never-issued addresses are used first. After the pool has been issued, an
+address can be reused only when all its previous invoices are confirmed or
+expired, and seven days have passed since the latest confirmation or expiry.
+Archiving an invoice does not release its address. Pending or payment-detected
+invoices continue to reserve their address until reconciliation closes them.
+
+Set `SUBADDRESS_REUSE_COOLDOWN_SECONDS` to a positive number of seconds to change
+the seven-day default (`604800`). If every address is reserved or cooling down,
+invoice creation returns HTTP 429 with `Retry-After`. When closure timestamps are
+missing, the address remains unavailable. Existing merchant quotas also apply.
+
+Reuse requires a fresh, synchronized view-only wallet snapshot. Snapshot failure
+returns HTTP 503 without creating an invoice. Historical confirmed and pending
+transfers are excluded from the new invoice, with a blockchain cutoff and
+persistent transaction exclusions protecting subsequent checks. Old allocation
+periods stop receiving updates once the address is reassigned. A genuinely new
+late or repeated payment intended for an older invoice can still be mistaken for
+payment of the new invoice; cooldown reduces this risk but cannot eliminate it.
+
+These protections apply to new native, BTCPay-compatible, and donation invoices.
+Existing totals, confirmations, and webhook history are not repaired or replayed.
+The additive `subaddress_allocations` table is created at API startup. Deploy API
+and reconciler changes together: briefly stop both services, build their images,
+start the API and wait for schema initialization, then start the reconciler.
+Do not run an older reconciler alongside the new API. Before rollback, stop both
+services; restore a compatible version before resuming creation and detection.
+
+Validation uses wallet fixtures and isolated PostgreSQL schemas, without sending
+transactions. Run the API suite with `python -m unittest discover -s tests` from
+`api/`. Set `SUBADDRESS_DATABASE_TESTS=1` to include concurrency and allocation
+integration tests; the configured database role must be allowed to create and
+drop temporary schemas. Tests do not use existing merchant rows.
+
 Late-payment classification uses the on-chain time when cumulative positive
 transfers first reach the invoice amount. `detected_at` remains the time the
 checkout observed the payment; `paid_after_expiry_at` records the on-chain

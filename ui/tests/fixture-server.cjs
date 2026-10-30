@@ -12,6 +12,10 @@ const profile = {
 };
 let availabilityState = "ready";
 let availabilityDelay = 0;
+let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, enabled: true,
+  url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/pay/fixture-token`,
+  action_url: `http://127.0.0.1:${process.env.FIXTURE_API_PORT || 8000}/api/core/public/payment-links/fixture-token/invoices` };
+
 const reference = "00000000-0000-4000-8000-000000000123";
 const fixtureInvoice = "00000000-0000-4000-8000-000000000456";
 
@@ -49,6 +53,23 @@ const server = http.createServer((request, response) => {
       const options = JSON.parse(body);
       availabilityState = options.state ?? availabilityState;
       availabilityDelay = options.delay ?? 0;
+    } else if (path === "/api/core/payment-links" && request.method === "GET") {
+      result = [paymentLink];
+    } else if (path.startsWith("/api/core/payment-links") && ["POST", "PATCH"].includes(request.method)) {
+      paymentLink = { ...paymentLink, ...JSON.parse(body) };
+      result = paymentLink;
+    } else if (path === "/api/core/public/payment-links/fixture-token") {
+      status = paymentLink.enabled ? 200 : 404;
+      result = paymentLink.enabled ? paymentLink : { detail: "Unavailable" };
+    } else if (path === "/api/core/public/payment-links/fixture-token/invoices") {
+      if (request.method === "POST") {
+        response.writeHead(303, { Location: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/invoice/${fixtureInvoice}` });
+        response.end();
+        return;
+      }
+      status = 405;
+    } else if (path === `/api/core/public/invoice/${fixtureInvoice}`) {
+      result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: "pending", confirmation_target: 2, confirmations: 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
     } else if (path === "/api/core/subaddresses/status") {
       status = availabilityState === "unavailable" ? 503 : 200;
       result = status === 200 ? availability() : { detail: "Fixture unavailable" };

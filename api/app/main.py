@@ -9,6 +9,7 @@ from sqlalchemy import text
 from .db import Base, engine
 from .config import DONATIONS_ENABLED
 from .btcpay_routes import router as btcpay_router
+from .payment_links import router as payment_links_router
 from .routes import router
 from .allocation_diagnostics import AllocationError
 
@@ -393,3 +394,5 @@ def startup():
 
 app.include_router(router)
 app.include_router(btcpay_router)
+
+app.include_router(payment_links_router)

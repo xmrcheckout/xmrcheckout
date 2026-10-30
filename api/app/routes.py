@@ -406,6 +406,10 @@ def _public_invoice_status_response(
             update["qr_logo"] = logo
             if logo == "custom" and isinstance(logo_data_url, str):
                 update["qr_logo_data_url"] = logo_data_url
+    product = metadata.get("payment_link") if isinstance(metadata, dict) else None
+    if isinstance(product, dict):
+        update["product_title"] = product.get("title")
+        update["product_description"] = product.get("description")
     continue_url = _get_checkout_continue_url(invoice)
     update["checkout_continue_available"] = bool(
         invoice.status == "confirmed" and continue_url
@@ -1104,6 +1108,13 @@ def create_invoice_for_user(
             status_code=status.HTTP_409_CONFLICT,
             detail="Primary address is not configured for this user",
         )
+    return create_invoice_for_merchant(payload, request, db, user)
+
+
+def create_invoice_for_merchant(
+    payload: InvoiceCreateUser, request: Request, db: Session, user: User,
+):
+    """Shared native/public creation; callers establish merchant authorization."""
     confirmation_target = payload.confirmation_target
     if "confirmation_target" not in payload.model_fields_set:
         confirmation_target = user.default_confirmation_target

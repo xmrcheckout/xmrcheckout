@@ -19,6 +19,9 @@ type InvoiceStatus =
   "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type InvoiceStatusResponse = {
+  quote?: { fiat_amount: string; fiat_currency: string; rate: string; source: string; quoted_at: string } | null;
+  product_title?: string;
+  product_description?: string;
   id: string;
   address: string;
   subaddress_index: number | null;
@@ -194,9 +197,15 @@ export default async function InvoiceStatusDetailPage({
         )}
         eyebrow="Direct-to-wallet invoice"
         id="payment-request-title"
-        title="Payment request"
+        title={invoice.product_title || "Payment request"}
       />
 
+      {invoice.quote ? <div className="mt-4 rounded-xl border border-stroke p-4 text-sm">
+        <p>Original reference: {invoice.quote.fiat_amount} {invoice.quote.fiat_currency}. This invoice is defined in XMR.</p>
+        <p>Informational rate: {invoice.quote.rate} {invoice.quote.fiat_currency} per XMR. Source: {invoice.quote.source}. Quoted at: {invoice.quote.quoted_at}.</p>
+        <p>This estimate does not lock a rate or guarantee a fiat outcome.</p>
+      </div> : null}
+      {invoice.product_description ? <p className="mt-4 whitespace-pre-wrap break-words">{invoice.product_description}</p> : null}
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
         <InvoicePaymentDetails
           address={invoice.address}

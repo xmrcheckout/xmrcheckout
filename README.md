@@ -499,3 +499,66 @@ uvicorn app.main:app --reload
 ```
 
 The API listens on `http://127.0.0.1:8000`.
+
+
+### Reusable payment links
+
+In Dashboard → Payment links, configure a fixed XMR amount or a fiat-reference
+amount (for example 20 EUR). Copy the reusable URL or HTML form into your website.
+HTML blocks must permit forms; use the URL when an editor strips forms. A button
+submission immediately creates a separate invoice and opens hosted checkout.
+Opening a reusable URL shows a review page first; GET/HEAD never create invoices.
+No API key or wallet credential belongs in the snippet.
+
+Fiat-reference inputs produce XMR invoices using an informational quote at
+creation time, with source and timestamp. No exchange rate or fiat outcome is
+guaranteed. A quote outage prevents creation. Editing settings affects future
+invoices only. Disabling a link prevents new purchases; existing invoices remain
+valid and continue detection. PATCH management requests submit the complete
+settings, using the same fields as creation.
+
+Public creations share the merchant's existing invoice and address limits and
+`PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (default 10 successful creations per rolling
+24 hours, across all links). The public POST endpoint is additionally limited at
+Nginx to 6 requests per minute per client IP, burst 3. A malicious visitor can
+consume the public allowance. Existing address reuse and seven-day cooldown
+still apply; a fresh invoice does not guarantee a never-used address. Raising
+the daily allowance does not expand the address pool.
+
+Plain HTML provides no duplicate-submission recovery: each separate submission
+can create another invoice. Do not automatically retry an interrupted request;
+creation may have succeeded. Keep the invoice URL or contact the merchant before
+submitting again. Customer details and protected digital delivery are outside
+this feature. Merchants arrange fulfillment using the invoice ID; a return URL
+does not protect a download.
+
+Management API: authenticated GET/POST `/api/core/payment-links` and PATCH
+`/api/core/payment-links/{id}`. Public GET
+`/api/core/public/payment-links/{token}` exposes product details; public POST
+`/api/core/public/payment-links/{token}/invoices` accepts an empty HTML form and
+returns a 303 redirect, or an HTML error with applicable Retry-After information.
+Price, receiving wallet, confirmation, and URL overrides are rejected. Generated
+invoices appear in the normal invoice list and webhook events, with a snapshot
+in `metadata.payment_link`; search invoice metadata for the product or link ID.
+
+Deploy the additive API schema before the UI. Rebuild API/UI/Nginx and restart;
+verify read-only page and health responses. Observe public creation counts,
+HTTP 429 responses, quote failures, and allocation diagnostics in service logs.
+For rollback, disable links, restore preceding application images/configuration,
+and retain additive tables and invoice records.
+
+Payment-link verification uses isolated fixtures. Run the Python suite against a
+throwaway PostgreSQL database named `payment_link_tests` to enable its HTTP and
+concurrency tests; set `SUBADDRESS_DATABASE_TESTS=1` for allocation integration
+coverage. Mount the repository's `scripts/` and `docker/` paths when testing in
+the API image. Never point these tests at a merchant database.
+
+For browser checks after a UI build, start the fixture from `ui/`:
+
+```sh
+FIXTURE_API_PORT=18380 FIXTURE_UI_URL=http://127.0.0.1:3300 API_BASE_URL=http://127.0.0.1:18380 PORT=3300 node tests/fixture-server.cjs
+```
+
+Then run `node ui/tests/browser-payment-links.cjs http://127.0.0.1:3300 http://127.0.0.1:18380`.
+Set `PLAYWRIGHT_MODULE` and `CHROMIUM_PATH` if they are installed outside the
+usual module/browser locations. These fixtures never use merchant credentials.

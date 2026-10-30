@@ -148,8 +148,10 @@ function send(path, method, ip) { return new Promise((resolve, reject) => {
  const other=await send('/app','POST','198.51.100.11');
  const get=await Promise.all(Array.from({length:25},()=>send('/logo.png','GET','198.51.100.10')));
  const api=await Promise.all(Array.from({length:25},()=>send('/api/core/auth/validate','POST','198.51.100.10')));
+ const purchase=await Promise.all(Array.from({length:12},()=>send('/api/core/public/payment-links/missing/invoices','POST','198.51.100.13')));
+ const product=await send('/api/core/public/payment-links/fixture-token','GET','198.51.100.13');
  const global=await Promise.all(Array.from({length:400},()=>send('/_next/static/missing.js','GET','198.51.100.12')));
- console.log(JSON.stringify({post,other,get,api,global}));
+ console.log(JSON.stringify({post,other,get,api,global,purchase,product}));
 })().catch(error=>{console.error(error);process.exitCode=1;});
 '''
         results = json.loads(command("docker", "exec", "-i", names["client"], "node", "-e", client_code, proxy_ip))
@@ -158,6 +160,8 @@ function send(path, method, ip) { return new Promise((resolve, reject) => {
         assert results["other"] == 404
         assert set(results["get"]) == {200}
         assert set(results["api"]) == {204}
+        assert set(results["purchase"]) == {404, 429}
+        assert results["product"] == 200
         assert 429 in results["global"] and 404 in results["global"]
         (artifacts / "rate-results.json").write_text(json.dumps(results, indent=2))
         print("Trusted per-client limits, unaffected GET/API requests, and retained global limit: passed", flush=True)

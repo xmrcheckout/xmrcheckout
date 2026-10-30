@@ -9,7 +9,10 @@ a framework error; genuine 500 responses are not rewritten.
 In `conf.d/default.conf`, UI POSTs share a per-client limit of 5 requests per
 second with a burst of 10 and immediate HTTP 429 rejection after the burst.
 Adjust `ui_post_rate_limit` and its `burst` together for your deployment.
-GET/HEAD requests and `/api/` requests do not consume this POST bucket. The
+GET/HEAD requests and `/api/` requests do not consume this POST bucket.
+Public payment-link POSTs under `/api/core/public/payment-links/` have a separate
+6 requests/minute per-client bucket with burst 3, and an HTML 429 response with
+`Retry-After: 60`. Read-only product requests do not consume that bucket. The
 existing global 50 requests/second, burst 200 limit still applies.
 
 Only the `cloudflared` service may supply `CF-Connecting-IP`. Other peers use

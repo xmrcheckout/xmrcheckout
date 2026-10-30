@@ -192,3 +192,21 @@ class SubaddressAllocation(Base):
     cutoff_height = Column(BigInteger, nullable=True)
     excluded_txids = Column(JSON, nullable=False)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class PaymentLink(Base):
+    __tablename__ = "payment_links"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    token = Column(String(64), nullable=False, unique=True, index=True)
+    title = Column(String(200), nullable=False)
+    description = Column(String(2000), nullable=False, default="")
+    amount_xmr = Column(Numeric(18, 12), nullable=True)
+    amount_fiat = Column(Numeric(18, 2), nullable=True)
+    currency = Column(String(3), nullable=True)
+    confirmation_target = Column(Integer, nullable=False)
+    checkout_continue_url = Column(String, nullable=True)
+    enabled = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

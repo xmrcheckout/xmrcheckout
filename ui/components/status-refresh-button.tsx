@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useInvoiceRefresh } from "./invoice-status-auto-refresh";
 
 type StatusRefreshButtonProps = {
@@ -16,14 +16,17 @@ export default function StatusRefreshButton({
   const router = useRouter();
   const shared = useInvoiceRefresh();
   const [localPending, startTransition] = useTransition();
+  const [requested, setRequested] = useState(false);
   const isRefreshing = shared?.pending ?? localPending;
 
   const handleRefresh = () => {
+    setRequested(true);
     if (shared) shared.refresh();
     else startTransition(() => router.refresh());
   };
 
   return (
+    <>
     <button
       className={`inline-flex min-h-8 items-center justify-center gap-2 rounded-full border border-stroke bg-white/80 px-3 py-1 text-xs font-semibold text-ink transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       type="button"
@@ -46,5 +49,9 @@ export default function StatusRefreshButton({
       </svg>
       {isRefreshing ? "Refreshing..." : label}
     </button>
+    <span className="sr-only" role="status">
+      {isRefreshing ? "Refreshing status." : requested ? "Refresh finished. See current status." : ""}
+    </span>
+    </>
   );
 }

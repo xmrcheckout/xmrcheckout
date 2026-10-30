@@ -57,7 +57,7 @@ export default function SystemHealthPanel({ status }: SystemHealthPanelProps) {
   const failed = status?.last_reconcile_failed_invoices ?? 0;
 
   return (
-    <section className="grid gap-6" aria-labelledby="system-health-title">
+    <section className="grid min-w-0 grid-cols-1 gap-6" aria-labelledby="system-health-title">
       <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
         <div className="max-w-2xl">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
@@ -113,7 +113,7 @@ export default function SystemHealthPanel({ status }: SystemHealthPanelProps) {
             },
           ].map((item) => (
             <div
-              className="flex items-center justify-between gap-3 rounded-xl border border-stroke bg-cream/60 px-4 py-3 sm:block"
+              className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-stroke bg-cream/60 px-4 py-3 sm:block"
               key={item.label}
             >
               <dt className="text-sm font-semibold text-ink-soft">{item.label}</dt>

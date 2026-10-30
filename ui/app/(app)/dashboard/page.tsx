@@ -7,6 +7,7 @@ import ApiKeySection from "../../../components/api-key-section";
 import BtcpayCheckoutStyleSection from "../../../components/btcpay-checkout-style-section";
 import DefaultConfirmationTargetSection from "../../../components/default-confirmation-target-section";
 import DefaultQrLogoSection from "../../../components/default-qr-logo-section";
+import InvoiceAddressAvailability, { type SubaddressStatus } from "../../../components/invoice-address-availability";
 import InvoicePanel from "../../../components/invoice-panel";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import SystemHealthPanel, {
@@ -299,6 +300,16 @@ export default async function DashboardPage({
     }
   }
 
+  let addressStatus: SubaddressStatus | null = null;
+  if (["overview", "invoices", "health"].includes(activeTab)) {
+    const response = await fetch(`${apiBaseUrl}/api/core/subaddresses/status`, {
+      headers: { Authorization: `ApiKey ${apiKey}` },
+      cache: "no-store",
+    }).catch(() => null);
+    if (response?.status === 401) redirect("/?login=1");
+    if (response?.ok) addressStatus = await response.json().catch(() => null);
+  }
+
   const allInvoices = invoicesData?.items ?? [];
   let profileData: ProfileSummary | null = null;
   let systemStatus: SystemStatusSummary | null = null;
@@ -484,6 +495,8 @@ export default async function DashboardPage({
                 </Link>
               </header>
 
+              <InvoiceAddressAvailability status={addressStatus} />
+
               <div
                 className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
                 aria-label="Merchant metrics"
@@ -663,24 +676,30 @@ export default async function DashboardPage({
           ) : null}
 
           {activeTab === "health" ? (
-            <SystemHealthPanel status={systemStatus} />
+            <div className="grid min-w-0 grid-cols-1 gap-6">
+              <SystemHealthPanel status={systemStatus} />
+              <InvoiceAddressAvailability status={addressStatus} full />
+            </div>
           ) : null}
 
           {activeTab === "invoices" ? (
-            <InvoicePanel
-              activeInvoices={allInvoices}
-              includeArchived={includeArchived}
-              searchQuery={invoiceSearchQuery}
-              statusFilter={invoiceStatusFilter}
-              sort={invoiceSort}
-              order={invoiceOrder}
-              page={invoicePage}
-              pageSize={invoicePageSize}
-              total={invoicesData?.total ?? 0}
-              defaultConfirmationTarget={
-                profileData?.default_confirmation_target ?? 1
-              }
-            />
+            <div className="grid min-w-0 grid-cols-1 gap-6">
+              <InvoiceAddressAvailability status={addressStatus} />
+              <InvoicePanel
+                activeInvoices={allInvoices}
+                includeArchived={includeArchived}
+                searchQuery={invoiceSearchQuery}
+                statusFilter={invoiceStatusFilter}
+                sort={invoiceSort}
+                order={invoiceOrder}
+                page={invoicePage}
+                pageSize={invoicePageSize}
+                total={invoicesData?.total ?? 0}
+                defaultConfirmationTarget={
+                  profileData?.default_confirmation_target ?? 1
+                }
+              />
+            </div>
           ) : null}
 
           {activeTab === "profile" ? (

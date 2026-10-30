@@ -10,6 +10,33 @@ const profile = {
   default_qr_logo_data_url: null,
   created_at: "2026-10-01T00:00:00Z",
 };
+let availabilityState = "ready";
+let availabilityDelay = 0;
+const reference = "00000000-0000-4000-8000-000000000123";
+const fixtureInvoice = "00000000-0000-4000-8000-000000000456";
+
+function availability() {
+  const exhausted = availabilityState === "exhausted";
+  const rows = [
+    { index: 1, category: exhausted ? "reserved" : "never_issued", code: exhausted ? "active_invoice" : "never_issued" },
+    { index: 2, category: exhausted ? "reserved" : "eligible_for_reuse", code: exhausted ? "active_invoice" : "cooldown_complete" },
+    { index: 3, category: "reserved", code: "awaiting_invoice_status_update" },
+    { index: 4, category: "cooling_down", code: "reuse_cooldown" },
+    { index: 5, category: "needs_review", code: "missing_closure_time" },
+  ].map((row) => ({ ...row, invoice_ids: row.index === 3 ? [fixtureInvoice] : [],
+    latest_closure_at: row.index === 2 || row.index === 4 ? "2026-10-29T12:00:00Z" : null,
+    cooldown_complete_at: row.index === 4 ? "2026-11-05T12:00:00Z" : null }));
+  const counts = Object.fromEntries(["never_issued", "eligible_for_reuse", "reserved", "cooling_down", "needs_review"]
+    .map((category) => [category, rows.filter((row) => row.category === category).length]));
+  return { retrieved_at: new Date().toISOString(), cooldown_seconds: 604800, pool_size: 5, counts,
+    earliest_estimated_eligibility_at: "2026-11-05T12:00:00Z", addresses: rows,
+    snapshot: ["snapshot_failed", "recovered"].includes(availabilityState) ? {
+      attempt_id: reference, attempted_at: "2026-10-30T12:00:00Z", completed_at: "2026-10-30T12:00:01Z",
+      outcome: availabilityState === "recovered" ? "succeeded" : "failed", duration_ms: 1000,
+      failure_category: availabilityState === "recovered" ? null : "wallet_syncing",
+      last_success_at: "2026-10-29T12:00:00Z",
+    } : null };
+}
 
 const server = http.createServer((request, response) => {
   let body = "";
@@ -18,7 +45,14 @@ const server = http.createServer((request, response) => {
     const path = new URL(request.url, "http://fixture").pathname;
     let status = 200;
     let result = {};
-    if (path === "/api/core/auth/validate") {
+    if (path === "/__fixture" && request.method === "POST") {
+      const options = JSON.parse(body);
+      availabilityState = options.state ?? availabilityState;
+      availabilityDelay = options.delay ?? 0;
+    } else if (path === "/api/core/subaddresses/status") {
+      status = availabilityState === "unavailable" ? 503 : 200;
+      result = status === 200 ? availability() : { detail: "Fixture unavailable" };
+    } else if (path === "/api/core/auth/validate") {
       status = 204;
     } else if (path === "/api/core/auth/login") {
       result = { api_key: "fixture-only-api-key", webhook_secret: "fixture-only-webhook-secret" };
@@ -28,8 +62,14 @@ const server = http.createServer((request, response) => {
       result = { items: [], total: 0 };
     } else if (path === "/api/core/invoices" && request.method === "POST") {
       if (JSON.parse(body).amount_xmr === "0.2") {
+        availabilityState = "recovered";
         status = 201;
         result = { id: "fixture-invoice-created", address, subaddress_index: 1, amount_xmr: "0.2", warnings: [] };
+      } else if (["0.3", "0.4", "0.5"].includes(JSON.parse(body).amount_xmr)) {
+        const amount = JSON.parse(body).amount_xmr;
+        status = amount === "0.3" ? 429 : 503;
+        result = { detail: "Fixture allocation rejected", code: amount === "0.3" ? "pool_exhausted" : amount === "0.4" ? "allocation_contention" : "snapshot_failed", diagnostic_id: reference, ...(amount === "0.5" ? {} : { retry_after_seconds: 5 }) };
+        availabilityState = amount === "0.3" ? "exhausted" : "snapshot_failed";
       } else {
         status = 503;
         result = { detail: "Fixture invoice service unavailable" };
@@ -44,12 +84,16 @@ const server = http.createServer((request, response) => {
     }
     // Deliberately log only method/path/status, never fields or credentials.
     console.log("fixture", request.method, path, status);
-    response.writeHead(status, { "Content-Type": "application/json" });
-    response.end(status === 204 ? undefined : JSON.stringify(result));
+    const send = () => {
+      response.writeHead(status, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+      response.end(status === 204 ? undefined : JSON.stringify(result));
+    };
+    if (path === "/api/core/subaddresses/status" && availabilityDelay) setTimeout(send, availabilityDelay);
+    else send();
   });
 });
 
-server.listen(8000, "0.0.0.0", () => {
+server.listen(Number(process.env.FIXTURE_API_PORT ?? 8000), "0.0.0.0", () => {
   const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "0.0.0.0"], { stdio: "inherit" });
   child.on("exit", (code) => server.close(() => process.exit(code ?? 1)));
   process.on("SIGTERM", () => child.kill("SIGTERM"));

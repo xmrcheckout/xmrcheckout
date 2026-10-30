@@ -7,6 +7,10 @@ import { redirect } from "next/navigation";
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
 export type InvoiceState = {
+  code?: string | null;
+  diagnosticId?: string | null;
+  retryAfterSeconds?: number | null;
+  creationAttemptId?: string;
   error: string | null;
   invoiceId: string | null;
   address: string | null;
@@ -314,8 +318,13 @@ export async function createInvoiceAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Could not confirm invoice creation. Check the invoice list before trying again.";
+    const message = typeof detail?.detail === "string" ? detail.detail : "Could not confirm invoice creation. Check the invoice list before trying again.";
+    revalidatePath("/dashboard");
     return {
+      code: typeof detail?.code === "string" ? detail.code : null,
+      diagnosticId: typeof detail?.diagnostic_id === "string" ? detail.diagnostic_id : null,
+      retryAfterSeconds: typeof detail?.retry_after_seconds === "number" ? detail.retry_after_seconds : Number(response.headers.get("Retry-After")) || null,
+      creationAttemptId: crypto.randomUUID(),
       error: message,
       invoiceId: null,
       address: null,
@@ -334,6 +343,7 @@ export async function createInvoiceAction(
     amount_xmr: string;
     warnings?: string[] | null;
   };
+  revalidatePath("/dashboard");
   return {
     error: null,
     invoiceId: data.id,

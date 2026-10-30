@@ -1,5 +1,6 @@
 "use client";
 
+import DiagnosticReference from "./diagnostic-reference";
 import PendingSubmitButton from "./pending-submit-button";
 
 import Link from "next/link";
@@ -173,11 +174,20 @@ function CreateInvoiceModal({
   } = useXmrFiatRate(amountMode === "fiat" ? fiatCurrency : null);
 
   useEffect(() => {
-    if (!state.invoiceId) {
+    if (mode === "tour" || (!state.invoiceId && !state.creationAttemptId)) {
       return;
     }
     router.refresh();
-  }, [router, state.invoiceId]);
+  }, [mode, router, state.invoiceId, state.creationAttemptId]);
+
+  const creationError = state.error ? (
+    <div role="alert" className="grid min-w-0 gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+      <p className="font-semibold">{state.code === "pool_exhausted" ? "No invoice addresses are currently eligible." : state.code === "allocation_contention" ? "Invoice detection is busy. Try again shortly." : state.code === "snapshot_failed" ? "The view-only snapshot failed. An address could not be safely reused." : state.error}</p>
+      {state.retryAfterSeconds ? <p>Try again in {state.retryAfterSeconds.toLocaleString()} seconds.</p> : null}
+      {state.diagnosticId ? <DiagnosticReference value={state.diagnosticId} /> : null}
+      {mode === "live" ? <Link className="font-semibold underline underline-offset-4" href="/dashboard?tab=health">View System health</Link> : null}
+    </div>
+  ) : null;
 
   const publicInvoiceUrl = state.invoiceId
     ? createInvoiceOrigin
@@ -401,11 +411,7 @@ function CreateInvoiceModal({
                 </div>
               ) : null}
 
-              {state.error ? (
-                <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                  {state.error}
-                </p>
-              ) : null}
+              {creationError}
 
               <div className="flex flex-wrap justify-end gap-3">
                 <button
@@ -879,11 +885,7 @@ function CreateInvoiceModal({
                     ) : null}
                   </div>
 
-                  {state.error ? (
-                    <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                      {state.error}
-                    </p>
-                  ) : null}
+                  {creationError}
                 </div>
               </div>
 

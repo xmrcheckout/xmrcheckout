@@ -38,7 +38,8 @@ export async function createDonationAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to create a donation invoice.";
+    const reference = typeof detail?.diagnostic_id === "string" ? ` Reference ID: ${detail.diagnostic_id}` : "";
+    const message = `Donation invoice creation is unavailable. Try again later.${reference}`;
     return { error: message, invoiceId: null };
   }
 

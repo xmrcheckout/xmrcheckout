@@ -13,7 +13,7 @@ from fastapi import HTTPException
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from app import reconciler, subaddress_allocator as allocator
+from app import reconciler, subaddress_allocator as allocator, subaddress_status as pool_status
 from app.config import DATABASE_URL
 from app.db import Base
 from app.invoice_limits import reserve_invoice_creation
@@ -101,8 +101,8 @@ class AllocationDatabaseTests(unittest.TestCase):
         with self.Session.begin() as db:
             db.add(User(id=self.user_id, payment_address="merchant", view_key_encrypted="view",
                         api_key_hash="hash", api_key_encrypted="key"))
-        self.decrypt = patch.object(allocator, "decrypt_secret", return_value="view")
-        self.derive = patch.object(allocator, "derive_subaddress", side_effect=lambda **kw: f"address-{kw['address_index']}")
+        self.decrypt = patch.object(pool_status, "decrypt_secret", return_value="view")
+        self.derive = patch.object(pool_status, "derive_subaddress", side_effect=lambda **kw: f"address-{kw['address_index']}")
         self.snapshot = patch.object(MoneroWalletService, "snapshot_address", return_value=(100, [
             TransferDetail("historical", 100, 10, None, "address-1", 90)]))
         self.decrypt.start()

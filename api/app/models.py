@@ -164,6 +164,20 @@ class SystemStatus(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
+class SnapshotStatus(Base):
+    __tablename__ = "snapshot_status"
+
+    # No user foreign key: diagnostics must commit while allocation holds the user lock.
+    user_id = Column(UUID(as_uuid=True), primary_key=True)
+    attempt_id = Column(UUID(as_uuid=True), nullable=False)
+    attempted_at = Column(DateTime(timezone=True), nullable=False)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+    outcome = Column(String, nullable=False)
+    duration_ms = Column(Integer, nullable=True)
+    failure_category = Column(String, nullable=True)
+    last_success_at = Column(DateTime(timezone=True), nullable=True)
+
+
 class SubaddressAllocation(Base):
     __tablename__ = "subaddress_allocations"
     __table_args__ = (

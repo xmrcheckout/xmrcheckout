@@ -3,16 +3,30 @@ import os
 
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from .db import Base, engine
 from .config import DONATIONS_ENABLED
 from .btcpay_routes import router as btcpay_router
 from .routes import router
+from .allocation_diagnostics import AllocationError
 
 app = FastAPI(title="xmrcheckout.com API", version="0.1.0")
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO").upper())
+
+
+@app.exception_handler(AllocationError)
+async def allocation_error_response(request, exc):
+    content = {"detail": exc.detail, "code": exc.code, "diagnostic_id": exc.diagnostic_id}
+    if exc.retry_after_seconds is not None:
+        content["retry_after_seconds"] = exc.retry_after_seconds
+    if request.url.path == "/api/core/donations":
+        content = {"detail": "Donation invoice creation is unavailable. Try again later.",
+                   "diagnostic_id": exc.diagnostic_id}
+    return JSONResponse(content, status_code=exc.status_code,
+                        headers={**(exc.headers or {}), "Cache-Control": "no-store"})
 
 
 def custom_openapi():

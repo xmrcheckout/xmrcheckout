@@ -172,6 +172,40 @@ transactions. Run the API suite with `python -m unittest discover -s tests` from
 integration tests; the configured database role must be allowed to create and
 drop temporary schemas. Tests do not use existing merchant rows.
 
+Authenticated merchants can inspect `GET /api/core/subaddresses/status` (use
+`Authorization: ApiKey …`). The response is uncached and reads local records only:
+it never contacts wallet RPC, reserves an address, or consumes creation quotas.
+The supported pool is partitioned into `never_issued`, `eligible_for_reuse`,
+`reserved`, `cooling_down`, and `needs_review`. Missing closure times, invalid
+prior invoices, and inconsistent allocation history require review. Past-expiry
+pending invoices keep their addresses reserved until their status updates.
+Estimated cooldown completion does not guarantee creation; wallet availability,
+pending invoices, and merchant quotas still apply.
+
+The additive `snapshot_status` table retains only each merchant's latest reuse
+snapshot attempt and last-success timestamp. New merchants have no recorded
+attempt. Diagnostics commit independently of the invoice transaction, so a failed
+creation cannot erase them. A diagnostic storage failure is logged without
+changing the creation result. Operator JSON logs correlate `snapshot_succeeded`,
+`snapshot_failed`, and `allocation_rejected` with merchant-visible reference IDs.
+They contain stable reason codes and numeric RPC codes, never raw RPC messages,
+credentials, or key material. `diagnostic_storage_unavailable` means the latest
+stored status may be incomplete; use the correlated operator logs.
+
+Allocation failures preserve HTTP status and string `detail`, and add `code`,
+`diagnostic_id`, and optional `retry_after_seconds`. Codes are `pool_exhausted`,
+`allocation_contention`, and `snapshot_failed`; existing `Retry-After` headers
+remain. Public donation errors stay generic and may include a reference ID.
+Merchant diagnostics are excluded from public system health. The dashboard uses
+manual refresh and refreshes availability after invoice creation attempts; it
+adds no background monitoring or notification service.
+
+For this additive reporting update, build API/reconciler and UI images, replace
+the API first and wait for schema initialization, then replace reconciler and UI.
+Reload Nginx after replacement, verify authenticated availability and public
+health, and check a fresh successful reconciliation cycle. Validate creation
+scenarios only with isolated fixtures, never real merchant wallets.
+
 Late-payment classification uses the on-chain time when cumulative positive
 transfers first reach the invoice amount. `detected_at` remains the time the
 checkout observed the payment; `paid_after_expiry_at` records the on-chain

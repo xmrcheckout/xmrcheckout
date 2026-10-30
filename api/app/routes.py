@@ -31,6 +31,7 @@ from .models import Invoice, ProfileHistory, SystemStatus, User, Webhook, Webhoo
 from monero.address import Address, IntegratedAddress, SubAddress
 from .rates import UnsupportedCurrencyError, get_xmr_rate
 from .subaddress_allocator import MAX_SUBADDRESS_INDEX, create_subaddress_for_user
+from .subaddress_status import merchant_status
 from .schemas import (
     ApiCredentialsResetRequest,
     ApiCredentialsResetResponse,
@@ -1066,6 +1067,23 @@ def update_profile(
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.get("/api/core/subaddresses/status")
+def get_subaddress_status(
+    response: Response,
+    db: Session = Depends(get_db),
+    api_key: str = Depends(require_api_key),
+):
+    user = _get_user_for_api_key(db, api_key)
+    if user is None:
+        raise HTTPException(401, "User API key required")
+    response.headers["Cache-Control"] = "no-store"
+    try:
+        return merchant_status(db, user)
+    except Exception:
+        raise HTTPException(503, "Invoice address availability is unavailable",
+                            headers={"Cache-Control": "no-store"}) from None
 
 
 @router.post("/api/core/invoices", response_model=InvoiceResponse, status_code=201)

@@ -8,7 +8,6 @@ import time
 from urllib.parse import urlparse
 
 from fastapi import HTTPException, status
-from monero.backends.jsonrpc import JSONRPCWallet
 from monero.backends.jsonrpc.exceptions import RPCError
 import requests
 from requests import RequestException
@@ -29,6 +28,7 @@ from .config import (
 from .db import engine
 from .models import User
 from .security import decrypt_secret
+from .wallet_rpc import WalletRPC
 
 logger = logging.getLogger(__name__)
 
@@ -45,9 +45,8 @@ def wallet_error_summary(exc: Exception) -> str:
     if isinstance(exc, RPCError):
         error = getattr(exc, "error", None)
         if isinstance(error, dict):
-            code = error.get("code", "unknown")
-            message = str(error.get("message", "RPC request failed"))
-            return f"RPC code={code} message={message[:180]}"
+            code = error.get("code")
+            return f"RPC code={code}" if type(code) is int else "RPC request failed"
         return "RPC request failed"
     if isinstance(exc, RequestException):
         return f"{type(exc).__name__}: request failed"
@@ -92,7 +91,7 @@ class TransferDetail:
 
 @dataclass
 class WalletBackend:
-    client: JSONRPCWallet
+    client: WalletRPC
     url: str
     lock_key: int | None = None
     current_wallet: str | None = None
@@ -112,7 +111,7 @@ class MoneroWalletService:
             parsed = urlparse(url)
             host = parsed.hostname or "127.0.0.1"
             port = parsed.port or 18082
-            client = JSONRPCWallet(
+            client = WalletRPC(
                 host=host,
                 port=port,
                 user=MONERO_WALLET_RPC_USER or None,
@@ -166,8 +165,7 @@ class MoneroWalletService:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     logger.warning(
-                        "Wallet RPC lock timeout backend=%s operation=%s timeout_seconds=%.1f",
-                        backend.url,
+                        "Wallet RPC lock timeout operation=%s timeout_seconds=%.1f",
                         operation,
                         timeout_seconds,
                     )
@@ -186,10 +184,8 @@ class MoneroWalletService:
                     )
                 except Exception:
                     logger.warning(
-                        "Wallet RPC lock release failed backend=%s operation=%s",
-                        backend.url,
+                        "Wallet RPC lock release failed operation=%s",
                         operation,
-                        exc_info=True,
                     )
         finally:
             connection.close()

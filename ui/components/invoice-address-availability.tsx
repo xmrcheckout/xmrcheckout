@@ -53,16 +53,17 @@ const failures: Record<string, string> = {
   snapshot_unavailable: "A safe view-only snapshot could not be completed.",
 };
 
-export default function InvoiceAddressAvailability({ status, full = false }: {
+export default function InvoiceAddressAvailability({ status, full = false, showRefresh = true }: {
   status: SubaddressStatus | null;
   full?: boolean;
+  showRefresh?: boolean;
 }) {
   const snapshot = status?.snapshot;
   return (
     <section className="min-w-0 rounded-surface border border-stroke bg-white/70 p-5 shadow-soft sm:p-6" aria-label="Invoice address availability">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h2 className="font-sans text-xl font-semibold">Invoice address availability</h2>
-        <StatusRefreshButton label="Refresh availability" />
+        {showRefresh ? <StatusRefreshButton label="Refresh availability" /> : null}
       </div>
       {status ? (
         <>

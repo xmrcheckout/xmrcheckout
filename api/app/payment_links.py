@@ -10,11 +10,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
-from pydantic import ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from starlette.concurrency import run_in_threadpool
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from .db import get_db
+from .db import SessionLocal, get_db
 from .models import Invoice, PaymentLink, User
 from .routes import _get_user_for_api_key, create_invoice_for_merchant
 from .schemas import InvoiceCreateUser
@@ -23,6 +24,13 @@ from .security import require_api_key
 router = APIRouter()
 logger = logging.getLogger(__name__)
 PUBLIC_PAYMENT_LINK_DAILY_LIMIT = max(1, int(os.getenv("PUBLIC_PAYMENT_LINK_DAILY_LIMIT", "10")))
+
+SUPPORTED_CURRENCIES = ("USD", "EUR", "GBP", "CAD", "AUD", "NZD", "CHF", "JPY", "CNY", "HKD", "SGD", "INR", "BRL", "MXN", "SEK", "NOK", "DKK", "ZAR", "PLN", "KRW")
+
+
+class PaymentLinkState(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    enabled: bool
 
 
 class PaymentLinkInput(InvoiceCreateUser):
@@ -43,13 +51,25 @@ class PaymentLinkInput(InvoiceCreateUser):
     def template_fields(self):
         if self.metadata is not None or self.expires_at is not None:
             raise ValueError("Template metadata and expiry overrides are not supported")
-        amount = self.amount_xmr if self.amount_xmr is not None else self.amount_fiat
-        precision = 12 if self.amount_xmr is not None else 2
+        return self
+
+    @field_validator("currency")
+    @classmethod
+    def supported_currency(cls, value):
+        if value is not None and value not in SUPPORTED_CURRENCIES:
+            raise ValueError("Choose a supported currency")
+        return value
+
+    @field_validator("amount_xmr", "amount_fiat")
+    @classmethod
+    def amount_precision(cls, amount, info):
+        if amount is None:
+            return amount
+        precision = 12 if info.field_name == "amount_xmr" else 2
         if not amount.is_finite() or amount >= Decimal("1000000") or amount != amount.quantize(Decimal(10) ** -precision):
             raise ValueError("Amount is too large or has too many decimal places")
-        if self.amount_fiat is not None and (len(self.currency) != 3 or not self.currency.isalpha()):
-            raise ValueError("Use a three-letter currency code")
-        return self
+        return amount
+
 
 
 def merchant(db: Session = Depends(get_db), key: str = Depends(require_api_key)):
@@ -97,13 +117,24 @@ def create_link(payload: PaymentLinkInput, db: Session = Depends(get_db), user: 
 
 
 @router.patch("/api/core/payment-links/{link_id}")
-def edit_link(link_id: UUID, payload: PaymentLinkInput, db: Session = Depends(get_db), user: User = Depends(merchant)):
+def edit_link(link_id: UUID, payload: PaymentLinkInput | PaymentLinkState, db: Session = Depends(get_db), user: User = Depends(merchant)):
     # Same lock order as public creation: merchant, then template.
     db.query(User).filter(User.id == user.id).with_for_update().one()
     link = db.query(PaymentLink).filter(PaymentLink.id == link_id, PaymentLink.user_id == user.id).with_for_update().first()
     if link is None:
         raise HTTPException(404, "Payment link not found")
-    apply_settings(link, payload, user)
+    if isinstance(payload, PaymentLinkState):
+        if payload.enabled:
+            settings = {name: getattr(link, name) for name in (
+                    "title", "description", "amount_xmr", "amount_fiat", "currency",
+                    "confirmation_target", "checkout_continue_url")}
+            try:
+                PaymentLinkInput(**settings)
+            except ValidationError:
+                raise HTTPException(422, "Correct the saved payment-link settings before enabling it.") from None
+        link.enabled = payload.enabled
+    else:
+        apply_settings(link, payload, user)
     db.commit()
     db.refresh(link)
     return serialize(link)
@@ -123,14 +154,29 @@ def public_link(token: str, response: Response, db: Session = Depends(get_db)):
     return {key: data[key] for key in ("title", "description", "amount_xmr", "amount_fiat", "currency", "confirmation_target", "action_url")}
 
 
-def reserve_public_budget(db, user):
-    # Caller holds the merchant lock until invoice commit, across all workers.
-    now = datetime.now(timezone.utc)
-    recent = db.query(func.count(Invoice.id), func.min(Invoice.created_at)).filter(
+def public_usage(db, user, now):
+    return db.query(func.count(Invoice.id), func.min(Invoice.created_at)).filter(
         Invoice.user_id == user.id,
         Invoice.metadata_json["origin"].as_string() == "payment_link",
         Invoice.created_at > now - timedelta(days=1),
     ).one()
+
+
+@router.get("/api/core/payment-links/status")
+def link_status(response: Response, db: Session = Depends(get_db), user: User = Depends(merchant)):
+    response.headers["Cache-Control"] = "no-store"
+    now = datetime.now(timezone.utc)
+    used, _ = public_usage(db, user, now)
+    return {"supported_currencies": SUPPORTED_CURRENCIES,
+            "daily_limit": PUBLIC_PAYMENT_LINK_DAILY_LIMIT, "used": used,
+            "remaining": max(0, PUBLIC_PAYMENT_LINK_DAILY_LIMIT - used),
+            "retrieved_at": now, "window_hours": 24}
+
+
+def reserve_public_budget(db, user):
+    # Caller holds the merchant lock until invoice commit, across all workers.
+    now = datetime.now(timezone.utc)
+    recent = public_usage(db, user, now)
     if recent[0] >= PUBLIC_PAYMENT_LINK_DAILY_LIMIT:
         oldest = recent[1]
         if oldest.tzinfo is None:
@@ -150,11 +196,20 @@ def error_page(status_code, detail, headers=None):
 
 
 @router.post("/api/core/public/payment-links/{token}/invoices")
-async def purchase(token: str, request: Request, db: Session = Depends(get_db)):
+async def purchase(token: str, request: Request):
+    if request.url.query or await request.stream().__anext__():
+        return error_page(400, "This button does not accept price or checkout overrides.")
+    return await run_in_threadpool(purchase_in_worker, token, request)
+
+
+def purchase_in_worker(token: str, request: Request):
+    # Session lifetime and all blocking I/O stay inside this worker thread.
+    with SessionLocal() as db:
+        return create_purchase(token, request, db)
+
+
+def create_purchase(token: str, request: Request, db: Session):
     try:
-        # Generated forms are empty; reject all configuration overrides without parsing bodies.
-        if request.url.query or await request.stream().__anext__():
-            raise HTTPException(400, "This button does not accept price or checkout overrides.")
         initial = enabled_link(db, token)
         user = db.query(User).filter(User.id == initial.user_id).with_for_update().first()
         if user is None or not user.payment_address or not user.view_key_encrypted:

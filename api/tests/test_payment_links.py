@@ -26,6 +26,10 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         Base.metadata.create_all(engine)
         app = FastAPI()
+        @app.get("/__test/ping")
+        async def ping():
+            return {"ok": True}
+
         app.include_router(payment_links.router)
         app.include_router(routes.router)
         sock = socket.socket()
@@ -162,6 +166,60 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
                     self.assertEqual(future.result().status_code, 404)
         with SessionLocal() as db:
             self.assertEqual(db.query(Invoice).filter(Invoice.user_id == self.user_id).count(), 0)
+
+    def test_slow_purchase_does_not_block_event_loop_and_closes_session(self):
+        from contextlib import contextmanager
+        _, url = self.create()
+        entered, release = threading.Event(), threading.Event()
+        session_threads = []
+        closed = []
+        @contextmanager
+        def session():
+            session_threads.append(threading.get_ident())
+            with SessionLocal() as db:
+                try:
+                    yield db
+                finally:
+                    closed.append(True)
+        def slow_address(*args, **kwargs):
+            entered.set()
+            if not release.wait(5):
+                raise RuntimeError("test barrier timed out")
+            raise RuntimeError("fixture failure")
+        with patch.object(payment_links, "SessionLocal", session), patch.object(routes, "create_subaddress_for_user", side_effect=slow_address):
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(requests.post, url + "/invoices", timeout=10)
+                try:
+                    self.assertTrue(entered.wait(5))
+                    self.assertEqual(requests.get(self.base + "/__test/ping", timeout=1).status_code, 200)
+                finally:
+                    release.set()
+                self.assertEqual(future.result().status_code, 503)
+        self.assertEqual(closed, [True])
+        self.assertNotEqual(session_threads[0], self.thread.ident)
+        with SessionLocal() as db:
+            self.assertEqual(db.query(Invoice).filter(Invoice.user_id == self.user_id).count(), 0)
+
+    def test_status_and_legacy_state_changes(self):
+        data, url = self.create()
+        endpoint = self.base + "/api/core/payment-links/status"
+        self.assertEqual(requests.get(endpoint).status_code, 401)
+        before = requests.get(endpoint, headers=self.headers)
+        self.assertEqual(before.headers["Cache-Control"], "no-store")
+        self.assertEqual(before.json()["used"], 0)
+        requests.post(url + "/invoices", allow_redirects=False).raise_for_status()
+        status = requests.get(endpoint, headers=self.headers).json()
+        self.assertEqual(status["remaining"], status["daily_limit"] - 1)
+        self.assertIn("EUR", status["supported_currencies"])
+        with SessionLocal() as db:
+            db.query(Invoice).filter(Invoice.user_id == self.user_id).update({"created_at": datetime.now(timezone.utc) - timedelta(days=2)})
+            db.query(PaymentLink).filter(PaymentLink.id == data["id"]).update({"amount_xmr": None, "amount_fiat": 20, "currency": "ZZZ"})
+            db.commit()
+        self.assertEqual(requests.get(endpoint, headers=self.headers).json()["used"], 0)
+        patch_url = self.base + "/api/core/payment-links/" + data["id"]
+        self.assertEqual(requests.patch(patch_url, headers=self.headers, json={"enabled": False}).status_code, 200)
+        self.assertEqual(requests.patch(patch_url, headers=self.headers, json={"enabled": True}).status_code, 422)
+        self.assertEqual(requests.post(self.base + "/api/core/payment-links", headers=self.headers, json={"title": "Invalid", "amount_fiat": "20", "currency": "ZZZ"}).status_code, 422)
 
     def test_parallel_budget_shared_across_links(self):
         _, a = self.create()

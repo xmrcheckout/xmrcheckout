@@ -225,7 +225,7 @@ export default async function DashboardPage({
   let offset = activeTab === "invoices" ? (invoicePage - 1) * invoiceLimit : 0;
   let total = 0;
   const items: InvoiceSummary[] = [];
-  do {
+  if (activeTab !== "payment-links") do {
     const invoiceUrl = new URL(`${apiBaseUrl}/api/core/invoices`);
     invoiceUrl.searchParams.set("limit", invoiceLimit.toString());
     invoiceUrl.searchParams.set("offset", offset.toString());

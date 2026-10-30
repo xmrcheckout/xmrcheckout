@@ -553,12 +553,28 @@ concurrency tests; set `SUBADDRESS_DATABASE_TESTS=1` for allocation integration
 coverage. Mount the repository's `scripts/` and `docker/` paths when testing in
 the API image. Never point these tests at a merchant database.
 
-For browser checks after a UI build, start the fixture from `ui/`:
+Payment-link reliability checks build and use the UI/API/Nginx images. Run:
 
 ```sh
-FIXTURE_API_PORT=18380 FIXTURE_UI_URL=http://127.0.0.1:3300 API_BASE_URL=http://127.0.0.1:18380 PORT=3300 node tests/fixture-server.cjs
+CHROMIUM_PATH=/path/to/chrome python3 tests/check_payment_links.py --playwright-module /path/to/playwright
 ```
 
-Then run `node ui/tests/browser-payment-links.cjs http://127.0.0.1:3300 http://127.0.0.1:18380`.
-Set `PLAYWRIGHT_MODULE` and `CHROMIUM_PATH` if they are installed outside the
-usual module/browser locations. These fixtures never use merchant credentials.
+This starts PostgreSQL, the real API, the UI, and Nginx on an isolated internal
+Docker network, then serves the merchant button from a different loopback
+origin. Wallet allocation, QR generation, quotes, and webhooks use fixtures.
+The test verifies the cross-origin POST and 303 redirect with JavaScript disabled,
+field errors and preserved input, allowance/address failures, and no invoice-list
+fetch on the Payment links tab. Temporary containers and networks are removed.
+
+Authenticated GET `/api/core/payment-links/status` returns the curated currency
+choices and current rolling allowance (`daily_limit`, `used`, `remaining`,
+`window_hours`, `retrieved_at`). The dashboard shows these alongside the existing
+address status; refresh retrieves both without reserving capacity. Failed status
+requests are shown as unavailable, not zero capacity.
+
+Payment-link saves validate currencies against this curated server list without
+contacting the quote provider. Existing unsupported settings remain visible for
+correction. PATCH also accepts only `{"enabled": false}` to disable such a link;
+`{"enabled": true}` validates all saved settings before enabling. Full-settings
+PATCH requests remain compatible. The purchase operation runs in a worker
+thread with its own database session, preserving atomic merchant/template locks.

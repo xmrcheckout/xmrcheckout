@@ -503,6 +503,8 @@ The API listens on `http://127.0.0.1:8000`.
 
 ### Reusable payment links
 
+Follow the [payment button setup guide](https://xmrcheckout.com/guides/monero-payment-buttons) for the merchant walkthrough, embedding instructions, and limitations.
+
 In Dashboard → Payment links, configure a fixed XMR amount or a fiat-reference
 amount (for example 20 EUR). Copy the reusable URL or HTML form into your website.
 HTML blocks must permit forms; use the URL when an editor strips forms. A button
@@ -514,8 +516,8 @@ Fiat-reference inputs produce XMR invoices using an informational quote at
 creation time, with source and timestamp. No exchange rate or fiat outcome is
 guaranteed. A quote outage prevents creation. Editing settings affects future
 invoices only. Disabling a link prevents new purchases; existing invoices remain
-valid and continue detection. PATCH management requests submit the complete
-settings, using the same fields as creation.
+valid and continue detection. Full-settings PATCH requests use the same fields as creation; enabled-state-only
+PATCH requests can disable a link without changing its product settings.
 
 Public creations share the merchant's existing invoice and address limits and
 `PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (default 10 successful creations per rolling

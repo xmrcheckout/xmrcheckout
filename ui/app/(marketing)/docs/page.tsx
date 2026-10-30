@@ -45,6 +45,48 @@ const codeBlockClass =
   "min-w-0 max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
 
 const endpointGroups = [
+{
+  "title": "Payment-link management",
+  "auth": "API key",
+  "items": [
+    {
+      "method": "GET",
+      "path": "/api/core/payment-links",
+      "description": "List the signed-in merchant’s reusable payment templates."
+    },
+    {
+      "method": "POST",
+      "path": "/api/core/payment-links",
+      "description": "Create a fixed-amount payment link; returns 201 with reusable and form-action URLs."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/core/payment-links/{link_id}",
+      "description": "Replace settings or change only the enabled state of an owned link."
+    },
+    {
+      "method": "GET",
+      "path": "/api/core/payment-links/status",
+      "description": "Read supported currencies and the merchant’s rolling public invoice allowance."
+    }
+  ]
+},
+{
+  "title": "Public payment links",
+  "auth": "None",
+  "items": [
+    {
+      "method": "GET",
+      "path": "/api/core/public/payment-links/{token}",
+      "description": "Read an enabled product’s public details without allocating an invoice."
+    },
+    {
+      "method": "POST",
+      "path": "/api/core/public/payment-links/{token}/invoices",
+      "description": "Submit an empty HTML form to create an invoice and receive a 303 redirect."
+    }
+  ]
+},
   {
     title: "Login",
     auth: "None",
@@ -265,6 +307,94 @@ const endpointGroups = [
 ];
 
 const endpointRequirements = [
+{
+  "method": "GET",
+  "path": "/api/core/payment-links",
+  "auth": "API key",
+  "required": [],
+  "optional": [],
+  "notes": [
+    "Returns an array of owned templates, with IDs, settings, enabled state, reusable url, and action_url."
+  ]
+},
+{
+  "method": "POST",
+  "path": "/api/core/payment-links",
+  "auth": "API key",
+  "required": [
+    "title",
+    "amount_xmr OR amount_fiat",
+    "currency (when using amount_fiat)"
+  ],
+  "optional": [
+    "description",
+    "confirmation_target",
+    "checkout_continue_url",
+    "enabled"
+  ],
+  "notes": [
+    "Title: 1–200 characters; description: up to 2000. Amounts must be positive and below 1000000; at most 12 decimal places for XMR or 2 for fiat-reference inputs.",
+    "Use supported_currencies from the status endpoint. Saves do not contact the quote provider.",
+    "Confirmation target: 0–10, defaulting to the merchant profile at save time. Enabled defaults to true. Invoices use the configured default lifetime (one hour by default).",
+    "Return URLs require HTTPS, with HTTP allowed for localhost and 127.0.0.1. Metadata and expiry overrides are not supported on templates.",
+    "Returns 201 with saved settings, id, url, and action_url."
+  ]
+},
+{
+  "method": "PATCH",
+  "path": "/api/core/payment-links/{link_id}",
+  "auth": "API key",
+  "required": [
+    "link_id (owned UUID path)",
+    "complete settings OR enabled alone"
+  ],
+  "optional": [],
+  "notes": [
+    "Full settings use the creation fields; omitted optional fields take their creation defaults, so send all settings you intend to retain.",
+    "An enabled-only body can disable a legacy link with invalid settings. Enabling validates all saved settings and returns 422 if correction is required.",
+    "Returns updated settings and the same URLs. Existing invoices retain their snapshots and continue detection after disabling."
+  ]
+},
+{
+  "method": "GET",
+  "path": "/api/core/payment-links/status",
+  "auth": "API key",
+  "required": [],
+  "optional": [],
+  "notes": [
+    "Returns supported_currencies, daily_limit, used, remaining, window_hours, and retrieved_at. Counts are shared across the merchant’s links over the preceding 24 hours.",
+    "Status is a non-reserving snapshot, returned with Cache-Control: no-store. Address availability is separately reported by /api/core/subaddresses/status."
+  ]
+},
+{
+  "method": "GET",
+  "path": "/api/core/public/payment-links/{token}",
+  "auth": "None",
+  "required": [
+    "token (public path identifier)"
+  ],
+  "optional": [],
+  "notes": [
+    "Returns title, description, amount_xmr, amount_fiat, currency, confirmation_target, and action_url. Disabled or unknown links return 404.",
+    "Reading or previewing a link never creates an invoice. The reusable /pay/{token} URL is the hosted product review page."
+  ]
+},
+{
+  "method": "POST",
+  "path": "/api/core/public/payment-links/{token}/invoices",
+  "auth": "None",
+  "required": [
+    "token (public path identifier)",
+    "empty form body"
+  ],
+  "optional": [],
+  "notes": [
+    "No API key, cookies, or JavaScript are required. Rejects query parameters and non-empty bodies with 400; all purchase settings come from the saved template.",
+    "Success returns 303 to the hosted invoice; it does not return invoice JSON. Application errors are HTML, including unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). Applicable responses include Retry-After.",
+    "The default allowance is 10 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
+    "There is no duplicate-submission recovery or automatic retry. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying."
+  ]
+},
   {
     method: "POST",
     path: "/api/core/auth/login",
@@ -632,11 +762,12 @@ export default function DocsPage() {
         </aside>
 
         <nav
-          className="sticky top-3 z-10 mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur sm:flex"
+          className="sticky top-3 z-10 mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur sm:flex sm:flex-wrap"
           aria-label="Documentation sections"
         >
           {[
             { href: "#start", label: "Start" },
+            { href: "#payment-links", label: "Payment links" },
             { href: "#fiat-inputs", label: "Fiat inputs" },
             { href: "#concepts", label: "Concepts" },
             { href: "#api-reference", label: "API reference" },
@@ -742,6 +873,52 @@ Content-Type: application/json
 }`}</code>
             </CopyCodeBlock>
           </div>
+        </section>
+
+        <section id="payment-links" aria-labelledby="payment-links-title" className="mt-10 grid min-w-0 scroll-mt-24 gap-5 break-words rounded-surface border border-stroke bg-card p-5 sm:p-8">
+          <h2 id="payment-links-title" className="font-sans text-2xl font-semibold">Reusable payment links and HTML buttons</h2>
+          <p>Merchants can configure a fixed amount in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first.</p>
+          <p><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the merchant setup guide</Link> for wallet prerequisites, embedding, capacity, and manual fulfillment. The API operations below support managing those same templates from an integration.</p>
+          <details className="min-w-0 rounded-xl border border-stroke p-4">
+            <summary className="min-h-11 cursor-pointer font-semibold">API examples and response behavior</summary>
+            <p className="mt-3">Create a €20 reference template with a merchant API key held on your server. Fiat-reference inputs produce an XMR amount only when an invoice is requested; no rate or fiat outcome is guaranteed.</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/payment-links
+Authorization: ApiKey YOUR_MERCHANT_API_KEY
+Content-Type: application/json
+
+{
+  "title": "Digital guide",
+  "amount_fiat": "20.00",
+  "currency": "EUR",
+  "confirmation_target": 2,
+  "enabled": true
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">The 201 response includes saved settings and these selected fields. Tokens and IDs here are placeholders; use the returned URLs.</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`{
+  "id": "00000000-0000-4000-8000-000000000001",
+  "url": "https://checkout.example/pay/YOUR_PUBLIC_TOKEN",
+  "action_url": "https://checkout.example/api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices"
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">To read the current allowance, send an authenticated GET to /api/core/payment-links/status. Example response:</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`{
+  "supported_currencies": ["USD", "EUR", "GBP", "CAD", "AUD", "NZD", "CHF", "JPY", "CNY", "HKD", "SGD", "INR", "BRL", "MXN", "SEK", "NOK", "DKK", "ZAR", "PLN", "KRW"],
+  "daily_limit": 10,
+  "used": 2,
+  "remaining": 8,
+  "window_hours": 24,
+  "retrieved_at": "2026-10-30T12:00:00Z"
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">A form sends an empty public POST, without merchant credentials. An illustrative successful exchange is:</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 0
+
+HTTP/1.1 303 See Other
+Location: https://checkout.example/invoice/NEW_INVOICE_ID`}</code></CopyCodeBlock>
+            <p className="mt-3">On failure, the browser receives HTML explaining unavailability and any applicable Retry-After guidance. Do not automatically retry an uncertain request; it may already have created an invoice. Amount, wallet, confirmation, and URL overrides are rejected.</p>
+            <p className="mt-3">For editing, PATCH accepts full settings using the creation fields, or an enabled-only body such as {`{"enabled": false}`}. Re-enabling with {`{"enabled": true}`} validates saved settings. Full-settings updates replace omitted optional fields with defaults. The returned URLs remain stable; existing invoices retain their product snapshots.</p>
+          </details>
+          <p>Find the six operations in the Payment-link management and Public payment links groups in the <a href="#api-reference" className="font-semibold underline underline-offset-4">endpoint directory</a>.</p>
         </section>
 
         <section

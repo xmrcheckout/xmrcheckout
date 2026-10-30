@@ -6,7 +6,7 @@ import PageIntroBand from "../../../components/page-intro-band";
 export const metadata: Metadata = {
   title: "Monero Checkout Guides",
   description:
-    "Practical guides for running self-hosted XMR Checkout and integrating its Monero invoice API and webhooks.",
+    "Practical guides for adding Monero payment buttons, running self-hosted XMR Checkout, and integrating invoices and webhooks.",
   alternates: {
     canonical: "/guides",
   },
@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     siteName: "XMR Checkout",
     title: "Monero Checkout Guides | XMR Checkout",
     description:
-      "Practical guides for running self-hosted XMR Checkout and integrating its Monero invoice API and webhooks.",
+      "Practical guides for adding Monero payment buttons, running self-hosted XMR Checkout, and integrating invoices and webhooks.",
   },
   twitter: {
     card: "summary",
     title: "Monero Checkout Guides | XMR Checkout",
     description:
-      "Practical guides for running self-hosted XMR Checkout and integrating its Monero invoice API and webhooks.",
+      "Practical guides for adding Monero payment buttons, running self-hosted XMR Checkout, and integrating invoices and webhooks.",
   },
 };
 
@@ -39,7 +39,7 @@ export default function GuidesPage() {
           title="Run your checkout with a clear path from setup to integration."
           description={
             <p>
-              Start with the guide that matches your role. Both follow the same
+              Start with the guide that matches your role. All follow the same
               non-custodial model: your wallet receives XMR, while XMR Checkout
               observes incoming payments and reports invoice status.
             </p>
@@ -47,6 +47,12 @@ export default function GuidesPage() {
         />
 
         <section className="mt-8 grid gap-5 md:grid-cols-2" aria-label="Guides">
+          <Link className={cardClass} href="/guides/monero-payment-buttons">
+            <p className="text-sm font-semibold text-ink-soft">For independent websites and freelancers</p>
+            <h2 className="mt-2 font-sans text-2xl font-semibold group-hover:underline group-hover:underline-offset-4">Add a Monero payment button to your website</h2>
+            <p className="mt-3 text-sm leading-relaxed text-ink-soft">Configure a fixed amount, copy HTML or a reusable URL, and track a separate invoice for each submission without programming.</p>
+            <span className="mt-5 inline-flex text-sm font-semibold text-ink">Read the payment button guide →</span>
+          </Link>
           <Link className={cardClass} href="/guides/self-hosted-monero-checkout">
             <p className="flex items-center gap-2 text-sm font-semibold text-ink-soft">
               <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />

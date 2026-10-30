@@ -35,6 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${normalizedSiteUrl}/guides/monero-payment-api-webhooks`,
       lastModified,
     },
+    { url: `${normalizedSiteUrl}/guides/monero-payment-buttons`, lastModified },
     {
       url: `${normalizedSiteUrl}/faq`,
       lastModified,

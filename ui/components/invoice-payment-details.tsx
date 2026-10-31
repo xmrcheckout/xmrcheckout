@@ -4,12 +4,14 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 
+import SimulatedCheckoutPreview from "./simulated-checkout-preview";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
 
 type InvoicePaymentDetailsProps = {
+  simulation?: boolean;
   address: string;
   amount: string;
   hasDetectedPayment: boolean;
@@ -37,6 +39,7 @@ export default function InvoicePaymentDetails({
   qrLogoMode,
   qrLogoDataUrl,
   enableFiatEstimate = true,
+  simulation = false,
 }: InvoicePaymentDetailsProps) {
   const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -44,7 +47,7 @@ export default function InvoicePaymentDetails({
     rate: usdRate,
     updatedAt: usdRateUpdatedAt,
     source: usdRateSource,
-  } = useXmrUsdRate(enableFiatEstimate);
+  } = useXmrUsdRate(enableFiatEstimate && !simulation);
   const isInvalid = status === "invalid";
   const isExpired = status === "expired";
   const canSendPayment = status === "pending";
@@ -67,6 +70,7 @@ export default function InvoicePaymentDetails({
   }, [usdRate, amountValue]);
 
   useEffect(() => {
+    if (simulation) return;
     let active = true;
     const size = 200;
     const canvas = document.createElement("canvas");
@@ -105,7 +109,7 @@ export default function InvoicePaymentDetails({
     return () => {
       active = false;
     };
-  }, [uri, qrLogoMode]);
+  }, [uri, qrLogoMode, simulation]);
 
   const resolvedQrLogoMode = qrLogoMode ?? "monero";
   const resolvedLogoSrc =
@@ -153,6 +157,8 @@ export default function InvoicePaymentDetails({
         : status === "confirmed"
           ? "success"
           : "error";
+
+  if (simulation) return <SimulatedCheckoutPreview amount={formattedAmount} target={confirmationTarget} />;
 
   return (
     <section className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">

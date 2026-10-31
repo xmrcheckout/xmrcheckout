@@ -70,6 +70,7 @@ export default function TourInvoicePreview({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
         <InvoicePaymentDetails
+          simulation
           address={invoice.address}
           amount={invoice.amount_xmr}
           hasDetectedPayment={

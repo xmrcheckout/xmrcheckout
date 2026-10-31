@@ -108,8 +108,13 @@ export default function LoginForm() {
   return (
     <form className="mt-4 grid gap-3" action={formAction}>
       <details className="text-sm text-ink-soft">
-        <summary className="cursor-pointer underline underline-offset-4">Where do I find these?</summary>
-        <p className="mt-2">In your Monero wallet, open the address or key settings and copy your primary address and secret view key. Names vary by wallet. Never provide your recovery seed or private spend key.</p>
+        <summary className="min-h-11 cursor-pointer py-3 underline underline-offset-4">Where do I find these?</summary>
+        <div className="mt-3 grid gap-3">
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Monero GUI</summary><p>Open Settings → Wallet → Show seed &amp; keys. Copy only the primary address and private view key. Other secrets shown on that screen must stay in your wallet.</p><a className="underline" href="https://github.com/monero-ecosystem/monero-GUI-guide/blob/master/monero-GUI-guide.md#seed-and-keys" target="_blank" rel="noreferrer">Official GUI guide</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Feather</summary><p>Open Wallet → Keys. Copy the primary address and secret view key only.</p><a className="underline" href="https://docs.featherwallet.org/guides/primary-address" target="_blank" rel="noreferrer">Official Feather guide</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Cake Wallet</summary><p>Open your Monero wallet’s menu → Security and backup → Show seed/keys, and authenticate locally. Copy only the primary address and private view key. Menu labels can vary by version; never copy the seed or spend key into this site.</p><a className="underline" href="https://docs.cakewallet.com/cryptos/monero/" target="_blank" rel="noreferrer">Official Cake Wallet guide</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Other wallets</summary><p>Use your wallet’s official instructions to locate the 95-character primary address starting with 4 and the 64-character private view key. A public view key or subaddress will not work here. If view-key export is unavailable, do not submit other secrets.</p></details>
+        </div>
       </details>
       <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
@@ -162,7 +167,7 @@ export default function LoginForm() {
             className="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft"
             htmlFor="view_key"
           >
-            Secret view key
+            Private view key
           </label>
           {isLikelySecretViewKey(viewKey) ? (
             <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-800">
@@ -198,7 +203,7 @@ export default function LoginForm() {
             }}
           />
           <button
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.7rem] font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+            className="min-h-11 min-w-11 absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white/70 px-2.5 py-1 text-[0.7rem] font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
             type="button"
             onClick={() => setIsViewKeyVisible((current) => !current)}
           >
@@ -206,7 +211,7 @@ export default function LoginForm() {
           </button>
         </div>
         <p id="view-key-help" className="text-xs leading-relaxed text-ink-soft">
-          Paste the 64-character secret view key.
+          Paste the 64-character private view key (also called a secret view key).
         </p>
       </div>
       <div id="login-feedback" role="status" aria-live="polite" aria-atomic="true">
@@ -237,7 +242,7 @@ export default function LoginForm() {
           pendingLabel="Connecting…"
           disabled={!canSubmit}
         >
-          Sign in
+          Connect view-only wallet
         </PendingSubmitButton>
       </div>
     </form>

@@ -2,6 +2,7 @@
 
 import { invoiceContext } from "../lib/invoice-display";
 
+import SimulatedCheckoutPreview from "./simulated-checkout-preview";
 import DiagnosticReference from "./diagnostic-reference";
 import PendingSubmitButton from "./pending-submit-button";
 
@@ -140,6 +141,8 @@ function CreateInvoiceModal({
     mode === "tour" ? createInvoiceTourAction : createInvoiceAction;
   const [state, formAction] = useFormState(action, initialState);
   const [amount, setAmount] = useState("");
+  const [demoPreview, setDemoPreview] = useState(false);
+  useEffect(() => { if (demoPreview) document.getElementById("demo-ready")?.focus(); }, [demoPreview]);
   const [amountMode, setAmountMode] = useState<"xmr" | "fiat">("xmr");
   const [fiatCurrency, setFiatCurrency] = useState("USD");
   const [confirmationMode, setConfirmationMode] = useState<
@@ -167,13 +170,16 @@ function CreateInvoiceModal({
     rate: usdRate,
     updatedAt: usdRateUpdatedAt,
     source: usdRateSource,
-  } = useXmrUsdRate();
+  } = useXmrUsdRate(mode !== "tour");
   const {
-    rate: fiatRate,
+    rate: liveFiatRate,
     updatedAt: fiatRateUpdatedAt,
-    status: fiatRateStatus,
+    status: liveFiatRateStatus,
     source: fiatRateSource,
-  } = useXmrFiatRate(amountMode === "fiat" ? fiatCurrency : null);
+  } = useXmrFiatRate(mode !== "tour" && amountMode === "fiat" ? fiatCurrency : null);
+  const demoRates: Record<string, number> = { USD: 200, EUR: 180, GBP: 160 };
+  const fiatRate = mode === "tour" ? demoRates[fiatCurrency] ?? null : liveFiatRate;
+  const fiatRateStatus = mode === "tour" ? (fiatRate ? "ready" : "error") : liveFiatRateStatus;
 
   useEffect(() => {
     if (mode === "tour" || (!state.invoiceId && !state.creationAttemptId)) {
@@ -248,7 +254,7 @@ function CreateInvoiceModal({
   const usdEstimateTime = usdRateUpdatedAt
     ? new Date(usdRateUpdatedAt).toLocaleString()
     : null;
-  const fiatEstimateMeta =
+  const fiatEstimateMeta = mode === "tour" ? "Simulated demo rate (not a market rate)" :
     fiatRateSource === "coingecko"
       ? "CoinGecko spot rate"
       : "external spot rate";
@@ -265,7 +271,7 @@ function CreateInvoiceModal({
   const expiryIsValid =
     expiryMode !== "custom" || (!expiresTime && !expiresDate) || !!expiresDate;
   const isFiatCurrencyValid =
-    amountMode !== "fiat" || Boolean(fiatCurrency.trim());
+    amountMode !== "fiat" || Boolean(fiatCurrency.trim()) && (mode !== "tour" || Boolean(fiatRate));
 
   const handleQrLogoFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -302,16 +308,16 @@ function CreateInvoiceModal({
   const labelClass =
     "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
   const inputClass =
-    "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
+    "w-full min-w-0 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const primaryButton =
-    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const secondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const smallSecondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
 
   const createDisabled =
-    !amount ||
+    !amount || Number(amount) <= 0 ||
     !isFiatCurrencyValid ||
     (confirmationMode === "custom" && !confirmationTarget) ||
     !expiryIsValid ||
@@ -340,7 +346,7 @@ function CreateInvoiceModal({
             </h2>
             {mode === "tour" ? (
               <p className="mt-2 text-sm font-semibold text-ink-soft">
-                Tour mode: submissions are simulated. No invoice is created.
+                Tour mode: preview a simulated invoice. Nothing is saved.
               </p>
             ) : null}
           </div>
@@ -352,8 +358,15 @@ function CreateInvoiceModal({
         <form
           className="flex min-h-0 flex-1 flex-col gap-6 px-5 pb-5 pt-5 sm:px-7 sm:pb-7 sm:pt-6"
           action={formAction}
+          onSubmit={mode === "tour" ? event => { event.preventDefault(); if (!createDisabled && Number(amount) > 0) setDemoPreview(true); } : undefined}
         >
-          {state.invoiceId ? (
+          {demoPreview ? (
+            <div className="grid min-h-0 gap-4 overflow-y-auto">
+              <p id="demo-ready" tabIndex={-1} role="status" className="font-semibold text-sage">Simulated invoice ready. Nothing was saved.</p>
+              <SimulatedCheckoutPreview amount={amountMode === "fiat" ? (Number(amount) / (fiatRate || 1)).toFixed(12) : amount} target={Number(confirmationMode === "custom" ? confirmationTarget : defaultConfirmationTarget)} description={description} expiry={expiryMode === "custom" ? expiryValue || "Custom date not set" : "60 minutes"} />
+              <button type="button" className={secondaryButton} onClick={onClose}>Done</button>
+            </div>
+          ) : state.invoiceId ? (
             <div className="grid gap-4">
               {publicInvoiceUrl ? (
                 <div className="rounded-2xl border border-stroke bg-cream/70 p-5 shadow-soft">
@@ -541,7 +554,7 @@ function CreateInvoiceModal({
                           />
                         </div>
                         <datalist id="wizard-fiat-currency-options">
-                          {FIAT_CURRENCY_SUGGESTIONS.map((code) => (
+                          {(mode === "tour" ? ["USD", "EUR", "GBP"] : FIAT_CURRENCY_SUGGESTIONS).map((code) => (
                             <option
                               key={code}
                               value={code}
@@ -550,9 +563,7 @@ function CreateInvoiceModal({
                           ))}
                         </datalist>
                         <p className="text-sm text-ink-soft sm:col-span-2">
-                          Fiat inputs create an XMR invoice using an
-                          informational rate at request time. The invoice is
-                          stored and checked in XMR.
+                          {mode === "tour" ? "Demo only: USD 200, EUR 180, or GBP 160 per XMR. These fixed simulated rates are not market quotes. Other currencies are unavailable in this demo." : "Fiat inputs create an XMR invoice using an informational rate at request time. The invoice is stored and checked in XMR."}
                         </p>
                         {showFiatEstimate ? (
                           <details className="w-fit text-xs text-ink-soft sm:col-span-2">
@@ -837,7 +848,7 @@ function CreateInvoiceModal({
                         />
                         {qrLogoMode === "custom" ? (
                           <input
-                            className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink"
+                            className="w-full min-w-0 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink"
                             id="wizard_qr_logo_file"
                             type="file"
                             accept="image/*"
@@ -1158,13 +1169,13 @@ export default function InvoicePanel({
   const labelClass =
     "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
   const inputClass =
-    "w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
+    "w-full min-w-0 rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10";
   const primaryButton =
-    "inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const secondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
   const smallSecondaryButton =
-    "inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70";
 
   const sortHref = (key: string) => {
     const nextOrder = sort === key && order === "asc" ? "desc" : "asc";
@@ -1197,9 +1208,9 @@ export default function InvoicePanel({
   const resultEnd = Math.min(page * pageSize, total);
 
   return (
-    <section className="grid gap-6" aria-labelledby="invoice-panel-title">
+    <section className="grid min-w-0 grid-cols-1 gap-6" aria-labelledby="invoice-panel-title">
       <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
-        <div className="max-w-2xl">
+        <div className="min-w-0 max-w-2xl">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
             Invoices
@@ -1210,7 +1221,7 @@ export default function InvoicePanel({
           >
             Invoice activity
           </h1>
-          <p className="mt-2 text-ink-soft">
+          <p className="mt-2 hidden text-ink-soft lg:block">
             Create invoices, follow confirmations, and open a row when you need
             the raw details.
           </p>
@@ -1233,12 +1244,12 @@ export default function InvoicePanel({
               Export CSV
             </button>
           )}
-          <button className={primaryButton} type="button" onClick={openCreate}>
+          <button className={`${primaryButton} order-first lg:order-none`} type="button" onClick={openCreate}>
             Create invoice
           </button>
         </div>
       </header>
-      <div className="grid gap-4">
+      <div className="grid min-w-0 grid-cols-1 gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <form
             className="flex w-full flex-1 flex-wrap items-end gap-3"
@@ -1247,7 +1258,7 @@ export default function InvoicePanel({
               applySearch();
             }}
           >
-            <div className="grid w-full gap-2 sm:max-w-lg">
+            <div className="grid min-w-0 flex-1 gap-2 sm:max-w-lg">
               <label className={labelClass} htmlFor="invoice_search">
                 Search
               </label>
@@ -1280,20 +1291,20 @@ export default function InvoicePanel({
             </div>
           </form>
         </div>
-        <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3">
-          <label className="grid min-w-0 gap-2 text-xs font-semibold lg:hidden">Status
-            <select className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
+        <div className="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,6rem),1fr))] gap-3">
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold lg:hidden">Status
+            <select aria-label="Status" className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
               {invoiceStatusOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </label>
-          <label className="grid min-w-0 gap-2 text-xs font-semibold">Sort by
-            <select className={inputClass} value={sort} onChange={event => router.push(buildInvoicesHref({ sort: event.target.value }))}>
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">Sort by
+            <select aria-label="Sort by" className={inputClass} value={sort} onChange={event => router.push(buildInvoicesHref({ sort: event.target.value }))}>
               <option value="created_at">Created</option><option value="amount_xmr">Amount</option><option value="status">Status</option><option value="confirmations">Confirmations</option>
             </select>
           </label>
-          <label className="grid min-w-0 gap-2 text-xs font-semibold">Direction
-            <select className={inputClass} value={order} onChange={event => router.push(buildInvoicesHref({ order: event.target.value }))}>
-              <option value="desc">Descending</option><option value="asc">Ascending</option>
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">Direction
+            <select aria-label="Direction" className={inputClass} value={order} onChange={event => router.push(buildInvoicesHref({ order: event.target.value }))}>
+              <option value="desc" aria-label="Descending">Desc.</option><option value="asc" aria-label="Ascending">Asc.</option>
             </select>
           </label>
         </div>
@@ -1304,7 +1315,7 @@ export default function InvoicePanel({
           {invoiceStatusOptions.map((option) => (
             <Link
               key={option.value}
-              className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 ${
+              className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 ${
                 statusFilter === option.value
                   ? "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]"
                   : "border-stroke bg-white/60 text-ink hover:border-ink/40 hover:bg-white"
@@ -1328,7 +1339,7 @@ export default function InvoicePanel({
           </div>
         ) : (
           <>
-            <div className="grid gap-4 lg:hidden">
+            <div className="grid min-w-0 grid-cols-1 gap-4 lg:hidden">
               {activeList.map((invoice) => {
                 const isExpanded = expandedInvoiceId === invoice.id;
                 const context = invoiceContext(invoice.metadata);
@@ -1341,11 +1352,11 @@ export default function InvoicePanel({
                 return (
                   <div
                     key={invoice.id}
-                    className={`rounded-xl border border-stroke bg-card p-4 shadow-soft transition-colors hover:border-ink/30 sm:p-5 ${
+                    className={`min-w-0 rounded-xl border border-stroke bg-card p-4 shadow-soft transition-colors hover:border-ink/30 sm:p-5 ${
                       invoice.archived_at ? "bg-ink/5" : ""
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="min-w-0 grid gap-1 text-left">
                         {context.title ? <p className="break-words text-sm font-semibold">{context.title}</p> : null}
                         {mode === "tour" ? (
@@ -1369,7 +1380,7 @@ export default function InvoicePanel({
                       </div>
                       <div className="shrink-0 text-right">
                         <p className={labelClass}>Amount</p>
-                        <p className="mt-1 whitespace-nowrap font-mono text-lg font-semibold text-ink">
+                        <p className="mt-1 break-all font-mono text-lg font-semibold text-ink">
                           {formatXmrAmount(invoice.amount_xmr)} XMR
                         </p>
                       </div>
@@ -1899,7 +1910,7 @@ export default function InvoicePanel({
           onClose={closeArchiveModal}
           panelClassName="max-h-[calc(100dvh-1.5rem)] max-w-lg p-5 sm:rounded-surface sm:p-8"
         >
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                 Archive invoice

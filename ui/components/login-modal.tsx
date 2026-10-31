@@ -83,7 +83,7 @@ export default function LoginModal() {
           </h3>
         </div>
         <button
-          className="shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
+          className="min-h-11 min-w-11 shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
           type="button"
           onClick={closeModal}
           aria-label="Close login modal"
@@ -99,7 +99,7 @@ export default function LoginModal() {
           <p className="font-semibold text-ink">Before you continue</p>
           <p className="mt-1">
             This instance receives your primary address and private view key to
-            detect incoming payments. The key is encrypted at rest. Payments go
+            observe incoming payments, including incoming activity beyond checkout invoices. Share it only with an instance you trust. The key is encrypted at rest. Payments go
             directly to your wallet; this access cannot spend funds. Never submit
             a spend key or recovery seed.
           </p>

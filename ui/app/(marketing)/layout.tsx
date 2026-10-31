@@ -40,7 +40,7 @@ export default async function MarketingLayout({
       <footer className="site-footer site-footer-dark">
         <div className="site-footer-copy">
           <p>
-            xmrcheckout.com - Open source. Self-hostable.
+            XMR Checkout · Open source. Self-hostable.
           </p>
           <p>
             <Link

@@ -102,7 +102,7 @@ export default async function MarketingHomePage({
           </div>
         </div>
         <div className="home-wallet-table">
-          <div><h3>Add a Monero payment button without programming</h3><p>Configure a fixed amount and copy an HTML button into your website. Each successful submission creates a separate XMR invoice. No WooCommerce integration is required.</p><Link className="home-doc-link" href="/guides/monero-payment-buttons">Set up a payment button</Link></div>
+          <div><h3>Payment and donation links without programming</h3><p>Sell a product, offer a service, or accept fixed-amount donations directly to your own wallet. Share a reusable link or paste an HTML button into your website. Each successful submission creates a separate XMR invoice.</p><Link className="home-doc-link" href="/guides/monero-payment-buttons">Set up a payment or donation link</Link></div>
           <div><h3>Prefer your own infrastructure?</h3><p>XMR Checkout is open source and self-hostable. Deploy your own instance before connecting your wallet there.</p><Link className="home-doc-link" href="/guides/self-hosted-monero-checkout">Self-host XMR Checkout</Link></div>
         </div>
       </section>

@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 const donationsEnabled = areDonationsEnabled();
 
 type FaqItem = {
+  id?: string;
   question: string;
   answer: React.ReactNode;
   category: FaqCategory;
@@ -75,6 +76,7 @@ function ComparisonYesNo({ value, label }: { value: boolean; label: string }) {
 }
 
 const faqItems: FaqItem[] = [
+  { id: "payment-link-donations", question: "Can I use payment links to accept Monero donations?", category: "operations", answer: <><p className="text-ink-soft">Yes. Create a payment link for a fixed contribution to your own wallet, give it a title such as “Support my project”, and set Button text to “Donate with Monero”. Share its reusable URL or copy the HTML button to your website. Each successful submission creates a separate XMR invoice; funds go directly to your wallet.</p><p className="text-ink-soft">The recipient chooses the amount in advance. Create several links to offer preset contribution amounts. Donor-entered amounts and automatic recurring collection are not supported. Existing invoice allowances and address limits apply even when an invoice is never paid.</p><p><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons#donations">Set up a donation link</Link></p></> },
   { question: "Can I add a payment button without WooCommerce?", category: "comparisons", answer: <><p className="text-ink-soft">Yes. Configure a fixed XMR amount or a supported fiat-reference amount in Dashboard → Payment links, then copy an HTML button into your website. If your editor removes forms, use the reusable URL. No programming or WooCommerce integration is required.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons">Read the payment button guide</Link></p></> },
   { question: "How is a reusable payment link different from a wallet QR code?", category: "operations", answer: <><p className="text-ink-soft">A static wallet QR code does not create a separate invoice for each purchase. A payment button requests a new invoice on submission. Opening the reusable URL first shows a review page; submitting there requests the invoice. The invoice has its own ID and payment status for reconciliation.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons">Read the payment button guide</Link></p></> },
   { question: "Do repeated clicks reuse an invoice or guarantee a new address?", category: "operations", answer: <><p className="text-ink-soft">Separate submissions can create separate invoices; plain HTML has no duplicate-submission recovery. A fresh invoice does not guarantee an address that has never been used: the merchant address pool eventually reuses eligible addresses after its cooldown. Late payments after reuse can still be confused with newer invoices. Check the dashboard allowance and address availability, and contact the merchant before retrying an interrupted creation request.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons">Read the payment button guide</Link></p></> },
@@ -284,7 +286,7 @@ const faqItems: FaqItem[] = [
 
 function FaqCard({ item }: { item: FaqItem }) {
   return (
-    <details className="group border-t border-stroke px-5 py-5 first:border-t-0 sm:px-6">
+    <details id={item.id} className="scroll-mt-24 group border-t border-stroke px-5 py-5 first:border-t-0 sm:px-6">
       <summary className="cursor-pointer list-none select-none font-sans font-semibold text-lg text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-4 [&::-webkit-details-marker]:hidden sm:text-xl">
         <span className="flex items-start justify-between gap-4">
           <span>{item.question}</span>

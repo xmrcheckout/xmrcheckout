@@ -26,8 +26,9 @@ export default async function PaymentLinks() {
   const codeClass = "overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream";
   return <section className="grid min-w-0 gap-6">
     <div><h2 className="text-2xl font-semibold">Payment links</h2>
-      <p className="mt-2 text-ink-soft">Create a reusable button for a fixed amount. Each submission creates a separate XMR invoice paid directly to your wallet.</p>
+      <p className="mt-2 text-ink-soft">Create a reusable button for a product, service, or fixed-amount donation. Each submission creates a separate XMR invoice paid directly to your wallet.</p>
       <p className="mt-2 text-sm text-ink-soft">Public invoice creation has a daily allowance and shares your address capacity. Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.</p>
+      <p className="mt-2 text-sm text-ink-soft">For contributions, use a title such as “Support my project” and set Button text to “Donate with Monero”. Create separate links for preset amounts; donor-entered amounts and recurring collection are not supported.</p>
       <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Payment link setup guide</Link></p>
     </div>
     <section aria-label="Public invoice allowance" className="rounded-2xl border border-stroke p-5">

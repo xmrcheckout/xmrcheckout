@@ -16,7 +16,7 @@ type AccessibleDialogProps = {
 };
 
 const focusableSelector =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  'summary, a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const emptySubscribe = () => () => {};
 
@@ -71,7 +71,7 @@ export default function AccessibleDialog({
 
       const focusable = Array.from(
         panelRef.current.querySelectorAll<HTMLElement>(focusableSelector),
-      ).filter((element) => !element.hasAttribute("hidden"));
+      ).filter((element) => element.getClientRects().length > 0 && !element.closest("[hidden]"));
 
       if (focusable.length === 0) {
         event.preventDefault();

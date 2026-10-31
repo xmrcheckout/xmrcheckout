@@ -927,8 +927,8 @@ summary:focus-visible {
 
 .home-hero-copy {
   display: grid;
-  align-content: space-between;
-  gap: 1.25rem;
+  align-content: start;
+  gap: 1.5rem;
   max-width: 38rem;
 }
 
@@ -2318,3 +2318,5 @@ summary:focus-visible {
   .journey-steps button { display: block; padding-inline: min(.6rem, 2vw); }
   .journey-steps button span { margin-right: .4rem; }
 }
+
+.home-hero-copy .home-entry-note + .home-entry-note { margin-top: -.5rem; }

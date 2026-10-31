@@ -422,7 +422,7 @@ export default async function TourPage({
         className="mx-auto w-full max-w-7xl"
         aria-label="Tour environment"
       >
-        <PageIntroBand
+        {activeTab === "overview" ? <PageIntroBand
           as="p"
           eyebrow="Demo workspace"
           title="See how Monero checkout works."
@@ -432,7 +432,7 @@ export default async function TourPage({
               All activity is simulated; no wallet connection or payment is required.
             </p>
           }
-        />
+        /> : <p className="border-b border-stroke pb-3 text-sm"><strong>Demo workspace.</strong> All activity is simulated; no payment is requested.</p>}
       </section>
 
       <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">

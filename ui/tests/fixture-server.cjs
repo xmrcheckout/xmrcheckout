@@ -11,6 +11,7 @@ const profile = {
   created_at: "2026-10-01T00:00:00Z",
 };
 let availabilityState = "ready";
+let invoiceStatus = "pending";
 let availabilityDelay = 0;
 let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, enabled: true,
   url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/pay/fixture-token`,
@@ -52,6 +53,7 @@ const server = http.createServer((request, response) => {
     if (path === "/__fixture" && request.method === "POST") {
       const options = JSON.parse(body);
       availabilityState = options.state ?? availabilityState;
+      invoiceStatus = options.invoiceStatus ?? invoiceStatus;
       availabilityDelay = options.delay ?? 0;
     } else if (path === "/api/core/payment-links/status") {
       result = { supported_currencies: ["USD", "EUR", "GBP"], daily_limit: 10, used: 0, remaining: 10, window_hours: 24, retrieved_at: new Date().toISOString() };
@@ -71,7 +73,7 @@ const server = http.createServer((request, response) => {
       }
       status = 405;
     } else if (path === `/api/core/public/invoice/${fixtureInvoice}`) {
-      result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: "pending", confirmation_target: 2, confirmations: 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
+      result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: invoiceStatus, confirmation_target: 2, confirmations: invoiceStatus === "confirmed" ? 2 : invoiceStatus === "payment_detected" ? 1 : 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
     } else if (path === "/api/core/subaddresses/status") {
       status = availabilityState === "unavailable" ? 503 : 200;
       result = status === 200 ? availability() : { detail: "Fixture unavailable" };
@@ -82,7 +84,12 @@ const server = http.createServer((request, response) => {
     } else if (path === "/api/core/profile") {
       result = profile;
     } else if (path === "/api/core/invoices" && request.method === "GET") {
-      result = { items: [], total: 0 };
+      result = { items: [
+        { metadata: { description: "Fixture order description" } },
+        { metadata: { payment_link: { title: "Fixture product title" }, order_id: "123" } },
+        { metadata: { description: { malformed: true }, posData: "{" } },
+        { metadata: { description: "Long description ".repeat(20) } },
+      ].map((item, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, address, amount_xmr: "0.1", status: "pending", confirmation_target: 2, confirmations: 0, created_at: "2026-10-01T00:00:00Z", expires_at: null, archived_at: null, detected_at: null, confirmed_at: null, ...item })), total: 4 };
     } else if (path === "/api/core/invoices" && request.method === "POST") {
       if (JSON.parse(body).amount_xmr === "0.2") {
         availabilityState = "recovered";
@@ -115,6 +122,18 @@ const server = http.createServer((request, response) => {
     else send();
   });
 });
+
+// Optional same-origin proxy for browser requests; the Next server uses API_BASE_URL.
+if (process.env.FIXTURE_PROXY_PORT) {
+  http.createServer((request, response) => {
+    const upstream = http.request({ hostname: "127.0.0.1", port: request.url.startsWith("/api/") ? Number(process.env.FIXTURE_API_PORT ?? 8000) : Number(process.env.PORT ?? 3000), path: request.url, method: request.method, headers: request.headers }, result => {
+      response.writeHead(result.statusCode, result.headers);
+      result.pipe(response);
+    });
+    upstream.on("error", () => { response.writeHead(502); response.end("Fixture unavailable"); });
+    request.pipe(upstream);
+  }).listen(Number(process.env.FIXTURE_PROXY_PORT), "127.0.0.1");
+}
 
 server.listen(Number(process.env.FIXTURE_API_PORT ?? 8000), "0.0.0.0", () => {
   const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "0.0.0.0"], { stdio: "inherit" });

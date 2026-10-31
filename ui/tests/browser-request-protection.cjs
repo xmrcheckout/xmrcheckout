@@ -28,7 +28,7 @@ async function main() {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto(base + "/?login=1", { waitUntil: "networkidle" });
     await page.getByLabel("Primary address", { exact: true }).fill("4" + "1".repeat(94));
-    await page.getByLabel("Secret view key", { exact: true }).fill("1".repeat(64));
+    await page.getByLabel("Private view key", { exact: true }).fill("1".repeat(64));
     await page.getByText("Address and view key match", { exact: true }).waitFor();
     await page.getByRole("dialog").locator("button[type=submit]").click();
     await page.waitForURL("**/dashboard");

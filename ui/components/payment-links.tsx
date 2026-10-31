@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { utcTimestamp } from "../lib/timestamps";
 import Image from "next/image";
 import { cookies } from "next/headers";
 import { paymentButtonHtml, paymentButtonImageUrl } from "../lib/payment-button";
@@ -17,7 +18,7 @@ export default async function PaymentLinks() {
     fetch(`${base}/api/core/payment-links/status`, { headers, cache: "no-store" }).catch(() => null),
     fetch(`${base}/api/core/subaddresses/status`, { headers, cache: "no-store" }).catch(() => null),
   ]);
-  if (!response?.ok) return <p role="alert">Payment links are unavailable. Refresh to try again.</p>;
+  if (!response?.ok) return <section><h1 className="font-sans text-2xl font-semibold">Payment links</h1><p role="alert">Payment links are unavailable. Refresh to try again.</p></section>;
   const usage = usageResponse?.ok ? await usageResponse.json() : null;
   const addressStatus = addressResponse?.ok ? await addressResponse.json() : null;
   const currencies: string[] | null = usage?.supported_currencies ?? null;
@@ -25,7 +26,7 @@ export default async function PaymentLinks() {
   const target = profile?.ok ? (await profile.json()).default_confirmation_target : 1;
   const codeClass = "overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream";
   return <section className="grid min-w-0 gap-6">
-    <div><h2 className="text-2xl font-semibold">Payment links</h2>
+    <div><h1 className="font-sans text-2xl font-semibold sm:text-3xl">Payment links</h1>
       <p className="mt-2 text-ink-soft">Create a reusable button for a product, service, or fixed-amount donation. Each submission creates a separate XMR invoice paid directly to your wallet.</p>
       <p className="mt-2 text-sm text-ink-soft">Public invoice creation has a daily allowance and shares your address capacity. Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.</p>
       <p className="mt-2 text-sm text-ink-soft">For contributions, use a title such as “Support my project” and set Button text to “Donate with Monero”. Create separate links for preset amounts; donor-entered amounts and recurring collection are not supported.</p>
@@ -33,11 +34,11 @@ export default async function PaymentLinks() {
     </div>
     <section aria-label="Public invoice allowance" className="rounded-2xl border border-stroke p-5">
       <h3 className="text-xl font-semibold">Public invoice allowance</h3>
-      {usage ? <><p className="mt-3">{usage.remaining} remaining · {usage.used} used · Limit {usage.daily_limit} per rolling {usage.window_hours} hours</p><p className="mt-2 break-words text-sm">Status retrieved: {usage.retrieved_at}</p></> : <p role="status">Allowance unavailable. Refresh to try again.</p>}
+      {usage ? <><p className="mt-3">{usage.remaining} remaining · {usage.used} used · Limit {usage.daily_limit} per rolling {usage.window_hours} hours</p><p className="mt-2 break-words text-sm">Status retrieved: <time dateTime={usage.retrieved_at}>{utcTimestamp(usage.retrieved_at)}</time></p></> : <p role="status">Allowance unavailable. Refresh to try again.</p>}
       <p className="my-3 text-sm">Allowance and address capacity are shared across your payment links. These snapshots do not reserve capacity.</p>
       <StatusRefreshButton label="Refresh allowance and addresses" />
     </section>
-    <InvoiceAddressAvailability status={addressStatus} showRefresh={false} />
+    <InvoiceAddressAvailability status={addressStatus} showRefresh={false} compact={Boolean(addressStatus && addressStatus.counts.never_issued + addressStatus.counts.eligible_for_reuse > 0 && addressStatus.counts.needs_review === 0 && addressStatus.snapshot?.outcome !== "failed")} />
     <details className="rounded-2xl border border-stroke p-5"><summary className="min-h-11 cursor-pointer font-semibold">Create payment link</summary><PaymentLinkEditor currencies={currencies} defaultTarget={target} /></details>
     {links.length === 0 ? <p>No payment links yet.</p> : links.map(link => <article key={link.id} className="grid min-w-0 gap-4 rounded-2xl border border-stroke p-5">
       <h3 className="break-words text-xl font-semibold">{link.title} · {link.enabled ? "Enabled" : "Disabled"}</h3>

@@ -15,7 +15,7 @@ let invoiceStatus = "pending";
 let invoiceResponseStatus = 200;
 let layoutFixture = false;
 let availabilityDelay = 0;
-let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, enabled: true,
+let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", button_text: "Buy with Monero", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, enabled: true,
   url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/pay/fixture-token`,
   action_url: `http://127.0.0.1:${process.env.FIXTURE_API_PORT || 8000}/api/core/public/payment-links/fixture-token/invoices` };
 

@@ -31,6 +31,7 @@ export default function WorkspaceNav({
   mobileColumns = 3,
   showIndexes = true,
 }: WorkspaceNavProps) {
+  const orderedItems = [...items.filter(item => item.value === "overview"), ...items.filter(item => item.value !== "overview")];
   const mobileGridClass =
     mobileColumns === 2 ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3";
 
@@ -46,7 +47,7 @@ export default function WorkspaceNav({
         className={`grid gap-2 lg:grid-cols-1 ${mobileGridClass}`}
         aria-label={ariaLabel}
       >
-        {items.map((item) => {
+        {orderedItems.map((item) => {
           const isActive = activeValue === item.value;
 
           return (

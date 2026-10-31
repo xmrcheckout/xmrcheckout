@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { invoiceContext } from "../../../lib/invoice-display";
 import Link from "next/link";
 
 import InvoicePanel from "../../../components/invoice-panel";
@@ -327,7 +328,8 @@ export default async function TourPage({
     (delivery) => delivery.http_status !== null && delivery.http_status >= 400,
   ).length;
   const recentInvoiceItems = invoices.slice(0, 5).map((invoice) => ({
-    title: invoice.id,
+    title: invoiceContext(invoice.metadata).title ?? invoice.id,
+    invoiceId: invoice.id,
     detail: `Created ${new Date(invoice.created_at).toLocaleString()}`,
     status:
       invoice.status === "payment_detected"
@@ -533,11 +535,12 @@ export default async function TourPage({
                           />
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center justify-between gap-2">
-                              <p className="break-all font-mono text-sm font-semibold text-ink">
+                              <p className="break-words text-sm font-semibold text-ink">
                                 {item.title}
                               </p>
                               <StatusBadge label={item.status} tone={item.tone} />
                             </div>
+                            {item.title !== item.invoiceId ? <p className="mt-1 break-all font-mono text-xs text-ink-soft">{item.invoiceId}</p> : null}
                             <p className="mt-1 text-sm text-ink-soft">
                               {item.detail}
                             </p>

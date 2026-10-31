@@ -51,7 +51,7 @@ async function main() {
           await panel.getByRole("button", { name: "Refresh availability" }).click();
           await panel.getByText(/Latest attempt:.*Successful/).waitFor();
           assert.equal(await panel.getByText("The view-only wallet is still syncing.", { exact: false }).count(), 0);
-          await panel.getByText(/Last successful snapshot:.*29\/10\/2026/).waitFor();
+          await panel.getByText(/Last successful snapshot:.*2026-10-29/).waitFor();
         }
       }
       await setState("unavailable");

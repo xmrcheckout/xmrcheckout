@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { utcTimestamp } from "../lib/timestamps";
 import DiagnosticReference from "./diagnostic-reference";
 import StatusRefreshButton from "./status-refresh-button";
 
@@ -28,9 +29,7 @@ export type SubaddressStatus = {
   } | null;
 };
 
-const timestamp = (value: string | null) => value
-  ? `${new Date(value).toLocaleString("en-GB", { timeZone: "UTC" })} UTC`
-  : "Not recorded";
+const timestamp = (value: string | null) => value ? utcTimestamp(value) : "Not recorded";
 
 const explanations: Record<string, string> = {
   never_issued: "Never issued",
@@ -66,7 +65,7 @@ export default function InvoiceAddressAvailability({ status, full = false, showR
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-sans text-sm font-semibold">Invoice address availability</h2>
-          {eligible !== null ? <p className="mt-1 text-sm">Eligible addresses <strong className="ml-2 font-mono text-lg">{eligible}</strong></p> : null}
+          {eligible !== null ? <p className="mt-1 text-sm"><span>Eligible addresses</span> <strong className="ml-2 font-mono text-lg">{eligible}</strong></p> : null}
         </div>
         {showRefresh ? <StatusRefreshButton label="Refresh availability" /> : null}
       </div>
@@ -78,8 +77,9 @@ export default function InvoiceAddressAvailability({ status, full = false, showR
       <details className="mt-2">
         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay">Address availability details</summary>
         {status ? <dl className="grid min-w-0 grid-cols-1 gap-3 text-sm sm:grid-cols-3">
-          {[["Reserved addresses", status.counts.reserved], ["Cooling-down addresses", status.counts.cooling_down], ["Needs review", status.counts.needs_review]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="font-mono font-semibold">{value}</dd></div>)}
+          {[["Reserved addresses", status.counts.reserved], ["Addresses waiting before reuse", status.counts.cooling_down], ["Needs review", status.counts.needs_review]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="font-mono font-semibold">{value}</dd></div>)}
         </dl> : null}
+        <p className="mt-2 text-sm text-ink-soft">Addresses wait after an invoice closes before they can be reused, to help distinguish later payments.</p>
         <p className="mt-2 text-sm text-ink-soft">Address eligibility does not guarantee invoice creation. Pending invoices, wallet availability, and creation limits still apply.</p>
         <Link className="mt-2 inline-block min-h-11 py-3 text-sm font-semibold underline underline-offset-4" href="/dashboard?tab=health">View address and snapshot details in System health</Link>
       </details>
@@ -97,7 +97,7 @@ export default function InvoiceAddressAvailability({ status, full = false, showR
             {[
               ["Eligible addresses", status.counts.never_issued + status.counts.eligible_for_reuse],
               ["Reserved addresses", status.counts.reserved],
-              ["Cooling-down addresses", status.counts.cooling_down],
+              ["Addresses waiting before reuse", status.counts.cooling_down],
               ["Needs review", status.counts.needs_review],
             ].map(([label, value]) => (
               <div key={label}><dt className="text-sm text-ink-soft">{label}</dt><dd className="mt-1 font-mono text-2xl font-semibold">{value}</dd></div>

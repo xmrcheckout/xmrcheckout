@@ -53,12 +53,38 @@ const failures: Record<string, string> = {
   snapshot_unavailable: "A safe view-only snapshot could not be completed.",
 };
 
-export default function InvoiceAddressAvailability({ status, full = false, showRefresh = true }: {
+export default function InvoiceAddressAvailability({ status, full = false, showRefresh = true, compact = false }: {
   status: SubaddressStatus | null;
   full?: boolean;
+  compact?: boolean;
   showRefresh?: boolean;
 }) {
   const snapshot = status?.snapshot;
+  const eligible = status ? status.counts.never_issued + status.counts.eligible_for_reuse : null;
+  if (compact) return (
+    <section className="min-w-0 rounded-surface border border-stroke bg-white/70 p-4 shadow-soft" aria-label="Invoice address availability">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="font-sans text-sm font-semibold">Invoice address availability</h2>
+          {eligible !== null ? <p className="mt-1 text-sm">Eligible addresses <strong className="ml-2 font-mono text-lg">{eligible}</strong></p> : null}
+        </div>
+        {showRefresh ? <StatusRefreshButton label="Refresh availability" /> : null}
+      </div>
+      {!status ? <p className="mt-2 text-sm" role="status">Unavailable. Refresh to try again.</p> : <>
+        {eligible === 0 ? <p className="mt-2 text-sm font-semibold" role="status">No invoice addresses are currently eligible.</p> : null}
+        {status.counts.needs_review > 0 ? <p className="mt-2 text-sm font-semibold" role="status">Needs review: {status.counts.needs_review}. Check System health for details.</p> : null}
+        <p className="mt-2 text-xs text-ink-soft">Status retrieved: <time dateTime={status.retrieved_at}>{timestamp(status.retrieved_at)}</time></p>
+      </>}
+      <details className="mt-2">
+        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay">Address availability details</summary>
+        {status ? <dl className="grid min-w-0 grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+          {[["Reserved addresses", status.counts.reserved], ["Cooling-down addresses", status.counts.cooling_down], ["Needs review", status.counts.needs_review]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="font-mono font-semibold">{value}</dd></div>)}
+        </dl> : null}
+        <p className="mt-2 text-sm text-ink-soft">Address eligibility does not guarantee invoice creation. Pending invoices, wallet availability, and creation limits still apply.</p>
+        <Link className="mt-2 inline-block min-h-11 py-3 text-sm font-semibold underline underline-offset-4" href="/dashboard?tab=health">View address and snapshot details in System health</Link>
+      </details>
+    </section>
+  );
   return (
     <section className="min-w-0 rounded-surface border border-stroke bg-white/70 p-5 shadow-soft sm:p-6" aria-label="Invoice address availability">
       <div className="flex flex-wrap items-start justify-between gap-3">

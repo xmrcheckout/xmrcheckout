@@ -64,14 +64,14 @@ export default function WebhookSection({
   );
 
   return (
-    <div className="grid gap-8">
+    <div className="grid min-w-0 grid-cols-1 gap-8">
       {mode === "tour" ? (
         <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
           Tour mode: webhook changes are simulated. No endpoints are saved.
         </div>
       ) : null}
       <form
-        className="grid gap-6 rounded-surface border border-stroke bg-card p-5 shadow-soft sm:p-6"
+        className="grid min-w-0 grid-cols-1 gap-6 rounded-surface border border-stroke bg-card p-5 shadow-soft sm:p-6"
         action={createAction}
       >
         <div>
@@ -85,7 +85,7 @@ export default function WebhookSection({
             not need to reduce delivery volume.
           </p>
         </div>
-        <div className="grid gap-2">
+        <div className="grid min-w-0 gap-2">
           <label
             className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
             htmlFor="default_url"
@@ -103,21 +103,21 @@ export default function WebhookSection({
             Used for any selected event without a specific override URL.
           </p>
         </div>
-        <fieldset className="grid gap-4 md:grid-cols-2">
+        <fieldset className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
           <legend className="sr-only">Invoice events to relay</legend>
           {webhookEvents.map(({ event, key, label }) => (
             <div
               key={event}
-              className="border-t-2 border-clay/40 bg-white/60 p-4"
+              className="min-w-0 border-t-2 border-clay/40 bg-white/60 p-4"
             >
               <label className="flex items-center gap-3 text-sm font-semibold text-ink">
                 <input
-                  className="h-4 w-4 rounded border-stroke text-ink focus:ring-ink/20"
+                  className="h-4 w-4 shrink-0 rounded border-stroke text-ink focus:ring-ink/20"
                   type="checkbox"
                   name={`event_${key}`}
                   defaultChecked
                 />
-                <span>{label}</span>
+                <span className="min-w-0 break-all">{label}</span>
               </label>
               <input
                 className="mt-3 w-full rounded-xl border border-stroke bg-white/80 px-3 py-2 text-sm text-ink outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
@@ -154,7 +154,7 @@ export default function WebhookSection({
         </p>
         <p className="mt-2 text-sm text-ink-soft">
           Webhooks are optional. You can poll{" "}
-          <code>/api/core/public/invoice/&lt;invoice_id&gt;</code> without
+          <code className="break-all">/api/core/public/invoice/&lt;invoice_id&gt;</code> without
           authentication to read invoice status.
         </p>
       </div>

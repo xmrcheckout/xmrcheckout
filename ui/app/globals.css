@@ -31,3 +31,28 @@ img {
 :is([role="dialog"], [aria-label="Simulated checkout preview"], [aria-labelledby="invoice-panel-title"]) :is(input, textarea, select) {
   border-color: #71716c;
 }
+
+/* Use the invoice workspace width, including sidebar space, to choose its layout. */
+.invoice-workspace {
+  container: invoice-workspace / inline-size;
+}
+
+.invoice-table,
+.invoice-status-filters {
+  display: none;
+}
+
+@container invoice-workspace (min-width: 60rem) {
+  .invoice-cards,
+  .invoice-status-select {
+    display: none;
+  }
+
+  .invoice-table {
+    display: block;
+  }
+
+  .invoice-status-filters {
+    display: flex;
+  }
+}

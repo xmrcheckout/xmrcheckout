@@ -60,6 +60,7 @@ In a separate terminal:
 ```sh
 node tests/browser-accessibility.cjs http://127.0.0.1:3336
 node tests/browser-ux.cjs http://127.0.0.1:3336
+node tests/browser-layout.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 ```
 
 Screenshot contrast sampling requires Python 3 with Pillow. Set `CONTRAST_PYTHON`
@@ -89,3 +90,18 @@ count them as passes. Preserve the script output with release evidence.
   payment-state regression checks passed. No real wallet credentials were used.
 
 These results do not change any manual row from Pending to Passed.
+
+## Dashboard layout regression coverage
+
+The layout script uses isolated long-amount fixtures and checks 320, 390, 768,
+1024, 1280, 1420, 1422, and 1440px, including either side of the invoice table's
+60rem content-width threshold. It verifies amount containment, complete selected
+filter labels, compact address disclosures and warnings, and invoice/webhook
+page overflow at normal and 200% text sizes. Run fixture browser scripts
+sequentially because they share mutable fixture state.
+
+Dashboard layout verification (2026-10-31): lint, six unit tests, the eight-width
+layout checks, and existing UX, accessibility, and address-availability browser
+checks passed using isolated fixtures. Accessibility scans reported no tagged
+violations; screenshot sampling resolved HTML contrast findings. Existing manual
+assistive-technology checks above remain pending.

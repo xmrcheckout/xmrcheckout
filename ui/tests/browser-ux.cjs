@@ -11,7 +11,8 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       page.on('request', request => { if(request.method()==='POST' && /\/invoices$/.test(request.url())) creations.push(request.url()); });
       await page.goto(base+'/tour?tab=invoices', {waitUntil:'networkidle'});
       await page.getByText('Order #1027',{exact:true}).filter({visible:true}).first().waitFor();
-      if(width===390) assert.ok(await page.getByText('Order #1027',{exact:true}).filter({visible:true}).first().evaluate(e=>e.getBoundingClientRect().top)<844,'invoice context should begin in viewport');
+      // Filters stack on narrow screens so their complete selected labels remain readable.
+      if(width===390) assert.ok(await page.getByRole('button',{name:'Create invoice',exact:true}).evaluate(e=>e.getBoundingClientRect().bottom)<=844,'invoice creation should remain visible before scrolling');
       await page.getByLabel(/Sort by/).selectOption('amount_xmr');
       await page.waitForURL(/sort=amount_xmr/);
       await page.getByLabel(/Direction/).selectOption('asc');

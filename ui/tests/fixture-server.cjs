@@ -12,6 +12,7 @@ const profile = {
 };
 let availabilityState = "ready";
 let invoiceStatus = "pending";
+let layoutFixture = false;
 let availabilityDelay = 0;
 let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, enabled: true,
   url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/pay/fixture-token`,
@@ -54,6 +55,7 @@ const server = http.createServer((request, response) => {
       const options = JSON.parse(body);
       availabilityState = options.state ?? availabilityState;
       invoiceStatus = options.invoiceStatus ?? invoiceStatus;
+      layoutFixture = options.layoutFixture ?? layoutFixture;
       availabilityDelay = options.delay ?? 0;
     } else if (path === "/api/core/payment-links/status") {
       result = { supported_currencies: ["USD", "EUR", "GBP"], daily_limit: 10, used: 0, remaining: 10, window_hours: 24, retrieved_at: new Date().toISOString() };
@@ -89,7 +91,8 @@ const server = http.createServer((request, response) => {
         { metadata: { payment_link: { title: "Fixture product title" }, order_id: "123" } },
         { metadata: { description: { malformed: true }, posData: "{" } },
         { metadata: { description: "Long description ".repeat(20) } },
-      ].map((item, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, address, amount_xmr: "0.1", status: "pending", confirmation_target: 2, confirmations: 0, created_at: "2026-10-01T00:00:00Z", expires_at: null, archived_at: null, detected_at: null, confirmed_at: null, ...item })), total: 4 };
+        ...(layoutFixture ? [{ metadata: { description: "Invalid fixture invoice" } }] : []),
+      ].map((item, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, address, amount_xmr: layoutFixture ? "123.037683234728" : "0.1", status: layoutFixture ? ["pending", "payment_detected", "confirmed", "expired", "invalid"][index] : "pending", confirmation_target: 2, confirmations: 0, created_at: "2026-10-01T00:00:00Z", expires_at: null, archived_at: null, detected_at: null, confirmed_at: null, ...item })), total: layoutFixture ? 5 : 4 };
     } else if (path === "/api/core/invoices" && request.method === "POST") {
       if (JSON.parse(body).amount_xmr === "0.2") {
         availabilityState = "recovered";

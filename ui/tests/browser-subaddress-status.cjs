@@ -75,7 +75,7 @@ async function main() {
         if (amount !== "0.5") await dialog.getByText("Try again in 5 seconds.", { exact: true }).waitFor();
         await dialog.getByRole("link", { name: "View System health" }).waitFor();
         await dialog.getByText(/Reference ID:/).waitFor();
-        if (amount === "0.3") await panel.locator("dd").first().filter({ hasText: /^0$/ }).waitFor();
+        if (amount === "0.3") await panel.getByRole("status").filter({ hasText: "No invoice addresses are currently eligible." }).waitFor();
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
         if (amount === "0.5") await page.screenshot({ path: `/tmp/subaddress-dialog-${width}.png`, fullPage: true });
       }

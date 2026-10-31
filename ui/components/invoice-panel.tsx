@@ -1208,7 +1208,7 @@ export default function InvoicePanel({
   const resultEnd = Math.min(page * pageSize, total);
 
   return (
-    <section className="grid min-w-0 grid-cols-1 gap-6" aria-labelledby="invoice-panel-title">
+    <section className="invoice-workspace grid min-w-0 grid-cols-1 gap-6" aria-labelledby="invoice-panel-title">
       <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
         <div className="min-w-0 max-w-2xl">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
@@ -1291,8 +1291,8 @@ export default function InvoicePanel({
             </div>
           </form>
         </div>
-        <div className="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,6rem),1fr))] gap-3">
-          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold lg:hidden">Status
+        <div className="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr))] gap-3">
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold invoice-status-select">Status
             <select aria-label="Status" className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
               {invoiceStatusOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
@@ -1309,7 +1309,7 @@ export default function InvoicePanel({
           </label>
         </div>
         <div
-          className="hidden flex-wrap gap-2 lg:flex"
+          className="invoice-status-filters flex-wrap gap-2"
           role="group"
           aria-label="Invoice status filters"
         >
@@ -1340,7 +1340,7 @@ export default function InvoicePanel({
           </div>
         ) : (
           <>
-            <div className="grid min-w-0 grid-cols-1 gap-4 lg:hidden">
+            <div className="invoice-cards grid min-w-0 grid-cols-1 gap-4">
               {activeList.map((invoice) => {
                 const isExpanded = expandedInvoiceId === invoice.id;
                 const context = invoiceContext(invoice.metadata);
@@ -1379,7 +1379,7 @@ export default function InvoicePanel({
                           {invoice.address.slice(-10)}
                         </span>
                       </div>
-                      <div className="shrink-0 text-right">
+                      <div className="min-w-0 max-w-full text-right">
                         <p className={labelClass}>Amount</p>
                         <p className="mt-1 break-all font-mono text-lg font-semibold text-ink">
                           {formatXmrAmount(invoice.amount_xmr)} XMR
@@ -1570,14 +1570,14 @@ export default function InvoicePanel({
                 );
               })}
             </div>
-            <div className="hidden overflow-hidden rounded-surface border border-stroke bg-card shadow-soft lg:block">
+            <div className="invoice-table overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">
               <table className="w-full table-fixed border-collapse text-left text-sm">
                 <colgroup>
-                  <col className="w-[24%]" />
-                  <col className="w-[14%]" />
-                  <col className="w-[16%]" />
-                  <col className="w-[15%]" />
-                  <col className="w-[31%]" />
+                  <col />
+                  <col className="w-[12.5rem]" />
+                  <col className="w-[10rem]" />
+                  <col className="w-[9.5rem]" />
+                  <col className="w-[16.5rem]" />
                 </colgroup>
                 <thead className="bg-sand/40">
                   <tr className="border-b border-stroke">
@@ -1602,10 +1602,11 @@ export default function InvoicePanel({
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       <Link
-                        className="block max-w-full break-words underline underline-offset-4"
+                        className="block underline underline-offset-4"
                         href={sortHref("confirmations")}
                       >
-                        Confirmations{sortIndicator("confirmations")}
+                        <span className="whitespace-nowrap">Confirmations</span>{" "}
+                        <span className="inline-block">{sortIndicator("confirmations")}</span>
                       </Link>
                     </th>
                     <th className="border-l border-stroke px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
@@ -1668,8 +1669,8 @@ export default function InvoicePanel({
                               ) : null}
                             </div>
                           </td>
-                          <td className="px-4 py-3 align-top whitespace-nowrap font-mono text-sm font-semibold text-ink">
-                            {formatXmrAmount(invoice.amount_xmr)} XMR
+                          <td className="break-all px-4 py-3 align-top font-mono text-sm font-semibold text-ink">
+                            <span>{formatXmrAmount(invoice.amount_xmr)}</span>{" "}<span className="inline-block">XMR</span>
                           </td>
                           <td className="px-4 py-3 align-top">
                             <StatusBadge

@@ -238,7 +238,7 @@ export default function LoginForm() {
       </div>
       <div className="flex items-center justify-end">
         <PendingSubmitButton
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none"
           pendingLabel="Connecting…"
           disabled={!canSubmit}
         >

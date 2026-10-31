@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 
-import InvoicePaymentDetails from "./invoice-payment-details";
+import { SimulatedCheckoutDetails, useSimulatedInvoice } from "./simulated-checkout-preview";
 
 type TourInvoicePreviewProps = {
   invoice: {
@@ -25,16 +27,8 @@ const formatTimestamp = (value: string | null) =>
 export default function TourInvoicePreview({
   invoice,
 }: TourInvoicePreviewProps) {
-  const confirmations = Math.max(0, invoice.confirmations ?? 0);
-  const timelineItems = [
-    { label: "Invoice created", value: invoice.created_at },
-    ...(invoice.detected_at
-      ? [{ label: "Payment detected", value: invoice.detected_at }]
-      : []),
-    ...(invoice.confirmed_at
-      ? [{ label: "Payment confirmed", value: invoice.confirmed_at }]
-      : []),
-  ];
+  const { snapshot, setStatus } = useSimulatedInvoice(invoice.confirmation_target, invoice.status, invoice.created_at, invoice.expires_at);
+  const { confirmations, timeline: timelineItems } = snapshot;
 
   return (
     <article className="grid gap-6" aria-labelledby="tour-invoice-title">
@@ -69,18 +63,13 @@ export default function TourInvoicePreview({
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
-        <InvoicePaymentDetails
-          simulation
-          address={invoice.address}
+        <SimulatedCheckoutDetails
           amount={invoice.amount_xmr}
-          hasDetectedPayment={
-            invoice.status === "payment_detected" ||
-            invoice.status === "confirmed"
-          }
-          status={invoice.status}
-          confirmationTarget={invoice.confirmation_target}
-          confirmations={confirmations}
-          enableFiatEstimate={false}
+          target={invoice.confirmation_target}
+          description={invoice.metadata?.description}
+          expiry={formatTimestamp(invoice.expires_at)}
+          snapshot={snapshot}
+          onStatusChange={setStatus}
         />
 
         <aside className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
@@ -116,7 +105,7 @@ export default function TourInvoicePreview({
               <dt className="text-xs font-semibold text-ink-soft">
                 Confirmations
               </dt>
-              <dd className="mt-1 text-sm font-semibold">
+              <dd data-testid="context-confirmations" className="mt-1 text-sm font-semibold">
                 {confirmations}/{invoice.confirmation_target}
               </dd>
             </div>
@@ -152,7 +141,7 @@ export default function TourInvoicePreview({
 
       <section className="border-y border-stroke py-6" aria-labelledby="tour-invoice-timeline">
         <h2 className="text-xl font-semibold" id="tour-invoice-timeline">
-          Invoice timeline
+          Simulated invoice timeline
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...timelineItems].reverse().map((item) => (

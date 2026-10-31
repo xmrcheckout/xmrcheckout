@@ -21,6 +21,7 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
         amount_fiat: currency === "XMR" ? null : form.get("amount"), currency: currency === "XMR" ? null : currency,
         confirmation_target: Number(form.get("confirmation_target")),
         checkout_continue_url: String(form.get("checkout_continue_url") ?? "").trim() || null,
+        auto_create_invoice: form.get("auto_create_invoice") === "on",
         enabled: form.get("enabled") === "on" }),
     });
     if (!response.ok) {

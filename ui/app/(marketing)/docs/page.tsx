@@ -877,7 +877,7 @@ Content-Type: application/json
 
         <section id="payment-links" aria-labelledby="payment-links-title" className="mt-10 grid min-w-0 scroll-mt-24 gap-5 break-words rounded-surface border border-stroke bg-card p-5 sm:p-8">
           <h2 id="payment-links-title" className="font-sans text-2xl font-semibold">Reusable payment links and HTML buttons</h2>
-          <p>Merchants can configure a fixed amount in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first.</p>
+          <p>Merchants can configure a fixed amount in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first unless the merchant enables auto_create_invoice (default false). Automatic mode creates an invoice from the active browser and resumes the same attempt in the same tab.</p>
           <p><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the merchant setup guide</Link> for wallet prerequisites, embedding, capacity, and manual fulfillment. The API operations below support managing those same templates from an integration.</p>
           <details className="min-w-0 rounded-xl border border-stroke p-4">
             <summary className="min-h-11 cursor-pointer font-semibold">API examples and response behavior</summary>
@@ -908,7 +908,7 @@ Content-Type: application/json
   "window_hours": 24,
   "retrieved_at": "2026-10-30T12:00:00Z"
 }`}</code></CopyCodeBlock>
-            <p className="mt-3">A form sends an empty public POST, without merchant credentials. An illustrative successful exchange is:</p>
+            <p className="mt-3">A form sends an empty public POST, without merchant credentials. Automatic clients may send a UUID Idempotency-Key header and Accept: application/json. A new attempt returns 201; replay returns 200 with the same invoice_url, status, and expires_at. Save the key before requesting creation and retain it after interrupted responses. GET and HEAD never create invoices. An illustrative successful exchange is:</p>
             <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 0

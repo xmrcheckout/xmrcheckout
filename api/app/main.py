@@ -63,6 +63,10 @@ def startup():
             lock_acquired = False
         try:
             Base.metadata.create_all(bind=connection)
+            connection.execute(text("ALTER TABLE payment_links ADD COLUMN IF NOT EXISTS auto_create_invoice BOOLEAN NOT NULL DEFAULT false"))
+            connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_id UUID"))
+            connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_attempt_id UUID"))
+            connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS invoice_payment_link_attempt ON invoices (payment_link_id, payment_link_attempt_id)"))
             connection.execute(
                 text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS user_id UUID")
             )

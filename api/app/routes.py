@@ -1,4 +1,6 @@
 import uuid
+import os
+from uuid import UUID
 from typing import Any
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_DOWN, InvalidOperation
@@ -27,7 +29,7 @@ from .config import (
 from .db import get_db
 from .formatting import format_xmr_amount
 from .invoice_limits import reserve_invoice_creation
-from .models import Invoice, ProfileHistory, SystemStatus, User, Webhook, WebhookDelivery
+from .models import PaymentLink, Invoice, ProfileHistory, SystemStatus, User, Webhook, WebhookDelivery
 from monero.address import Address, IntegratedAddress, SubAddress
 from .rates import UnsupportedCurrencyError, get_xmr_rate
 from .subaddress_allocator import MAX_SUBADDRESS_INDEX, create_subaddress_for_user
@@ -414,6 +416,11 @@ def _public_invoice_status_response(
     update["checkout_continue_available"] = bool(
         invoice.status == "confirmed" and continue_url
     )
+    if invoice.payment_link_id:
+        link = db.query(PaymentLink).filter(PaymentLink.id == invoice.payment_link_id, PaymentLink.enabled.is_(True)).first()
+        if link:
+            site = os.getenv("SITE_URL", "http://localhost:3000").rstrip("/")
+            update["payment_link_url"] = f"{site}/pay/{link.token}?new=1"
     update["qr_url"] = _qr_url(invoice, request)
     return response.model_copy(update=update)
 
@@ -1113,6 +1120,7 @@ def create_invoice_for_user(
 
 def create_invoice_for_merchant(
     payload: InvoiceCreateUser, request: Request, db: Session, user: User,
+    *, payment_link_id: UUID | None = None, payment_link_attempt_id: UUID | None = None,
 ):
     """Shared native/public creation; callers establish merchant authorization."""
     confirmation_target = payload.confirmation_target
@@ -1171,6 +1179,8 @@ def create_invoice_for_merchant(
     address, subaddress_index = create_subaddress_for_user(db, user=user, invoice_id=invoice_id)
     invoice = Invoice(
         id=invoice_id,
+        payment_link_id=payment_link_id,
+        payment_link_attempt_id=payment_link_attempt_id,
         user_id=user.id,
         wallet_address=user.payment_address,
         address=address,

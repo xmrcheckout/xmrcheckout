@@ -9,7 +9,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 from starlette.concurrency import run_in_threadpool
 from sqlalchemy import func
@@ -39,6 +39,7 @@ class PaymentLinkInput(InvoiceCreateUser):
     description: str = Field(default="", max_length=2000)
     confirmation_target: int | None = Field(default=None, ge=0, le=10)
     enabled: bool = True
+    auto_create_invoice: bool = False
 
     @field_validator("title")
     @classmethod
@@ -87,13 +88,14 @@ def serialize(link):
         "amount_fiat": str(link.amount_fiat) if link.amount_fiat is not None else None,
         "currency": link.currency, "confirmation_target": link.confirmation_target,
         "checkout_continue_url": link.checkout_continue_url, "enabled": link.enabled,
+        "auto_create_invoice": link.auto_create_invoice,
         "url": f"{site}/pay/{link.token}",
         "action_url": f"{site}/api/core/public/payment-links/{link.token}/invoices",
     }
 
 
 def apply_settings(link, payload, user):
-    for name in ("title", "description", "amount_xmr", "amount_fiat", "enabled"):
+    for name in ("title", "description", "amount_xmr", "amount_fiat", "enabled", "auto_create_invoice"):
         setattr(link, name, getattr(payload, name))
     link.currency = payload.currency if payload.amount_fiat is not None else None
     link.confirmation_target = payload.confirmation_target if payload.confirmation_target is not None else user.default_confirmation_target
@@ -151,7 +153,7 @@ def enabled_link(db, token):
 def public_link(token: str, response: Response, db: Session = Depends(get_db)):
     response.headers["Cache-Control"] = "no-store"
     data = serialize(enabled_link(db, token))
-    return {key: data[key] for key in ("title", "description", "amount_xmr", "amount_fiat", "currency", "confirmation_target", "action_url")}
+    return {key: data[key] for key in ("title", "description", "amount_xmr", "amount_fiat", "currency", "confirmation_target", "action_url", "auto_create_invoice")}
 
 
 def public_usage(db, user, now):
@@ -209,7 +211,27 @@ def purchase_in_worker(token: str, request: Request):
 
 
 def create_purchase(token: str, request: Request, db: Session):
+    wants_json = "application/json" in request.headers.get("accept", "")
+    def failure(code, detail, headers=None):
+        if wants_json:
+            return JSONResponse({"detail": detail}, status_code=code, headers={**(headers or {}), "Cache-Control": "no-store"})
+        return error_page(code, detail, headers)
+
+    def success(invoice, replay=False):
+        site = os.getenv("SITE_URL", "http://localhost:3000").rstrip("/")
+        url = f"{site}/invoice/{invoice.id}"
+        if wants_json:
+            return JSONResponse({"invoice_url": url, "status": invoice.status,
+                "expires_at": invoice.expires_at.isoformat() if invoice.expires_at else None},
+                status_code=200 if replay else 201, headers={"Cache-Control": "no-store"})
+        return RedirectResponse(url, status_code=303, headers={"Cache-Control": "no-store"})
+
     try:
+        raw_attempt = request.headers.get("idempotency-key")
+        try:
+            attempt = UUID(raw_attempt) if raw_attempt is not None else None
+        except ValueError:
+            raise HTTPException(400, "Idempotency-Key must be a UUID") from None
         initial = enabled_link(db, token)
         user = db.query(User).filter(User.id == initial.user_id).with_for_update().first()
         if user is None or not user.payment_address or not user.view_key_encrypted:
@@ -217,24 +239,28 @@ def create_purchase(token: str, request: Request, db: Session):
         link = db.query(PaymentLink).filter(PaymentLink.id == initial.id).populate_existing().with_for_update().one()
         if not link.enabled:
             raise HTTPException(404, "This payment link is unavailable. Contact the merchant.")
+        if attempt:
+            existing = db.query(Invoice).filter(Invoice.payment_link_id == link.id, Invoice.payment_link_attempt_id == attempt).first()
+            if existing:
+                logger.info("Public payment-link invoice replayed link=%s invoice=%s", link.id, existing.id)
+                return success(existing, replay=True)
         reserve_public_budget(db, user)
         payload = InvoiceCreateUser(
             amount_xmr=link.amount_xmr, amount_fiat=link.amount_fiat, currency=link.currency,
             confirmation_target=link.confirmation_target, checkout_continue_url=link.checkout_continue_url,
             metadata={"origin": "payment_link", "payment_link": {"id": str(link.id), "title": link.title, "description": link.description}},
         )
-        invoice = create_invoice_for_merchant(payload, request, db, user)
+        invoice = create_invoice_for_merchant(payload, request, db, user, payment_link_id=link.id, payment_link_attempt_id=attempt)
+        invoice = db.query(Invoice).filter(Invoice.id == invoice.id).one()
         logger.info("Public payment-link invoice created link=%s invoice=%s", link.id, invoice.id)
-        # Use configured public origin rather than a caller-supplied Host header.
-        site = os.getenv("SITE_URL", "http://localhost:3000").rstrip("/")
-        return RedirectResponse(f"{site}/invoice/{invoice.id}", status_code=303, headers={"Cache-Control": "no-store"})
+        return success(invoice)
     except HTTPException as exc:
         db.rollback()
         diagnostic = getattr(exc, "diagnostic_id", None)
         detail = str(exc.detail) + (f" Reference ID: {diagnostic}" if diagnostic else "")
         logger.info("Public payment-link creation unavailable status=%s", exc.status_code)
-        return error_page(exc.status_code, detail, exc.headers)
+        return failure(exc.status_code, detail, exc.headers)
     except Exception:
         db.rollback()
         logger.warning("Public payment-link creation failed")
-        return error_page(503, "The checkout service is unavailable.")
+        return failure(503, "The checkout service is unavailable.")

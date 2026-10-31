@@ -506,10 +506,17 @@ The API listens on `http://127.0.0.1:8000`.
 Follow the [payment button setup guide](https://xmrcheckout.com/guides/monero-payment-buttons) for the merchant walkthrough, embedding instructions, and limitations.
 
 In Dashboard → Payment links, configure a fixed XMR amount or a fiat-reference
-amount (for example 20 EUR). Copy the reusable URL or HTML form into your website.
-HTML blocks must permit forms; use the URL when an editor strips forms. A button
-submission immediately creates a separate invoice and opens hosted checkout.
-Opening a reusable URL shows a review page first; GET/HEAD never create invoices.
+amount (for example 20 EUR). Preview the branded graphic and copy its linked-image
+HTML into your website, or use the reusable URL with your own button.
+By default the URL opens a review page. The per-link setting
+“Skip review and create invoice automatically” (`auto_create_invoice`, default false)
+lets an active, visible browser create an invoice and open checkout directly.
+GET/HEAD remain read-only; automatic creation uses POST. Visits by automated
+browsers can consume public allowance and address capacity too.
+In automatic mode the same tab resumes its current unpaid invoice. Use
+“Start another purchase” to deliberately create a separate order. Completed,
+expired, or invalid previous invoices show a choice to view them or start again.
+Without JavaScript or browser storage, customers use the manual review button.
 No API key or wallet credential belongs in the snippet.
 
 Fiat-reference inputs produce XMR invoices using an informational quote at
@@ -539,6 +546,12 @@ Management API: authenticated GET/POST `/api/core/payment-links` and PATCH
 `/api/core/public/payment-links/{token}` exposes product details; public POST
 `/api/core/public/payment-links/{token}/invoices` accepts an empty HTML form and
 returns a 303 redirect, or an HTML error with applicable Retry-After information.
+Clients may supply a UUID `Idempotency-Key` header and `Accept: application/json`.
+Creation returns 201; replay returns 200 with the original `invoice_url`, current
+`status`, and `expires_at`, without consuming additional allowance or addresses.
+Save the attempt key before sending the request and retain it after errors;
+explicit retries must reuse it. Keys are scoped to a payment link and must not
+be placed in reusable URLs. JSON errors preserve Retry-After guidance.
 Price, receiving wallet, confirmation, and URL overrides are rejected. Generated
 invoices appear in the normal invoice list and webhook events, with a snapshot
 in `metadata.payment_link`; search invoice metadata for the product or link ID.

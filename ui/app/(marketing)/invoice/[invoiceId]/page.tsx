@@ -20,6 +20,7 @@ type InvoiceStatus =
 
 type InvoiceStatusResponse = {
   quote?: { fiat_amount: string; fiat_currency: string; rate: string; source: string; quoted_at: string } | null;
+  payment_link_url?: string;
   product_title?: string;
   product_description?: string;
   id: string;
@@ -309,6 +310,7 @@ export default async function InvoiceStatusDetailPage({
             Continue to merchant
           </a>
         ) : null}
+        {invoice.payment_link_url ? <a href={invoice.payment_link_url} className="inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold">Start another purchase</a> : null}
         <InvoiceStatusActions />
       </section>
     </main>

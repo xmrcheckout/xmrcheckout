@@ -47,6 +47,7 @@ try:
         try:
             if urllib.request.urlopen(base + "/api/core/public/payment-links/fixture-token", timeout=2).status == 200: break
         except Exception: time.sleep(.2)
+    print(command("docker", "exec", api, "python", "-m", "unittest", "tests.test_payment_links"), flush=True)
     class Merchant(BaseHTTPRequestHandler):
         snippet = b""
 

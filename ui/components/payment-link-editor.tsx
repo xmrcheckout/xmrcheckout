@@ -7,7 +7,7 @@ import { savePaymentLink, type PaymentLinkState } from "../app/(app)/dashboard/p
 export type PaymentLinkData = {
   id: string; title: string; description: string; amount_xmr: string | null;
   amount_fiat: string | null; currency: string | null; confirmation_target: number;
-  checkout_continue_url: string | null; enabled: boolean; url: string; action_url: string;
+  auto_create_invoice: boolean; checkout_continue_url: string | null; enabled: boolean; url: string; action_url: string;
 };
 const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-3 py-2 text-ink";
 function Buttons({ canDisable }: { canDisable: boolean }) {
@@ -17,10 +17,11 @@ function Buttons({ canDisable }: { canDisable: boolean }) {
 export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null }) {
   const empty = { title: "", description: "", amount: "", currency: "XMR", confirmation_target: String(defaultTarget), checkout_continue_url: "" };
   const [values, setValues] = useState(link ? { title: link.title, description: link.description, amount: link.amount_xmr ?? link.amount_fiat ?? "", currency: link.currency ?? "XMR", confirmation_target: String(link.confirmation_target), checkout_continue_url: link.checkout_continue_url ?? "" } : empty);
+  const [automatic, setAutomatic] = useState(link?.auto_create_invoice ?? false);
   const [enabled, setEnabled] = useState(link?.enabled ?? true);
   const [state, action] = useFormState<PaymentLinkState, FormData>(async (previous, data) => {
     const result = await savePaymentLink(previous, data);
-    if (result.success && !link) { setValues(empty); setEnabled(true); }
+    if (result.success && !link) { setValues(empty); setEnabled(true); setAutomatic(false); }
     if (result.success === "Payment link disabled.") setEnabled(false);
     return result;
   }, { error: "", success: "", fieldErrors: {} });
@@ -48,6 +49,8 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies 
     <p className="text-sm text-ink-soft">Zero confirmations accepts detection without waiting for a block confirmation.</p>
     <div><label htmlFor={`${prefix}-checkout_continue_url`}>Merchant return URL (optional)</label><input {...props("checkout_continue_url")} type="url" placeholder="https://your-site.example/thanks" />{error("checkout_continue_url")}</div>
     <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="enabled" checked={enabled} onChange={event => setEnabled(event.target.checked)} />Enable new purchases</label>
+    <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="auto_create_invoice" checked={automatic} onChange={event => setAutomatic(event.target.checked)} />Skip review and create invoice automatically</label>
+    <p className="text-sm text-ink-soft">Visits can create unpaid invoices and consume your public invoice allowance and address capacity. Reopening in the same tab resumes the current invoice. Automated browsers can also trigger creation.</p>
     <p className="text-sm text-ink-soft">Disabling stops new purchases. Existing invoices continue to be checked.</p>
     <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
     <Buttons canDisable={!!link?.enabled} />

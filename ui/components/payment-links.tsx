@@ -49,11 +49,11 @@ export default async function PaymentLinks() {
           <a href={link.url} className="inline-block max-w-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay">
             <Image src={paymentButtonImageUrl(link.url)} alt="Buy with Monero via xmrcheckout" width={280} height={80} unoptimized className="h-auto max-w-full" />
           </a>
-          <p className="text-sm text-ink-soft">Opens the payment review page.</p>
+          <p className="text-sm text-ink-soft">{link.auto_create_invoice ? "Creates an invoice automatically when opened." : "Opens the payment review page."}</p>
         </div>
         <CopyCodeBlock className={codeClass}>{paymentButtonHtml(link.url)}</CopyCodeBlock>
       </div>
-      <p className="text-sm text-ink-soft">Paste into an HTML block on your website. The graphic links to the payment review page; the customer creates an invoice from there. No form or JavaScript is needed. You can also attach the reusable link to your own button.</p>
+      <p className="text-sm text-ink-soft">Paste into an HTML block on your website. {link.auto_create_invoice ? "Opening the graphic automatically requests an invoice." : "The graphic links to the payment review page; the customer creates an invoice from there."} No form or JavaScript is needed. You can also attach the reusable link to your own button.</p>
       <details><summary className="min-h-11 cursor-pointer font-semibold">Edit settings</summary><PaymentLinkEditor currencies={currencies} link={link} /></details>
     </article>)}
   </section>;

@@ -70,6 +70,81 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
         token = data["url"].rsplit("/", 1)[1]
         return data, self.base + f"/api/core/public/payment-links/{token}"
 
+    def test_existing_database_upgrade(self):
+        from sqlalchemy import create_engine, text
+        from app import main
+        schema = "payment_link_migration_" + uuid4().hex
+        with engine.begin() as connection:
+            connection.execute(text(f'CREATE SCHEMA "{schema}"'))
+        isolated = create_engine(engine.url, connect_args={"options": f"-csearch_path={schema}"})
+        try:
+            Base.metadata.create_all(isolated)
+            with isolated.begin() as connection:
+                connection.execute(text("ALTER TABLE payment_links DROP COLUMN auto_create_invoice"))
+                connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_id CASCADE"))
+                connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_attempt_id"))
+                connection.execute(text("INSERT INTO payment_links (id,user_id,token,title,description,confirmation_target,enabled) VALUES (:id,:user,'legacy','Legacy','',2,true)"), {"id": uuid4(), "user": uuid4()})
+            with patch.object(main, "engine", isolated):
+                main.startup()
+                main.startup()
+            with isolated.connect() as connection:
+                self.assertFalse(connection.execute(text("SELECT auto_create_invoice FROM payment_links WHERE token='legacy'")).scalar_one())
+                connection.execute(text("SELECT payment_link_id,payment_link_attempt_id FROM invoices"))
+                self.assertIsNotNone(connection.execute(text("SELECT indexname FROM pg_indexes WHERE schemaname=:schema AND indexname='invoice_payment_link_attempt'"), {"schema": schema}).scalar_one())
+        finally:
+            isolated.dispose()
+            with engine.begin() as connection:
+                connection.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
+
+    def test_automatic_setting_and_idempotent_creation(self):
+        data, url = self.create(auto_create_invoice=True)
+        self.assertTrue(data["auto_create_invoice"])
+        self.assertTrue(requests.get(url).json()["auto_create_invoice"])
+        self.assertEqual(requests.head(url + "/invoices").status_code, 405)
+        with SessionLocal() as db:
+            self.assertEqual(db.query(Invoice).filter(Invoice.user_id == self.user_id).count(), 0)
+        headers = {"Accept": "application/json", "Idempotency-Key": str(uuid4())}
+        with patch.object(payment_links, "PUBLIC_PAYMENT_LINK_DAILY_LIMIT", 1):
+            first = requests.post(url + "/invoices", headers=headers)
+            second = requests.post(url + "/invoices", headers=headers)
+            self.assertEqual(first.status_code, 201, first.text)
+            self.assertEqual(second.status_code, 200, second.text)
+            self.assertEqual(first.json(), second.json())
+            self.assertEqual(requests.post(url + "/invoices", headers={**headers, "Idempotency-Key": str(uuid4())}).status_code, 429)
+        patch_url = self.base + "/api/core/payment-links/" + data["id"]
+        requests.patch(patch_url, headers=self.headers, json={"enabled": False}).raise_for_status()
+        self.assertEqual(requests.post(url + "/invoices", headers=headers).status_code, 404)
+        response = requests.patch(patch_url, headers=self.headers, json={"enabled": True})
+        self.assertTrue(response.json()["auto_create_invoice"])
+        with SessionLocal() as db:
+            self.assertEqual(db.query(Invoice).filter(Invoice.user_id == self.user_id).count(), 1)
+        self.assertEqual(requests.post(url + "/invoices", headers={**headers, "Idempotency-Key": "bad"}).status_code, 400)
+
+    def test_concurrent_attempt_and_link_scope(self):
+        _, url = self.create()
+        headers = {"Accept": "application/json", "Idempotency-Key": str(uuid4())}
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            responses = list(pool.map(lambda _: requests.post(url + "/invoices", headers=headers), range(4)))
+        self.assertEqual(sorted(r.status_code for r in responses), [200, 200, 200, 201])
+        self.assertEqual(len({r.json()["invoice_url"] for r in responses}), 1)
+        self.assertEqual(routes.create_subaddress_for_user.call_count, 1)
+        self.assertEqual(routes.dispatch_webhooks.call_count, 1)
+        _, other = self.create()
+        self.assertNotEqual(requests.post(other + "/invoices", headers=headers).json()["invoice_url"], responses[0].json()["invoice_url"])
+
+    def test_recovery_after_commit(self):
+        _, url = self.create()
+        headers = {"Accept": "application/json", "Idempotency-Key": str(uuid4())}
+        with patch.object(routes, "dispatch_webhooks", side_effect=RuntimeError("post-commit failure")):
+            self.assertEqual(requests.post(url + "/invoices", headers=headers).status_code, 503)
+        replay = requests.post(url + "/invoices", headers=headers)
+        self.assertEqual(replay.status_code, 200, replay.text)
+        with SessionLocal() as db:
+            invoice = db.query(Invoice).filter(Invoice.user_id == self.user_id).one()
+            invoice.status = "confirmed"
+            db.commit()
+        self.assertEqual(requests.post(url + "/invoices", headers=headers).json()["status"], "confirmed")
+
     def test_management_and_public_boundary(self):
         data, url = self.create()
         self.assertEqual(requests.get(self.base + "/api/core/payment-links").status_code, 401)

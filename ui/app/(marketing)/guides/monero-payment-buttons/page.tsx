@@ -31,7 +31,7 @@ export default function PaymentButtonsGuide() {
           <li>Open <Link href="/dashboard?tab=payment-links" className={linkClass}>Dashboard → Payment links</Link>, then choose <strong>Create payment link</strong>.</li>
           <li>Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount. Customer-entered amounts are not supported.</li>
           <li>Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL.</li>
-          <li>Leave <strong>Enable new purchases</strong> selected and save. Copy controls appear in the payment-link list.</li>
+          <li>Leave <strong>Enable new purchases</strong> selected and save. Copy controls appear in the payment-link list. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity.</li>
         </ol>
         <p className="mt-4">For the €20 reference, each purchase request calculates an XMR amount using the available informational quote. The invoice is defined in XMR and displays the quote source and timestamp. There is no rate lock or guaranteed EUR outcome. If the quote is unavailable, creation fails.</p>
         <p className="mt-3 text-sm text-ink-soft">Need your own deployment first? Follow the <Link href="/guides/self-hosted-monero-checkout" className={linkClass}>self-hosting guide</Link>. A working view-only wallet and synchronized detection services are prerequisites.</p>
@@ -41,7 +41,7 @@ export default function PaymentButtonsGuide() {
         <p className="mt-4">Preview the branded button in the dashboard, then copy its HTML into a custom HTML block on your website. The graphic includes the xmrcheckout logo and links to the payment review page. No form, JavaScript, or merchant API key is needed in the snippet.</p>
         <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_PUBLIC_TOKEN")}</CopyCodeBlock>
         <p className="mt-3 text-sm text-ink-soft">This example uses a reserved example domain and placeholder token. Copy your actual snippet from the dashboard; keep your wallet credentials and API key out of website HTML.</p>
-        <p className="mt-4">You can also copy the reusable URL and attach it to a normal link or your own website button. Both options show the product review page; the customer then submits a purchase request. Opening or previewing a URL does not create an invoice.</p>
+        <p className="mt-4">You can also copy the reusable URL and attach it to a normal link or your own website button. Both options show the product review page; the customer then submits a purchase request. With review enabled, opening a URL does not create an invoice. With automatic creation enabled, an active browser requests an invoice and opens it. The same tab resumes its current unpaid invoice; use “Start another purchase” for a separate order. Without JavaScript or browser storage, customers use the manual creation button.</p>
         <p className="mt-3">Purchases use the saved receiving wallet, amount, confirmation target, and return URL. Editing HTML cannot override these settings.</p>
       </section>
       <section id="invoices" aria-labelledby="invoices-title" className={sectionClass}>

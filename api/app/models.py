@@ -22,6 +22,9 @@ class Invoice(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), nullable=True, index=True)
+    payment_link_id = Column(UUID(as_uuid=True), nullable=True)
+    payment_link_attempt_id = Column(UUID(as_uuid=True), nullable=True)
+    __table_args__ = (UniqueConstraint("payment_link_id", "payment_link_attempt_id", name="invoice_payment_link_attempt"),)
     wallet_address = Column(String, nullable=True, index=True)
     address = Column(String, nullable=False)
     subaddress_index = Column(Integer, nullable=True)
@@ -208,5 +211,6 @@ class PaymentLink(Base):
     confirmation_target = Column(Integer, nullable=False)
     checkout_continue_url = Column(String, nullable=True)
     enabled = Column(Boolean, nullable=False, default=True)
+    auto_create_invoice = Column(Boolean, nullable=False, default=False, server_default="false")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

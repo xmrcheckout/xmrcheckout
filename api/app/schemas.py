@@ -177,6 +177,7 @@ class InvoiceStatusResponse(BaseModel):
     btcpay_order_number: str | None = None
     product_title: str | None = None
     product_description: str | None = None
+    payment_link_url: str | None = None
     checkout_continue_available: bool = False
     quote: dict[str, Any] | None = None
     qr_url: str | None = None

@@ -95,7 +95,69 @@ async function main() {
     const paths = await (await fetch(base + "/api/core/__fixture/requests")).json();
     assert.equal(paths.includes("/api/core/invoices"), false, "Payment links must not load invoice history");
     await context.close();
-    console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, graphic preview, and copied cross-origin embed through invoice creation without JavaScript.");
+    const authorization = { Authorization: "ApiKey fixture-only-api-key" };
+    const links = await (await fetch(base + "/api/core/payment-links", { headers: authorization })).json();
+    const fixture = links.find(link => link.url.endsWith("/fixture-token"));
+    const settings = { title: fixture.title, amount_xmr: "0.1", confirmation_target: 2, auto_create_invoice: true };
+    assert.equal((await fetch(base + "/api/core/payment-links/" + fixture.id, {
+      method: "PATCH", headers: { ...authorization, "Content-Type": "application/json" }, body: JSON.stringify(settings),
+    })).status, 200);
+    for (const width of [320, 390, 768, 1440]) {
+      // Refill the real public purchase limiter before exercising creation and replay.
+      await new Promise(resolve => setTimeout(resolve, 21000));
+      const automatic = await browser.newContext({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });
+      const checkout = await automatic.newPage();
+      checkout.setDefaultTimeout(15000);
+      if (width === 390) {
+        await checkout.route("**/api/core/public/payment-links/fixture-token/invoices", async route => {
+          await route.fetch();
+          await route.abort();
+        }, { times: 1 });
+      }
+      if (width === 768) {
+        await checkout.addInitScript(() => Object.defineProperty(document, "prerendering", { configurable: true, value: true }));
+      }
+      await checkout.goto(base + "/pay/fixture-token");
+      if (width === 768) {
+        assert.equal(checkout.url(), base + "/pay/fixture-token");
+        assert.equal(await checkout.evaluate(() => sessionStorage.getItem("payment-link-attempt:fixture-token")), null);
+        await checkout.evaluate(() => {
+          Object.defineProperty(document, "prerendering", { configurable: true, value: false });
+          document.dispatchEvent(new Event("prerenderingchange"));
+        });
+      }
+      if (width === 390) {
+        await checkout.getByRole("button", { name: "Retry same checkout attempt" }).click();
+      }
+      await checkout.waitForURL(/\/invoice\//);
+      const invoiceUrl = checkout.url();
+      await checkout.addStyleTag({ content: "html { font-size: 125%; }" });
+      assert.equal(await checkout.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      // Remove the simulated prerender flag on later documents.
+      await checkout.goto(base + "/pay/fixture-token");
+      if (width === 768) await checkout.evaluate(() => {
+        Object.defineProperty(document, "prerendering", { configurable: true, value: false });
+        document.dispatchEvent(new Event("prerenderingchange"));
+      });
+      await checkout.waitForURL(invoiceUrl);
+      if (width === 320) {
+        await checkout.getByRole("link", { name: "Start another purchase", exact: true }).click();
+        await checkout.waitForURL(url => url.pathname.startsWith("/invoice/") && url.href !== invoiceUrl);
+      }
+      await automatic.close();
+    }
+    const fallback = await browser.newContext({ javaScriptEnabled: false });
+    const manual = await fallback.newPage();
+    await manual.goto(base + "/pay/fixture-token");
+    await manual.getByRole("button", { name: "Create invoice and pay with Monero" }).waitFor();
+    await fallback.close();
+    const noStorage = await browser.newContext();
+    await noStorage.addInitScript(() => Object.defineProperty(window, "sessionStorage", { get() { throw new Error("Storage unavailable"); } }));
+    const unavailableStorage = await noStorage.newPage();
+    await unavailableStorage.goto(base + "/pay/fixture-token", { waitUntil: "networkidle" });
+    await unavailableStorage.getByRole("button", { name: "Create invoice and pay with Monero" }).waitFor();
+    await noStorage.close();
+    console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, graphic preview, copied cross-origin embed, automatic creation, resumption, explicit new purchase, response recovery, prerender protection, and manual fallbacks.");
   } finally { await browser.close(); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

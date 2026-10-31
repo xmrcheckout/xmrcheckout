@@ -12,10 +12,26 @@ async function main() {
       const context = await browser.newContext({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });
       await context.addCookies([{ name: "xmrcheckout_api_key", value: "fixture-only-api-key", url: base }]);
       const page = await context.newPage();
+      page.setDefaultTimeout(15000);
       await page.goto(base + "/dashboard?tab=payment-links", { waitUntil: "networkidle" });
       await page.getByRole("heading", { name: "Payment links", exact: true }).waitFor();
+      const card = page.locator("article").filter({ has: page.locator('a[href$="/pay/fixture-token"]') });
+      const preview = card.getByRole("link", { name: "Buy with Monero via xmrcheckout", exact: true });
+      await preview.scrollIntoViewIfNeeded();
+      await preview.getByRole("img").evaluate(image => image.decode());
+      assert.equal(await preview.getAttribute("href"), base + "/pay/fixture-token");
+      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+      await card.getByRole("button", { name: "Copy code", exact: true }).nth(1).click();
+      const snippet = await page.evaluate(() => navigator.clipboard.readText());
+      assert.match(snippet, /<a href=/);
+      assert.match(snippet, /<img src=/);
+      assert.equal(snippet.includes("<form"), false);
+      assert.equal((await fetch(merchant, { method: "POST", body: snippet })).status, 204);
       await page.addStyleTag({ content: "html { font-size: 125%; }" });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `dashboard overflow ${width}`);
+      if (process.env.PAYMENT_LINK_SCREENSHOT_DIR) {
+        await card.screenshot({ path: `${process.env.PAYMENT_LINK_SCREENSHOT_DIR}/payment-link-${width}.png` });
+      }
       await page.getByText("Create payment link", { exact: true }).focus();
       await page.keyboard.press("Enter");
       const editor = page.locator("details").filter({ hasText: "Create payment link" });
@@ -49,19 +65,29 @@ async function main() {
         await page.getByRole("region", { name: "Invoice address availability", exact: true }).getByText("Unavailable. Refresh to try again.", { exact: true }).waitFor();
         await fetch(base + "/api/core/__fixture/failure?mode=none");
       }
-      await page.goto(base + "/pay/fixture-token", { waitUntil: "networkidle" });
+      await preview.focus();
+      await page.keyboard.press("Enter");
+      await page.waitForURL(base + "/pay/fixture-token");
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `review overflow ${width}`);
+      const paths = await (await fetch(base + "/api/core/__fixture/requests")).json();
+      assert.equal(paths.includes("/api/core/public/payment-links/fixture-token/invoices"), false, "Preview navigation must not create an invoice");
       await context.close();
     }
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
     await page.goto(merchant);
+    const graphic = page.getByRole("link", { name: "Buy with Monero via xmrcheckout", exact: true });
+    await graphic.getByRole("img").evaluate(image => image.decode());
+    assert.equal(await graphic.getAttribute("href"), base + "/pay/fixture-token");
+    await graphic.click();
+    await page.waitForURL(base + "/pay/fixture-token");
+    await page.getByRole("heading", { name: "Fixture product", exact: true }).waitFor();
     const requestPromise = page.waitForRequest(request => request.method() === "POST" && request.url().includes("/payment-links/fixture-token/invoices"));
     const responsePromise = page.waitForResponse(response => response.request().method() === "POST" && response.url().includes("/payment-links/fixture-token/invoices"));
-    await page.getByRole("button", { name: "Buy with Monero" }).click();
+    await page.getByRole("button", { name: "Create invoice and pay with Monero", exact: true }).click();
     const submitted = await requestPromise;
     assert.equal(new URL(submitted.url()).origin, new URL(base).origin);
-    assert.equal(submitted.headers().origin, new URL(merchant).origin);
+    assert.equal(submitted.headers().origin, new URL(base).origin);
     assert.equal(submitted.headers().authorization, undefined);
     assert.equal((await responsePromise).status(), 303);
     await page.waitForURL(/\/invoice\//);
@@ -69,7 +95,7 @@ async function main() {
     const paths = await (await fetch(base + "/api/core/__fixture/requests")).json();
     assert.equal(paths.includes("/api/core/invoices"), false, "Payment links must not load invoice history");
     await context.close();
-    console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, and cross-origin submission without JavaScript.");
+    console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, graphic preview, and copied cross-origin embed through invoice creation without JavaScript.");
   } finally { await browser.close(); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

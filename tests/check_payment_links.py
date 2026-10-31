@@ -48,11 +48,18 @@ try:
             if urllib.request.urlopen(base + "/api/core/public/payment-links/fixture-token", timeout=2).status == 200: break
         except Exception: time.sleep(.2)
     class Merchant(BaseHTTPRequestHandler):
+        snippet = b""
+
+        def do_POST(self):
+            Merchant.snippet = self.rfile.read(int(self.headers["Content-Length"]))
+            self.send_response(204)
+            self.end_headers()
+
         def do_GET(self):
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
             self.end_headers()
-            self.wfile.write(f'<form method="post" action="{base}/api/core/public/payment-links/fixture-token/invoices"><button type="submit">Buy with Monero</button></form>'.encode())
+            self.wfile.write(Merchant.snippet)
         def log_message(self, *args): pass
     merchant = ThreadingHTTPServer(("127.0.0.1", 0), Merchant)
     threading.Thread(target=merchant.serve_forever, daemon=True).start()

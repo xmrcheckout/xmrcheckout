@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { cookies } from "next/headers";
+import { paymentButtonHtml, paymentButtonImageUrl } from "../lib/payment-button";
 import InvoiceAddressAvailability from "./invoice-address-availability";
 import StatusRefreshButton from "./status-refresh-button";
 import CopyCodeBlock from "./copy-code-block";
@@ -22,7 +24,6 @@ export default async function PaymentLinks() {
   const links: PaymentLinkData[] = await response.json();
   const target = profile?.ok ? (await profile.json()).default_confirmation_target : 1;
   const codeClass = "overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream";
-  const escape = (value: string) => value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   return <section className="grid min-w-0 gap-6">
     <div><h2 className="text-2xl font-semibold">Payment links</h2>
       <p className="mt-2 text-ink-soft">Create a reusable button for a fixed amount. Each submission creates a separate XMR invoice paid directly to your wallet.</p>
@@ -41,8 +42,18 @@ export default async function PaymentLinks() {
       <h3 className="break-words text-xl font-semibold">{link.title} · {link.enabled ? "Enabled" : "Disabled"}</h3>
       <p>{link.amount_xmr ? `${link.amount_xmr} XMR` : `${link.amount_fiat} ${link.currency} reference`}</p>
       <p>Reusable link</p><CopyCodeBlock className={codeClass}>{link.url}</CopyCodeBlock>
-      <p>HTML button</p><CopyCodeBlock className={codeClass}>{`<form method="post" action="${escape(link.action_url)}">\n  <button type="submit">Buy with Monero</button>\n</form>`}</CopyCodeBlock>
-      <p className="text-sm text-ink-soft">Paste into an HTML block that permits forms. If your editor removes forms, use the reusable link. Opening the link shows a review page; submitting the button creates an invoice immediately.</p>
+      <div className="grid min-w-0 gap-3">
+        <p>HTML button</p>
+        <div className="grid min-w-0 justify-items-start gap-3 rounded-xl border border-stroke bg-white/50 p-4">
+          <p className="text-sm text-ink-soft">Button preview</p>
+          <a href={link.url} className="inline-block max-w-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay">
+            <Image src={paymentButtonImageUrl(link.url)} alt="Buy with Monero via xmrcheckout" width={280} height={80} unoptimized className="h-auto max-w-full" />
+          </a>
+          <p className="text-sm text-ink-soft">Opens the payment review page.</p>
+        </div>
+        <CopyCodeBlock className={codeClass}>{paymentButtonHtml(link.url)}</CopyCodeBlock>
+      </div>
+      <p className="text-sm text-ink-soft">Paste into an HTML block on your website. The graphic links to the payment review page; the customer creates an invoice from there. No form or JavaScript is needed. You can also attach the reusable link to your own button.</p>
       <details><summary className="min-h-11 cursor-pointer font-semibold">Edit settings</summary><PaymentLinkEditor currencies={currencies} link={link} /></details>
     </article>)}
   </section>;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
+import { paymentButtonHtml } from "../../../../lib/payment-button";
 
 const title = "Add a Monero payment button to your website";
 const description = "Configure a fixed amount, copy an HTML button or reusable link, and give each purchase submission a separate XMR invoice without programming.";
@@ -37,11 +38,11 @@ export default function PaymentButtonsGuide() {
       </section>
       <section id="embed" aria-labelledby="embed-title" className={sectionClass}>
         <h2 id="embed-title" className="font-sans text-2xl font-semibold">Copy your HTML button or reusable URL</h2>
-        <p className="mt-4">Copy the HTML button from the dashboard into a custom HTML block on your website. Submitting it requests a separate invoice and opens hosted checkout. No JavaScript or merchant API key belongs in the snippet.</p>
-        <CopyCodeBlock className={codeClass}>{`<form method="post" action="https://checkout.example/api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices">\n  <button type="submit">Buy with Monero</button>\n</form>`}</CopyCodeBlock>
+        <p className="mt-4">Preview the branded button in the dashboard, then copy its HTML into a custom HTML block on your website. The graphic includes the xmrcheckout logo and links to the payment review page. No form, JavaScript, or merchant API key is needed in the snippet.</p>
+        <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_PUBLIC_TOKEN")}</CopyCodeBlock>
         <p className="mt-3 text-sm text-ink-soft">This example uses a reserved example domain and placeholder token. Copy your actual snippet from the dashboard; keep your wallet credentials and API key out of website HTML.</p>
-        <p className="mt-4">If your editor strips forms, copy the reusable URL instead and attach it to a normal link or website button. Opening that URL shows the product review page; the customer then submits a purchase request. Opening or previewing a URL does not create an invoice. The embedded HTML form submits immediately.</p>
-        <p className="mt-3">Both paths use the saved receiving wallet, amount, confirmation target, and return URL. Editing HTML cannot override these settings.</p>
+        <p className="mt-4">You can also copy the reusable URL and attach it to a normal link or your own website button. Both options show the product review page; the customer then submits a purchase request. Opening or previewing a URL does not create an invoice.</p>
+        <p className="mt-3">Purchases use the saved receiving wallet, amount, confirmation target, and return URL. Editing HTML cannot override these settings.</p>
       </section>
       <section id="invoices" aria-labelledby="invoices-title" className={sectionClass}>
         <h2 id="invoices-title" className="font-sans text-2xl font-semibold">Review each purchase in your invoice list</h2>

@@ -63,6 +63,7 @@ def startup():
             lock_acquired = False
         try:
             Base.metadata.create_all(bind=connection)
+            connection.execute(text("ALTER TABLE payment_links ADD COLUMN IF NOT EXISTS button_text VARCHAR(32) NOT NULL DEFAULT 'Buy with Monero'"))
             connection.execute(text("ALTER TABLE payment_links ADD COLUMN IF NOT EXISTS auto_create_invoice BOOLEAN NOT NULL DEFAULT false"))
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_id UUID"))
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_attempt_id UUID"))

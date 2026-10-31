@@ -5,7 +5,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { savePaymentLink, type PaymentLinkState } from "../app/(app)/dashboard/payment-link-actions";
 
 export type PaymentLinkData = {
-  id: string; title: string; description: string; amount_xmr: string | null;
+  button_text: string; id: string; title: string; description: string; amount_xmr: string | null;
   amount_fiat: string | null; currency: string | null; confirmation_target: number;
   auto_create_invoice: boolean; checkout_continue_url: string | null; enabled: boolean; url: string; action_url: string;
 };
@@ -15,8 +15,8 @@ function Buttons({ canDisable }: { canDisable: boolean }) {
   return <div className="flex flex-wrap gap-3"><button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? "Saving…" : "Save payment link"}</button>{canDisable ? <button disabled={pending} formNoValidate name="mode" value="disable" className="min-h-11 rounded-full border border-stroke px-5 py-2">Disable payment link</button> : null}</div>;
 }
 export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null }) {
-  const empty = { title: "", description: "", amount: "", currency: "XMR", confirmation_target: String(defaultTarget), checkout_continue_url: "" };
-  const [values, setValues] = useState(link ? { title: link.title, description: link.description, amount: link.amount_xmr ?? link.amount_fiat ?? "", currency: link.currency ?? "XMR", confirmation_target: String(link.confirmation_target), checkout_continue_url: link.checkout_continue_url ?? "" } : empty);
+  const empty = { button_text: "Buy with Monero", title: "", description: "", amount: "", currency: "XMR", confirmation_target: String(defaultTarget), checkout_continue_url: "" };
+  const [values, setValues] = useState(link ? { button_text: link.button_text, title: link.title, description: link.description, amount: link.amount_xmr ?? link.amount_fiat ?? "", currency: link.currency ?? "XMR", confirmation_target: String(link.confirmation_target), checkout_continue_url: link.checkout_continue_url ?? "" } : empty);
   const [automatic, setAutomatic] = useState(link?.auto_create_invoice ?? false);
   const [enabled, setEnabled] = useState(link?.enabled ?? true);
   const [state, action] = useFormState<PaymentLinkState, FormData>(async (previous, data) => {
@@ -39,6 +39,9 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies 
   return <form ref={form} action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={link?.id ?? ""} />
     <div><label htmlFor={`${prefix}-title`}>Title</label><input {...props("title")} required maxLength={200} />{error("title")}</div>
+    <div><label htmlFor={`${prefix}-button_text`}>Button text</label><input {...props("button_text")} required maxLength={32} />{error("button_text")}
+      <p className="mt-2 text-sm text-ink-soft">Up to 32 characters. Replaces “Buy with Monero” in the graphic. Copy the updated HTML after changing this text.</p>
+    </div>
     <div><label htmlFor={`${prefix}-description`}>Description</label><textarea {...props("description")} maxLength={2000} />{error("description")}</div>
     <div className="grid gap-4 sm:grid-cols-2">
       <div><label htmlFor={`${prefix}-amount`}>Fixed amount</label><input {...props("amount")} type="number" min="0.000000000001" step="any" required />{error("amount")}</div>

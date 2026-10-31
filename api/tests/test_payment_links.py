@@ -81,6 +81,7 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             Base.metadata.create_all(isolated)
             with isolated.begin() as connection:
                 connection.execute(text("ALTER TABLE payment_links DROP COLUMN auto_create_invoice"))
+                connection.execute(text("ALTER TABLE payment_links DROP COLUMN button_text"))
                 connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_id CASCADE"))
                 connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_attempt_id"))
                 connection.execute(text("INSERT INTO payment_links (id,user_id,token,title,description,confirmation_target,enabled) VALUES (:id,:user,'legacy','Legacy','',2,true)"), {"id": uuid4(), "user": uuid4()})
@@ -88,6 +89,7 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
                 main.startup()
                 main.startup()
             with isolated.connect() as connection:
+                self.assertEqual(connection.execute(text("SELECT button_text FROM payment_links WHERE token='legacy'")).scalar_one(), "Buy with Monero")
                 self.assertFalse(connection.execute(text("SELECT auto_create_invoice FROM payment_links WHERE token='legacy'")).scalar_one())
                 connection.execute(text("SELECT payment_link_id,payment_link_attempt_id FROM invoices"))
                 self.assertIsNotNone(connection.execute(text("SELECT indexname FROM pg_indexes WHERE schemaname=:schema AND indexname='invoice_payment_link_attempt'"), {"schema": schema}).scalar_one())
@@ -95,6 +97,20 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             isolated.dispose()
             with engine.begin() as connection:
                 connection.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
+
+    def test_custom_button_text(self):
+        data, url = self.create(button_text="Donate & <Monero>")
+        self.assertEqual(data["button_text"], "Donate & <Monero>")
+        endpoint = self.base + "/api/core/payment-links/" + data["id"]
+        disabled = requests.patch(endpoint, headers=self.headers, json={"enabled": False})
+        self.assertEqual(disabled.json()["button_text"], "Donate & <Monero>")
+        for value in ("", "   ", "x" * 33, "bad\x00text"):
+            response = requests.patch(endpoint, headers=self.headers, json={**self.settings, "button_text": value})
+            self.assertEqual(response.status_code, 422, response.text)
+        updated = requests.patch(endpoint, headers=self.headers, json={**self.settings, "button_text": "Subscribe with Monero"})
+        self.assertEqual(updated.json()["button_text"], "Subscribe with Monero")
+        default, _ = self.create()
+        self.assertEqual(default["button_text"], "Buy with Monero")
 
     def test_automatic_setting_and_idempotent_creation(self):
         data, url = self.create(auto_create_invoice=True)

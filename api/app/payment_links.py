@@ -40,6 +40,15 @@ class PaymentLinkInput(InvoiceCreateUser):
     confirmation_target: int | None = Field(default=None, ge=0, le=10)
     enabled: bool = True
     auto_create_invoice: bool = False
+    button_text: str = Field(default="Buy with Monero", min_length=1, max_length=32)
+
+    @field_validator("button_text")
+    @classmethod
+    def valid_button_text(cls, value):
+        value = " ".join(value.split())
+        if not value or any(ord(char) < 32 or 127 <= ord(char) <= 159 for char in value):
+            raise ValueError("Enter printable button text")
+        return value
 
     @field_validator("title")
     @classmethod
@@ -89,13 +98,14 @@ def serialize(link):
         "currency": link.currency, "confirmation_target": link.confirmation_target,
         "checkout_continue_url": link.checkout_continue_url, "enabled": link.enabled,
         "auto_create_invoice": link.auto_create_invoice,
+        "button_text": link.button_text,
         "url": f"{site}/pay/{link.token}",
         "action_url": f"{site}/api/core/public/payment-links/{link.token}/invoices",
     }
 
 
 def apply_settings(link, payload, user):
-    for name in ("title", "description", "amount_xmr", "amount_fiat", "enabled", "auto_create_invoice"):
+    for name in ("title", "description", "amount_xmr", "amount_fiat", "enabled", "auto_create_invoice", "button_text"):
         setattr(link, name, getattr(payload, name))
     link.currency = payload.currency if payload.amount_fiat is not None else None
     link.confirmation_target = payload.confirmation_target if payload.confirmation_target is not None else user.default_confirmation_target

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 
+import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
@@ -170,16 +171,12 @@ export default function InvoicePaymentDetails({
         </div>
         {isInvalid || isExpired ? (
           <p className="mt-4 border-l-2 border-red-300 pl-3 text-sm font-semibold text-red-100">
-            This invoice is no longer valid. Contact the merchant to request a
-            new invoice.
-          </p>
-        ) : shouldPromptPayment ? (
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-cream/70">
-            Your wallet adds the network fee on top. Do not subtract it from the
-            amount shown.
+            Contact the merchant to request a new invoice.
           </p>
         ) : null}
       </header>
+
+      <InvoiceRefreshFeedback className="border-b border-stroke px-5 py-3 text-xs text-ink-soft sm:px-7" />
 
       <div className="grid lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0 px-5 py-6 sm:px-7 lg:border-r lg:border-stroke">
@@ -199,6 +196,22 @@ export default function InvoicePaymentDetails({
               />
             ) : null}
           </div>
+
+          {canSendPayment ? (
+              <a
+                className="mt-4 min-h-11 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                href={uri}
+              >
+                Open wallet
+              </a>
+          ) : null}
+
+          {shouldPromptPayment ? (
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">
+            Your wallet adds the network fee on top. Do not subtract it from the
+            amount shown.
+          </p>
+          ) : null}
 
           {usdEstimate ? (
             <div className="mt-3 text-sm text-ink-soft">
@@ -282,7 +295,7 @@ export default function InvoicePaymentDetails({
               </div>
 
             </>
-          ) : (
+          ) : !isExpired && !isInvalid ? (
             <p className="mt-4 border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
               {isExpired
                 ? "This invoice is no longer valid. Contact the merchant to request a new invoice."
@@ -296,15 +309,8 @@ export default function InvoicePaymentDetails({
                       ? "QR code could not be generated. Copy the payment address and exact amount into your wallet."
                       : "QR code is loading. You can also copy the payment address and exact amount into your wallet."}
             </p>
-          )}
-          {canSendPayment ? (
-              <a
-                className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
-                href={uri}
-              >
-                Open wallet
-              </a>
           ) : null}
+
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@ import InvoiceStatusActions from "../../../../components/invoice-status-actions"
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
 import { formatRelativeTime } from "../../../../components/relative-time";
+import Timestamp from "../../../../components/timestamp";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
 
 export const dynamic = "force-dynamic";
@@ -54,9 +55,9 @@ const statusDescription = (
     return `Payment confirmed on-chain at ${confirmationTarget} confirmations.`;
   }
   if (status === "invalid") {
-    return "Invoice marked invalid. Do not send payment.";
+    return "";
   }
-  return "This invoice has expired. Do not send payment. Contact the merchant to request a new invoice.";
+  return "";
 };
 
 const formatTimestamp = (value: string | null) => {
@@ -99,6 +100,7 @@ export default async function InvoiceStatusDetailPage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
@@ -171,9 +173,9 @@ export default async function InvoiceStatusDetailPage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
-      <InvoiceRefreshFeedback />
       <PageIntroBand
         description={statusDescription(
           invoice.status,
@@ -185,11 +187,6 @@ export default async function InvoiceStatusDetailPage({
         title={invoice.product_title || "Payment request"}
       />
 
-      {invoice.quote ? <div className="mt-4 rounded-xl border border-stroke p-4 text-sm">
-        <p>Original reference: {invoice.quote.fiat_amount} {invoice.quote.fiat_currency}. This invoice is defined in XMR.</p>
-        <p>Informational rate: {invoice.quote.rate} {invoice.quote.fiat_currency} per XMR. Source: {invoice.quote.source}. Quoted at: {invoice.quote.quoted_at}.</p>
-        <p>This estimate does not lock a rate or guarantee a fiat outcome.</p>
-      </div> : null}
       {invoice.product_description ? <p className="mt-4 whitespace-pre-wrap break-words">{invoice.product_description}</p> : null}
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
         <InvoicePaymentDetails
@@ -257,6 +254,11 @@ export default async function InvoiceStatusDetailPage({
             This status page is public. Anyone with the link can view the
             current invoice state.
           </p>
+      {invoice.quote ? <div className="mt-4 rounded-xl border border-stroke p-4 text-sm">
+        <p>Original reference: {invoice.quote.fiat_amount} {invoice.quote.fiat_currency}. This invoice is defined in XMR.</p>
+        <p>Informational rate: {invoice.quote.rate} {invoice.quote.fiat_currency} per XMR. Source: {invoice.quote.source}. Quoted at: <Timestamp value={invoice.quote.quoted_at} />.</p>
+        <p>This estimate does not lock a rate or guarantee a fiat outcome.</p>
+      </div> : null}
         </aside>
       </div>
 

@@ -5,6 +5,7 @@ import {
   useTransition, type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import Timestamp from "./timestamp";
 
 const RefreshContext = createContext<{
   refresh: () => void;
@@ -13,6 +14,7 @@ const RefreshContext = createContext<{
   error: boolean;
   intervalMs: number;
   statusMessage: string;
+  status?: string;
 } | null>(null);
 
 export const useInvoiceRefresh = () => useContext(RefreshContext);
@@ -23,6 +25,7 @@ type InvoiceStatusAutoRefreshProps = {
   retrievedAt?: string;
   error?: boolean;
   statusMessage?: string;
+  status?: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 };
 
 export default function InvoiceStatusAutoRefresh({
@@ -31,6 +34,7 @@ export default function InvoiceStatusAutoRefresh({
   retrievedAt,
   error = false,
   statusMessage = "",
+  status,
 }: InvoiceStatusAutoRefreshProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -51,26 +55,30 @@ export default function InvoiceStatusAutoRefresh({
   }, [pending]);
 
   useEffect(() => {
+    if (status === "confirmed" || status === "invalid") return;
     const interval = setInterval(refresh, intervalMs);
     return () => clearInterval(interval);
-  }, [intervalMs, refresh]);
+  }, [intervalMs, refresh, status]);
 
   return (
-    <RefreshContext.Provider value={{ refresh, pending, retrievedAt: lastRetrievedAt, error, intervalMs, statusMessage }}>
+    <RefreshContext.Provider value={{ refresh, pending, retrievedAt: lastRetrievedAt, error, intervalMs, statusMessage, status }}>
       {children}
     </RefreshContext.Provider>
   );
 }
 
-export function InvoiceRefreshFeedback() {
+export function InvoiceRefreshFeedback({ className = "mx-auto mb-4 max-w-4xl text-sm text-ink-soft" }: { className?: string }) {
   const state = useInvoiceRefresh();
   if (!state) return null;
   return (
-    <div className="mx-auto mb-4 max-w-4xl text-sm text-ink-soft">
-      <p>Checks for updates every {state.intervalMs / 1000} seconds.</p>
-      <p>
-        {state.retrievedAt ? <>Status retrieved: <time dateTime={state.retrievedAt}>{new Date(state.retrievedAt).toLocaleString("en-GB", { timeZone: "UTC" })} UTC</time>.</> : "Status has not been retrieved yet."}
-        {" "}This is the status retrieval time, not the latest blockchain observation.
+    <div className={className}>
+      <p>{state.status === "confirmed" || state.status === "invalid"
+        ? "Automatic checks stopped."
+        : state.status === "expired"
+          ? `Status checks every ${state.intervalMs / 1000}s for any later detection.`
+          : `Checks every ${state.intervalMs / 1000}s.`}</p>
+      <p title="Time of the successful status request, not the latest blockchain observation.">
+        {state.retrievedAt ? <>Status retrieved: <Timestamp value={state.retrievedAt} />.</> : "Status has not been retrieved yet."}
       </p>
       <p role="status" aria-live="polite" aria-atomic="true" className={state.error ? "mt-2 text-red-700" : "sr-only"}>
         {state.error ? state.retrievedAt ? "Status unavailable. The last successful check has not changed. Retry to check again." : "Status unavailable. Retry to check again." : state.statusMessage}

@@ -199,6 +199,7 @@ export default async function BtcpayModalInvoicePage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
         <InvoiceRefreshFeedback />
@@ -259,9 +260,9 @@ export default async function BtcpayModalInvoicePage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
-      <InvoiceRefreshFeedback />
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       {useClassicCheckout ? (
         <div className="mx-auto grid max-w-md gap-5">

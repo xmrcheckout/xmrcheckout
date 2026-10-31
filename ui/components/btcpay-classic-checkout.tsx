@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 
+import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatXmrAmount } from "../lib/formatting";
@@ -78,7 +79,7 @@ const statusMessage = (
     return "Invoice marked invalid. Do not send payment.";
   }
   if (status === "expired") {
-    return "Invoice expired. Do not send payment. Contact the merchant to request a new invoice.";
+    return "Invoice expired. Do not send payment.";
   }
   if (status === "confirmed") {
     return `Payment confirmed at ${confirmationTarget} confirmations.`;
@@ -240,6 +241,7 @@ export default function BtcpayClassicCheckout({
           <h2 className="mt-1 text-2xl font-semibold">Payment confirmed</h2>
           <StatusBadge className="mt-4" label="Confirmed" tone="success" />
         </header>
+      <InvoiceRefreshFeedback className="border-b border-stroke px-6 py-3 text-xs text-ink-soft" />
 
         <dl className="divide-y divide-stroke px-6 py-3 text-sm text-ink">
           <div className="flex items-center justify-between gap-4 py-3">
@@ -321,6 +323,18 @@ export default function BtcpayClassicCheckout({
           ) : null}
         </div>
       </header>
+      <InvoiceRefreshFeedback className="border-b border-stroke px-6 py-3 text-xs text-ink-soft" />
+
+      {canSendPayment ? (
+        <div className="border-t border-stroke bg-sand/50 px-6 py-5">
+          <a
+            className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+            href={uri}
+          >
+            Open wallet
+          </a>
+        </div>
+      ) : null}
 
       <div className="grid justify-items-center bg-sand/60 px-5 py-6">
         {canSendPayment && qrDataUrl ? (
@@ -347,7 +361,7 @@ export default function BtcpayClassicCheckout({
               </div>
             ) : null}
           </div>
-        ) : (
+        ) : status !== "expired" && status !== "invalid" ? (
           <p className="rounded-xl border border-stroke bg-cream/70 px-4 py-3 text-sm font-semibold text-ink-soft">
             {canSendPayment
               ? qrFailed
@@ -357,7 +371,7 @@ export default function BtcpayClassicCheckout({
                 ? `${confirmations}/${confirmationTarget} confirmations. No further payment is requested. Waiting for confirmations.`
                 : statusMessage(status, confirmationTarget)}
           </p>
-        )}
+        ) : null}
       </div>
 
       <div className="border-t border-stroke px-6 py-5">
@@ -373,8 +387,7 @@ export default function BtcpayClassicCheckout({
           </>
         ) : status === "expired" ? (
           <p className="border-l-2 border-red-400 pl-3 text-sm leading-relaxed text-red-700">
-            This invoice is no longer valid. Contact the merchant to request a
-            new invoice.
+            Contact the merchant to request a new invoice.
           </p>
         ) : (
           <p className="border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
@@ -408,16 +421,7 @@ export default function BtcpayClassicCheckout({
         </dl>
       </details>
 
-      {canSendPayment ? (
-        <div className="border-t border-stroke bg-sand/50 px-6 py-5">
-          <a
-            className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
-            href={uri}
-          >
-            Pay in wallet
-          </a>
-        </div>
-      ) : null}
+
     </section>
   );
 }

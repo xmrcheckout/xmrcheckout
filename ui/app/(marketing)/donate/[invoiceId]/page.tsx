@@ -93,6 +93,7 @@ export default async function DonateStatusDetailPage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
@@ -120,6 +121,7 @@ export default async function DonateStatusDetailPage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
@@ -189,9 +191,9 @@ export default async function DonateStatusDetailPage({
       retrievedAt={retrievedAt}
       error={!invoice}
       statusMessage={statusMessage}
+      status={invoice?.status}
     >
       <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
-      <InvoiceRefreshFeedback />
       <PageIntroBand
         description={statusDescription(
           invoice.status,

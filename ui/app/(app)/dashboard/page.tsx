@@ -40,6 +40,7 @@ type InvoiceStatusFilter = InvoiceStatus | "active" | "all";
 
 type DashboardSearchParams = Record<string, string | string[] | undefined>;
 type InvoiceSummary = {
+  metadata?: Record<string, unknown> | null;
   id: string;
   address: string;
   subaddress_index?: number | null;

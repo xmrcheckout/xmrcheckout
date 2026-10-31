@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
+import { invoiceLookupId } from "../lib/invoice-display";
 
 type InvoiceStatusLookupProps = {
   initialValue?: string;
@@ -25,12 +26,13 @@ export default function InvoiceStatusLookup({
       setError("Enter an invoice id to continue.");
       return;
     }
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(trimmed)) {
-      setError("Enter the complete invoice ID in UUID format.");
+    const id = invoiceLookupId(trimmed, window.location.origin);
+    if (!id) {
+      setError("Enter a complete invoice ID or an invoice link from this site.");
       return;
     }
     setError(null);
-    router.push(`/invoice/${encodeURIComponent(trimmed)}`);
+    router.push(`/invoice/${encodeURIComponent(id)}`);
   };
 
   return (
@@ -42,7 +44,7 @@ export default function InvoiceStatusLookup({
         className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
         htmlFor={inputId}
       >
-        Invoice ID
+        Invoice ID or link
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <input
@@ -54,7 +56,7 @@ export default function InvoiceStatusLookup({
           type="text"
           value={invoiceId}
           onChange={(event) => { setInvoiceId(event.target.value); setError(null); }}
-          placeholder="e.g. 9d2f2b3c-8a77-4c2b-b9d4-..."
+          placeholder="Paste the complete invoice ID or link"
           autoComplete="off"
           spellCheck={false}
           required

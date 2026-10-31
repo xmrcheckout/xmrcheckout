@@ -1,5 +1,7 @@
 "use client";
 
+import { invoiceContext } from "../lib/invoice-display";
+
 import DiagnosticReference from "./diagnostic-reference";
 import PendingSubmitButton from "./pending-submit-button";
 
@@ -37,7 +39,7 @@ type InvoiceItem = {
   confirmations?: number | null;
   paid_after_expiry?: boolean;
   paid_after_expiry_at?: string | null;
-  metadata?: Record<string, string> | null;
+  metadata?: Record<string, unknown> | null;
   created_at: string;
   archived_at: string | null;
   detected_at: string | null;
@@ -1278,8 +1280,25 @@ export default function InvoicePanel({
             </div>
           </form>
         </div>
+        <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3">
+          <label className="grid min-w-0 gap-2 text-xs font-semibold lg:hidden">Status
+            <select className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
+              {invoiceStatusOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+          <label className="grid min-w-0 gap-2 text-xs font-semibold">Sort by
+            <select className={inputClass} value={sort} onChange={event => router.push(buildInvoicesHref({ sort: event.target.value }))}>
+              <option value="created_at">Created</option><option value="amount_xmr">Amount</option><option value="status">Status</option><option value="confirmations">Confirmations</option>
+            </select>
+          </label>
+          <label className="grid min-w-0 gap-2 text-xs font-semibold">Direction
+            <select className={inputClass} value={order} onChange={event => router.push(buildInvoicesHref({ order: event.target.value }))}>
+              <option value="desc">Descending</option><option value="asc">Ascending</option>
+            </select>
+          </label>
+        </div>
         <div
-          className="flex flex-wrap gap-2"
+          className="hidden flex-wrap gap-2 lg:flex"
           aria-label="Invoice status filters"
         >
           {invoiceStatusOptions.map((option) => (
@@ -1312,6 +1331,7 @@ export default function InvoicePanel({
             <div className="grid gap-4 lg:hidden">
               {activeList.map((invoice) => {
                 const isExpanded = expandedInvoiceId === invoice.id;
+                const context = invoiceContext(invoice.metadata);
                 const showPaidAfterExpiry = Boolean(invoice.paid_after_expiry);
                 const isArchivable =
                   !invoice.archived_at &&
@@ -1327,6 +1347,7 @@ export default function InvoicePanel({
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0 grid gap-1 text-left">
+                        {context.title ? <p className="break-words text-sm font-semibold">{context.title}</p> : null}
                         {mode === "tour" ? (
                           <span className="w-fit break-all font-mono text-xs font-semibold text-ink underline underline-offset-4">
                             {invoice.id}
@@ -1419,6 +1440,9 @@ export default function InvoicePanel({
                       <div className="mt-4 grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="grid gap-2">
+                            <p className={labelClass}>Invoice context</p>
+                            <p className="break-all text-sm">{invoice.id}</p>
+                            {context.details.map(detail => <p className="break-words text-sm" key={detail}>{detail}</p>)}
                             <p className={labelClass}>Created at</p>
                             <p
                               className="text-sm font-semibold text-ink"
@@ -1580,6 +1604,7 @@ export default function InvoicePanel({
                 <tbody>
                   {activeList.map((invoice) => {
                     const isExpanded = expandedInvoiceId === invoice.id;
+                const context = invoiceContext(invoice.metadata);
                     const showPaidAfterExpiry = Boolean(
                       invoice.paid_after_expiry,
                     );
@@ -1595,6 +1620,7 @@ export default function InvoicePanel({
                         >
                           <td className="min-w-0 px-4 py-3 align-top">
                             <div className="grid min-w-0 gap-1 text-left">
+                              {context.title ? <p className="break-words text-sm font-semibold">{context.title}</p> : null}
                               {mode === "tour" ? (
                                 <span
                                   className="block truncate font-mono text-xs text-ink underline underline-offset-4"
@@ -1682,7 +1708,10 @@ export default function InvoicePanel({
                               <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   <div className="grid gap-2">
-                                    <p className={labelClass}>Created at</p>
+                                    <p className={labelClass}>Invoice context</p>
+                            <p className="break-all text-sm">{invoice.id}</p>
+                            {context.details.map(detail => <p className="break-words text-sm" key={detail}>{detail}</p>)}
+                            <p className={labelClass}>Created at</p>
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={

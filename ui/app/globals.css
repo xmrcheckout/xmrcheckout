@@ -28,7 +28,7 @@ img {
   box-shadow: 0 0 0 3px #f8f2e9 !important;
 }
 
-:is([role="dialog"], [aria-label="Simulated checkout preview"], [aria-labelledby="invoice-panel-title"]) :is(input, textarea, select) {
+:is([role="dialog"], [aria-label="Simulated checkout preview"], [aria-labelledby="invoice-panel-title"], .invoice-lookup) :is(input, textarea, select) {
   border-color: #71716c;
 }
 
@@ -61,4 +61,32 @@ img {
 main {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  background: #101217;
+  color: #f8f2e9;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid #f8f2e9;
+  outline-offset: 3px;
+}
+pre:focus-visible {
+  outline: 2px solid #c0733f;
+  outline-offset: -3px;
+}
+.docs-page :is(a, summary, button) {
+  min-height: 24px;
+}
+.docs-page a {
+  display: inline-block;
+  padding-block: 0.2rem;
 }

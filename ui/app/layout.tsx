@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
-    template: "XMR Checkout | %s",
+    template: "%s | XMR Checkout",
   },
   description: siteDescription,
   openGraph: {
@@ -59,6 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${crimsonPro.variable}`}>
       <body>
+        <a className="skip-link" href="#main-content">Skip to main content</a>
         {children}
         <script
           type="application/ld+json"

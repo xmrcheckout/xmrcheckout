@@ -18,7 +18,7 @@ export async function loginAction(
   const viewKey = String(formData.get("view_key") ?? "").trim();
 
   if (!paymentAddress || !viewKey) {
-    return { error: "Primary address and secret view key are required." };
+    return { error: "Primary address and private view key are required." };
   }
 
   const response = await fetch(`${apiBaseUrl}/api/core/auth/login`, {
@@ -30,7 +30,7 @@ export async function loginAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to sign in.";
+    const message = detail?.detail ?? "Unable to connect.";
     return { error: message };
   }
 

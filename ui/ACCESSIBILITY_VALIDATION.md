@@ -61,6 +61,11 @@ In a separate terminal:
 node tests/browser-accessibility.cjs http://127.0.0.1:3336
 node tests/browser-ux.cjs http://127.0.0.1:3336
 node tests/browser-layout.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-subaddress-status.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-link-errors.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-checkout-clarity.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-wallet-connection.cjs http://127.0.0.1:3336
+node tests/browser-polish.cjs http://127.0.0.1:3336
 ```
 
 Screenshot contrast sampling requires Python 3 with Pillow. Set `CONTRAST_PYTHON`
@@ -76,6 +81,9 @@ screen-reader test. Automated incomplete findings require review; do not silentl
 count them as passes. Preserve the script output with release evidence.
 
 ## Automated verification record — 2026-10-31
+
+This original record covers the listed flows only. The expanded public-page
+checks and follow-up results below supersede it for the smaller UX fixes.
 
 - Six unit tests passed, including simulated targets of zero, one, and two.
 - Browser coverage completed at 320px, 390px, 768px, and 1440px with reduced
@@ -105,3 +113,47 @@ layout checks, and existing UX, accessibility, and address-availability browser
 checks passed using isolated fixtures. Accessibility scans reported no tagged
 violations; screenshot sampling resolved HTML contrast findings. Existing manual
 assistive-technology checks above remain pending.
+
+## Smaller UX fixes — follow-up on 2026-11-01
+
+The earlier record covered a narrower set of pages. Expanded checks found and
+corrected low-contrast guide navigation numbers, the lookup input boundary, and
+horizontal overflow in opened integration examples at 200% text.
+
+- All 40 public-page axe scans at 320, 390, 768, and 1440px passed with no
+  WCAG-tagged violations. Opened code examples, keyboard scrolling, skip links,
+  mobile-menu Escape/focus return, dashboard headings, titles, and footers were
+  included. These pages also fit at 200% text with reduced motion.
+- The existing accessibility suite passed all 56 scans with no WCAG-tagged
+  violations. HTML screenshot contrast sampling checked 7,535 public-page
+  samples and 3,389 samples in the existing flows. The sampler clips text to
+  scroll containers and image bounds; hidden offscreen text is not sampled as
+  if it were visible. SVG illustration contrast remains a manual check.
+- Link-error, checkout-clarity, wallet-connection, UX, layout, and address-status
+  browser checks passed using isolated fixtures. Coverage includes unavailable
+  status recovery, terminal polling, wallet format guidance, dashboard return
+  paths, an actual rendering failure and recovery, and script-disabled invoice
+  404 content. No real wallet credentials or production writes were used.
+- Lint, all 11 unit tests, the production UI image build, and a build from the
+  staged snapshot passed. The isolated API/PostgreSQL/Nginx payment-link checks
+  and UI request-protection checks also passed, including credential-log checks.
+- Privacy, terms, and contact links were omitted at the maintainer's request.
+  Both footers use neutral project attribution. BTCPay protocol status values
+  remain compatible; visible demo text uses “Demo” while keeping `/tour` URLs.
+
+Script-free error documents use rendered routes with HTTP 404. Document requests
+for `/invoice/...` and `/pay/...` make a read-only public lookup before rendering;
+valid document requests therefore make an additional lookup. Client navigation
+and refresh data requests retain Next's native error flow. Dashboard invoice
+links are not prefetched. These changes do not alter payment detection,
+confirmation thresholds, webhook payloads, or wallet permissions.
+
+For the full API/PostgreSQL/Nginx payment-link fixture checks, from the repository
+root after building the UI image:
+
+```sh
+python3 tests/check_payment_links.py --playwright-module /path/to/playwright
+python3 tests/check_ui_request_protection.py --playwright-module /path/to/playwright
+```
+
+All manual wallet-application and assistive-technology rows above remain Pending.

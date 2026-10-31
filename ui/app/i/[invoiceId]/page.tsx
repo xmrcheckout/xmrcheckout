@@ -178,7 +178,7 @@ export default async function BtcpayModalInvoicePage({
 
   if (response.status === 404 || response.status === 422) {
     return (
-      <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
+      <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <section className="w-full max-w-lg rounded-surface border border-stroke bg-card p-6 shadow-card">
           <h1 className="font-sans text-2xl font-semibold">{response.status === 422 ? "Invalid invoice ID" : "Invoice not found"}</h1>
@@ -201,7 +201,7 @@ export default async function BtcpayModalInvoicePage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
+      <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
         <InvoiceRefreshFeedback />
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
           <header className="bg-ink px-6 py-5 text-cream">
@@ -262,7 +262,7 @@ export default async function BtcpayModalInvoicePage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       {useClassicCheckout ? (
         <div className="mx-auto grid max-w-md gap-5">

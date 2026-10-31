@@ -6,11 +6,13 @@ import { useRef, useState } from "react";
 type CopyCodeBlockProps = {
   children: ReactNode;
   className: string;
+  label?: string;
 };
 
 export default function CopyCodeBlock({
   children,
   className,
+  label = "Code example",
 }: CopyCodeBlockProps) {
   const codeRef = useRef<HTMLPreElement>(null);
   const [copyFailed, setCopyFailed] = useState(false);
@@ -35,7 +37,7 @@ export default function CopyCodeBlock({
       <p role="status" aria-live="polite" className={copyFailed ? "p-3 text-sm text-red-700" : "sr-only"}>
         {copyFailed ? "Could not copy. Select and copy the text manually." : copied ? "Code copied to clipboard" : ""}
       </p>
-      <pre ref={codeRef} className={className}>
+      <pre ref={codeRef} className={className} tabIndex={0} role="region" aria-label={label}>
         {children}
       </pre>
       <button

@@ -2,13 +2,14 @@
 
 import type { ReactNode } from "react";
 import type { MouseEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type MobileNavProps = {
   children: ReactNode;
 };
 
 export default function MobileNav({ children }: MobileNavProps) {
+  const summaryRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
 
   const handleSummaryClick = (event: MouseEvent<HTMLElement>) => {
@@ -26,8 +27,15 @@ export default function MobileNav({ children }: MobileNavProps) {
   };
 
   return (
-    <details className="mobile-nav" open={open}>
+    <details className="mobile-nav" open={open} onKeyDown={(event) => {
+      if (event.key === "Escape" && open) {
+        event.preventDefault();
+        setOpen(false);
+        summaryRef.current?.focus();
+      }
+    }}>
       <summary
+        ref={summaryRef}
         aria-controls="mobile-navigation"
         aria-expanded={open}
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}

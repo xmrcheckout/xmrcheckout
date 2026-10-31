@@ -58,7 +58,7 @@ export default function TourInvoicePreview({
       </header>
 
       <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
-        Tour mode: this invoice is simulated. No payment is requested and the
+        Demo mode: this invoice is simulated. No payment is requested and the
         status does not refresh from the network.
       </div>
 

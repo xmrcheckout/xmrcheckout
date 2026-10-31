@@ -8,7 +8,7 @@ const fields: Record<string, string> = { title: "title", description: "descripti
 export async function savePaymentLink(_state: PaymentLinkState, form: FormData): Promise<PaymentLinkState> {
   const fieldErrors: Record<string, string> = {};
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
-  if (!apiKey) return { error: "Sign in before saving a payment link.", success: "", fieldErrors };
+  if (!apiKey) return { error: "Connect before saving a payment link.", success: "", fieldErrors };
   const id = String(form.get("id") ?? "");
   const currency = String(form.get("currency") ?? "XMR");
   const disabling = form.get("mode") === "disable" && !!id;

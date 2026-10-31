@@ -7,9 +7,9 @@ export default async function PaymentLinkPage({ params }: { params: Promise<{ to
   const { token } = await params;
   const response = await fetch(`${process.env.API_BASE_URL ?? "http://localhost:8000"}/api/core/public/payment-links/${encodeURIComponent(token)}`, { cache: "no-store" }).catch(() => null);
   if (response?.status === 404) notFound();
-  if (!response?.ok) return <main className="mx-auto max-w-2xl px-6 py-16"><h1 className="text-2xl font-semibold">Checkout unavailable</h1><p>Refresh to try again. No invoice has been requested from this page.</p></main>;
+  if (!response?.ok) return <main id="main-content" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16"><h1 className="text-2xl font-semibold">Checkout unavailable</h1><p>Refresh to try again. No invoice has been requested from this page.</p></main>;
   const link = await response.json();
-  return <main className="mx-auto grid w-full max-w-2xl gap-5 px-6 py-16">
+  return <main id="main-content" tabIndex={-1} className="mx-auto grid w-full max-w-2xl gap-5 px-6 py-16">
     <h1 className="break-words text-3xl font-semibold">{link.title}</h1>
     <p className="whitespace-pre-wrap break-words">{link.description}</p>
     <p className="text-xl">{link.amount_xmr ? `${link.amount_xmr} XMR` : `${link.amount_fiat} ${link.currency} reference`}</p>

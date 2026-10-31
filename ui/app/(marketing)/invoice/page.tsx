@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 const statusPath = [
   {
-    label: "Detected",
+    label: "Payment detected",
     detail: "Incoming XMR is visible on-chain.",
     dotClass: "bg-monero",
   },
@@ -40,7 +40,7 @@ const statusPath = [
 
 export default function InvoiceStatusPage() {
   return (
-    <main className="px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
         <PageIntroBand
           id="invoice-status-title"

@@ -11,8 +11,8 @@ const fixture = process.argv[3] || 'http://127.0.0.1:8035';
       for (const [path,heading,code] of [
         ['/i/bad-id','Invalid invoice ID',200],
         ['/i/00000000-0000-4000-8000-000000000999','Invoice not found',200],
-        ['/invoice/bad-id','Invalid invoice ID',404],
-        ['/invoice/00000000-0000-4000-8000-000000000999','Invoice not found',404],
+        ['/invoice/bad-id','Invoice link unavailable',404],
+        ['/invoice/00000000-0000-4000-8000-000000000999','Invoice link unavailable',404],
         ['/pay/dead-token','Payment link unavailable',404],
         ['/missing-page','Page not found',404],
       ]) {
@@ -42,8 +42,26 @@ const fixture = process.argv[3] || 'http://127.0.0.1:8035';
       await page.close();
       console.log('Link errors, HTTP status, stopped polling, and recovery passed:',width);
     }
+    const page = await browser.newPage();
+    const linkEndpoint = fixture+'/api/core/payment-links/00000000-0000-4000-8000-000000000777';
+    await fetch(linkEndpoint,{method:'PATCH',body:JSON.stringify({title:{internal:'internal-error-canary'}})});
+    await page.goto(base+'/pay/fixture-token',{waitUntil:'networkidle'});
+    await page.getByRole('heading',{name:'Page unavailable',exact:true}).waitFor();
+    assert.equal((await page.locator('body').innerText()).includes('internal-error-canary'),false);
+    await fetch(linkEndpoint,{method:'PATCH',body:JSON.stringify({title:'Fixture product'})});
+    await page.getByRole('link',{name:'Skip to main content',exact:true}).focus();
+    await page.keyboard.press('Enter');
+    await page.getByRole('button',{name:'Try again',exact:true}).click();
+    await page.getByRole('heading',{name:'Fixture product',exact:true}).waitFor();
+    await page.close();
+    const noScript = await browser.newContext({javaScriptEnabled:false});
+    const staticPage = await noScript.newPage();
+    assert.equal((await staticPage.goto(base+'/invoice/bad-id')).status(),404);
+    await staticPage.getByRole('heading',{name:'Invoice link unavailable',exact:true}).waitFor();
+    await noScript.close();
   } finally {
     await fetch(fixture+'/__fixture',{method:'POST',body:JSON.stringify({invoiceResponseStatus:200})});
+    await fetch(fixture+'/api/core/payment-links/00000000-0000-4000-8000-000000000777',{method:'PATCH',body:JSON.stringify({title:'Fixture product'})});
     await browser.close();
   }
 })().catch(error=>{console.error(error);process.exitCode=1});

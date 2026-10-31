@@ -41,7 +41,7 @@ const sections = [
 
 export default function ApiWebhookGuidePage() {
   return (
-    <main className="reference-page px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-5xl">
         <PageIntroBand
           eyebrow="Guide · API and webhooks"
@@ -66,7 +66,7 @@ export default function ApiWebhookGuidePage() {
               href={href}
               key={href}
             >
-              <span className="font-mono text-xs text-ink-soft/60">0{index + 1}</span>
+              <span className="font-mono text-xs text-ink-soft">0{index + 1}</span>
               {label}
             </a>
           ))}
@@ -74,7 +74,7 @@ export default function ApiWebhookGuidePage() {
 
         <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
           <section className={sectionClass} id="flow" aria-labelledby="flow-title">
-            <p className="text-sm font-semibold text-clay">01 · Use the request flow</p>
+            <p className="text-sm font-semibold text-ink-soft">01 · Use the request flow</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="flow-title">
               Create, redirect, observe, and update your order.
             </h2>
@@ -95,7 +95,7 @@ export default function ApiWebhookGuidePage() {
           </section>
 
           <section className={sectionClass} id="create" aria-labelledby="create-title">
-            <p className="text-sm font-semibold text-clay">02 · Create an invoice</p>
+            <p className="text-sm font-semibold text-ink-soft">02 · Create an invoice</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="create-title">
               Keep the API call on your server.
             </h2>
@@ -105,7 +105,7 @@ export default function ApiWebhookGuidePage() {
               order reference in metadata so your webhook handler can connect
               an event to your order.
             </p>
-            <pre className={codeClass}>
+            <pre className={codeClass} tabIndex={0} role="region" aria-label="Command example">
               <code>{`curl -sS -X POST "$XMRCHECKOUT_API_BASE_URL/invoices" \\\n  -H "Authorization: ApiKey $XMRCHECKOUT_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "amount_xmr": "0.125",\n    "confirmation_target": 2,\n    "metadata": { "order_id": "ORDER-1234" }\n  }'`}</code>
             </pre>
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
@@ -116,7 +116,7 @@ export default function ApiWebhookGuidePage() {
           </section>
 
           <section className={sectionClass} id="status" aria-labelledby="status-title">
-            <p className="text-sm font-semibold text-sage">03 · Read status</p>
+            <p className="text-sm font-semibold text-ink-soft">03 · Read status</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="status-title">
               Use the public invoice endpoint for a simple fallback.
             </h2>
@@ -126,7 +126,7 @@ export default function ApiWebhookGuidePage() {
               refreshes or as a polling fallback while your server waits for a
               webhook.
             </p>
-            <pre className={codeClass}>
+            <pre className={codeClass} tabIndex={0} role="region" aria-label="Command example">
               <code>{`curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
             </pre>
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
@@ -137,7 +137,7 @@ export default function ApiWebhookGuidePage() {
           </section>
 
           <section className={sectionClass} id="webhooks" aria-labelledby="webhooks-title">
-            <p className="text-sm font-semibold text-sage">04 · Receive webhooks</p>
+            <p className="text-sm font-semibold text-ink-soft">04 · Receive webhooks</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="webhooks-title">
               Subscribe to the events your server needs.
             </h2>
@@ -174,7 +174,7 @@ export default function ApiWebhookGuidePage() {
           </section>
 
           <section className={sectionClass} id="security" aria-labelledby="security-title">
-            <p className="text-sm font-semibold text-clay">05 · Keep integration safe</p>
+            <p className="text-sm font-semibold text-ink-soft">05 · Keep integration safe</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="security-title">
               Separate customer-facing pages from server credentials.
             </h2>

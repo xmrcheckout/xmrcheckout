@@ -3,6 +3,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 (async () => {
   const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH, args:['--no-sandbox']});
   const base = process.argv[2] || 'http://127.0.0.1:3335';
+  const fixture = process.argv[3] || 'http://127.0.0.1:8035';
   try {
     for (const width of [320,390,768,1440]) {
       console.log('Checking UX width',width);
@@ -63,7 +64,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await page.getByText('Fixture product title',{exact:true}).filter({visible:true}).waitFor();
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     for(const state of ['pending','payment_detected','confirmed','expired','invalid']) {
-      await fetch('http://127.0.0.1:8035/__fixture',{method:'POST',body:JSON.stringify({invoiceStatus:state})});
+      await fetch(fixture+'/__fixture',{method:'POST',body:JSON.stringify({invoiceStatus:state})});
       await page.goto(base+'/invoice/00000000-0000-4000-8000-000000000456',{waitUntil:'domcontentloaded'});
       assert.equal(await page.locator('a[href^="monero:"]').count(),state==='pending'?1:0);
     }

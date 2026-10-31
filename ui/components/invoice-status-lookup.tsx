@@ -37,7 +37,7 @@ export default function InvoiceStatusLookup({
 
   return (
     <form
-      className={`grid gap-3 ${compact ? "text-sm" : "text-base"}`}
+      className={`invoice-lookup grid gap-3 ${compact ? "text-sm" : "text-base"}`}
       onSubmit={handleSubmit}
     >
       <label

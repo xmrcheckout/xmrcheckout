@@ -133,7 +133,7 @@ export default async function BtcpayReceiptPage({
 
   if (response.status === 404) {
     return (
-      <main className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
           <header className="bg-ink px-6 py-5 text-cream">
@@ -163,7 +163,7 @@ export default async function BtcpayReceiptPage({
 
   if (!response.ok) {
     return (
-      <main className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
           <header className="bg-ink px-6 py-5 text-cream">
@@ -216,7 +216,7 @@ export default async function BtcpayReceiptPage({
     invoice.btcpay_redirect_url ?? `/i/${encodeURIComponent(invoiceId)}`;
 
   return (
-    <main className="min-h-screen bg-cream px-3 py-6 text-ink print:bg-white print:p-0 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-cream px-3 py-6 text-ink print:bg-white print:p-0 sm:px-6 sm:py-10">
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       <article className="mx-auto w-full max-w-3xl overflow-hidden rounded-surface border border-stroke bg-card shadow-card print:rounded-none print:border-neutral-300 print:bg-white print:shadow-none">
         <header className="bg-ink px-6 py-6 text-cream print:border-b print:border-neutral-300 print:bg-white print:text-black sm:px-8">

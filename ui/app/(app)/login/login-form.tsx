@@ -31,7 +31,7 @@ const isLikelyPrimaryAddress = (value: string) => {
   return base58Pattern.test(trimmed);
 };
 
-const isLikelySecretViewKey = (value: string) =>
+const isLikelyPrivateViewKey = (value: string) =>
   viewKeyPattern.test(value.trim());
 
 export default function LoginForm({ nextDestination }: { nextDestination?: string }) {
@@ -51,7 +51,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
   const canSubmit = useMemo(() => {
     if (
       !isLikelyPrimaryAddress(paymentAddress) ||
-      !isLikelySecretViewKey(viewKey)
+      !isLikelyPrivateViewKey(viewKey)
     ) {
       return false;
     }
@@ -61,7 +61,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
   useEffect(() => {
     if (
       !isLikelyPrimaryAddress(paymentAddress) ||
-      !isLikelySecretViewKey(viewKey)
+      !isLikelyPrivateViewKey(viewKey)
     ) {
       return;
     }
@@ -98,7 +98,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
         }
         setValidationStatus("error");
         setValidationMessage(
-          "Unable to validate the address and view key yet. You can still sign in to confirm.",
+          "Unable to validate the address and view key yet. You can still connect to confirm.",
         );
       }
     }, validationDelayMs);
@@ -116,7 +116,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
         <summary className="min-h-11 cursor-pointer py-3 underline underline-offset-4">Where do I find these?</summary>
         <div className="mt-3 grid gap-3">
           <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Monero GUI</summary><p>Open Settings → Wallet → Show seed &amp; keys. Copy only the primary address and private view key. Other secrets shown on that screen must stay in your wallet.</p><a className="underline" href="https://github.com/monero-ecosystem/monero-GUI-guide/blob/master/monero-GUI-guide.md#seed-and-keys" target="_blank" rel="noreferrer">Official GUI guide</a></details>
-          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Feather</summary><p>Open Wallet → Keys. Copy the primary address and secret view key only.</p><a className="underline" href="https://docs.featherwallet.org/guides/primary-address" target="_blank" rel="noreferrer">Official Feather guide</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Feather</summary><p>Open Wallet → Keys. Copy the primary address and private view key only.</p><a className="underline" href="https://docs.featherwallet.org/guides/primary-address" target="_blank" rel="noreferrer">Official Feather guide</a></details>
           <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Cake Wallet</summary><p>Open your Monero wallet’s menu → Security and backup → Show seed/keys, and authenticate locally. Copy only the primary address and private view key. Menu labels can vary by version; never copy the seed or spend key into this site.</p><a className="underline" href="https://docs.cakewallet.com/cryptos/monero/" target="_blank" rel="noreferrer">Official Cake Wallet guide</a></details>
           <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Other wallets</summary><p>Use your wallet’s official instructions to locate the 95-character primary address starting with 4 and the 64-character private view key. A public view key or subaddress will not work here. If view-key export is unavailable, do not submit other secrets.</p></details>
         </div>
@@ -175,7 +175,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
           >
             Private view key
           </label>
-          {isLikelySecretViewKey(viewKey) ? (
+          {isLikelyPrivateViewKey(viewKey) ? (
             <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-800">
               <svg
                 className="h-3.5 w-3.5"

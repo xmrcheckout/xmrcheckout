@@ -36,7 +36,7 @@ export default async function MarketingHomePage({
   }
 
   return (
-    <main className="home-page text-ink">
+    <main id="main-content" tabIndex={-1} className="home-page text-ink">
       <section className="home-hero" aria-labelledby="home-hero-title">
         <div className="home-hero-copy">
           <p className="home-kicker">Monero checkout for merchants</p>

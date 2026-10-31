@@ -114,7 +114,7 @@ const invoiceStatusOptions: {
   { value: "active", label: "Active" },
   { value: "all", label: "All" },
   { value: "pending", label: "Awaiting funds" },
-  { value: "payment_detected", label: "Detected" },
+  { value: "payment_detected", label: "Payment detected" },
   { value: "confirmed", label: "Confirmed" },
   { value: "expired", label: "Expired" },
   { value: "invalid", label: "Invalid" },
@@ -346,7 +346,7 @@ function CreateInvoiceModal({
             </h2>
             {mode === "tour" ? (
               <p className="mt-2 text-sm font-semibold text-ink-soft">
-                Tour mode: preview a simulated invoice. Nothing is saved.
+                Demo mode: preview a simulated invoice. Nothing is saved.
               </p>
             ) : null}
           </div>
@@ -904,7 +904,7 @@ function CreateInvoiceModal({
 
               <div className="flex flex-wrap justify-end gap-3 border-t border-stroke pt-4">
                 <button
-                  className={secondaryButton}
+                  className={`${secondaryButton} !bg-cream !text-ink`}
                   type="button"
                   onClick={onClose}
                 >
@@ -1239,7 +1239,7 @@ export default function InvoicePanel({
               className={secondaryButton}
               type="button"
               disabled
-              title="Tour mode only"
+              title="Demo mode only"
             >
               Export CSV
             </button>
@@ -1367,6 +1367,7 @@ export default function InvoicePanel({
                         ) : (
                           <Link
                             className="w-fit break-all font-mono text-xs font-semibold text-ink underline underline-offset-4"
+                            prefetch={false}
                             href={`/invoice/${invoice.id}`}
                             target="_blank"
                             rel="noreferrer"
@@ -1423,6 +1424,7 @@ export default function InvoicePanel({
                       {mode !== "tour" ? (
                         <Link
                           className={smallSecondaryButton}
+                          prefetch={false}
                           href={`/invoice/${invoice.id}`}
                           target="_blank"
                           rel="noreferrer"
@@ -1644,6 +1646,7 @@ export default function InvoicePanel({
                               ) : (
                                 <Link
                                   className="block truncate font-mono text-xs text-ink underline underline-offset-4"
+                                  prefetch={false}
                                   href={`/invoice/${invoice.id}`}
                                   target="_blank"
                                   rel="noreferrer"
@@ -1688,6 +1691,7 @@ export default function InvoicePanel({
                               {mode !== "tour" ? (
                                 <Link
                                   className={smallSecondaryButton}
+                                  prefetch={false}
                                   href={`/invoice/${invoice.id}`}
                                   target="_blank"
                                   rel="noreferrer"
@@ -1928,7 +1932,7 @@ export default function InvoicePanel({
               </p>
               {mode === "tour" ? (
                 <p className="mt-2 text-sm font-semibold text-ink-soft">
-                  Tour mode: no changes are saved.
+                  Demo mode: no changes are saved.
                 </p>
               ) : null}
             </div>

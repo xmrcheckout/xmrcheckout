@@ -62,7 +62,7 @@ function RecipeHeader({
 
 export default function IntegrationsPage() {
   return (
-    <main className="reference-page px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
         <section aria-label="Integration recipe introduction">
           <PageIntroBand
@@ -114,7 +114,7 @@ export default function IntegrationsPage() {
               className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
               href={item.href}
             >
-              <span className="font-mono text-xs text-ink-soft/60">
+              <span className="font-mono text-xs text-ink-soft">
                 0{index + 1}
               </span>
               {item.label}
@@ -266,7 +266,7 @@ export default function IntegrationsPage() {
             <div className={sectionCardClass}>
               <h3 className="font-sans font-semibold text-xl">Setup steps</h3>
               <ol className="mt-3 list-decimal space-y-3 pl-5 text-ink-soft marker:font-mono marker:text-ink-soft">
-                <li>Sign in to XMR Checkout to get your API key.</li>
+                <li>Connect to XMR Checkout to get your API key.</li>
                 <li>
                   Store id: returned by the login response or via{" "}
                   <span className="font-mono text-ink">GET /api/v1/stores</span>

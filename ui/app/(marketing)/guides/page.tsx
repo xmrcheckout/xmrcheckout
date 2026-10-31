@@ -31,7 +31,7 @@ const cardClass =
 
 export default function GuidesPage() {
   return (
-    <main className="reference-page px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
         <PageIntroBand
           eyebrow="Guides"

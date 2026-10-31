@@ -41,7 +41,7 @@ const sections = [
 
 export default function SelfHostedGuidePage() {
   return (
-    <main className="reference-page px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-5xl">
         <PageIntroBand
           eyebrow="Guide · Self-hosting"
@@ -66,7 +66,7 @@ export default function SelfHostedGuidePage() {
               href={href}
               key={href}
             >
-              <span className="font-mono text-xs text-ink-soft/60">0{index + 1}</span>
+              <span className="font-mono text-xs text-ink-soft">0{index + 1}</span>
               {label}
             </a>
           ))}
@@ -74,7 +74,7 @@ export default function SelfHostedGuidePage() {
 
         <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
           <section className={sectionClass} id="architecture" aria-labelledby="architecture-title">
-            <p className="text-sm font-semibold text-clay">01 · Understand the flow</p>
+            <p className="text-sm font-semibold text-ink-soft">01 · Understand the flow</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="architecture-title">
               Customer to merchant wallet, with status reported by software.
             </h2>
@@ -101,7 +101,7 @@ export default function SelfHostedGuidePage() {
           </section>
 
           <section className={sectionClass} id="requirements" aria-labelledby="requirements-title">
-            <p className="text-sm font-semibold text-clay">02 · Prepare the host</p>
+            <p className="text-sm font-semibold text-ink-soft">02 · Prepare the host</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="requirements-title">
               Gather the configuration before starting the stack.
             </h2>
@@ -139,7 +139,7 @@ export default function SelfHostedGuidePage() {
           </section>
 
           <section className={sectionClass} id="docker" aria-labelledby="docker-title">
-            <p className="text-sm font-semibold text-clay">03 · Deploy with Docker</p>
+            <p className="text-sm font-semibold text-ink-soft">03 · Deploy with Docker</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="docker-title">
               Start from the example environment and choose your node path.
             </h2>
@@ -149,7 +149,7 @@ export default function SelfHostedGuidePage() {
               Then choose whether the reconciler should use a third-party daemon
               or a local daemon started by the Compose profile.
             </p>
-            <pre className={codeClass}>
+            <pre className={codeClass} tabIndex={0} role="region" aria-label="Command example">
               <code>{`cp .env.example .env
 docker compose up --build -d
 
@@ -165,7 +165,7 @@ docker compose --profile local-daemon up --build -d`}</code>
           </section>
 
           <section className={sectionClass} id="verify" aria-labelledby="verify-title">
-            <p className="text-sm font-semibold text-sage">04 · Verify detection</p>
+            <p className="text-sm font-semibold text-ink-soft">04 · Verify detection</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="verify-title">
               Test one invoice before connecting a store.
             </h2>
@@ -193,7 +193,7 @@ docker compose --profile local-daemon up --build -d`}</code>
           </section>
 
           <section className={sectionClass} id="troubleshooting" aria-labelledby="troubleshooting-title">
-            <p className="text-sm font-semibold text-sage">05 · Troubleshoot safely</p>
+            <p className="text-sm font-semibold text-ink-soft">05 · Troubleshoot safely</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="troubleshooting-title">
               Check the observation path in order.
             </h2>
@@ -221,7 +221,7 @@ docker compose --profile local-daemon up --build -d`}</code>
                 className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                 href="/tour"
               >
-                Explore the interactive tour
+                Explore the interactive demo
               </Link>
             </div>
           </section>

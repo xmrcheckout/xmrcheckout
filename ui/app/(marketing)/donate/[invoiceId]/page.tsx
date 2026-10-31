@@ -43,15 +43,15 @@ const statusDescription = (
     return "Awaiting on-chain detection of your donation.";
   }
   if (status === "payment_detected") {
-    return `Donation detected. ${confirmations}/${confirmationTarget} confirmations.`;
+    return `Payment detected. ${confirmations}/${confirmationTarget} confirmations.`;
   }
   if (status === "confirmed") {
     return `Donation confirmed on-chain at ${confirmationTarget} confirmations.`;
   }
   if (status === "invalid") {
-    return "Donation marked invalid. Do not send a payment.";
+    return "";
   }
-  return "Donation expired before detection. Start a new donation if needed.";
+  return "";
 };
 
 const formatTimestamp = (value: string | null) => {
@@ -95,7 +95,7 @@ export default async function DonateStatusDetailPage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
         <PageIntroBand
           description="The donation id does not match a known invoice. Check the id and try again."
@@ -123,7 +123,7 @@ export default async function DonateStatusDetailPage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
         <PageIntroBand
           description="We could not load this donation status. Refresh the page or try again later."
@@ -193,7 +193,7 @@ export default async function DonateStatusDetailPage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
       <PageIntroBand
         description={statusDescription(
           invoice.status,

@@ -2289,3 +2289,15 @@ summary:focus-visible {
 .reference-page :where(section, article, div, header, footer, aside, nav, details, dl, ol, ul, li, h1, h2, h3, p) {
   min-width: 0;
 }
+
+/* Native details content must not create an implicit grid track around code. */
+.reference-page details.grid {
+  display: block;
+}
+.reference-page details.grid[open] > :not(summary) {
+  margin-top: 1.5rem;
+}
+.reference-page summary {
+  min-width: 0;
+  flex-wrap: wrap;
+}

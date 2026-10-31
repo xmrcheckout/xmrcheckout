@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { dashboardDestination } from "../../../lib/wallet-connection";
 
 export const metadata: Metadata = {
-  title: "Login",
+  title: "Connect wallet",
 };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {

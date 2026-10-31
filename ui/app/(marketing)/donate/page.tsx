@@ -17,7 +17,7 @@ export default function DonatePage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
       <PageIntroBand
         description="Choose an XMR amount and create a payment request."
         eyebrow="Support the project"

@@ -101,7 +101,7 @@ const faqItems: FaqItem[] = [
       <>
         <p className="text-ink-soft">
           The maximum permission we ask for is view-only access: your primary
-          address and your secret view key. We never request spend keys and we
+          address and your private view key. We never request spend keys and we
           never request signing access.
         </p>
       </>
@@ -125,7 +125,7 @@ const faqItems: FaqItem[] = [
       <>
         <p className="text-ink-soft">
           No. We do not require email or personal information. Your primary
-          address is the identifier for access, paired with your secret view
+          address is the identifier for access, paired with your private view
           key.
         </p>
       </>
@@ -307,7 +307,7 @@ function FaqCard({ item }: { item: FaqItem }) {
 
 export default function FaqPage() {
   return (
-    <main className="px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="px-[6vw] pb-20 pt-8 text-ink">
       <section
         className="mx-auto w-full max-w-7xl"
         aria-label="FAQ introduction"

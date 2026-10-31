@@ -66,7 +66,7 @@ export type WebhookRedeliverState = {
   success: string | null;
 };
 
-const tourNoopMessage = "Tour mode only: no changes are saved.";
+const tourNoopMessage = "Demo mode only: no changes are saved.";
 
 export async function createInvoiceTourAction(
   _prevState: InvoiceState,
@@ -256,7 +256,7 @@ export async function createInvoiceAction(
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
     return {
-      error: "API key not found. Please sign in again.",
+      error: "API key not found. Please connect again.",
       invoiceId: null,
       address: null,
       amount: null,
@@ -361,7 +361,7 @@ export async function resetApiKeyAction(
 ): Promise<ApiKeyState> {
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { apiKey: _prevState.apiKey, error: "API key not found. Please sign in again." };
+    return { apiKey: _prevState.apiKey, error: "API key not found. Please connect again." };
   }
 
   const response = await fetch(`${apiBaseUrl}/api/core/api-credentials/reset`, {
@@ -375,7 +375,7 @@ export async function resetApiKeyAction(
   }).catch(() => null);
 
   if (!response || response.status >= 500) {
-    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Sign in again to retrieve the current credentials before retrying or updating integrations." };
+    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Connect again to retrieve the current credentials before retrying or updating integrations." };
   }
 
   if (!response.ok) {
@@ -386,7 +386,7 @@ export async function resetApiKeyAction(
 
   const data = (await response.json().catch(() => null)) as { api_key?: string | null } | null;
   if (!data?.api_key) {
-    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Sign in again to retrieve the current credentials before retrying or updating integrations." };
+    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Connect again to retrieve the current credentials before retrying or updating integrations." };
   }
   
   // Update the cookie with the new API key
@@ -408,7 +408,7 @@ export async function resetWebhookSecretAction(
   if (!apiKey) {
     return {
       webhookSecret: _prevState.webhookSecret,
-      error: "API key not found. Please sign in again.",
+      error: "API key not found. Please connect again.",
     };
   }
 
@@ -423,7 +423,7 @@ export async function resetWebhookSecretAction(
   }).catch(() => null);
 
   if (!response || response.status >= 500) {
-    return { webhookSecret: _prevState.webhookSecret, error: "Could not confirm the webhook secret reset. Sign in again to retrieve the current credentials before retrying or updating integrations." };
+    return { webhookSecret: _prevState.webhookSecret, error: "Could not confirm the webhook secret reset. Connect again to retrieve the current credentials before retrying or updating integrations." };
   }
 
   if (!response.ok) {
@@ -436,7 +436,7 @@ export async function resetWebhookSecretAction(
   if (!data?.webhook_secret) {
     return {
       webhookSecret: _prevState.webhookSecret,
-      error: "Could not confirm the webhook secret reset. Sign in again to retrieve the current credentials before retrying or updating integrations.",
+      error: "Could not confirm the webhook secret reset. Connect again to retrieve the current credentials before retrying or updating integrations.",
     };
   }
 
@@ -468,7 +468,7 @@ export async function updateBtcpayCheckoutStyleAction(
   if (!apiKey) {
     return {
       style: _prevState.style,
-      error: "API key not found. Please sign in again.",
+      error: "API key not found. Please connect again.",
       success: null,
     };
   }
@@ -521,7 +521,7 @@ export async function updateDefaultConfirmationTargetAction(
   if (!apiKey) {
     return {
       value: _prevState.value,
-      error: "API key not found. Please sign in again.",
+      error: "API key not found. Please connect again.",
       success: null,
     };
   }
@@ -584,7 +584,7 @@ export async function updateDefaultQrLogoAction(
     return {
       logo: _prevState.logo,
       logoDataUrl: _prevState.logoDataUrl,
-      error: "API key not found. Please sign in again.",
+      error: "API key not found. Please connect again.",
       success: null,
     };
   }
@@ -640,7 +640,7 @@ export async function createWebhookAction(
 ): Promise<WebhookFormState> {
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { error: "API key not found. Please sign in again.", success: null };
+    return { error: "API key not found. Please connect again.", success: null };
   }
 
   const defaultUrl = String(formData.get("default_url") ?? "").trim();
@@ -714,7 +714,7 @@ export async function deleteWebhookAction(
 ): Promise<WebhookFormState> {
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { error: "API key not found. Please sign in again.", success: null };
+    return { error: "API key not found. Please connect again.", success: null };
   }
 
   const webhookId = String(formData.get("webhook_id") ?? "").trim();
@@ -747,7 +747,7 @@ export async function archiveInvoiceAction(
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
     return {
-      error: "API key not found. Please sign in again.",
+      error: "API key not found. Please connect again.",
       success: null,
       archivedId: null,
     };
@@ -802,7 +802,7 @@ export async function redeliverWebhookDeliveryAction(
 ): Promise<WebhookRedeliverState> {
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { error: "API key not found. Please sign in again.", success: null };
+    return { error: "API key not found. Please connect again.", success: null };
   }
 
   const deliveryId = String(formData.get("delivery_id") ?? "").trim();

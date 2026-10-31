@@ -88,7 +88,7 @@ const endpointGroups = [
   ]
 },
   {
-    title: "Login",
+    title: "Connect wallet",
     auth: "None",
     items: [
       {
@@ -403,7 +403,7 @@ const endpointRequirements = [
     optional: [],
     notes: [
       "Primary address only; subaddresses and integrated addresses are rejected.",
-      "Use the secret view key (never submit a spend key).",
+      "Use the private view key (never submit a spend key).",
     ],
   },
   {
@@ -718,7 +718,7 @@ const requirementsByEndpoint = Object.fromEntries(
 
 export default function DocsPage() {
   return (
-    <main className="reference-page docs-page px-[6vw] pb-20 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="reference-page docs-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
         <section aria-label="Documentation introduction">
           <PageIntroBand
@@ -729,7 +729,7 @@ export default function DocsPage() {
               <p>
                 Create invoices, send customers to hosted invoice pages, and
                 receive invoice status through polling or webhooks. Setup uses
-                your primary address and secret view key; spend keys are never
+                your primary address and private view key; spend keys are never
                 requested.
               </p>
             }
@@ -777,7 +777,7 @@ export default function DocsPage() {
               key={item.href}
               href={item.href}
             >
-              <span className="font-mono text-xs text-ink-soft/60">
+              <span className="font-mono text-xs text-ink-soft">
                 0{index + 1}
               </span>
               {item.label}
@@ -811,7 +811,7 @@ export default function DocsPage() {
             <li className="min-w-0 px-5 py-5 sm:px-6">
               <span className="font-mono text-xs text-ink-soft">01</span>
               <p className="mt-2 font-semibold text-ink">
-                Sign in
+                Connect
               </p>
               <p className="mt-1 text-sm text-ink-soft">
                 Use the sign-in form to retrieve an API key.
@@ -1043,7 +1043,7 @@ Content-Type: application/json
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>API key for authenticated endpoints</li>
               <li>
-                Primary address + secret view key to retrieve API credentials
+                Primary address + private view key to retrieve API credentials
               </li>
               <li>Headers: Authorization: ApiKey &lt;api_key&gt;</li>
               <li>

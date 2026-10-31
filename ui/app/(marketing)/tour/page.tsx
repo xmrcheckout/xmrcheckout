@@ -11,7 +11,7 @@ import WebhookSection from "../../../components/webhook-section";
 import WorkspaceNav from "../../../components/workspace-nav";
 
 export const metadata: Metadata = {
-  title: "Monero Checkout Tour",
+  title: "Monero Checkout Demo",
   description:
     "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
   alternates: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "/tour",
     siteName: "XMR Checkout",
-    title: "Monero Checkout Tour | XMR Checkout",
+    title: "Monero Checkout Demo | XMR Checkout",
     description:
       "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
   },
@@ -419,10 +419,10 @@ export default async function TourPage({
     "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]";
 
   return (
-    <main className="px-[6vw] pb-16 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="px-[6vw] pb-16 pt-8 text-ink">
       <section
         className="mx-auto w-full max-w-7xl"
-        aria-label="Tour environment"
+        aria-label="Demo environment"
       >
         {activeTab === "overview" ? <PageIntroBand
           as="p"
@@ -440,7 +440,7 @@ export default async function TourPage({
       <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
         <WorkspaceNav
           activeValue={activeTab}
-          ariaLabel="Tour sections"
+          ariaLabel="Demo sections"
           items={tourNavItems}
           mobileColumns={2}
         />
@@ -621,7 +621,7 @@ export default async function TourPage({
                     <StatusBadge label="Simulated" tone="success" />
                   </div>
                   <p className="mt-2 text-sm text-ink-soft">
-                    Simulated payment observation services are available for this tour.
+                    Simulated payment observation services are available for this demo.
                   </p>
                 </section>
                 <Link

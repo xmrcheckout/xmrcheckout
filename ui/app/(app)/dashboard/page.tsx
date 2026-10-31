@@ -456,7 +456,7 @@ export default async function DashboardPage({
   ];
 
   return (
-    <main className="px-[6vw] pb-16 pt-8 text-ink">
+    <main id="main-content" tabIndex={-1} className="px-[6vw] pb-16 pt-8 text-ink">
       <header
         className="mx-auto w-full max-w-7xl border-b border-stroke pb-5"
         aria-label="Dashboard header"
@@ -560,6 +560,7 @@ export default async function DashboardPage({
                       recentInvoiceItems.map((item) => (
                         <Link
                           className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-stroke py-3 first:border-t-0 first:pt-0 last:pb-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                          prefetch={false}
                           href={item.href}
                           key={`${item.title}-${item.detail}`}
                         >
@@ -805,7 +806,7 @@ export default async function DashboardPage({
                     API key unavailable
                   </h2>
                   <p className="mt-2 text-ink-soft">
-                    Sign in again to reveal your API key.
+                    Connect again to reveal your API key.
                   </p>
                 </div>
               )}

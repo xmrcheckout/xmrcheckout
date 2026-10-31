@@ -17,6 +17,9 @@ type BtcpayModalBridgeProps = {
 const statusMap: Record<InvoiceStatus, string> = {
   pending: "New",
   payment_detected: "Processing",
+  // BTCPay's postMessage contract requires this exact protocol value.
+  // https://docs.btcpayserver.org/Development/ecommerce-integration-guide/
+  // Customer-facing text uses "Confirmed".
   confirmed: "Settled",
   expired: "Expired",
   invalid: "Invalid",

@@ -67,7 +67,7 @@ export default function WebhookSection({
     <div className="grid min-w-0 grid-cols-1 gap-8">
       {mode === "tour" ? (
         <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
-          Tour mode: webhook changes are simulated. No endpoints are saved.
+          Demo mode: webhook changes are simulated. No endpoints are saved.
         </div>
       ) : null}
       <form

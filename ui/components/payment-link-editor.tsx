@@ -34,7 +34,9 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies 
   const props = (name: keyof typeof values) => ({ id: `${prefix}-${name}`, name, value: values[name], onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setValues(current => ({ ...current, [name]: event.target.value })), "aria-invalid": !!state.fieldErrors[name], "aria-describedby": state.fieldErrors[name] ? `${prefix}-${name}-error` : undefined, className: inputClass });
   const error = (name: string) => state.fieldErrors[name] ? <p id={`${prefix}-${name}-error`} className="text-sm text-red-700">{state.fieldErrors[name]}</p> : null;
   const unknown = values.currency !== "XMR" && !currencies?.includes(values.currency);
-  return <form ref={form} action={action} className="grid min-w-0 gap-4">
+  // All fields are controlled; creation resets them explicitly after success.
+  // Native action resets can otherwise undo a saved checkbox's visible state.
+  return <form ref={form} action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={link?.id ?? ""} />
     <div><label htmlFor={`${prefix}-title`}>Title</label><input {...props("title")} required maxLength={200} />{error("title")}</div>
     <div><label htmlFor={`${prefix}-description`}>Description</label><textarea {...props("description")} maxLength={2000} />{error("description")}</div>

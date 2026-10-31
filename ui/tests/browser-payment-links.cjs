@@ -27,6 +27,23 @@ async function main() {
       assert.match(snippet, /<img src=/);
       assert.equal(snippet.includes("<form"), false);
       assert.equal((await fetch(merchant, { method: "POST", body: snippet })).status, 204);
+      if (width === 320) {
+        const settings = card.locator("details");
+        await settings.locator("summary").click();
+        const skipReview = settings.getByRole("checkbox", { name: "Skip review and create invoice automatically" });
+        await skipReview.check();
+        await settings.getByRole("button", { name: "Save payment link", exact: true }).click();
+        await settings.getByRole("status").filter({ hasText: "Payment link saved" }).waitFor();
+        assert.equal((await (await fetch(base + "/api/core/public/payment-links/fixture-token")).json()).auto_create_invoice, true);
+        assert.equal(await skipReview.isChecked(), true, "Saved skip-review checkbox must remain checked");
+        await page.reload({ waitUntil: "networkidle" });
+        await settings.locator("summary").click();
+        assert.equal(await skipReview.isChecked(), true, "Saved skip-review setting must survive reload");
+        await skipReview.uncheck();
+        await settings.getByRole("button", { name: "Save payment link", exact: true }).click();
+        await settings.getByRole("status").filter({ hasText: "Payment link saved" }).waitFor();
+        assert.equal(await skipReview.isChecked(), false, "Disabled skip-review checkbox must remain unchecked");
+      }
       await page.addStyleTag({ content: "html { font-size: 125%; }" });
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `dashboard overflow ${width}`);
       if (process.env.PAYMENT_LINK_SCREENSHOT_DIR) {

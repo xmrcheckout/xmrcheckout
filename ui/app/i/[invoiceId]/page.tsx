@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import BtcpayModalBridge from "../../../components/btcpay-modal-bridge";
 import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
@@ -175,37 +176,19 @@ export default async function BtcpayModalInvoicePage({
     ? `${invoice.status === "pending" ? "Awaiting funds" : invoice.status.replaceAll("_", " ")}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
     : "";
 
-  if (response.status === 404) {
+  if (response.status === 404 || response.status === 422) {
     return (
-      <InvoiceStatusAutoRefresh
-      key={invoiceId}
-      retrievedAt={retrievedAt}
-      error={!invoice}
-      statusMessage={statusMessage}
-    >
       <main className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
-        <InvoiceRefreshFeedback />
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
-        <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
-          <header className="bg-ink px-6 py-5 text-cream">
-            <p className="flex items-center gap-2 text-sm font-semibold text-cream/70">
-              <span
-                className="h-2.5 w-2.5 rounded-full bg-monero"
-                aria-hidden="true"
-              />
-              Direct-to-wallet checkout
-            </p>
-            <h1 className="mt-2 text-2xl font-semibold">Invoice not found</h1>
-          </header>
-          <div className="px-6 py-5">
-            <p className="text-sm leading-relaxed text-ink-soft">
-              The invoice id does not match a known invoice. Check the id and
-              try again.
-            </p>
-          </div>
+        <section className="w-full max-w-lg rounded-surface border border-stroke bg-card p-6 shadow-card">
+          <h1 className="font-sans text-2xl font-semibold">{response.status === 422 ? "Invalid invoice ID" : "Invoice not found"}</h1>
+          <p className="mt-3 text-sm text-ink-soft">
+            {response.status === 422 ? "Enter the complete invoice ID in UUID format." : "Check that you have the complete invoice link."}
+            {" "}Do not send payment. Contact the merchant for a valid invoice link.
+          </p>
+          <Link className="mt-5 inline-flex min-h-11 items-center underline" href="/invoice">Look up an invoice</Link>
         </section>
       </main>
-    </InvoiceStatusAutoRefresh>
     );
   }
 

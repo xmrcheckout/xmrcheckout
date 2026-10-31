@@ -221,6 +221,10 @@ docker compose exec -T reconciler python -m app.reclassify_invoice_timing
 docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
 ```
 
+Outgoing webhooks can optionally use an authenticated Cloudflare Worker relay to
+keep the server IP private from recipients. This defaults to off; see the
+[webhook relay deployment guide](workers/webhook-relay/README.md).
+
 Webhook destinations must use HTTPS and resolve exclusively to public IP
 addresses. Loopback, private, link-local, and other special-use destinations
 are rejected, including at redirect hops. This restriction applies to both the

@@ -29,7 +29,16 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       await page.getByRole('dialog').waitFor({state:'detached'});
       await page.getByRole('button',{name:'Create invoice',exact:true}).click();
       assert.equal(await page.getByRole('spinbutton',{name:'Amount (XMR)',exact:true}).inputValue(),'');
-      await page.keyboard.press('Escape');
+      await page.evaluate(()=>document.documentElement.style.fontSize='200%');
+      const zoomDialog=page.getByRole('dialog');
+      for(const name of ['Close','Cancel','Create invoice']) {
+        const action=name==='Create invoice'?zoomDialog.locator('button[type=submit]'):zoomDialog.getByRole('button',{name,exact:true});
+        await action.scrollIntoViewIfNeeded();
+        const rect=await action.boundingBox();assert.ok(rect.y>=0 && rect.y+rect.height<=844,'enlarged dialog action reachable: '+name);
+      }
+      assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'enlarged create dialog overflow');
+      await page.keyboard.press('Escape');await zoomDialog.waitFor({state:'detached'});
+      await page.evaluate(()=>document.documentElement.style.fontSize='');
       await page.goto(base+'/invoice',{waitUntil:'networkidle'});
       await page.getByLabel('Invoice ID or link',{exact:true}).fill('https://other.example/invoice/11111111-1111-4111-8111-111111111111');
       await page.getByRole('button',{name:'Check status',exact:true}).click();

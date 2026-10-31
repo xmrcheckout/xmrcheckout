@@ -22,7 +22,7 @@ type TourInvoicePreviewProps = {
 };
 
 const formatTimestamp = (value: string | null) =>
-  value ? new Date(value).toLocaleString() : "-";
+  value ? `${new Date(value).toLocaleString("en-GB", { timeZone: "UTC" })} UTC` : "-";
 
 export default function TourInvoicePreview({
   invoice,
@@ -87,19 +87,15 @@ export default function TourInvoicePreview({
                 {invoice.id}
               </dd>
             </div>
-            <div className="grid grid-cols-2 gap-4 py-3">
-              <div>
+            <div className="py-3">
                 <dt className="text-xs font-semibold text-ink-soft">Created</dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {formatTimestamp(invoice.created_at)}
                 </dd>
-              </div>
-              <div>
-                <dt className="text-xs font-semibold text-ink-soft">Expires</dt>
+                <dt className="mt-3 text-xs font-semibold text-ink-soft">Expires</dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {formatTimestamp(invoice.expires_at)}
                 </dd>
-              </div>
             </div>
             <div className="py-3">
               <dt className="text-xs font-semibold text-ink-soft">

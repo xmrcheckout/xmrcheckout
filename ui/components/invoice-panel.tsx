@@ -328,7 +328,7 @@ function CreateInvoiceModal({
       ariaLabelledBy="create-invoice-title"
       initialFocusSelector="#wizard_amount_mode"
       onClose={onClose}
-      panelClassName="flex max-h-[calc(100dvh-0.75rem)] max-w-3xl flex-col rounded-t-[1.2rem] bg-cream sm:max-h-[85vh] sm:rounded-surface"
+      panelClassName="max-h-[calc(100dvh-0.75rem)] max-w-3xl rounded-t-[1.2rem] bg-cream sm:max-h-[85vh] sm:rounded-surface"
     >
         <span className="sr-only" role="status" aria-live="polite">
           {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : state.invoiceId ? "Invoice created" : ""}
@@ -356,13 +356,13 @@ function CreateInvoiceModal({
         </div>
 
         <form
-          className="flex min-h-0 flex-1 flex-col gap-6 px-5 pb-5 pt-5 sm:px-7 sm:pb-7 sm:pt-6"
+          className="grid gap-6 px-5 pb-5 pt-5 sm:px-7 sm:pb-7 sm:pt-6"
           action={formAction}
           onSubmit={mode === "tour" ? event => { event.preventDefault(); if (!createDisabled && Number(amount) > 0) setDemoPreview(true); } : undefined}
         >
           {demoPreview ? (
             <div className="grid min-h-0 gap-4 overflow-y-auto">
-              <p id="demo-ready" tabIndex={-1} role="status" className="font-semibold text-sage">Simulated invoice ready. Nothing was saved.</p>
+              <p id="demo-ready" tabIndex={-1} role="status" className="font-semibold text-emerald-800">Simulated invoice ready. Nothing was saved.</p>
               <SimulatedCheckoutPreview amount={amountMode === "fiat" ? (Number(amount) / (fiatRate || 1)).toFixed(12) : amount} target={Number(confirmationMode === "custom" ? confirmationTarget : defaultConfirmationTarget)} description={description} expiry={expiryMode === "custom" ? expiryValue || "Custom date not set" : "60 minutes"} />
               <button type="button" className={secondaryButton} onClick={onClose}>Done</button>
             </div>
@@ -440,7 +440,7 @@ function CreateInvoiceModal({
             </div>
           ) : (
             <>
-              <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+              <div className="pr-1">
                 <div className="grid gap-6">
                   <div className="grid gap-4">
                     <div>
@@ -1310,6 +1310,7 @@ export default function InvoicePanel({
         </div>
         <div
           className="hidden flex-wrap gap-2 lg:flex"
+          role="group"
           aria-label="Invoice status filters"
         >
           {invoiceStatusOptions.map((option) => (

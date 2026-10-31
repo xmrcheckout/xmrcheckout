@@ -37,6 +37,8 @@ export default function AccessibleDialog({
     () => false,
   );
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -49,20 +51,18 @@ export default function AccessibleDialog({
         ? document.activeElement
         : null;
 
-    window.requestAnimationFrame(() => {
+    const frame = window.requestAnimationFrame(() => {
       const initialFocus = initialFocusSelector
         ? panelRef.current?.querySelector<HTMLElement>(initialFocusSelector)
         : null;
-      const firstFocusable = panelRef.current?.querySelector<HTMLElement>(
-        focusableSelector,
-      );
+      const firstFocusable = Array.from(panelRef.current?.querySelectorAll<HTMLElement>(focusableSelector) ?? []).find(element => element.getClientRects().length > 0);
       (initialFocus ?? firstFocusable)?.focus();
     });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key !== "Tab" || !panelRef.current) {
@@ -82,7 +82,10 @@ export default function AccessibleDialog({
       const last = focusable[focusable.length - 1];
       const active = document.activeElement;
 
-      if (event.shiftKey && active === first) {
+      if (!panelRef.current.contains(active) || !focusable.includes(active as HTMLElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && active === first) {
         event.preventDefault();
         last.focus();
       } else if (!event.shiftKey && active === last) {
@@ -91,19 +94,25 @@ export default function AccessibleDialog({
       }
     };
 
+    const portal = panelRef.current?.parentElement;
+    const siblings = Array.from(document.body.children).filter((element): element is HTMLElement => element instanceof HTMLElement && element !== portal);
+    const inertValues = siblings.map(element => element.inert);
+    siblings.forEach(element => { element.inert = true; });
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     document.documentElement.setAttribute("data-dialog-open", "true");
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      window.cancelAnimationFrame(frame);
+      siblings.forEach((element, index) => { element.inert = inertValues[index]; });
       document.body.style.overflow = previousOverflow;
       document.documentElement.removeAttribute("data-dialog-open");
       window.removeEventListener("keydown", handleKeyDown);
       previousFocusRef.current?.focus();
       previousFocusRef.current = null;
     };
-  }, [initialFocusSelector, isHydrated, onClose]);
+  }, [initialFocusSelector, isHydrated]);
 
   if (!isHydrated) {
     return null;
@@ -115,6 +124,8 @@ export default function AccessibleDialog({
     >
       <button
         aria-label="Close dialog"
+        aria-hidden="true"
+        tabIndex={-1}
         className="absolute inset-0 cursor-default bg-ink/70"
         type="button"
         onClick={onClose}

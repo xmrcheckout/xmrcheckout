@@ -20,3 +20,14 @@ img {
   max-width: 100%;
   display: block;
 }
+
+/* Two contrasting edges keep keyboard focus visible on light and dark surfaces. */
+:where([role="dialog"], [aria-label="Simulated checkout preview"], .home-page) :is(a, button, input, textarea, select, summary):focus-visible {
+  outline: 2px solid #101217 !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px #f8f2e9 !important;
+}
+
+:is([role="dialog"], [aria-label="Simulated checkout preview"], [aria-labelledby="invoice-panel-title"]) :is(input, textarea, select) {
+  border-color: #71716c;
+}

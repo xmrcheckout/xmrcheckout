@@ -18,7 +18,7 @@ export function InvoiceJourney() {
   const select = (index: number) => setActive(index);
 
   return (
-    <div className="checkout-console invoice-journey" aria-labelledby={`${id}-title`}>
+    <div className="checkout-console invoice-journey" role="region" aria-labelledby={`${id}-title`}>
       <div className="console-topbar"><h2 id={`${id}-title`}>A simulated invoice journey</h2></div>
       <div className="journey-scene" data-step={active + 1}>
         <svg viewBox="0 0 600 390" role="img" aria-labelledby={`${id}-art-title`}>
@@ -103,7 +103,7 @@ export function InvoiceJourney() {
         ))}
       </div>
       <div className="journey-explore">Explore each step <span>Hover, focus, or tap</span></div>
-      <div className="journey-steps" aria-label="Invoice journey steps">
+      <div className="journey-steps" role="group" aria-label="Invoice journey steps">
         {steps.map((item, index) => <button key={item.title} type="button" aria-pressed={active === index} aria-controls={`${id}-detail`} onMouseEnter={() => select(index)} onFocus={() => select(index)} onClick={() => select(index)}><span>{String(index + 1).padStart(2, "0")}</span>{item.title}</button>)}
       </div>
       <div className="journey-detail" id={`${id}-detail`} role="region" aria-label="Selected step explanation" aria-live="polite" aria-atomic="true">

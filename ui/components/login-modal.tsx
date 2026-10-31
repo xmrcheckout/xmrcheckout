@@ -33,7 +33,6 @@ export function LoginTrigger({ className, children }: LoginTriggerProps) {
       type="button"
       onClick={openModal}
       aria-haspopup="dialog"
-      aria-controls="login-modal"
     >
       {children}
     </button>

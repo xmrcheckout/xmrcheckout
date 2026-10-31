@@ -718,7 +718,7 @@ const requirementsByEndpoint = Object.fromEntries(
 
 export default function DocsPage() {
   return (
-    <main className="docs-page px-[6vw] pb-20 pt-8 text-ink">
+    <main className="reference-page docs-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
         <section aria-label="Documentation introduction">
           <PageIntroBand

@@ -56,3 +56,9 @@ img {
     display: flex;
   }
 }
+
+/* Long public identifiers and enlarged text must fit the page. */
+main {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

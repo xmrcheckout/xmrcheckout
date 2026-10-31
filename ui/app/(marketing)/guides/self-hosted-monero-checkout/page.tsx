@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 const sectionClass =
-  "scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
+  "min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
 const codeClass =
   "mt-4 overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft";
 
@@ -41,7 +41,7 @@ const sections = [
 
 export default function SelfHostedGuidePage() {
   return (
-    <main className="px-[6vw] pb-20 pt-8 text-ink">
+    <main className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-5xl">
         <PageIntroBand
           eyebrow="Guide · Self-hosting"
@@ -72,7 +72,7 @@ export default function SelfHostedGuidePage() {
           ))}
         </nav>
 
-        <div className="mt-8 grid gap-6">
+        <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
           <section className={sectionClass} id="architecture" aria-labelledby="architecture-title">
             <p className="text-sm font-semibold text-clay">01 · Understand the flow</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="architecture-title">

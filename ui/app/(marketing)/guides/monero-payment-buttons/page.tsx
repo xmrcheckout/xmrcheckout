@@ -18,7 +18,7 @@ const linkClass = "font-semibold underline decoration-clay underline-offset-4";
 const sections = [["setup", "Configure your product"], ["embed", "Copy your button or link"], ["invoices", "Review purchases"], ["manage", "Change or disable a link"], ["limits", "Capacity and failures"]];
 
 export default function PaymentButtonsGuide() {
-  return <main className="px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
+  return <main className="reference-page px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
     <PageIntroBand eyebrow="Guide · Payment links" id="payment-buttons-title" title={title} description={<p>Accept Monero on an independent website without WooCommerce or an API integration. Configure a fixed amount in the dashboard, then paste a button into an HTML block or share a reusable link.</p>} />
     <nav aria-label="Payment button guide sections" className="mt-6 grid gap-2 rounded-surface border border-stroke bg-card p-3 sm:grid-cols-2">
       {sections.map(([id, label]) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center rounded-xl px-3 py-2 font-semibold hover:bg-white/70">{label}</a>)}

@@ -13,6 +13,7 @@ async function fits(page) {
   const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH, args:['--no-sandbox']});
   try {
     const context = await browser.newContext({reducedMotion:'reduce'});
+    await context.route('**/api/core/public/rates/*', route => route.fulfill({json:{rate:'200',quoted_at:'2026-10-31T12:00:00Z'}}));
     await context.addCookies([{name:'xmrcheckout_api_key', value:'fixture-only-api-key', url:base}]);
     const page = await context.newPage();
     for (const width of [320,390,768,1024,1280,1420,1422,1440]) {
@@ -60,6 +61,20 @@ async function fits(page) {
       await fits(page);
       await page.evaluate(()=>document.documentElement.style.fontSize='');
       console.log('Layout checks passed:', width);
+    }
+    const publicPages = ['/', '/invoice', '/faq', '/docs', '/docs/integrations', '/guides',
+      '/guides/self-hosted-monero-checkout', '/guides/monero-payment-api-webhooks',
+      '/guides/monero-payment-buttons', '/tour', '/donate',
+      '/invoice/00000000-0000-4000-8000-000000000456', '/pay/fixture-token'];
+    for (const width of [320,390,768,1440]) {
+      await page.setViewportSize({width,height:1000});
+      for (const path of publicPages) {
+        await page.goto(base + path, {waitUntil:'networkidle'});
+        await fits(page);
+        await page.evaluate(()=>document.documentElement.style.fontSize='200%');
+        await fits(page);
+        console.log('Public overflow checks passed:', width, path);
+      }
     }
     for(const state of ['exhausted','unavailable']) {
       await setState({state});

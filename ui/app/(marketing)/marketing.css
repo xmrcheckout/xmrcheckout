@@ -2320,3 +2320,11 @@ summary:focus-visible {
 }
 
 .home-hero-copy .home-entry-note + .home-entry-note { margin-top: -.5rem; }
+
+/* Reference grids must shrink around code; long identifiers wrap in prose. */
+.reference-page {
+  overflow-wrap: anywhere;
+}
+.reference-page :where(section, article, div, header, footer, aside, nav, details, dl, ol, ul, li, h1, h2, h3, p) {
+  min-width: 0;
+}

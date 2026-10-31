@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { dashboardDestination } from "../../../lib/wallet-connection";
 
 import ApiKeySection from "../../../components/api-key-section";
 import BtcpayCheckoutStyleSection from "../../../components/btcpay-checkout-style-section";
@@ -154,14 +155,19 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<DashboardSearchParams>;
 }) {
+  const resolvedSearchParams = await searchParams;
+  const destinationParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(resolvedSearchParams)) {
+    if (typeof value === "string") destinationParams.set(key, value);
+  }
+  const loginUrl = `/?login=1&next=${encodeURIComponent(dashboardDestination(`/dashboard?${destinationParams}`))}`;
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   const webhookSecret =
     (await cookies()).get("xmrcheckout_webhook_secret")?.value ?? null;
   if (!apiKey) {
-    redirect("/?login=1");
+    redirect(loginUrl);
   }
 
-  const resolvedSearchParams = await searchParams;
   const tabParam = resolvedSearchParams?.tab;
   const activeTabValue = Array.isArray(tabParam) ? tabParam[0] : tabParam;
   const activeTab: DashboardTab = tabs.includes(activeTabValue as DashboardTab)
@@ -254,7 +260,7 @@ export default async function DashboardPage({
       cache: "no-store",
     });
     if (response.status === 401) {
-      redirect("/?login=1");
+      redirect(loginUrl);
     }
     if (!response.ok) {
       break;
@@ -277,7 +283,7 @@ export default async function DashboardPage({
       cache: "no-store",
     });
     if (response.status === 401) {
-      redirect("/?login=1");
+      redirect(loginUrl);
     }
     if (response.ok) {
       webhooksData = (await response.json()) as WebhookSummary[];
@@ -296,7 +302,7 @@ export default async function DashboardPage({
       cache: "no-store",
     });
     if (response.status === 401) {
-      redirect("/?login=1");
+      redirect(loginUrl);
     }
     if (response.ok) {
       webhookHistory = (await response.json()) as WebhookDeliverySummary[];
@@ -309,7 +315,7 @@ export default async function DashboardPage({
       headers: { Authorization: `ApiKey ${apiKey}` },
       cache: "no-store",
     }).catch(() => null);
-    if (response?.status === 401) redirect("/?login=1");
+    if (response?.status === 401) redirect(loginUrl);
     if (response?.ok) addressStatus = await response.json().catch(() => null);
   }
 
@@ -325,7 +331,7 @@ export default async function DashboardPage({
       cache: "no-store",
     });
     if (response.status === 401) {
-      redirect("/?login=1");
+      redirect(loginUrl);
     }
     if (response.ok) {
       profileData = (await response.json()) as ProfileSummary;

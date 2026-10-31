@@ -103,7 +103,7 @@ export default function LoginModal() {
             a spend key or recovery seed.
           </p>
         </div>
-        <LoginForm />
+        <LoginForm nextDestination={searchParams.get("next") ?? undefined} />
       </div>
     </AccessibleDialog>
   );

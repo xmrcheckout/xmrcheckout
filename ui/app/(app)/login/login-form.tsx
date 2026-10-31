@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 
+import { dashboardDestination, walletFormatErrors } from "../../../lib/wallet-connection";
+
 import PendingSubmitButton from "../../../components/pending-submit-button";
 
 import { loginAction, type LoginState } from "./actions";
@@ -32,7 +34,7 @@ const isLikelyPrimaryAddress = (value: string) => {
 const isLikelySecretViewKey = (value: string) =>
   viewKeyPattern.test(value.trim());
 
-export default function LoginForm() {
+export default function LoginForm({ nextDestination }: { nextDestination?: string }) {
   const [state, formAction] = useFormState(loginAction, initialState);
   const [paymentAddress, setPaymentAddress] = useState("");
   const [viewKey, setViewKey] = useState("");
@@ -43,6 +45,8 @@ export default function LoginForm() {
   const [validationMessage, setValidationMessage] = useState<string | null>(
     null,
   );
+
+  const formatErrors = walletFormatErrors(paymentAddress, viewKey);
 
   const canSubmit = useMemo(() => {
     if (
@@ -107,6 +111,7 @@ export default function LoginForm() {
 
   return (
     <form className="mt-4 grid gap-3" action={formAction}>
+      <input type="hidden" name="next" value={dashboardDestination(nextDestination)} />
       <details className="text-sm text-ink-soft">
         <summary className="min-h-11 cursor-pointer py-3 underline underline-offset-4">Where do I find these?</summary>
         <div className="mt-3 grid gap-3">
@@ -143,8 +148,8 @@ export default function LoginForm() {
         <textarea
           className="min-h-[72px] w-full resize-none rounded-xl border border-stroke bg-white/80 px-3 py-2.5 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
           id="payment_address"
-          aria-describedby="address-help login-feedback"
-          aria-invalid={validationStatus === "invalid"}
+          aria-describedby="address-help address-format login-feedback"
+          aria-invalid={Boolean(paymentAddress.trim() && formatErrors.address) || validationStatus === "invalid"}
           name="payment_address"
           rows={2}
           autoComplete="off"
@@ -160,6 +165,7 @@ export default function LoginForm() {
           Use the 95-character primary address that starts with 4. Subaddresses
           and integrated addresses are not used for dashboard access.
         </p>
+        <p id="address-format" className="text-sm text-ink-soft">{formatErrors.address}</p>
       </div>
       <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
@@ -189,8 +195,8 @@ export default function LoginForm() {
           <input
             className="min-h-[42px] w-full rounded-xl border border-stroke bg-white/80 px-3 py-2.5 pr-20 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
             id="view_key"
-            aria-describedby="view-key-help login-feedback"
-            aria-invalid={validationStatus === "invalid"}
+            aria-describedby="view-key-help view-key-format login-feedback"
+            aria-invalid={Boolean(viewKey.trim() && formatErrors.viewKey) || validationStatus === "invalid"}
             name="view_key"
             type={isViewKeyVisible ? "text" : "password"}
             autoComplete="off"
@@ -213,6 +219,8 @@ export default function LoginForm() {
         <p id="view-key-help" className="text-xs leading-relaxed text-ink-soft">
           Paste the 64-character private view key (also called a secret view key).
         </p>
+        <p id="view-key-format" className="text-sm text-ink-soft">{formatErrors.viewKey}</p>
+        <p className="text-xs text-ink-soft">Format checks only. The server checks whether the address and private view key match.</p>
       </div>
       <div id="login-feedback" role="status" aria-live="polite" aria-atomic="true">
         {validationStatus === "checking" ? (

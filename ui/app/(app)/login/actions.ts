@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { dashboardDestination } from "../../../lib/wallet-connection";
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
@@ -53,5 +54,5 @@ export async function loginAction(
     path: "/",
   });
 
-  redirect("/dashboard");
+  redirect(dashboardDestination(formData.get("next")));
 }

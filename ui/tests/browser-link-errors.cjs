@@ -2,6 +2,12 @@ const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const base = process.argv[2] || 'http://127.0.0.1:3336';
 const fixture = process.argv[3] || 'http://127.0.0.1:8035';
+const assertBranded = async (page,label) => {
+  await page.locator('.site-header .brand-logo').waitFor();
+  await page.locator('.site-footer').waitFor();
+  const background = await page.evaluate(()=>{const style=getComputedStyle(document.body);return style.backgroundImage+' '+style.backgroundColor});
+  assert.match(background,/gradient|rgb\(248, 242, 233\)/,label+' background');
+};
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH, args: ['--no-sandbox'] });
   try {
@@ -26,6 +32,7 @@ const fixture = process.argv[3] || 'http://127.0.0.1:8035';
         await page.clock.fastForward(61000);
         await page.waitForTimeout(100);
         assert.equal(refreshes,0,path+' must not poll');
+        if(path==='/missing-page') await assertBranded(page,path);
         if(path.startsWith('/invoice/')) await page.getByLabel('Invoice ID or link').waitFor();
         if(path.startsWith('/pay/')) assert.match(await page.getByRole('main').innerText(),/Do not send payment.*Contact the merchant/s);
         await page.evaluate(()=>document.documentElement.style.fontSize='200%');
@@ -48,6 +55,7 @@ const fixture = process.argv[3] || 'http://127.0.0.1:8035';
     await page.goto(base+'/pay/fixture-token',{waitUntil:'networkidle'});
     await page.getByRole('heading',{name:'Page unavailable',exact:true}).waitFor();
     assert.equal((await page.locator('body').innerText()).includes('internal-error-canary'),false);
+    await assertBranded(page,'/pay/fixture-token error');
     await fetch(linkEndpoint,{method:'PATCH',body:JSON.stringify({title:'Fixture product'})});
     await page.getByRole('link',{name:'Skip to main content',exact:true}).focus();
     await page.keyboard.press('Enter');
@@ -58,7 +66,19 @@ const fixture = process.argv[3] || 'http://127.0.0.1:8035';
     const staticPage = await noScript.newPage();
     assert.equal((await staticPage.goto(base+'/invoice/bad-id')).status(),404);
     await staticPage.getByRole('heading',{name:'Invoice link unavailable',exact:true}).waitFor();
+    assert.equal((await staticPage.goto(base+'/missing-page')).status(),404);
+    await staticPage.getByRole('main').getByRole('heading',{name:'Page not found',exact:true}).waitFor();
+    await assertBranded(staticPage,'/missing-page without JavaScript');
     await noScript.close();
+    const signedIn = await browser.newContext({viewport:{width:1440,height:844}});
+    await signedIn.addCookies([{name:'xmrcheckout_api_key',value:'fixture-key',url:base}]);
+    const signedInPage = await signedIn.newPage();
+    assert.equal((await signedInPage.goto(base+'/missing-page')).status(),404);
+    const nav = signedInPage.getByRole('navigation',{name:'Primary navigation'});
+    await nav.getByRole('link',{name:'Dashboard',exact:true}).waitFor();
+    await nav.getByRole('button',{name:'Log out',exact:true}).waitFor();
+    assert.equal(await nav.getByText('Connect view-only wallet',{exact:true}).count(),0);
+    await signedIn.close();
   } finally {
     await fetch(fixture+'/__fixture',{method:'POST',body:JSON.stringify({invoiceResponseStatus:200})});
     await fetch(fixture+'/api/core/payment-links/00000000-0000-4000-8000-000000000777',{method:'PATCH',body:JSON.stringify({title:'Fixture product'})});

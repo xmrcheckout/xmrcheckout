@@ -1,14 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
-export default function ErrorPage() {
-  return <main id="main-content" tabIndex={-1} className="mx-auto min-h-[60vh] max-w-2xl px-6 py-16 text-ink">
-    <h1 className="font-sans text-3xl font-semibold">Page unavailable</h1>
-    <p className="mt-4">We could not load this page. Try again. If you were creating an invoice, check your invoice list before submitting again.</p>
-    <div className="mt-6 flex flex-wrap gap-4">
-      <button className="min-h-11 rounded-full bg-ink px-6 py-3 text-cream" onClick={() => window.location.reload()}>Try again</button>
-      <Link className="inline-flex min-h-11 items-center underline" href="/">Return home</Link>
+import PageError from "../components/page-error";
+
+// Catches /i/ pages and group layout failures. Importing marketing.css here
+// could restyle checkout pages, and signed-in state is unknown, so this stays
+// Tailwind-only and shows no navigation.
+export default function RootError() {
+  return (
+    <div className="min-h-screen bg-cream text-ink">
+      <header className="mx-auto w-full max-w-6xl px-[6vw] pt-6">
+        <Link className="inline-flex min-h-11 items-center gap-3 font-sans font-semibold" href="/">
+          <Image className="h-10 w-10" src="/logo.png" alt="" width={128} height={128} priority />
+          XMR Checkout
+        </Link>
+      </header>
+      <PageError />
     </div>
-  </main>;
+  );
 }

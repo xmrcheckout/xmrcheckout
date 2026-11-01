@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 
 import {
@@ -15,7 +15,6 @@ import {
 } from "../lib/payment-proof";
 import AccessibleDialog from "./accessible-dialog";
 import CopyIconButton from "./copy-icon-button";
-import PendingSubmitButton from "./pending-submit-button";
 import Timestamp from "./timestamp";
 
 type PaymentProofDialogProps = {
@@ -47,7 +46,7 @@ export default function PaymentProofDialog({
 
   // Secrets stay in the form while a check can be retried, then are cleared
   // once the check gives an answer.
-  const [state, formAction] = useFormState(
+  const [state, formAction, pending] = useFormState(
     async (previous: PaymentProofState, formData: FormData) => {
       const next = await checkPaymentProofAction(previous, formData);
       if (next.outcome) {
@@ -163,7 +162,17 @@ export default function PaymentProofDialog({
         )}
       </section>
 
-      <form action={formAction} autoComplete="off" className="mt-6 grid gap-4">
+      {/* Submitted by hand because React resets a form given an action, which
+          would return the proof type radio to its default after each check. */}
+      <form
+        autoComplete="off"
+        className="mt-6 grid gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          startTransition(() => formAction(formData));
+        }}
+      >
         <input type="hidden" name="invoice_id" value={invoiceId} />
         <div>
           <label className={labelClass} htmlFor="payment-proof-txid">
@@ -286,13 +295,17 @@ export default function PaymentProofDialog({
         )}
 
         <div className="flex flex-wrap items-center gap-3">
-          <PendingSubmitButton
+          <button
+            aria-busy={pending}
             className={primaryButton}
-            disabled={missingProof}
-            pendingLabel="Checking..."
+            disabled={missingProof || pending}
+            type="submit"
           >
-            Check proof
-          </PendingSubmitButton>
+            {pending ? "Checking..." : "Check proof"}
+          </button>
+          <span className="sr-only" role="status" aria-live="polite">
+            {pending ? "Checking..." : ""}
+          </span>
         </div>
       </form>
 

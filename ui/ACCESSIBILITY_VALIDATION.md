@@ -67,6 +67,7 @@ node tests/browser-checkout-clarity.cjs http://127.0.0.1:3336 http://127.0.0.1:8
 node tests/browser-expiry.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 node tests/browser-wallet-connection.cjs http://127.0.0.1:3336
 node tests/browser-polish.cjs http://127.0.0.1:3336
+node tests/browser-payment-proof.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 ```
 
 Screenshot contrast sampling requires Python 3 with Pillow. Set `CONTRAST_PYTHON`

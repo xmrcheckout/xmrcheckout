@@ -23,6 +23,7 @@ let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture 
 
 const reference = "00000000-0000-4000-8000-000000000123";
 const fixtureInvoice = "00000000-0000-4000-8000-000000000456";
+let lastProofBody = null;
 
 function availability() {
   const exhausted = availabilityState === "exhausted";
@@ -121,6 +122,21 @@ const server = http.createServer((request, response) => {
         status = 503;
         result = { detail: "Fixture invoice service unavailable" };
       }
+    } else if (/^\/api\/core\/invoices\/[^/]+\/transfers$/.test(path)) {
+      result = [{ txid: "a".repeat(64), amount_xmr: "0.1", confirmations: 3, timestamp: 1790000000 }];
+    } else if (/^\/api\/core\/invoices\/[^/]+\/payment-proof$/.test(path)) {
+      lastProofBody = JSON.parse(body);
+      const outcomes = { a: "credited", b: "other_invoice", c: "predates_invoice", d: "not_recorded", e: "no_match", f: "not_found" };
+      const proofResult = outcomes[String(lastProofBody.txid)[0]];
+      if (proofResult) {
+        const matched = !["no_match", "not_found"].includes(proofResult);
+        result = { result: proofResult, proof_type: lastProofBody.signature ? "signature" : "tx_key", received_xmr: matched ? "0.1" : "0", required_xmr: "0.1", in_pool: false, confirmations: matched ? 3 : 0, confirmation_target: 2, bound_to_invoice: false, checked_at: "2026-10-31T12:00:00Z" };
+      } else {
+        status = 503;
+        result = { detail: "Could not check this proof right now. Try again shortly." };
+      }
+    } else if (path === "/__fixture/proof") {
+      result = { body: lastProofBody };
     } else if (path.includes("webhooks")) {
       result = [];
     } else if (path.startsWith("/api/core/public/rates/")) {

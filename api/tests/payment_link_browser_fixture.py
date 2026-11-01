@@ -16,12 +16,13 @@ from app.security import hash_api_key
 assert make_url(str(engine.url)).database == "payment_link_tests"
 Base.metadata.create_all(engine)
 with SessionLocal() as db:
-    user = User(payment_address="4" + "1" * 94, view_key_encrypted="fixture", api_key_hash=hash_api_key("fixture-only-api-key"), api_key_encrypted="fixture")
-    db.add(user)
-    db.flush()
-    link = PaymentLink(user_id=user.id, token="fixture-token", title="Fixture product", description="Manual delivery", amount_xmr="0.1", confirmation_target=2, enabled=True)
-    db.add(link)
-    db.commit()
+    if not db.query(PaymentLink).filter(PaymentLink.token == "fixture-token").first():
+        user = User(payment_address="4" + "1" * 94, view_key_encrypted="fixture", api_key_hash=hash_api_key("fixture-only-api-key"), api_key_encrypted="fixture")
+        db.add(user)
+        db.flush()
+        link = PaymentLink(user_id=user.id, token="fixture-token", title="Fixture product", description="Manual delivery", amount_xmr="0.1", confirmation_target=2, enabled=True)
+        db.add(link)
+        db.commit()
 
 app = FastAPI()
 paths = []
@@ -39,6 +40,10 @@ def request_paths():
 def change_failure(mode: str = "none"):
     failures.clear()
     if mode == "allowance": failures.add("/api/core/payment-links/status")
+    if mode == "invoices":
+        from app.models import Invoice
+        with SessionLocal() as db:
+            for invoice in db.query(Invoice).all(): failures.add(f"/api/core/public/invoice/{invoice.id}")
     if mode == "addresses": failures.add("/api/core/subaddresses/status")
     return {"ok": True}
 app.include_router(payment_links.router)

@@ -1,5 +1,5 @@
+from .public_origin import public_origin
 import uuid
-import os
 from uuid import UUID
 from typing import Any
 from datetime import datetime, timedelta, timezone
@@ -303,21 +303,12 @@ def _resolve_webhook_payload(
 
 
 def _invoice_url(invoice: Invoice, request: Request) -> str:
-    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-    host = request.headers.get("x-forwarded-host", request.headers.get("host", ""))
     path_prefix = "/donate" if _is_donation_invoice(invoice) else "/invoice"
-    if not host:
-        return f"{path_prefix}/{invoice.id}"
-    return f"{proto}://{host}{path_prefix}/{invoice.id}"
+    return f"{public_origin(request)}{path_prefix}/{invoice.id}"
 
 
 def _qr_url(invoice: Invoice, request: Request) -> str:
-    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-    host = request.headers.get("x-forwarded-host", request.headers.get("host", ""))
-    path = invoice_qr_url(str(invoice.id))
-    if not host:
-        return path
-    return f"{proto}://{host}{path}"
+    return f"{public_origin(request)}{invoice_qr_url(str(invoice.id))}"
 
 
 def _invoice_response(
@@ -419,7 +410,7 @@ def _public_invoice_status_response(
     if invoice.payment_link_id:
         link = db.query(PaymentLink).filter(PaymentLink.id == invoice.payment_link_id, PaymentLink.enabled.is_(True)).first()
         if link:
-            site = os.getenv("SITE_URL", "http://localhost:3000").rstrip("/")
+            site = public_origin(request)
             update["payment_link_url"] = f"{site}/pay/{link.token}?new=1"
     update["qr_url"] = _qr_url(invoice, request)
     return response.model_copy(update=update)

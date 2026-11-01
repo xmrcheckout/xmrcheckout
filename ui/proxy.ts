@@ -4,8 +4,8 @@ import { hasValidMultipartBoundary } from "./lib/multipart";
 
 export async function proxy(request: NextRequest) {
   if (
-    request.method === "POST"
-    && !hasValidMultipartBoundary(request.headers.get("content-type"))
+    request.method === "POST" &&
+    !hasValidMultipartBoundary(request.headers.get("content-type"))
   ) {
     return new NextResponse("Invalid multipart boundary.", {
       status: 400,

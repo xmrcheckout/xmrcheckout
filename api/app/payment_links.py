@@ -20,6 +20,7 @@ from .models import Invoice, PaymentLink, User
 from .routes import _get_user_for_api_key, create_invoice_for_merchant
 from .schemas import InvoiceCreateUser
 from .security import require_api_key
+from .public_origin import public_origin
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -160,9 +161,10 @@ def enabled_link(db, token):
 
 
 @router.get("/api/core/public/payment-links/{token}")
-def public_link(token: str, response: Response, db: Session = Depends(get_db)):
+def public_link(token: str, request: Request, response: Response, db: Session = Depends(get_db)):
     response.headers["Cache-Control"] = "no-store"
     data = serialize(enabled_link(db, token))
+    data["action_url"] = f"{public_origin(request)}/api/core/public/payment-links/{token}/invoices"
     return {key: data[key] for key in ("title", "description", "amount_xmr", "amount_fiat", "currency", "confirmation_target", "action_url", "auto_create_invoice")}
 
 
@@ -228,7 +230,7 @@ def create_purchase(token: str, request: Request, db: Session):
         return error_page(code, detail, headers)
 
     def success(invoice, replay=False):
-        site = os.getenv("SITE_URL", "http://localhost:3000").rstrip("/")
+        site = public_origin(request)
         url = f"{site}/invoice/{invoice.id}"
         if wants_json:
             return JSONResponse({"invoice_url": url, "status": invoice.status,

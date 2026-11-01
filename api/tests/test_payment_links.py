@@ -70,6 +70,19 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
         token = data["url"].rsplit("/", 1)[1]
         return data, self.base + f"/api/core/public/payment-links/{token}"
 
+    def test_attempt_recovers_despite_forged_origin_headers(self):
+        import os
+        _, url = self.create()
+        headers = {"Accept": "application/json", "Idempotency-Key": str(uuid4())}
+        with patch.dict(os.environ, {"SITE_URL": self.base}):
+            first = requests.post(url + "/invoices", headers={**headers, "Host": "attacker.example", "X-Forwarded-Proto": "http"}, timeout=10)
+            self.assertEqual(first.status_code, 201, first.text)
+            replay = requests.post(url + "/invoices", headers={**headers, "X-Forwarded-Host": "evil.example"}, timeout=10)
+            self.assertEqual(replay.status_code, 200, replay.text)
+            self.assertTrue(first.json()["invoice_url"].startswith(self.base + "/invoice/"))
+            self.assertTrue(replay.json()["invoice_url"].startswith(self.base + "/invoice/"))
+            self.assertEqual(first.json()["invoice_url"].rsplit("/", 1)[1], replay.json()["invoice_url"].rsplit("/", 1)[1])
+
     def test_existing_database_upgrade(self):
         from sqlalchemy import create_engine, text
         from app import main

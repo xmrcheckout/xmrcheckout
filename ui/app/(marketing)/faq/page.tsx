@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 
 const donationsEnabled = areDonationsEnabled();
 
+export const dynamic = "force-dynamic";
+
 type FaqItem = {
   id?: string;
   question: string;

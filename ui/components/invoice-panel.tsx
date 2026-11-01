@@ -19,6 +19,7 @@ import {
   getCurrencyFlag,
 } from "../lib/fiat-currencies";
 import AccessibleDialog from "./accessible-dialog";
+import PaymentProofDialog from "./payment-proof-dialog";
 import StatusBadge, { type StatusTone } from "./status-badge";
 
 import {
@@ -954,6 +955,7 @@ export default function InvoicePanel({
     string | null
   >(null);
   const normalizedSearchQuery = searchQuery ?? "";
+  const [proofInvoiceId, setProofInvoiceId] = useState<string | null>(null);
   const [searchDraft, setSearchDraft] = useState({
     source: normalizedSearchQuery,
     value: normalizedSearchQuery,
@@ -1540,6 +1542,15 @@ export default function InvoicePanel({
                           ) : null}
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
+                          {mode !== "tour" ? (
+                            <button
+                              className={smallSecondaryButton}
+                              type="button"
+                              onClick={() => setProofInvoiceId(invoice.id)}
+                            >
+                              Check payment proof
+                            </button>
+                          ) : null}
                           {isArchivable ? (
                             <button
                               className={smallSecondaryButton}
@@ -1823,6 +1834,17 @@ export default function InvoicePanel({
                                   ) : null}
                                 </div>
                                 <div className="flex flex-wrap items-center gap-3">
+                                  {mode !== "tour" ? (
+                                    <button
+                                      className={secondaryButton}
+                                      type="button"
+                                      onClick={() =>
+                                        setProofInvoiceId(invoice.id)
+                                      }
+                                    >
+                                      Check payment proof
+                                    </button>
+                                  ) : null}
                                   {isArchivable ? (
                                     <button
                                       className={secondaryButton}
@@ -1964,6 +1986,13 @@ export default function InvoicePanel({
             </form>
           </div>
         </AccessibleDialog>
+      ) : null}
+      {proofInvoiceId ? (
+        <PaymentProofDialog
+          invoiceId={proofInvoiceId}
+          key={proofInvoiceId}
+          onClose={() => setProofInvoiceId(null)}
+        />
       ) : null}
     </section>
   );

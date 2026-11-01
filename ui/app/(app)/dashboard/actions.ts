@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import type { PaymentProofOutcome } from "../../../lib/payment-proof";
+
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
 export type InvoiceState = {
@@ -23,6 +25,21 @@ export type InvoiceState = {
 
 export type ApiKeyState = {
   apiKey: string;
+  error: string | null;
+};
+
+export type PaymentProofState = {
+  outcome: PaymentProofOutcome | null;
+  error: string | null;
+};
+
+export type InvoiceTransfersState = {
+  transfers: Array<{
+    txid: string;
+    amount_xmr: string;
+    confirmations: number;
+    timestamp: number | null;
+  }>;
   error: string | null;
 };
 
@@ -774,6 +791,88 @@ export async function archiveInvoiceAction(
 
   revalidatePath("/dashboard");
   return { error: null, success: "Invoice archived until expiry.", archivedId: invoiceId };
+}
+
+export async function checkPaymentProofAction(
+  _prevState: PaymentProofState,
+  formData: FormData,
+): Promise<PaymentProofState> {
+  const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
+  if (!apiKey) {
+    return { outcome: null, error: "API key not found. Please connect again." };
+  }
+  const invoiceId = String(formData.get("invoice_id") ?? "").trim();
+  if (!invoiceId) {
+    return { outcome: null, error: "Invoice id missing." };
+  }
+  const proofType = String(formData.get("proof_type") ?? "");
+  // The message is part of the signed data, so it is passed on unchanged.
+  const body =
+    proofType === "signature"
+      ? {
+          txid: String(formData.get("txid") ?? ""),
+          signature: String(formData.get("signature") ?? ""),
+          message: String(formData.get("message") ?? ""),
+        }
+      : {
+          txid: String(formData.get("txid") ?? ""),
+          tx_key: String(formData.get("tx_key") ?? ""),
+        };
+
+  let response: Response;
+  try {
+    response = await fetch(
+      `${apiBaseUrl}/api/core/invoices/${encodeURIComponent(invoiceId)}/payment-proof`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `ApiKey ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        cache: "no-store",
+      },
+    );
+  } catch {
+    return {
+      outcome: null,
+      error: "Could not check this proof right now. Try again shortly.",
+    };
+  }
+  if (!response.ok) {
+    const detail = await response.json().catch(() => null);
+    return {
+      outcome: null,
+      error:
+        typeof detail?.detail === "string"
+          ? detail.detail
+          : "Could not check this proof right now. Try again shortly.",
+    };
+  }
+  return { outcome: (await response.json()) as PaymentProofOutcome, error: null };
+}
+
+export async function loadInvoiceTransfersAction(
+  invoiceId: string,
+): Promise<InvoiceTransfersState> {
+  const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
+  if (!apiKey) {
+    return { transfers: [], error: "API key not found. Please connect again." };
+  }
+  const response = await fetch(
+    `${apiBaseUrl}/api/core/invoices/${encodeURIComponent(invoiceId)}/transfers`,
+    {
+      headers: { Authorization: `ApiKey ${apiKey}` },
+      cache: "no-store",
+    },
+  );
+  if (!response.ok) {
+    return { transfers: [], error: "Could not load recorded transactions." };
+  }
+  return {
+    transfers: (await response.json()) as InvoiceTransfersState["transfers"],
+    error: null,
+  };
 }
 
 export async function logoutAction() {

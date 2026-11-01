@@ -5,7 +5,7 @@ import BtcpayModalBridge from "../../../components/btcpay-modal-bridge";
 import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
 import InvoicePaymentDetails from "../../../components/invoice-payment-details";
 import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../components/invoice-status-auto-refresh";
-import { formatRelativeTime } from "../../../components/relative-time";
+import Timestamp from "../../../components/timestamp";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import StatusRefreshButton from "../../../components/status-refresh-button";
 
@@ -134,16 +134,6 @@ const formatStatus = (status: InvoiceStatus) => {
   return "Expired";
 };
 
-const formatTimestamp = (value: string | null) => {
-  if (!value) {
-    return { label: "-", relative: null };
-  }
-  return {
-    label: new Date(value).toLocaleString(),
-    relative: formatRelativeTime(value),
-  };
-};
-
 const statusTones: Record<InvoiceStatus, StatusTone> = {
   pending: "pending",
   payment_detected: "detected",
@@ -234,11 +224,9 @@ export default async function BtcpayModalInvoicePage({
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
   const hasDetectedPayment =
     invoice.status === "payment_detected" || invoice.status === "confirmed";
-  const createdTimestamp = formatTimestamp(invoice.created_at);
-  const expiresTimestamp = formatTimestamp(invoice.expires_at);
-  const lastReconcileCompleted = formatTimestamp(
-    systemStatus?.last_reconcile_completed_at ?? null,
-  );
+  const createdTimestamp = invoice.created_at;
+  const expiresTimestamp = invoice.expires_at;
+  const lastReconcileCompleted = systemStatus?.last_reconcile_completed_at ?? null;
   const walletStatusBadge = walletRpcBadge(systemStatus);
   const daemonStatusBadge = daemonBadge(systemStatus);
   const reconcilerStatusBadge = reconcilerBadge(systemStatus);
@@ -263,10 +251,11 @@ export default async function BtcpayModalInvoicePage({
       status={invoice?.status}
     >
       <main id="main-content" tabIndex={-1} className="min-h-screen bg-cream px-3 py-4 text-ink sm:px-6 sm:py-6">
+
       <BtcpayModalBridge invoiceId={invoiceId} status={invoice.status} />
       {useClassicCheckout ? (
-        <div className="mx-auto grid max-w-md gap-5">
-          <div className="flex items-start justify-between gap-3 px-1">
+        <div className="mx-auto grid w-full max-w-md grid-cols-[minmax(0,1fr)] gap-5">
+          <div className="flex flex-wrap items-start justify-between gap-3 px-1">
             <div>
               <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <span
@@ -289,6 +278,8 @@ export default async function BtcpayModalInvoicePage({
             btcpayAmount={invoice.btcpay_amount ?? null}
             btcpayCurrency={invoice.btcpay_currency ?? null}
             quote={invoice.quote ?? null}
+            expiresAt={invoice.expires_at}
+            expiryRetrievedAt={retrievedAt}
             status={invoice.status}
             confirmationTarget={confirmationTarget}
             confirmations={confirmations}
@@ -304,7 +295,7 @@ export default async function BtcpayModalInvoicePage({
         </div>
       ) : (
         <div className="mx-auto w-full max-w-4xl">
-          <div className="mb-4 flex items-start justify-between gap-3 px-1">
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-3 px-1">
             <div>
               <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                 <span
@@ -324,6 +315,8 @@ export default async function BtcpayModalInvoicePage({
             address={invoice.address}
             amount={invoice.amount_xmr}
             hasDetectedPayment={hasDetectedPayment}
+            expiresAt={invoice.expires_at}
+            expiryRetrievedAt={retrievedAt}
             status={invoice.status}
             confirmationTarget={confirmationTarget}
             confirmations={confirmations}
@@ -353,9 +346,8 @@ export default async function BtcpayModalInvoicePage({
                 <p className="text-xs font-semibold text-ink-soft">Expires</p>
                 <p
                   className="mt-2 text-sm font-semibold"
-                  title={expiresTimestamp.relative ?? undefined}
                 >
-                  {expiresTimestamp.label}
+                  <Timestamp value={expiresTimestamp} />
                 </p>
               </div>
             </div>
@@ -402,9 +394,8 @@ export default async function BtcpayModalInvoicePage({
                     </dt>
                     <dd
                       className="mt-1 font-semibold"
-                      title={lastReconcileCompleted.relative ?? undefined}
                     >
-                      {lastReconcileCompleted.label}
+                      <Timestamp value={lastReconcileCompleted} />
                     </dd>
                   </div>
                 </dl>
@@ -415,9 +406,8 @@ export default async function BtcpayModalInvoicePage({
                 ) : null}
                 <p
                   className="text-xs text-ink-soft"
-                  title={createdTimestamp.relative ?? undefined}
                 >
-                  Created {createdTimestamp.label}
+                  Created <Timestamp value={createdTimestamp} />
                 </p>
               </div>
             </details>

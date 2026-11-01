@@ -4,7 +4,9 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 
+import InvoiceExpiry from "./invoice-expiry";
 import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
+import Timestamp from "./timestamp";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
@@ -14,6 +16,8 @@ type InvoicePaymentDetailsProps = {
   address: string;
   amount: string;
   hasDetectedPayment: boolean;
+  expiresAt?: string | null;
+  expiryRetrievedAt?: string;
   status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
   confirmationTarget: number;
   confirmations: number;
@@ -32,6 +36,8 @@ export default function InvoicePaymentDetails({
   address,
   amount,
   hasDetectedPayment,
+  expiresAt,
+  expiryRetrievedAt,
   status,
   confirmationTarget,
   confirmations,
@@ -119,9 +125,6 @@ export default function InvoicePaymentDetails({
     usdRateSource === "coingecko"
       ? "CoinGecko spot rate"
       : "external spot rate";
-  const estimateTimestamp = usdRateUpdatedAt
-    ? new Date(usdRateUpdatedAt).toLocaleString()
-    : null;
   const statusLabel =
     status === "pending"
       ? "Awaiting funds"
@@ -197,6 +200,8 @@ export default function InvoicePaymentDetails({
             ) : null}
           </div>
 
+          {canSendPayment ? <InvoiceExpiry expiresAt={expiresAt ?? null} retrievedAt={expiryRetrievedAt} /> : null}
+
           {canSendPayment ? (
               <a
                 className="mt-4 min-h-11 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
@@ -222,7 +227,7 @@ export default function InvoicePaymentDetails({
                 </summary>
                 <p className="mt-2 max-w-[52ch] leading-relaxed">
                   Reference only, uses {estimateSourceLabel}
-                  {estimateTimestamp ? ` from ${estimateTimestamp}` : ""}. Not a
+                  {usdRateUpdatedAt ? <> from <Timestamp value={new Date(usdRateUpdatedAt).toISOString()} /></> : null}. Not a
                   quote or guarantee.
                 </p>
               </details>
@@ -270,7 +275,7 @@ export default function InvoicePaymentDetails({
           </p>
           {canSendPayment && qrDataUrl ? (
             <>
-              <div className="relative mt-4 h-[220px] w-[220px] border border-stroke bg-white p-2 shadow-soft sm:h-[240px] sm:w-[240px]">
+              <div className="relative mt-4 aspect-square w-[220px] max-w-full border border-stroke bg-white p-2 shadow-soft sm:w-[240px]">
                 <Image
                   className="h-full w-full bg-white"
                   src={qrDataUrl}

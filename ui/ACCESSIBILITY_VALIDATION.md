@@ -64,6 +64,7 @@ node tests/browser-layout.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 node tests/browser-subaddress-status.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 node tests/browser-link-errors.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 node tests/browser-checkout-clarity.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-expiry.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 node tests/browser-wallet-connection.cjs http://127.0.0.1:3336
 node tests/browser-polish.cjs http://127.0.0.1:3336
 ```
@@ -157,3 +158,22 @@ python3 tests/check_ui_request_protection.py --playwright-module /path/to/playwr
 ```
 
 All manual wallet-application and assistive-technology rows above remain Pending.
+
+## Checkout expiry integration — 2026-11-01
+
+The remaining expiry work is now integrated across invoice, donation, compact
+checkout, classic checkout, and receipt pages. Dates use the shared explicit-UTC
+formatter. A pending invoice shows its deadline and a visual countdown before
+the QR code; reaching zero requests a status check without changing invoice
+state. Script-disabled pages retain the deadline and refresh guidance.
+
+Lint, all 11 unit tests, the production build, and the dedicated expiry browser
+checks passed using isolated fixtures. Browser coverage includes 320, 390, 768,
+and 1440px, 200% text, reduced motion, Tokyo/en-GB and New York/en-US, scripts
+enabled and disabled, null/invalid/past deadlines, receipt timestamps, hydration,
+and crossing zero while the server still reports pending.
+
+Feature review: display and read-only status refresh only; no new key access,
+fund movement, price guarantees, invoice states, or payment-detection changes.
+Underpayment behavior is not part of this integration. Existing manual checks
+remain pending.

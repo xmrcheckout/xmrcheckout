@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import BtcpayModalBridge from "../../../../components/btcpay-modal-bridge";
 import CopyIconButton from "../../../../components/copy-icon-button";
 import PrintButton from "../../../../components/print-button";
-import { formatRelativeTime } from "../../../../components/relative-time";
+import Timestamp from "../../../../components/timestamp";
 import StatusBadge, {
   type StatusTone,
 } from "../../../../components/status-badge";
@@ -195,8 +195,6 @@ export default async function BtcpayReceiptPage({
   const orderId =
     invoice.btcpay_order_number ?? invoice.btcpay_order_id ?? null;
   const receiptTimestamp = invoice.confirmed_at ?? invoice.created_at;
-  const timestampLabel = new Date(receiptTimestamp).toLocaleString();
-  const timestampRelative = formatRelativeTime(receiptTimestamp);
   const totalFiat =
     invoice.btcpay_amount &&
     invoice.btcpay_currency &&
@@ -243,9 +241,8 @@ export default async function BtcpayReceiptPage({
             ) : null}
             <p
               className="mt-2 text-sm text-ink-soft"
-              title={timestampRelative ?? undefined}
             >
-              {timestampLabel}
+              <Timestamp value={receiptTimestamp} />
             </p>
             <p className="mx-auto mt-8 max-w-md border-l-2 border-clay pl-4 text-left text-sm leading-relaxed text-ink-soft">
               This receipt is available after the payment is confirmed.
@@ -287,9 +284,8 @@ export default async function BtcpayReceiptPage({
                     </dt>
                     <dd
                       className="mt-1 text-sm font-semibold"
-                      title={timestampRelative ?? undefined}
                     >
-                      {timestampLabel}
+                      <Timestamp value={receiptTimestamp} />
                     </dd>
                   </div>
                   {orderId ? (
@@ -314,9 +310,8 @@ export default async function BtcpayReceiptPage({
                   <dt className="text-xs font-semibold text-ink-soft">Date</dt>
                   <dd
                     className="mt-1 font-semibold"
-                    title={timestampRelative ?? undefined}
                   >
-                    {timestampLabel}
+                    <Timestamp value={receiptTimestamp} />
                   </dd>
                 </div>
                 <div className="py-4 sm:px-4">

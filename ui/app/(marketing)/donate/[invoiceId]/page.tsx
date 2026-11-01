@@ -6,7 +6,7 @@ import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../../co
 import DonationStatusActions from "../../../../components/donation-status-actions";
 import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
-import { formatRelativeTime } from "../../../../components/relative-time";
+import Timestamp from "../../../../components/timestamp";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
 import { areDonationsEnabled } from "../../../../lib/donations";
 
@@ -52,16 +52,6 @@ const statusDescription = (
     return "";
   }
   return "";
-};
-
-const formatTimestamp = (value: string | null) => {
-  if (!value) {
-    return { label: "-", relative: null };
-  }
-  return {
-    label: new Date(value).toLocaleString(),
-    relative: formatRelativeTime(value),
-  };
 };
 
 export default async function DonateStatusDetailPage({
@@ -148,20 +138,20 @@ export default async function DonateStatusDetailPage({
     invoice.status === "payment_detected" || invoice.status === "confirmed";
   const timelineItems: {
     label: string;
-    timestamp: ReturnType<typeof formatTimestamp>;
+    timestamp: string | null;
     state: "complete";
   }[] = [];
 
   timelineItems.push({
     label: "Donation created",
-    timestamp: formatTimestamp(invoice.created_at),
+    timestamp: invoice.created_at,
     state: "complete",
   });
 
   if (invoice.detected_at) {
     timelineItems.push({
       label: "Donation detected",
-      timestamp: formatTimestamp(invoice.detected_at),
+      timestamp: invoice.detected_at,
       state: "complete",
     });
   }
@@ -169,7 +159,7 @@ export default async function DonateStatusDetailPage({
   if (invoice.confirmed_at) {
     timelineItems.push({
       label: "Donation confirmed",
-      timestamp: formatTimestamp(invoice.confirmed_at),
+      timestamp: invoice.confirmed_at,
       state: "complete",
     });
   }
@@ -177,13 +167,13 @@ export default async function DonateStatusDetailPage({
   if (invoice.status === "expired") {
     timelineItems.push({
       label: "Donation expired",
-      timestamp: formatTimestamp(invoice.expires_at),
+      timestamp: invoice.expires_at,
       state: "complete",
     });
   }
 
-  const createdTimestamp = formatTimestamp(invoice.created_at);
-  const expiresTimestamp = formatTimestamp(invoice.expires_at);
+  const createdTimestamp = invoice.created_at;
+  const expiresTimestamp = invoice.expires_at;
 
   return (
     <InvoiceStatusAutoRefresh
@@ -194,6 +184,7 @@ export default async function DonateStatusDetailPage({
       status={invoice?.status}
     >
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+
       <PageIntroBand
         description={statusDescription(
           invoice.status,
@@ -210,6 +201,8 @@ export default async function DonateStatusDetailPage({
           address={invoice.address}
           amount={invoice.amount_xmr}
           hasDetectedPayment={hasDetectedPayment}
+          expiresAt={invoice.expires_at}
+          expiryRetrievedAt={retrievedAt}
           status={invoice.status}
           confirmationTarget={confirmationTarget}
             confirmations={confirmations}
@@ -239,18 +232,16 @@ export default async function DonateStatusDetailPage({
                 <dt className="text-xs font-semibold text-ink-soft">Created</dt>
                 <dd
                   className="mt-1 text-sm font-semibold"
-                  title={createdTimestamp.relative ?? undefined}
                 >
-                  {createdTimestamp.label}
+                  <Timestamp value={createdTimestamp} />
                 </dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold text-ink-soft">Expires</dt>
                 <dd
                   className="mt-1 text-sm font-semibold"
-                  title={expiresTimestamp.relative ?? undefined}
                 >
-                  {expiresTimestamp.label}
+                  <Timestamp value={expiresTimestamp} />
                 </dd>
               </div>
             </div>
@@ -277,9 +268,8 @@ export default async function DonateStatusDetailPage({
               </p>
               <p
                 className="mt-1 text-sm font-semibold"
-                title={item.timestamp.relative ?? undefined}
               >
-                {item.timestamp.label}
+                <Timestamp value={item.timestamp} />
               </p>
             </li>
           ))}

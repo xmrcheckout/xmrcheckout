@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 
+import InvoiceExpiry from "./invoice-expiry";
 import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
@@ -29,6 +30,8 @@ type BtcpayClassicCheckoutProps = {
   btcpayCurrency: string | null;
   quote: QuotePayload | null;
   status: InvoiceStatus;
+  expiresAt?: string | null;
+  expiryRetrievedAt?: string;
   confirmationTarget: number;
   confirmations: number;
   redirectUrl: string | null;
@@ -99,6 +102,8 @@ export default function BtcpayClassicCheckout({
   btcpayCurrency,
   quote,
   status,
+  expiresAt,
+  expiryRetrievedAt,
   confirmationTarget,
   confirmations,
   redirectUrl,
@@ -219,7 +224,7 @@ export default function BtcpayClassicCheckout({
 
   if (status === "confirmed") {
     return (
-      <section className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
+      <section className="min-w-0 overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
         <header className="bg-ink px-6 py-7 text-center text-cream">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-sage text-cream">
             <svg
@@ -301,7 +306,7 @@ export default function BtcpayClassicCheckout({
   }
 
   return (
-    <section className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
+    <section className="min-w-0 overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
       <header className="bg-ink px-6 py-6 text-center text-cream">
         <div className="flex flex-wrap items-center justify-center gap-2">
           <p className="text-sm font-semibold text-cream/70">Payment request</p>
@@ -310,8 +315,8 @@ export default function BtcpayClassicCheckout({
         <p className="mt-2 text-sm text-cream/70">
           {status === "payment_detected" ? `Payment detected. ${confirmations}/${confirmationTarget} confirmations.` : statusMessage(status, confirmationTarget)}
         </p>
-        <div className="mt-3 flex items-start justify-center gap-3">
-          <p className="break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.3rem)] font-semibold leading-tight">
+        <div className="mt-3 flex flex-wrap items-start justify-center gap-3">
+          <p className="min-w-0 break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.3rem)] font-semibold leading-tight">
             {formattedAmount} XMR
           </p>
           {canSendPayment ? (
@@ -322,6 +327,7 @@ export default function BtcpayClassicCheckout({
             />
           ) : null}
         </div>
+        {canSendPayment ? <InvoiceExpiry expiresAt={expiresAt ?? null} retrievedAt={expiryRetrievedAt} /> : null}
       </header>
       <InvoiceRefreshFeedback className="border-b border-stroke px-6 py-3 text-xs text-ink-soft" />
 
@@ -338,7 +344,7 @@ export default function BtcpayClassicCheckout({
 
       <div className="grid justify-items-center bg-sand/60 px-5 py-6">
         {canSendPayment && qrDataUrl ? (
-          <div className="relative h-[240px] w-[240px] border border-stroke bg-white p-2 shadow-soft sm:h-[260px] sm:w-[260px]">
+          <div className="relative aspect-square w-[240px] max-w-full border border-stroke bg-white p-2 shadow-soft sm:w-[260px]">
             <Image
               className="h-full w-full"
               src={qrDataUrl}

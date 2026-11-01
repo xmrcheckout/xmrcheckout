@@ -13,6 +13,8 @@ const profile = {
 let availabilityState = "ready";
 let invoiceStatus = "pending";
 let invoiceResponseStatus = 200;
+let invoiceExpiry;
+let checkoutStyle = "standard";
 let layoutFixture = false;
 let availabilityDelay = 0;
 let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", button_text: "Buy with Monero", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, enabled: true,
@@ -57,6 +59,8 @@ const server = http.createServer((request, response) => {
       availabilityState = options.state ?? availabilityState;
       invoiceStatus = options.invoiceStatus ?? invoiceStatus;
       invoiceResponseStatus = options.invoiceResponseStatus ?? invoiceResponseStatus;
+      if (Object.hasOwn(options, "invoiceExpiry")) invoiceExpiry = options.invoiceExpiry === "soon" ? new Date(Date.now() + 2500).toISOString() : options.invoiceExpiry;
+      checkoutStyle = options.checkoutStyle ?? checkoutStyle;
       layoutFixture = options.layoutFixture ?? layoutFixture;
       availabilityDelay = options.delay ?? 0;
     } else if (path === "/api/core/payment-links/status") {
@@ -76,9 +80,13 @@ const server = http.createServer((request, response) => {
         return;
       }
       status = 405;
-    } else if (path === `/api/core/public/invoice/${fixtureInvoice}`) {
+    } else if ([`/api/core/public/invoice/${fixtureInvoice}`, `/api/core/public/donation/${fixtureInvoice}`].includes(path)) {
       status = invoiceResponseStatus;
       result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: invoiceStatus, confirmation_target: 2, confirmations: invoiceStatus === "confirmed" ? 2 : invoiceStatus === "payment_detected" ? 1 : 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
+      if (invoiceExpiry !== undefined && invoiceExpiry !== "default") {
+        result.expires_at = invoiceExpiry;
+      }
+      if (checkoutStyle === "btcpay_classic") Object.assign(result, { btcpay_amount: "0.1", btcpay_currency: "XMR", btcpay_checkout_style: checkoutStyle });
     } else if (path.startsWith("/api/core/public/invoice/")) {
       status = /^[0-9a-f-]{36}$/i.test(path.split("/").pop()) ? 404 : 422;
       result = { detail: "Fixture invoice unavailable" };

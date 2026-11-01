@@ -10,4 +10,18 @@ ui/node_modules/
 nginx/certs/
 
 backups/
+secrets/
 wallets/
+qr/
+logs/
+ui/*.tsbuildinfo
+.codex
+design.md
+nginx/conf.d/*.pre-*
+
+# Local browser diagnostics and audit captures (preserved on disk).
+/.playwright-mcp/
+/audit-home*.png
+/homepage-spacing-*.png
+/invoice-live-desktop.png
+/xmrcheckout-homepage-desktop.png

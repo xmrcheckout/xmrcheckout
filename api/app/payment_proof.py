@@ -8,7 +8,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from decimal import Decimal
+import math
 import re
+import threading
+import time
 from typing import Collection, Iterable, Literal, Protocol
 
 ATOMIC_UNITS_PER_XMR = Decimal(10) ** 12
@@ -147,6 +150,38 @@ def classify_proof(
         ):
             return "other_invoice"
     return "not_recorded"
+
+
+class ProofRateLimiter:
+    """Per-merchant limit, because a check can hold a wallet shard's RPC lock.
+
+    Dashboard requests reach the API without passing the Nginx route limit. Each
+    API worker counts separately, which is enough to protect reconciliation.
+    """
+
+    def __init__(self, *, limit: int = 10, window_seconds: float = 60.0, clock=time.monotonic) -> None:
+        self._limit = limit
+        self._window = window_seconds
+        self._clock = clock
+        self._lock = threading.Lock()
+        self._attempts: dict[str, list[float]] = {}
+
+    def reserve(self, key: str) -> int | None:
+        """Record an attempt, or return the seconds to wait when over the limit."""
+        now = self._clock()
+        cutoff = now - self._window
+        with self._lock:
+            for existing, times in list(self._attempts.items()):
+                recent = [moment for moment in times if moment > cutoff]
+                if recent:
+                    self._attempts[existing] = recent
+                else:
+                    del self._attempts[existing]
+            attempts = self._attempts.setdefault(key, [])
+            if len(attempts) >= self._limit:
+                return max(1, math.ceil(attempts[0] + self._window - now))
+            attempts.append(now)
+            return None
 
 
 def atomic_to_xmr(amount_atomic: int) -> Decimal:

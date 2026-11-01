@@ -14,6 +14,10 @@ Public payment-link POSTs under `/api/core/public/payment-links/` have a separat
 6 requests/minute per-client bucket with burst 3, and an HTML 429 response with
 `Retry-After: 60`. Read-only product requests do not consume that bucket. The
 existing global 50 requests/second, burst 200 limit still applies.
+Payment proof POSTs under `/api/core/invoices/{id}/payment-proof` have their own
+6 requests/minute per-client bucket with burst 3 and a 16 KB body limit, because
+each check can hold a wallet RPC lock. Dashboard checks reach the API directly,
+so the API also limits each merchant to 10 checks a minute per worker.
 
 Only the `cloudflared` service may supply `CF-Connecting-IP`. Other peers use
 their connection address, regardless of incoming client-IP headers. Nginx

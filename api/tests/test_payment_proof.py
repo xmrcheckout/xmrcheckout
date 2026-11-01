@@ -1,16 +1,29 @@
+import asyncio
 from contextlib import nullcontext
+from datetime import datetime, timezone
 from decimal import Decimal
+import json
+import logging
+import os
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
+from uuid import uuid4
 
 from fastapi import HTTPException
 from monero.backends.jsonrpc.exceptions import RPCError
 from requests import ConnectionError as RequestsConnectionError
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 
-from app.monero_service import MoneroWalletService
+from app import routes
+from app.config import DATABASE_URL
+from app.db import Base
+from app.models import Invoice, InvoiceTransfer, SubaddressAllocation, User
+from app.monero_service import DaemonTransaction, MoneroWalletService, ProofCheck
 from app.payment_proof import (
     PaymentProofInputError,
+    ProofRateLimiter,
     SIGNATURE_PART_LENGTH,
     atomic_to_xmr,
     classify_proof,
@@ -315,6 +328,246 @@ class WalletProofCheckTests(unittest.TestCase):
                 self.check(tx_key=KEY)
         self.assertNotIn(KEY, "\n".join(logs.output))
         self.assertNotIn(KEY, str(raised.exception.detail))
+
+
+class RateLimiterTests(unittest.TestCase):
+    def test_limits_each_merchant_and_recovers(self):
+        now = [100.0]
+        limiter = ProofRateLimiter(limit=2, window_seconds=60, clock=lambda: now[0])
+        self.assertIsNone(limiter.reserve("a"))
+        self.assertIsNone(limiter.reserve("a"))
+        self.assertEqual(limiter.reserve("a"), 60)
+        self.assertIsNone(limiter.reserve("b"))
+        now[0] = 160.5
+        self.assertIsNone(limiter.reserve("a"))
+
+
+class BodyParsingTests(unittest.TestCase):
+    def read(self, body):
+        async def request_body():
+            return body
+        return asyncio.run(routes._read_payment_proof_body(SimpleNamespace(body=request_body)))
+
+    def test_invalid_json_does_not_repeat_the_body(self):
+        with self.assertRaises(HTTPException) as raised:
+            self.read(b'{"tx_key": "' + KEY.encode())
+        self.assertEqual(raised.exception.status_code, 400)
+        self.assertNotIn(KEY, str(raised.exception.detail))
+
+    def test_large_body_is_rejected(self):
+        with self.assertRaises(HTTPException) as raised:
+            self.read(b" " * (routes.PAYMENT_PROOF_MAX_BODY_BYTES + 1))
+        self.assertEqual(raised.exception.status_code, 413)
+
+    def test_valid_json_is_returned(self):
+        self.assertEqual(self.read(json.dumps({"txid": TXID}).encode()), {"txid": TXID})
+
+
+class ProofRouteTests(unittest.TestCase):
+    def setUp(self):
+        self.user = SimpleNamespace(id=uuid4())
+        self.invoice = SimpleNamespace(
+            id=uuid4(), address="invoice-address", amount_xmr=Decimal("1.5"), confirmation_target=3,
+        )
+        self.db = Mock()
+        self.service = Mock()
+        self.service.get_daemon_transaction.return_value = DaemonTransaction(found=True, block_height=100)
+        self.service.check_payment_proof.return_value = ProofCheck(True, 1_500_000_000_000, False, 4)
+        patches = [
+            patch.object(routes, "_get_merchant_invoice_for_proof", return_value=(self.user, self.invoice)),
+            patch.object(routes, "MoneroWalletService", return_value=self.service),
+            patch.object(routes, "_load_proof_context", return_value=({TXID}, set(), [])),
+            patch.object(routes, "_payment_proof_rate_limiter", ProofRateLimiter()),
+            patch.object(routes, "dispatch_webhooks"),
+        ]
+        for item in patches:
+            item.start()
+            self.addCleanup(item.stop)
+        self.webhooks = routes.dispatch_webhooks
+
+    def post(self, **body):
+        response = SimpleNamespace(headers={})
+        result = routes.check_invoice_payment_proof(
+            self.invoice.id, response, db=self.db, api_key="key", body={"txid": TXID, **body},
+        )
+        self.assertEqual(response.headers["Cache-Control"], "no-store")
+        return result
+
+    def test_matching_key_reports_amounts_without_changing_anything(self):
+        before = dict(vars(self.invoice))
+        result = self.post(tx_key=KEY)
+        self.assertEqual(result.result, "credited")
+        self.assertEqual((result.received_xmr, result.required_xmr, result.confirmations), ("1.5", "1.5", 4))
+        self.assertFalse(result.bound_to_invoice)
+        self.assertEqual(vars(self.invoice), before)
+        for method in (self.db.add, self.db.commit, self.db.delete, self.db.flush, self.db.execute, self.webhooks):
+            method.assert_not_called()
+
+    def test_checks_the_invoice_address_and_ignores_a_submitted_address(self):
+        self.post(tx_key=KEY, address="attacker-address")
+        self.assertEqual(self.service.check_payment_proof.call_args.kwargs["address"], "invoice-address")
+
+    def test_missing_transaction_is_not_found_without_a_wallet_call(self):
+        self.service.get_daemon_transaction.return_value = DaemonTransaction(found=False)
+        self.assertEqual(self.post(tx_key=KEY).result, "not_found")
+        self.service.check_payment_proof.assert_not_called()
+
+    def test_zero_received_and_bad_signature_are_no_match(self):
+        self.service.check_payment_proof.return_value = ProofCheck(True, 0, False, 4)
+        self.assertEqual(self.post(tx_key=KEY).result, "no_match")
+        self.service.check_payment_proof.return_value = ProofCheck(False, 0, False, 0)
+        self.assertEqual(self.post(signature=SIGNATURE).result, "no_match")
+
+    def test_failures_are_unavailable_rather_than_no_match(self):
+        unavailable = HTTPException(status_code=503, detail="Could not check")
+        self.service.get_daemon_transaction.side_effect = unavailable
+        with self.assertRaises(HTTPException) as raised:
+            self.post(tx_key=KEY)
+        self.assertEqual(raised.exception.status_code, 503)
+        self.service.get_daemon_transaction.side_effect = None
+        self.service.check_payment_proof.side_effect = unavailable
+        with self.assertRaises(HTTPException) as raised:
+            self.post(tx_key=KEY)
+        self.assertEqual(raised.exception.status_code, 503)
+
+    def test_signature_is_bound_only_when_message_is_exactly_the_invoice_id(self):
+        self.assertTrue(self.post(signature=SIGNATURE, message=str(self.invoice.id)).bound_to_invoice)
+        self.assertFalse(self.post(signature=SIGNATURE, message=f" {self.invoice.id}").bound_to_invoice)
+        self.assertFalse(self.post(signature=SIGNATURE).bound_to_invoice)
+
+    def test_pool_status_from_the_wallet_removes_block_height(self):
+        self.service.check_payment_proof.return_value = ProofCheck(True, 5, True, 0)
+        with patch.object(routes, "classify_proof", return_value="not_recorded") as classify:
+            self.assertTrue(self.post(tx_key=KEY).in_pool)
+        self.assertIsNone(classify.call_args.kwargs["block_height"])
+
+    def test_input_errors_are_400_and_never_repeat_secrets(self):
+        with self.assertRaises(HTTPException) as raised:
+            self.post(tx_key=SECRET_CANARY)
+        self.assertEqual(raised.exception.status_code, 400)
+        self.assertNotIn(SECRET_CANARY, str(raised.exception.detail))
+        self.service.get_daemon_transaction.assert_not_called()
+
+    def test_rate_limit_returns_429_before_any_wallet_work(self):
+        limiter = ProofRateLimiter(limit=1)
+        limiter.reserve(str(self.user.id))
+        with patch.object(routes, "_payment_proof_rate_limiter", limiter):
+            with self.assertRaises(HTTPException) as raised:
+                self.post(tx_key=KEY)
+        self.assertEqual(raised.exception.status_code, 429)
+        self.assertIn("Retry-After", raised.exception.headers)
+        self.service.get_daemon_transaction.assert_not_called()
+
+    def test_secrets_are_not_logged_by_a_successful_check(self):
+        with self.assertLogs(level=logging.DEBUG) as logs:
+            logging.getLogger("proof-test").debug("start")
+            self.post(signature=SIGNATURE, message="private-message")
+        output = "\n".join(logs.output)
+        self.assertNotIn(SIGNATURE, output)
+        self.assertNotIn("private-message", output)
+
+
+class MerchantAccessTests(unittest.TestCase):
+    def test_other_merchants_invoice_is_not_found(self):
+        db = Mock()
+        db.query.return_value.filter.return_value.first.return_value = None
+        with patch.object(routes, "_get_user_for_api_key", return_value=SimpleNamespace(id=uuid4())):
+            with self.assertRaises(HTTPException) as raised:
+                routes._get_merchant_invoice_for_proof(db, "key", uuid4())
+        self.assertEqual(raised.exception.status_code, 404)
+
+    def test_non_user_key_is_rejected(self):
+        with patch.object(routes, "_get_user_for_api_key", return_value=None):
+            with self.assertRaises(HTTPException) as raised:
+                routes._get_merchant_invoice_for_proof(Mock(), "key", uuid4())
+        self.assertEqual(raised.exception.status_code, 401)
+
+
+@unittest.skipUnless(os.getenv("SUBADDRESS_DATABASE_TESTS") == "1", "requires isolated PostgreSQL schema")
+class ProofDatabaseTests(unittest.TestCase):
+    def setUp(self):
+        self.schema = "test_proof_" + uuid4().hex
+        self.admin = create_engine(DATABASE_URL)
+        with self.admin.begin() as conn:
+            conn.execute(text(f'CREATE SCHEMA "{self.schema}"'))
+        self.engine = create_engine(DATABASE_URL, connect_args={"options": f"-csearch_path={self.schema}"})
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine, expire_on_commit=False)
+        self.addCleanup(self.clean)
+        self.user_id, self.other_user_id = uuid4(), uuid4()
+        self.invoice_id, self.older_id, self.foreign_id = uuid4(), uuid4(), uuid4()
+        with self.Session.begin() as db:
+            for user_id, address in ((self.user_id, "merchant"), (self.other_user_id, "other")):
+                db.add(User(id=user_id, payment_address=address, view_key_encrypted="view",
+                            api_key_hash=f"hash-{address}", api_key_encrypted="key"))
+            db.flush()
+            for invoice_id, owner, metadata in (
+                (self.invoice_id, self.user_id, None),
+                (self.older_id, self.user_id, None),
+                (self.foreign_id, self.other_user_id, None),
+            ):
+                db.add(Invoice(id=invoice_id, user_id=owner, address="shared", amount_xmr=Decimal("1"),
+                               status="pending", confirmation_target=1, metadata_json=metadata))
+            db.flush()
+            db.add(SubaddressAllocation(invoice_id=self.older_id, user_id=self.user_id, address="shared",
+                                        subaddress_index=1, generation=1, excluded_txids=[]))
+            db.add(SubaddressAllocation(invoice_id=self.invoice_id, user_id=self.user_id, address="shared",
+                                        subaddress_index=1, generation=2, cutoff_height=50, excluded_txids=["x"]))
+            db.add(SubaddressAllocation(invoice_id=self.foreign_id, user_id=self.other_user_id, address="shared",
+                                        subaddress_index=1, generation=3, excluded_txids=[]))
+
+    def clean(self):
+        self.engine.dispose()
+        with self.admin.begin() as conn:
+            conn.execute(text(f'DROP SCHEMA "{self.schema}" CASCADE'))
+        self.admin.dispose()
+
+    def add_transfer(self, invoice_id, txid=TXID, amount=5):
+        with self.Session.begin() as db:
+            db.add(InvoiceTransfer(invoice_id=invoice_id, txid=txid, amount_atomic=amount, confirmations=2,
+                                   timestamp=1_800_000_000))
+
+    def context(self, db):
+        return routes._load_proof_context(
+            db, user=SimpleNamespace(id=self.user_id),
+            invoice=db.get(Invoice, self.invoice_id), txid=TXID,
+        )
+
+    def test_context_separates_this_invoice_from_other_invoices(self):
+        with self.Session() as db:
+            invoice_txids, other_txids, allocations = self.context(db)
+        self.assertEqual((invoice_txids, other_txids), (set(), set()))
+        self.assertEqual({row.invoice_id for row in allocations}, {self.invoice_id, self.older_id})
+
+        self.add_transfer(self.older_id)
+        with self.Session() as db:
+            self.assertEqual(self.context(db)[:2], (set(), {TXID}))
+        self.add_transfer(self.invoice_id)
+        with self.Session() as db:
+            self.assertEqual(self.context(db)[:2], ({TXID}, {TXID}))
+
+    def test_context_ignores_another_merchants_records(self):
+        self.add_transfer(self.foreign_id)
+        with self.Session() as db:
+            self.assertEqual(self.context(db)[:2], (set(), set()))
+
+    def test_lookup_scopes_invoices_and_allows_archived(self):
+        with self.Session.begin() as db:
+            db.get(Invoice, self.invoice_id).archived_at = datetime.now(timezone.utc)
+        user = SimpleNamespace(id=self.user_id)
+        with self.Session() as db, patch.object(routes, "_get_user_for_api_key", return_value=user):
+            self.assertEqual(routes._get_merchant_invoice_for_proof(db, "key", self.invoice_id)[1].id, self.invoice_id)
+            with self.assertRaises(HTTPException) as raised:
+                routes._get_merchant_invoice_for_proof(db, "key", self.foreign_id)
+        self.assertEqual(raised.exception.status_code, 404)
+
+    def test_transfer_listing_skips_zero_amounts_and_formats_xmr(self):
+        self.add_transfer(self.invoice_id, amount=1_250_000_000_000)
+        self.add_transfer(self.invoice_id, txid="cd" * 32, amount=0)
+        user = SimpleNamespace(id=self.user_id)
+        with self.Session() as db, patch.object(routes, "_get_user_for_api_key", return_value=user):
+            rows = routes.list_invoice_transfers(self.invoice_id, db=db, api_key="key")
+        self.assertEqual([(row.txid, row.amount_xmr) for row in rows], [(TXID, "1.25")])
 
 
 if __name__ == "__main__":

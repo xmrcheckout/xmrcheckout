@@ -305,3 +305,24 @@ class ApiCredentialsResetRequest(BaseModel):
 class ApiCredentialsResetResponse(BaseModel):
     api_key: str | None = None
     webhook_secret: str | None = None
+
+
+class InvoiceTransferResponse(BaseModel):
+    txid: str
+    amount_xmr: str
+    confirmations: int
+    timestamp: int | None = None
+
+
+class PaymentProofResponse(BaseModel):
+    result: Literal[
+        "credited", "other_invoice", "predates_invoice", "not_recorded", "no_match", "not_found",
+    ]
+    proof_type: Literal["tx_key", "signature"]
+    received_xmr: str
+    required_xmr: str
+    in_pool: bool
+    confirmations: int
+    confirmation_target: int
+    bound_to_invoice: bool
+    checked_at: datetime

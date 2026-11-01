@@ -1,7 +1,14 @@
+from contextlib import nullcontext
 from decimal import Decimal
 from types import SimpleNamespace
 import unittest
+from unittest.mock import Mock, patch
 
+from fastapi import HTTPException
+from monero.backends.jsonrpc.exceptions import RPCError
+from requests import ConnectionError as RequestsConnectionError
+
+from app.monero_service import MoneroWalletService
 from app.payment_proof import (
     PaymentProofInputError,
     SIGNATURE_PART_LENGTH,
@@ -166,6 +173,148 @@ class AmountTests(unittest.TestCase):
     def test_atomic_conversion_is_exact(self):
         self.assertEqual(atomic_to_xmr(1), Decimal("0.000000000001"))
         self.assertEqual(atomic_to_xmr(18_446_744_073_709_551_615), Decimal("18446744.073709551615"))
+
+
+class DaemonLookupTests(unittest.TestCase):
+    def setUp(self):
+        self.service = object.__new__(MoneroWalletService)
+        self.service._daemon_url = "http://daemon:18081"
+
+    def lookup(self, payload=None, error=None, http_error=None):
+        response = Mock()
+        response.json.return_value = payload
+        response.raise_for_status.side_effect = http_error
+        with patch("app.monero_service.requests.post", return_value=response, side_effect=error) as post:
+            result = self.service.get_daemon_transaction(TXID)
+        self.assertEqual(post.call_args.kwargs["json"]["txs_hashes"], [TXID])
+        return result
+
+    def assert_unavailable(self, **kwargs):
+        with self.assertRaises(HTTPException) as raised:
+            self.lookup(**kwargs)
+        self.assertEqual(raised.exception.status_code, 503)
+
+    def test_missing_transaction_is_definite(self):
+        self.assertFalse(self.lookup({"status": "OK", "missed_tx": [TXID]}).found)
+
+    def test_mined_transaction_returns_height(self):
+        result = self.lookup({"status": "OK", "txs": [{"tx_hash": TXID, "in_pool": False, "block_height": 42}]})
+        self.assertEqual((result.found, result.in_pool, result.block_height), (True, False, 42))
+
+    def test_pool_transaction_has_no_height(self):
+        result = self.lookup({"status": "OK", "txs": [{"tx_hash": TXID, "in_pool": True, "block_height": 0}]})
+        self.assertEqual((result.found, result.in_pool, result.block_height), (True, True, None))
+
+    def test_failures_are_never_reported_as_missing(self):
+        self.assert_unavailable(error=RequestsConnectionError("daemon down"))
+        self.assert_unavailable(http_error=RequestsConnectionError("bad gateway"))
+        for payload in (
+            None,
+            [],
+            {"status": "BUSY", "missed_tx": [TXID]},
+            {"status": "OK"},
+            {"status": "OK", "missed_tx": ["other"]},
+            {"status": "OK", "missed_tx": "bad"},
+            {"status": "OK", "txs": [{"tx_hash": "other", "in_pool": True}]},
+            {"status": "OK", "txs": [{"tx_hash": TXID, "in_pool": False, "block_height": 0}]},
+            {"status": "OK", "txs": [{"tx_hash": TXID, "in_pool": "no", "block_height": 5}]},
+            {"status": "OK", "txs": [{"tx_hash": TXID}, {"tx_hash": TXID}]},
+        ):
+            self.assert_unavailable(payload=payload)
+
+    def test_unconfigured_daemon_is_unavailable(self):
+        self.service._daemon_url = None
+        with self.assertRaises(HTTPException) as raised:
+            self.service.get_daemon_transaction(TXID)
+        self.assertEqual(raised.exception.status_code, 503)
+
+
+class WalletProofCheckTests(unittest.TestCase):
+    def setUp(self):
+        self.service = object.__new__(MoneroWalletService)
+        self.client = Mock()
+        self.service._wallet_name = Mock(return_value="wallet")
+        self.service._backend_for_wallet_name = Mock(return_value=SimpleNamespace(client=self.client))
+        self.service._wallet_rpc_lock = Mock(return_value=nullcontext())
+        self.service._ensure_wallet_open = Mock()
+        self.service._ensure_daemon = Mock()
+        self.service._ensure_wallet_synced = Mock()
+        self.user = SimpleNamespace(payment_address="primary", view_key_encrypted="encrypted")
+
+    def check(self, **kwargs):
+        with patch("app.monero_service.decrypt_secret", return_value="view"):
+            return self.service.check_payment_proof(self.user, txid=TXID, address="sub", **kwargs)
+
+    def test_transaction_key_check_uses_the_invoice_address(self):
+        self.client.raw_request.return_value = {"received": 5, "in_pool": False, "confirmations": 3}
+        result = self.check(tx_key=KEY)
+        self.client.raw_request.assert_called_once_with(
+            "check_tx_key", {"txid": TXID, "tx_key": KEY, "address": "sub"},
+        )
+        self.assertEqual((result.good, result.received_atomic, result.confirmations), (True, 5, 3))
+        self.service._ensure_wallet_synced.assert_not_called()
+
+    def test_omitted_zero_fields_mean_no_funds_in_key_check(self):
+        self.client.raw_request.return_value = {"received": 0}
+        self.assertEqual(self.check(tx_key=KEY).received_atomic, 0)
+
+    def test_signature_check_passes_message_exactly(self):
+        self.client.raw_request.return_value = {"good": True, "received": 9, "in_pool": True, "confirmations": 0}
+        result = self.check(signature=SIGNATURE, message=" order ")
+        self.client.raw_request.assert_called_once_with(
+            "check_tx_proof",
+            {"txid": TXID, "address": "sub", "message": " order ", "signature": SIGNATURE},
+        )
+        self.assertTrue(result.in_pool)
+
+    def test_bad_signature_is_not_a_match_and_ignores_other_fields(self):
+        self.client.raw_request.return_value = {"good": False, "received": 99}
+        result = self.check(signature=SIGNATURE, message="")
+        self.assertEqual((result.good, result.received_atomic), (False, 0))
+
+    def test_malformed_wallet_signature_error_is_input_error(self):
+        self.client.raw_request.side_effect = RPCError("Signature decoding error")
+        with self.assertRaises(HTTPException) as raised:
+            self.check(signature=SIGNATURE, message="")
+        self.assertEqual(raised.exception.status_code, 400)
+
+    def test_wallet_failures_are_unavailable_and_not_no_match(self):
+        for error in (
+            RPCError("Failed to connect to daemon"),
+            RequestsConnectionError("wallet down"),
+            HTTPException(status_code=503, detail="Monero wallet RPC is busy"),
+            HTTPException(status_code=409, detail="Wallet file exists"),
+        ):
+            self.client.raw_request.side_effect = error
+            with self.assertRaises(HTTPException) as raised:
+                self.check(tx_key=KEY)
+            self.assertEqual(raised.exception.status_code, 503)
+            self.assertNotIn("Wallet file", str(raised.exception.detail))
+
+    def test_malformed_wallet_responses_are_unavailable(self):
+        for method_kwargs, response in (
+            ({"tx_key": KEY}, []),
+            ({"tx_key": KEY}, {}),
+            ({"tx_key": KEY}, {"received": "5"}),
+            ({"tx_key": KEY}, {"received": -1}),
+            ({"tx_key": KEY}, {"received": 5, "confirmations": "1"}),
+            ({"signature": SIGNATURE}, {"received": 5}),
+            ({"signature": SIGNATURE}, {"good": "true", "received": 5}),
+            ({"signature": SIGNATURE}, {"good": True}),
+        ):
+            self.client.raw_request.side_effect = None
+            self.client.raw_request.return_value = response
+            with self.assertRaises(HTTPException) as raised:
+                self.check(**method_kwargs)
+            self.assertEqual(raised.exception.status_code, 503)
+
+    def test_secrets_are_not_logged_on_failure(self):
+        self.client.raw_request.side_effect = RPCError("Failed to get transaction from daemon")
+        with self.assertLogs("app.monero_service", level="WARNING") as logs:
+            with self.assertRaises(HTTPException) as raised:
+                self.check(tx_key=KEY)
+        self.assertNotIn(KEY, "\n".join(logs.output))
+        self.assertNotIn(KEY, str(raised.exception.detail))
 
 
 if __name__ == "__main__":

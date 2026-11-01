@@ -4,6 +4,8 @@ const os = require('node:os');
 const path = require('node:path');
 const fs = require('node:fs');
 async function contrast(page, edge = "top") {
+  // Transitions would report a fading color and alpha while the text is hidden or restored.
+  const still=await page.addStyleTag({content:'* {transition:none!important}'});
   if (!await page.locator('[role=dialog]').count()) {
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.evaluate(() => document.fonts.ready);
@@ -60,7 +62,7 @@ async function contrast(page, edge = "top") {
   });
   const hidden=await page.addStyleTag({content:'* {color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important} ::placeholder {color:transparent!important}'});
   const file=path.join(os.tmpdir(),`xmr-contrast-${process.pid}.png`);
-  await page.screenshot({path:file,fullPage:!(await page.locator("[role=dialog]").count())});await hidden.evaluate(e=>e.remove());
+  await page.screenshot({path:file,fullPage:!(await page.locator("[role=dialog]").count())});await hidden.evaluate(e=>e.remove());await still.evaluate(e=>e.remove());
   const result=spawnSync(process.env.CONTRAST_PYTHON || 'python3',[path.join(__dirname,'contrast-samples.py'),file],{input:JSON.stringify(samples),encoding:'utf8'});
   fs.unlinkSync(file);assert.equal(result.status,0,result.stderr);
   const report=JSON.parse(result.stdout);assert.ok(report.checked>0);assert.deepEqual(report.failures,[],'rendered text contrast');

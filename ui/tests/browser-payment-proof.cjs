@@ -1,9 +1,29 @@
 const assert = require("node:assert/strict");
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || "playwright");
+const axePath = require.resolve("axe-core/axe.min.js");
+const { contrast } = require("./browser-contrast.cjs");
 
 const KEY = "b".repeat(64);
 const SIGNATURE = "OutProofV2" + "2".repeat(132);
 const failingTxid = "9".repeat(64);
+
+async function accessibility(page, dialog, name) {
+  await page.addScriptTag({ path: axePath });
+  const result = await page.evaluate(() => window.axe.run(document.querySelector("[role=dialog]"), { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] } }));
+  assert.deepEqual(result.violations.map((item) => ({ id: item.id, nodes: item.nodes.map((node) => node.target) })), [], name);
+  assert.deepEqual(result.incomplete.filter((item) => item.id !== "color-contrast").map((item) => item.id), [], name);
+  // The contrast helper samples dialogs assuming the page behind them is at the top.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await contrast(page);
+  const controls = dialog.locator("button:not([disabled]),input:not([type=hidden]):not([disabled]),textarea").filter({ visible: true });
+  const first = controls.first();
+  const last = controls.last();
+  await first.focus();
+  await page.keyboard.press("Shift+Tab");
+  assert.equal(await last.evaluate((node) => node === document.activeElement), true, `${name} backward focus wrap`);
+  await page.keyboard.press("Tab");
+  assert.equal(await first.evaluate((node) => node === document.activeElement), true, `${name} forward focus wrap`);
+}
 
 async function main() {
   const base = process.argv[2];
@@ -89,6 +109,14 @@ async function main() {
       await dialog.getByText("Checking...", { exact: true }).first().waitFor({ state: "detached" });
       assert.deepEqual(await lastBody(), { txid: "a".repeat(64), signature: SIGNATURE, message: "order 2" });
       assert.equal(await dialog.getByRole("radio", { name: "Signature" }).isChecked(), true);
+
+      await accessibility(page, dialog, `signature result ${width}`);
+      await dialog.getByRole("radio", { name: "Transaction key" }).check();
+      await txid.fill(failingTxid);
+      await key.fill(KEY);
+      await submit.click();
+      await dialog.getByRole("alert").getByText("Could not complete this check").waitFor();
+      await accessibility(page, dialog, `failure ${width}`);
 
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width} page overflow`);
       assert.equal(await dialog.evaluate((node) => node.scrollWidth > node.clientWidth), false, `${width} dialog overflow`);

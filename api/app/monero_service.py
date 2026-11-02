@@ -89,28 +89,6 @@ class TransferDetail:
     height: int | None = None
 
 
-@dataclass(frozen=True)
-class DaemonTransaction:
-    found: bool
-    in_pool: bool = False
-    block_height: int | None = None
-
-
-@dataclass(frozen=True)
-class ProofCheck:
-    good: bool
-    received_atomic: int
-    in_pool: bool
-    confirmations: int
-
-
-def _proof_check_unavailable() -> HTTPException:
-    return HTTPException(
-        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-        detail="Could not check this proof right now. Try again shortly.",
-    )
-
-
 @dataclass
 class WalletBackend:
     client: WalletRPC
@@ -359,110 +337,6 @@ class MoneroWalletService:
             if type(wallet_height) is not int or wallet_height < height:
                 raise HTTPException(503, "View-only wallet is still syncing")
             return height - 1, transfers
-
-    def get_daemon_transaction(self, txid: str) -> DaemonTransaction:
-        """Look up a transaction, separating "not found" from "daemon unavailable"."""
-        if not self._daemon_url:
-            raise _proof_check_unavailable()
-        try:
-            response = requests.post(
-                f"{self._daemon_url.rstrip('/')}/get_transactions",
-                json={"txs_hashes": [txid], "decode_as_json": False, "prune": True},
-                timeout=10,
-            )
-            response.raise_for_status()
-            payload = response.json()
-        except (RequestException, ValueError):
-            raise _proof_check_unavailable() from None
-        if not isinstance(payload, dict) or payload.get("status") != "OK":
-            raise _proof_check_unavailable()
-        missed = payload.get("missed_tx", [])
-        transactions = payload.get("txs", [])
-        if not isinstance(missed, list) or not isinstance(transactions, list):
-            raise _proof_check_unavailable()
-        if txid in missed and not transactions:
-            return DaemonTransaction(found=False)
-        if len(transactions) != 1 or not isinstance(transactions[0], dict):
-            raise _proof_check_unavailable()
-        entry = transactions[0]
-        in_pool = entry.get("in_pool")
-        if entry.get("tx_hash") != txid or type(in_pool) is not bool:
-            raise _proof_check_unavailable()
-        if in_pool:
-            return DaemonTransaction(found=True, in_pool=True)
-        height = entry.get("block_height")
-        if type(height) is not int or height <= 0:
-            raise _proof_check_unavailable()
-        return DaemonTransaction(found=True, block_height=height)
-
-    def check_payment_proof(
-        self,
-        user: User,
-        *,
-        txid: str,
-        address: str,
-        tx_key: str | None = None,
-        signature: str | None = None,
-        message: str | None = None,
-    ) -> ProofCheck:
-        """Check a sender's proof. Secrets are passed on, never logged or stored.
-
-        The wallet RPC needs an open wallet but checks proofs with the supplied
-        values and daemon data, so waiting for wallet sync is unnecessary.
-        """
-        if tx_key is not None:
-            method = "check_tx_key"
-            params = {"txid": txid, "tx_key": tx_key, "address": address}
-        else:
-            method = "check_tx_proof"
-            params = {
-                "txid": txid, "address": address, "message": message or "", "signature": signature,
-            }
-        try:
-            view_key = decrypt_secret(user.view_key_encrypted)
-            wallet_name = self._wallet_name(user, user.payment_address, view_key)
-            backend = self._backend_for_wallet_name(wallet_name)
-            with self._wallet_rpc_lock(backend, operation="check_payment_proof"):
-                self._ensure_wallet_open(
-                    backend=backend,
-                    wallet_name=wallet_name,
-                    payment_address=user.payment_address,
-                    view_key=view_key,
-                )
-                self._ensure_daemon(backend)
-                result = backend.client.raw_request(method, params)
-        except RPCError as exc:
-            if "signature" in str(exc).lower():
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Signature is not in the expected format.",
-                ) from None
-            logger.warning("Payment proof check failed error=%s", wallet_error_summary(exc))
-            raise _proof_check_unavailable() from None
-        except (HTTPException, RequestException) as exc:
-            logger.warning("Payment proof check failed error=%s", wallet_error_summary(exc))
-            raise _proof_check_unavailable() from None
-        if not isinstance(result, dict):
-            raise _proof_check_unavailable()
-        # check_tx_proof reports good=false for a signature that does not verify.
-        good = result.get("good", True) if method == "check_tx_proof" else True
-        received = result.get("received", 0)
-        in_pool = result.get("in_pool", False)
-        confirmations = result.get("confirmations", 0)
-        if (
-            type(good) is not bool
-            or type(received) is not int or received < 0
-            or type(in_pool) is not bool
-            or type(confirmations) is not int or confirmations < 0
-            or (method == "check_tx_proof" and "good" not in result)
-            or (good and "received" not in result)
-        ):
-            raise _proof_check_unavailable()
-        if not good:
-            return ProofCheck(good=False, received_atomic=0, in_pool=False, confirmations=0)
-        return ProofCheck(
-            good=True, received_atomic=received, in_pool=in_pool, confirmations=confirmations,
-        )
 
     def _ensure_wallet_ready_locked(
         self,

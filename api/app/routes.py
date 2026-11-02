@@ -27,14 +27,13 @@ from .config import (
     QR_STORAGE_DIR,
 )
 from .db import get_db
-from .formatting import format_xmr_amount
+from .formatting import atomic_to_xmr, format_xmr_amount
 from .invoice_limits import reserve_invoice_creation
 from .models import (
     Invoice,
     InvoiceTransfer,
     PaymentLink,
     ProfileHistory,
-    SubaddressAllocation,
     SystemStatus,
     User,
     Webhook,
@@ -42,13 +41,6 @@ from .models import (
 )
 from monero.address import Address, IntegratedAddress, SubAddress
 from .monero_service import MoneroWalletService
-from .payment_proof import (
-    PaymentProofInputError,
-    ProofRateLimiter,
-    atomic_to_xmr,
-    classify_proof,
-    validate_proof_request,
-)
 from .rates import UnsupportedCurrencyError, get_xmr_rate
 from .subaddress_allocator import MAX_SUBADDRESS_INDEX, create_subaddress_for_user
 from .subaddress_status import merchant_status
@@ -63,7 +55,6 @@ from .schemas import (
     InvoiceTransferResponse,
     LoginRequest,
     LoginResponse,
-    PaymentProofResponse,
     ProfileResponse,
     ProfileUpdate,
     RateQuoteResponse,
@@ -1494,29 +1485,7 @@ def get_invoice_for_user(
     return _invoice_response(invoice, request)
 
 
-PAYMENT_PROOF_MAX_BODY_BYTES = 16 * 1024
-_payment_proof_rate_limiter = ProofRateLimiter()
-
-
-async def _read_payment_proof_body(request: Request) -> object:
-    # Parsed here because FastAPI's default validation errors repeat rejected
-    # input, and proof bodies contain sender secrets.
-    body = await request.body()
-    if len(body) > PAYMENT_PROOF_MAX_BODY_BYTES:
-        raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail="Proof request is too large.",
-        )
-    try:
-        return json.loads(body)
-    except (ValueError, RecursionError):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Send a JSON object.",
-        ) from None
-
-
-def _get_merchant_invoice_for_proof(
+def _get_merchant_invoice_for_transfers(
     db: Session,
     api_key: str,
     invoice_id: uuid.UUID,
@@ -1545,36 +1514,6 @@ def _get_merchant_invoice_for_proof(
     return user, invoice
 
 
-def _load_proof_context(
-    db: Session,
-    *,
-    user: User,
-    invoice: Invoice,
-    txid: str,
-) -> tuple[set[str], set[str], list[SubaddressAllocation]]:
-    recorded = (
-        db.query(InvoiceTransfer.invoice_id)
-        .join(Invoice, Invoice.id == InvoiceTransfer.invoice_id)
-        .filter(
-            InvoiceTransfer.txid == txid,
-            Invoice.user_id == user.id,
-            Invoice.address == invoice.address,
-        )
-        .all()
-    )
-    invoice_txids = {txid} if any(row.invoice_id == invoice.id for row in recorded) else set()
-    other_txids = {txid} if any(row.invoice_id != invoice.id for row in recorded) else set()
-    allocations = (
-        db.query(SubaddressAllocation)
-        .filter(
-            SubaddressAllocation.user_id == user.id,
-            SubaddressAllocation.address == invoice.address,
-        )
-        .all()
-    )
-    return invoice_txids, other_txids, allocations
-
-
 @router.get(
     "/api/core/invoices/{invoice_id}/transfers",
     response_model=list[InvoiceTransferResponse],
@@ -1584,7 +1523,7 @@ def list_invoice_transfers(
     db: Session = Depends(get_db),
     api_key: str = Depends(require_api_key),
 ):
-    _, invoice = _get_merchant_invoice_for_proof(db, api_key, invoice_id)
+    _, invoice = _get_merchant_invoice_for_transfers(db, api_key, invoice_id)
     rows = (
         db.query(InvoiceTransfer)
         .filter(InvoiceTransfer.invoice_id == invoice.id, InvoiceTransfer.amount_atomic > 0)
@@ -1600,103 +1539,6 @@ def list_invoice_transfers(
         )
         for row in rows
     ]
-
-
-@router.post(
-    "/api/core/invoices/{invoice_id}/payment-proof",
-    response_model=PaymentProofResponse,
-    openapi_extra={
-        "requestBody": {
-            "required": True,
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "required": ["txid"],
-                        "properties": {
-                            "txid": {"type": "string"},
-                            "tx_key": {"type": "string"},
-                            "signature": {"type": "string"},
-                            "message": {"type": "string"},
-                        },
-                    }
-                }
-            },
-        }
-    },
-)
-def check_invoice_payment_proof(
-    invoice_id: uuid.UUID,
-    response: Response,
-    db: Session = Depends(get_db),
-    api_key: str = Depends(require_api_key),
-    body: object = Depends(_read_payment_proof_body),
-):
-    """Check a sender's proof against this invoice's address. This never changes the invoice."""
-    user, invoice = _get_merchant_invoice_for_proof(db, api_key, invoice_id)
-    try:
-        proof = validate_proof_request(body)
-    except PaymentProofInputError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc),
-        ) from None
-    retry_after = _payment_proof_rate_limiter.reserve(str(user.id))
-    if retry_after is not None:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Too many proof checks. Wait a minute and try again.",
-            headers={"Retry-After": str(retry_after)},
-        )
-
-    response.headers["Cache-Control"] = "no-store"
-    service = MoneroWalletService()
-    transaction = service.get_daemon_transaction(proof.txid)
-    received_atomic = 0
-    in_pool = False
-    confirmations = 0
-    bound_to_invoice = False
-    if not transaction.found:
-        result = "not_found"
-    else:
-        check = service.check_payment_proof(
-            user,
-            txid=proof.txid,
-            address=invoice.address,
-            tx_key=proof.tx_key,
-            signature=proof.signature,
-            message=proof.message,
-        )
-        received_atomic = check.received_atomic
-        in_pool = check.in_pool
-        confirmations = check.confirmations
-        proof_matches = check.good and check.received_atomic > 0
-        bound_to_invoice = (
-            proof_matches and proof.proof_type == "signature" and proof.message == str(invoice.id)
-        )
-        invoice_txids, other_txids, allocations = _load_proof_context(
-            db, user=user, invoice=invoice, txid=proof.txid,
-        )
-        result = classify_proof(
-            proof_matches=proof_matches,
-            txid=proof.txid,
-            block_height=None if check.in_pool else transaction.block_height,
-            invoice_id=invoice.id,
-            invoice_txids=invoice_txids,
-            other_invoice_txids=other_txids,
-            allocations=allocations,
-        )
-    return PaymentProofResponse(
-        result=result,
-        proof_type=proof.proof_type,
-        received_xmr=format_xmr_amount(atomic_to_xmr(received_atomic)),
-        required_xmr=format_xmr_amount(invoice.amount_xmr),
-        in_pool=in_pool,
-        confirmations=confirmations,
-        confirmation_target=invoice.confirmation_target,
-        bound_to_invoice=bound_to_invoice,
-        checked_at=datetime.now(timezone.utc),
-    )
 
 
 @router.delete(

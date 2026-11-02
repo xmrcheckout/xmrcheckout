@@ -164,12 +164,6 @@ const endpointGroups = [
         path: "/api/core/invoices/{invoice_id}/transfers",
         description: "List transactions recorded on an invoice.",
       },
-      {
-        method: "POST",
-        path: "/api/core/invoices/{invoice_id}/payment-proof",
-        description:
-          "Check a sender's transaction key or signature against an invoice. This never changes the invoice.",
-      },
     ],
   },
   {
@@ -597,22 +591,7 @@ const endpointRequirements = [
     optional: [],
     notes: [
       "Returns transaction ID, XMR amount, confirmations, and timestamp for each recorded transaction.",
-      "Archived invoices are included.",
-    ],
-  },
-  {
-    method: "POST",
-    path: "/api/core/invoices/{invoice_id}/payment-proof",
-    auth: "API key",
-    required: ["invoice_id (path)", "txid", "tx_key or signature"],
-    optional: ["message (signature only; must match the signed message exactly)"],
-    notes: [
-      "Checks the invoice's own address. The check is read-only: it does not change the invoice or send webhooks.",
-      "result is credited, other_invoice, predates_invoice, not_recorded, no_match, or not_found.",
-      "bound_to_invoice is true when a matching signature's message is exactly this invoice ID.",
-      "A match does not confirm the funds are still spendable, and it relies on the configured Monero daemon.",
-      "Returns 503 when the check could not run, which does not mean the proof failed. Limited to 10 checks a minute per worker; 429 includes Retry-After.",
-      "Keys, signatures, and messages are not stored or logged. Do not put them in URLs.",
+      "Archived invoices are included. In the dashboard, open invoice details and choose View transactions. Compare the invoice address and transaction ID with your own wallet if a payment is missing.",
     ],
   },
   {

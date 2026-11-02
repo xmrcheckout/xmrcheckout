@@ -19,7 +19,7 @@ import {
   getCurrencyFlag,
 } from "../lib/fiat-currencies";
 import AccessibleDialog from "./accessible-dialog";
-import PaymentProofDialog from "./payment-proof-dialog";
+import InvoiceTransactionsDialog from "./invoice-transactions-dialog";
 import StatusBadge, { type StatusTone } from "./status-badge";
 
 import {
@@ -955,7 +955,7 @@ export default function InvoicePanel({
     string | null
   >(null);
   const normalizedSearchQuery = searchQuery ?? "";
-  const [proofInvoiceId, setProofInvoiceId] = useState<string | null>(null);
+  const [transactionsInvoiceId, setTransactionsInvoiceId] = useState<string | null>(null);
   const [searchDraft, setSearchDraft] = useState({
     source: normalizedSearchQuery,
     value: normalizedSearchQuery,
@@ -1546,9 +1546,9 @@ export default function InvoicePanel({
                             <button
                               className={smallSecondaryButton}
                               type="button"
-                              onClick={() => setProofInvoiceId(invoice.id)}
+                              onClick={() => setTransactionsInvoiceId(invoice.id)}
                             >
-                              Check payment proof
+                              View transactions
                             </button>
                           ) : null}
                           {isArchivable ? (
@@ -1839,10 +1839,10 @@ export default function InvoicePanel({
                                       className={secondaryButton}
                                       type="button"
                                       onClick={() =>
-                                        setProofInvoiceId(invoice.id)
+                                        setTransactionsInvoiceId(invoice.id)
                                       }
                                     >
-                                      Check payment proof
+                                      View transactions
                                     </button>
                                   ) : null}
                                   {isArchivable ? (
@@ -1987,11 +1987,11 @@ export default function InvoicePanel({
           </div>
         </AccessibleDialog>
       ) : null}
-      {proofInvoiceId ? (
-        <PaymentProofDialog
-          invoiceId={proofInvoiceId}
-          key={proofInvoiceId}
-          onClose={() => setProofInvoiceId(null)}
+      {transactionsInvoiceId ? (
+        <InvoiceTransactionsDialog
+          invoiceId={transactionsInvoiceId}
+          key={transactionsInvoiceId}
+          onClose={() => setTransactionsInvoiceId(null)}
         />
       ) : null}
     </section>

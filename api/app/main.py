@@ -65,6 +65,7 @@ def startup():
             Base.metadata.create_all(bind=connection)
             connection.execute(text("ALTER TABLE payment_links ADD COLUMN IF NOT EXISTS button_text VARCHAR(32) NOT NULL DEFAULT 'Buy with Monero'"))
             connection.execute(text("ALTER TABLE payment_links ADD COLUMN IF NOT EXISTS auto_create_invoice BOOLEAN NOT NULL DEFAULT false"))
+            connection.execute(text("ALTER TABLE payment_links ADD COLUMN IF NOT EXISTS confirmation_message VARCHAR(2000)"))
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_id UUID"))
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_attempt_id UUID"))
             connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS invoice_payment_link_attempt ON invoices (payment_link_id, payment_link_attempt_id)"))

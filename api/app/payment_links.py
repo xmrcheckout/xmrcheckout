@@ -42,6 +42,17 @@ class PaymentLinkInput(InvoiceCreateUser):
     enabled: bool = True
     auto_create_invoice: bool = False
     button_text: str = Field(default="Buy with Monero", min_length=1, max_length=32)
+    confirmation_message: str | None = Field(default=None, max_length=2000)
+
+    @field_validator("confirmation_message")
+    @classmethod
+    def valid_confirmation_message(cls, value):
+        if value is None:
+            return None
+        value = value.replace("\r\n", "\n").replace("\r", "\n").strip()
+        if any(char not in "\n\t" and (ord(char) < 32 or 127 <= ord(char) <= 159) for char in value):
+            raise ValueError("Remove control characters from the confirmation message")
+        return value or None
 
     @field_validator("button_text")
     @classmethod
@@ -98,6 +109,7 @@ def serialize(link):
         "amount_fiat": str(link.amount_fiat) if link.amount_fiat is not None else None,
         "currency": link.currency, "confirmation_target": link.confirmation_target,
         "checkout_continue_url": link.checkout_continue_url, "enabled": link.enabled,
+        "confirmation_message": link.confirmation_message,
         "auto_create_invoice": link.auto_create_invoice,
         "button_text": link.button_text,
         "url": f"{site}/pay/{link.token}",
@@ -106,7 +118,7 @@ def serialize(link):
 
 
 def apply_settings(link, payload, user):
-    for name in ("title", "description", "amount_xmr", "amount_fiat", "enabled", "auto_create_invoice", "button_text"):
+    for name in ("title", "description", "amount_xmr", "amount_fiat", "enabled", "auto_create_invoice", "button_text", "confirmation_message"):
         setattr(link, name, getattr(payload, name))
     link.currency = payload.currency if payload.amount_fiat is not None else None
     link.confirmation_target = payload.confirmation_target if payload.confirmation_target is not None else user.default_confirmation_target
@@ -140,7 +152,7 @@ def edit_link(link_id: UUID, payload: PaymentLinkInput | PaymentLinkState, db: S
         if payload.enabled:
             settings = {name: getattr(link, name) for name in (
                     "title", "description", "amount_xmr", "amount_fiat", "currency",
-                    "confirmation_target", "checkout_continue_url")}
+                    "confirmation_target", "checkout_continue_url", "confirmation_message")}
             try:
                 PaymentLinkInput(**settings)
             except ValidationError:
@@ -257,10 +269,14 @@ def create_purchase(token: str, request: Request, db: Session):
                 logger.info("Public payment-link invoice replayed link=%s invoice=%s", link.id, existing.id)
                 return success(existing, replay=True)
         reserve_public_budget(db, user)
+        metadata = {"origin": "payment_link", "payment_link": {"id": str(link.id), "title": link.title, "description": link.description}}
+        if link.confirmation_message:
+            # Snapshot per invoice; shown publicly only after confirmation.
+            metadata["checkout"] = {"confirmation_message": link.confirmation_message}
         payload = InvoiceCreateUser(
             amount_xmr=link.amount_xmr, amount_fiat=link.amount_fiat, currency=link.currency,
             confirmation_target=link.confirmation_target, checkout_continue_url=link.checkout_continue_url,
-            metadata={"origin": "payment_link", "payment_link": {"id": str(link.id), "title": link.title, "description": link.description}},
+            metadata=metadata,
         )
         invoice = create_invoice_for_merchant(payload, request, db, user, payment_link_id=link.id, payment_link_attempt_id=attempt)
         invoice = db.query(Invoice).filter(Invoice.id == invoice.id).one()

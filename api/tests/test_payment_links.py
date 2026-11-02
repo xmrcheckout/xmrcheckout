@@ -95,6 +95,7 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             with isolated.begin() as connection:
                 connection.execute(text("ALTER TABLE payment_links DROP COLUMN auto_create_invoice"))
                 connection.execute(text("ALTER TABLE payment_links DROP COLUMN button_text"))
+                connection.execute(text("ALTER TABLE payment_links DROP COLUMN confirmation_message"))
                 connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_id CASCADE"))
                 connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_attempt_id"))
                 connection.execute(text("INSERT INTO payment_links (id,user_id,token,title,description,confirmation_target,enabled) VALUES (:id,:user,'legacy','Legacy','',2,true)"), {"id": uuid4(), "user": uuid4()})
@@ -104,6 +105,7 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             with isolated.connect() as connection:
                 self.assertEqual(connection.execute(text("SELECT button_text FROM payment_links WHERE token='legacy'")).scalar_one(), "Buy with Monero")
                 self.assertFalse(connection.execute(text("SELECT auto_create_invoice FROM payment_links WHERE token='legacy'")).scalar_one())
+                self.assertIsNone(connection.execute(text("SELECT confirmation_message FROM payment_links WHERE token='legacy'")).scalar_one())
                 connection.execute(text("SELECT payment_link_id,payment_link_attempt_id FROM invoices"))
                 self.assertIsNotNone(connection.execute(text("SELECT indexname FROM pg_indexes WHERE schemaname=:schema AND indexname='invoice_payment_link_attempt'"), {"schema": schema}).scalar_one())
         finally:
@@ -221,6 +223,59 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
         returned = requests.get(endpoint, allow_redirects=False)
         self.assertEqual(returned.status_code, 302)
         self.assertEqual(returned.headers["Location"], "https://merchant.example/thanks")
+
+    def test_confirmation_message_validation(self):
+        data, _ = self.create(confirmation_message="  Download: https://merchant.example/a.pdf\r\nThanks\t!  ")
+        self.assertEqual(data["confirmation_message"], "Download: https://merchant.example/a.pdf\nThanks\t!")
+        endpoint = self.base + "/api/core/payment-links/" + data["id"]
+        for value in ("x" * 2001, "bad\x00text", "bell\x07", "c1\x85text"):
+            response = requests.patch(endpoint, headers=self.headers, json={**self.settings, "confirmation_message": value})
+            self.assertEqual(response.status_code, 422, value)
+        self.assertEqual(requests.patch(endpoint, headers=self.headers, json={**self.settings, "confirmation_message": "x" * 2000}).json()["confirmation_message"], "x" * 2000)
+        for value in ("   ", "", None):
+            cleared = requests.patch(endpoint, headers=self.headers, json={**self.settings, "confirmation_message": value})
+            self.assertIsNone(cleared.json()["confirmation_message"])
+        default, _ = self.create()
+        self.assertIsNone(default["confirmation_message"])
+
+    def test_confirmation_message_only_after_confirmation(self):
+        message = "Your ebook: https://merchant.example/book-1.pdf"
+        data, url = self.create(confirmation_message=message, checkout_continue_url="https://merchant.example/thanks")
+        self.assertNotIn("confirmation_message", requests.get(url).json())
+        self.assertNotIn("book-1", requests.get(url).text)
+        invoice_id = requests.post(url + "/invoices", allow_redirects=False).headers["Location"].rsplit("/", 1)[1]
+        status_url = self.base + f"/api/core/public/invoice/{invoice_id}"
+        for state in ("pending", "payment_detected", "expired", "invalid"):
+            with SessionLocal() as db:
+                db.query(Invoice).filter(Invoice.id == invoice_id).update({"status": state})
+                db.commit()
+            response = requests.get(status_url)
+            self.assertEqual(response.headers["Cache-Control"], "no-store")
+            self.assertIsNone(response.json()["confirmation_message"], state)
+            self.assertNotIn("book-1", response.text, state)
+        with SessionLocal() as db:
+            db.query(Invoice).filter(Invoice.id == invoice_id).update({"status": "confirmed"})
+            db.commit()
+        self.assertEqual(requests.get(status_url).json()["confirmation_message"], message)
+        # Return URL and message share invoice metadata; both survive.
+        self.assertEqual(requests.get(status_url + "/continue", allow_redirects=False).headers["Location"], "https://merchant.example/thanks")
+        # Edits apply to new invoices only.
+        requests.patch(self.base + "/api/core/payment-links/" + data["id"], headers=self.headers, json={**self.settings, "confirmation_message": "Changed"}).raise_for_status()
+        self.assertEqual(requests.get(status_url).json()["confirmation_message"], message)
+
+    def test_confirmation_message_per_link(self):
+        invoices = {}
+        for number in range(1, 4):
+            _, url = self.create(title=f"Ebook {number}", confirmation_message=f"https://merchant.example/book-{number}.pdf")
+            invoices[number] = requests.post(url + "/invoices", allow_redirects=False).headers["Location"].rsplit("/", 1)[1]
+        _, plain = self.create(title="No message")
+        invoices[0] = requests.post(plain + "/invoices", allow_redirects=False).headers["Location"].rsplit("/", 1)[1]
+        with SessionLocal() as db:
+            db.query(Invoice).filter(Invoice.id.in_(list(invoices.values()))).update({"status": "confirmed"})
+            db.commit()
+        for number, invoice_id in invoices.items():
+            shown = requests.get(self.base + f"/api/core/public/invoice/{invoice_id}").json()["confirmation_message"]
+            self.assertEqual(shown, f"https://merchant.example/book-{number}.pdf" if number else None)
 
     def test_overrides_and_failures_do_not_create(self):
         _, url = self.create()

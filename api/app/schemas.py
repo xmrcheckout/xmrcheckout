@@ -179,6 +179,7 @@ class InvoiceStatusResponse(BaseModel):
     product_description: str | None = None
     payment_link_url: str | None = None
     checkout_continue_available: bool = False
+    confirmation_message: str | None = None
     quote: dict[str, Any] | None = None
     qr_url: str | None = None
 

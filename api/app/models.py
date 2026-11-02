@@ -210,6 +210,7 @@ class PaymentLink(Base):
     currency = Column(String(3), nullable=True)
     confirmation_target = Column(Integer, nullable=False)
     checkout_continue_url = Column(String, nullable=True)
+    confirmation_message = Column(String(2000), nullable=True)
     enabled = Column(Boolean, nullable=False, default=True)
     auto_create_invoice = Column(Boolean, nullable=False, default=False, server_default="false")
     button_text = Column(String(32), nullable=False, default="Buy with Monero", server_default="Buy with Monero")

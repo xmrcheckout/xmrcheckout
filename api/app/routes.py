@@ -247,6 +247,18 @@ def _merchant_invoice_filter():
     return func.coalesce(Invoice.metadata_json["origin"].as_string(), "") != "donation"
 
 
+def _get_confirmation_message(invoice: Invoice) -> str | None:
+    """Payment-link confirmation message; callers must gate it on confirmation."""
+    if not invoice.payment_link_id:
+        return None
+    metadata = invoice.metadata_json or {}
+    checkout = metadata.get("checkout") if isinstance(metadata, dict) else None
+    value = checkout.get("confirmation_message") if isinstance(checkout, dict) else None
+    if not isinstance(value, str):
+        return None
+    return value.strip() or None
+
+
 def _get_checkout_continue_url(invoice: Invoice) -> str | None:
     metadata = invoice.metadata_json or {}
     if not isinstance(metadata, dict):
@@ -418,6 +430,10 @@ def _public_invoice_status_response(
     update["checkout_continue_available"] = bool(
         invoice.status == "confirmed" and continue_url
     )
+    # Never expose the message before the invoice is confirmed.
+    update["confirmation_message"] = (
+        _get_confirmation_message(invoice) if invoice.status == "confirmed" else None
+    )
     if invoice.payment_link_id:
         link = db.query(PaymentLink).filter(PaymentLink.id == invoice.payment_link_id, PaymentLink.enabled.is_(True)).first()
         if link:
@@ -562,8 +578,10 @@ def create_donation_invoice(
 def get_invoice_status(
     invoice_id: uuid.UUID,
     request: Request,
+    response: Response,
     db: Session = Depends(get_db),
 ):
+    response.headers["Cache-Control"] = "no-store"
     invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
     if invoice is None or _is_donation_invoice(invoice):
         raise HTTPException(

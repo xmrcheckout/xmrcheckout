@@ -33,6 +33,8 @@ async function main() {
         const skipReview = settings.getByRole("checkbox", { name: "Skip review and create invoice automatically" });
         await skipReview.check();
         await settings.getByLabel("Button text", { exact: true }).fill("Donate & <Monero>");
+        const message = "Thanks!\nDownload: https://merchant.example/book-1.pdf";
+        await settings.getByLabel("Confirmation message (optional)", { exact: true }).fill(message);
         await settings.getByRole("button", { name: "Save payment link", exact: true }).click();
         await settings.getByRole("status").filter({ hasText: "Payment link saved" }).waitFor();
         assert.equal((await (await fetch(base + "/api/core/public/payment-links/fixture-token")).json()).auto_create_invoice, true);
@@ -49,6 +51,7 @@ async function main() {
         await page.reload({ waitUntil: "networkidle" });
         await settings.locator("summary").click();
         assert.equal(await settings.getByLabel("Button text", { exact: true }).inputValue(), "Donate & <Monero>");
+        assert.equal(await settings.getByLabel("Confirmation message (optional)", { exact: true }).inputValue(), message, "Confirmation message must survive reload");
         await settings.getByLabel("Button text", { exact: true }).fill("Buy with Monero");
         assert.equal(await skipReview.isChecked(), true, "Saved skip-review setting must survive reload");
         await skipReview.uncheck();

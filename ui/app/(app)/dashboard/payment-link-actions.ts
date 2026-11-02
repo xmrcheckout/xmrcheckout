@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export type PaymentLinkState = { error: string; success: string; fieldErrors: Record<string, string> };
-const fields: Record<string, string> = { title: "title", description: "description", button_text: "button_text", amount_xmr: "amount", amount_fiat: "amount", currency: "currency", confirmation_target: "confirmation_target", checkout_continue_url: "checkout_continue_url" };
+const fields: Record<string, string> = { title: "title", description: "description", button_text: "button_text", amount_xmr: "amount", amount_fiat: "amount", currency: "currency", confirmation_target: "confirmation_target", checkout_continue_url: "checkout_continue_url", confirmation_message: "confirmation_message" };
 export async function savePaymentLink(_state: PaymentLinkState, form: FormData): Promise<PaymentLinkState> {
   const fieldErrors: Record<string, string> = {};
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
@@ -21,6 +21,7 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
         amount_fiat: currency === "XMR" ? null : form.get("amount"), currency: currency === "XMR" ? null : currency,
         confirmation_target: Number(form.get("confirmation_target")),
         checkout_continue_url: String(form.get("checkout_continue_url") ?? "").trim() || null,
+        confirmation_message: String(form.get("confirmation_message") ?? "").trim() || null,
         button_text: form.get("button_text"),
         auto_create_invoice: form.get("auto_create_invoice") === "on",
         enabled: form.get("enabled") === "on" }),

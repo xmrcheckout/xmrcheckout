@@ -48,6 +48,21 @@ try:
             if urllib.request.urlopen(base + "/api/core/public/payment-links/fixture-token", timeout=2).status == 200: break
         except Exception: time.sleep(.2)
     print(command("docker", "exec", api, "python", "-m", "unittest", "tests.test_payment_links"), flush=True)
+    # Server-rendered invoice page must not contain the confirmation message before confirmation.
+    message = "Thanks <b>buyer</b>!\nDownload: https://merchant.example/ebook-1.pdf."
+    request = urllib.request.Request(base + "/api/core/payment-links", method="POST", headers={"Authorization": "ApiKey fixture-only-api-key", "Content-Type": "application/json"},
+        data=json.dumps({"title": "Ebook 1", "amount_xmr": "0.1", "confirmation_target": 1, "confirmation_message": message}).encode())
+    token = json.load(urllib.request.urlopen(request, timeout=10))["url"].rsplit("/", 1)[1]
+    request = urllib.request.Request(base + f"/api/core/public/payment-links/{token}/invoices", method="POST", headers={"Accept": "application/json"})
+    invoice_id = json.load(urllib.request.urlopen(request, timeout=10))["invoice_url"].rsplit("/", 1)[1]
+    pending = urllib.request.urlopen(base + f"/invoice/{invoice_id}", timeout=30).read().decode()
+    assert "Invoice timeline" in pending and "ebook-1" not in pending and "buyer" not in pending, "message leaked before confirmation"
+    command("docker", "exec", dbname, "psql", "-U", "fixture", "-d", "payment_link_tests", "-c", f"UPDATE invoices SET status='confirmed', confirmations=1, confirmed_at=now() WHERE id='{invoice_id}'")
+    confirmed = urllib.request.urlopen(base + f"/invoice/{invoice_id}", timeout=30).read().decode()
+    assert "Message from the merchant" in confirmed, "message missing after confirmation"
+    assert 'href="https://merchant.example/ebook-1.pdf"' in confirmed and 'rel="noopener noreferrer nofollow"' in confirmed
+    assert "Thanks &lt;b&gt;buyer&lt;/b&gt;!" in confirmed and "<b>buyer</b>" not in confirmed
+    print("Confirmation message server-render checks passed.", flush=True)
     class Merchant(BaseHTTPRequestHandler):
         snippet = b""
 

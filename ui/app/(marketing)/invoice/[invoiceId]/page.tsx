@@ -8,6 +8,7 @@ import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
 import Timestamp from "../../../../components/timestamp";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
+import { linkifyMessage } from "../../../../lib/linkify";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ type InvoiceStatusResponse = {
   confirmation_target: number;
   confirmations: number;
   checkout_continue_available?: boolean;
+  confirmation_message?: string | null;
   qr_logo?: "monero" | "none" | "custom" | null;
   qr_logo_data_url?: string | null;
   created_at: string;
@@ -117,6 +119,11 @@ export default async function InvoiceStatusDetailPage({
   const checkoutContinueAvailable =
     invoice.status === "confirmed" &&
     Boolean(invoice.checkout_continue_available);
+  // The API returns the message only for confirmed invoices; this page renders it server side.
+  const confirmationMessage =
+    invoice.status === "confirmed" && invoice.confirmation_message
+      ? invoice.confirmation_message
+      : null;
   const timelineItems: {
     label: string;
     timestamp: string | null;
@@ -274,6 +281,24 @@ export default async function InvoiceStatusDetailPage({
           ))}
         </ol>
       </section>
+
+      {confirmationMessage ? (
+        <section aria-labelledby="confirmation-message-heading" className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
+          <h2 id="confirmation-message-heading" className="text-lg font-semibold">Message from the merchant</h2>
+          <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words text-ink">
+            {linkifyMessage(confirmationMessage).map((segment, index) =>
+              segment.kind === "link" ? (
+                <a key={index} href={segment.href} target="_blank" rel="noopener noreferrer nofollow" className="font-semibold underline decoration-clay underline-offset-4">
+                  {segment.text}
+                </a>
+              ) : (
+                segment.text
+              ),
+            )}
+          </p>
+          <p className="mt-3 text-sm text-ink-soft">Written by the merchant. Contact them with your invoice ID if anything is missing.</p>
+        </section>
+      ) : null}
 
       <section className="mt-6 flex flex-wrap gap-3">
         {checkoutContinueAvailable ? (

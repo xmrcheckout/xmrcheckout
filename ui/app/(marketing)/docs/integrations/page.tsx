@@ -125,7 +125,7 @@ export default function IntegrationsPage() {
         <section id="payment-buttons" className="mt-8 min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft">
           <h2 className="font-sans text-2xl font-semibold">Without programming: payment buttons</h2>
           <p className="mt-3">For an independent website or freelance service, configure a fixed amount in Dashboard → Payment links, then copy an HTML form or reusable URL. Each successful submission creates a separate XMR invoice. No merchant API key belongs in the snippet.</p>
-          <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the payment button setup guide</Link> for embedding, capacity, and manual fulfillment.</p>
+          <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the payment button setup guide</Link> for embedding, capacity, and fulfillment, including <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">confirmation messages</Link> that show a download link or instructions after payment.</p>
         </section>
         <section className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">

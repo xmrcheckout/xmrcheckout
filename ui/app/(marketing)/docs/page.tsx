@@ -335,6 +335,7 @@ const endpointRequirements = [
     "description",
     "confirmation_target",
     "checkout_continue_url",
+    "confirmation_message",
     "enabled"
   ],
   "notes": [
@@ -342,6 +343,7 @@ const endpointRequirements = [
     "Use supported_currencies from the status endpoint. Saves do not contact the quote provider.",
     "Confirmation target: 0–10, defaulting to the merchant profile at save time. Enabled defaults to true. Invoices use the configured default lifetime (one hour by default).",
     "Return URLs require HTTPS, with HTTP allowed for localhost and 127.0.0.1. Metadata and expiry overrides are not supported on templates.",
+    "confirmation_message: optional plain text up to 2000 characters (no control characters other than newline and tab; blank becomes null). Each invoice keeps a snapshot, and the public invoice status returns it only after confirmation.",
     "Returns 201 with saved settings, id, url, and action_url."
   ]
 },
@@ -417,7 +419,10 @@ const endpointRequirements = [
     auth: "None",
     required: ["invoice_id (path)"],
     optional: [],
-    notes: ["Returns invoice status and payment details."],
+    notes: [
+      "Returns invoice status and payment details.",
+      "confirmation_message is null until the invoice is confirmed; for confirmed payment-link invoices it contains the link's plain-text message.",
+    ],
   },
   {
     method: "GET",
@@ -894,7 +899,7 @@ Content-Type: application/json
         <section id="payment-links" aria-labelledby="payment-links-title" className="mt-10 grid min-w-0 scroll-mt-24 gap-5 break-words rounded-surface border border-stroke bg-card p-5 sm:p-8">
           <h2 id="payment-links-title" className="font-sans text-2xl font-semibold">Reusable payment links and HTML buttons</h2>
           <p>Merchants can configure a fixed amount in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first unless the merchant enables auto_create_invoice (default false). Automatic mode creates an invoice from the active browser and resumes the same attempt in the same tab.</p>
-          <p><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the merchant setup guide</Link> for wallet prerequisites, embedding, capacity, and manual fulfillment. The API operations below support managing those same templates from an integration.</p>
+          <p><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the merchant setup guide</Link> for wallet prerequisites, embedding, capacity, fulfillment, and <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">confirmation messages</Link> such as download links shown after payment. The API operations below support managing those same templates from an integration.</p>
           <details className="min-w-0 rounded-xl border border-stroke p-4">
             <summary className="min-h-11 cursor-pointer font-semibold">API examples and response behavior</summary>
             <p className="mt-3">Create a €20 reference template with a merchant API key held on your server. Fiat-reference inputs produce an XMR amount only when an invoice is requested; no rate or fiat outcome is guaranteed.</p>

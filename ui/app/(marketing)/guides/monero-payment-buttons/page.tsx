@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const sectionClass = "min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
 const codeClass = "mt-4 max-w-full overflow-x-auto rounded-xl bg-ink px-5 pb-5 pt-16 font-mono text-sm text-cream";
 const linkClass = "font-semibold underline decoration-clay underline-offset-4";
-const sections = [["setup", "Configure your product"], ["embed", "Copy your button or link"], ["invoices", "Review purchases"], ["manage", "Change or disable a link"], ["donations", "Accept donations"], ["limits", "Capacity and failures"]];
+const sections = [["setup", "Configure your product"], ["embed", "Copy your button or link"], ["invoices", "Review purchases"], ["confirmation-message", "Show a message after payment"], ["manage", "Change or disable a link"], ["donations", "Accept donations"], ["limits", "Capacity and failures"]];
 
 export default function PaymentButtonsGuide() {
   return <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
@@ -30,7 +30,7 @@ export default function PaymentButtonsGuide() {
           <li>Connect your wallet using your primary address and private view key. Never submit a private spend key or recovery seed. Customer payments go directly to your wallet.</li>
           <li>Open <Link href="/dashboard?tab=payment-links" className={linkClass}>Dashboard → Payment links</Link>, then choose <strong>Create payment link</strong>.</li>
           <li>Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount. Customer-entered amounts are not supported.</li>
-          <li>Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL.</li>
+          <li>Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL and a <a href="#confirmation-message" className={linkClass}>confirmation message</a> shown after payment.</li>
           <li>Leave <strong>Enable new purchases</strong> selected and save. Set Button text to customize the graphic label (up to 32 characters). The default is “Buy with Monero”. Copy controls appear in the payment-link list; copy the updated HTML after changing the label. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity.</li>
         </ol>
         <p className="mt-4">For the €20 reference, each purchase request calculates an XMR amount using the available informational quote. The invoice is defined in XMR and displays the quote source and timestamp. There is no rate lock or guaranteed EUR outcome. If the quote is unavailable, creation fails.</p>
@@ -48,7 +48,26 @@ export default function PaymentButtonsGuide() {
         <h2 id="invoices-title" className="font-sans text-2xl font-semibold">Review each purchase in your invoice list</h2>
         <p className="mt-4">A successful submission opens an invoice with its own ID, XMR amount, payment instructions, and confirmation progress. Keep the invoice URL and use its ID when discussing a purchase with the customer.</p>
         <p className="mt-3">Review payment-link invoices in Dashboard → Invoices. Search the product title or payment-link ID in invoice metadata. Each invoice retains a snapshot of the product settings; optional existing webhooks also include that metadata.</p>
-        <p className="mt-3">Payment detection and reaching your confirmation target are separate states. Review the invoice status before fulfilling an order. Payment links do not collect buyer details or provide protected downloads. Arrange delivery yourself using the invoice ID; a merchant return URL is navigation after confirmation and does not protect a file.</p>
+        <p className="mt-3">Payment detection and reaching your confirmation target are separate states. Review the invoice status before fulfilling an order. Payment links do not collect buyer details or host files. Use a <a href="#confirmation-message" className={linkClass}>confirmation message</a> to show a download link or instructions after confirmation, or arrange delivery yourself using the invoice ID. A merchant return URL is navigation after confirmation.</p>
+      </section>
+      <section id="confirmation-message" aria-labelledby="confirmation-message-title" className={sectionClass}>
+        <h2 id="confirmation-message-title" className="font-sans text-2xl font-semibold">Show a confirmation message after payment</h2>
+        <p className="mt-4">Each payment link can have its own <strong>Confirmation message</strong>. It appears on the buyer’s invoice page under “Message from the merchant” once the invoice reaches your required confirmations. Until then, the message is not sent to the browser: the page is rendered on the server and the public invoice status returns no message. Web addresses starting with http:// or https:// become clickable links.</p>
+        <h3 className="mt-6 font-sans text-lg font-semibold">Example uses</h3>
+        <ul className="mt-3 list-disc space-y-3 pl-5">
+          <li><strong>Digital downloads.</strong> Selling five ebooks? Create five payment links, one per ebook, and put each ebook’s download link in that link’s message, for example “Thanks! Download your copy: https://your-site.example/files/ebook-1.pdf”.</li>
+          <li><strong>Shared access details.</strong> A license key, course access code, or private group invitation that is the same for every buyer.</li>
+          <li><strong>Delivery instructions.</strong> Next steps such as “Email your invoice ID to orders@your-site.example with your postal address” or “Book your session at https://your-site.example/book”.</li>
+          <li><strong>Thank-you notes.</strong> A short note with links to support pages, documentation, or updates.</li>
+        </ul>
+        <h3 className="mt-6 font-sans text-lg font-semibold">Limits and good practice</h3>
+        <ul className="mt-3 list-disc space-y-3 pl-5">
+          <li>Every buyer of a link sees the same text, and a buyer can share it with others. For files you need to protect, host them where you control access, such as expiring or signed download links, or a store that checks the invoice ID. Use <Link href="/guides/monero-payment-api-webhooks#webhooks" className={linkClass}>webhooks</Link> to issue unique keys or downloads per buyer.</li>
+          <li>The message follows your confirmation target. With zero confirmations it appears as soon as a payment is detected, before any block confirmation; choose at least one confirmation for content you cannot take back.</li>
+          <li>Each invoice keeps the message that was saved when it was created. Editing a link changes the message for new invoices only.</li>
+          <li>Messages are plain text up to 2,000 characters. Formatting and HTML are shown as typed. Files are not uploaded or hosted by XMR Checkout.</li>
+          <li>The message is merchant-provided information. XMR Checkout displays it but does not check its content or guarantee what it links to.</li>
+        </ul>
       </section>
       <section id="manage" aria-labelledby="manage-title" className={sectionClass}>
         <h2 id="manage-title" className="font-sans text-2xl font-semibold">Edit or disable future purchases</h2>

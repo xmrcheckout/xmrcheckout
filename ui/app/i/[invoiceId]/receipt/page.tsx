@@ -18,6 +18,9 @@ export const metadata: Metadata = {
 };
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost"
+).replace(/\/+$/, "");
 
 
 type InvoiceStatusResponse = {
@@ -35,6 +38,7 @@ type InvoiceStatusResponse = {
   btcpay_redirect_url?: string | null;
   btcpay_order_id?: string | null;
   btcpay_order_number?: string | null;
+  product_title?: string | null;
   quote?: {
     fiat_amount: string;
     fiat_currency: string;
@@ -62,7 +66,13 @@ const formatFiatAmount = (value: string, currency: string) => {
   }
 };
 
-const receiptTitle = (redirectUrl: string | null | undefined) => {
+const receiptTitle = (
+  productTitle: string | null | undefined,
+  redirectUrl: string | null | undefined,
+) => {
+  if (productTitle?.trim()) {
+    return productTitle.trim();
+  }
   if (!redirectUrl) {
     return "Receipt";
   }
@@ -190,7 +200,7 @@ export default async function BtcpayReceiptPage({
         : null;
   const paidXmr = invoice.amount_paid_xmr ?? invoice.amount_xmr;
   const qrSrc = resolveQrSrc(invoiceId, invoice.qr_url);
-  const storeTitle = receiptTitle(invoice.btcpay_redirect_url);
+  const storeTitle = receiptTitle(invoice.product_title, invoice.btcpay_redirect_url);
   const amountPaidLabel = totalFiat ? totalFiat : `${paidXmr} XMR`;
   const returnLabel = invoice.btcpay_redirect_url
     ? `Return to ${storeTitle}`
@@ -259,8 +269,18 @@ export default async function BtcpayReceiptPage({
                       {amountPaidLabel}
                     </p>
                   </div>
-                  <PrintButton />
+                  <div className="flex items-center gap-2 print:hidden">
+                    <CopyIconButton
+                      value={`${siteUrl}/i/${encodeURIComponent(invoiceId)}/receipt`}
+                      label="Copy receipt link"
+                    />
+                    <PrintButton />
+                  </div>
                 </div>
+                <p className="mt-4 text-xs text-ink-soft print:hidden">
+                  Save or print this receipt. XMR Checkout does not email
+                  receipts.
+                </p>
 
                 <dl className="mt-8 grid gap-5 sm:grid-cols-2">
                   <div>

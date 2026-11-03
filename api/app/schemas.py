@@ -16,7 +16,9 @@ from pydantic import (
 
 from .formatting import format_xmr_amount
 
-InvoiceStatus = Literal["pending", "payment_detected", "confirmed", "expired", "invalid"]
+InvoiceStatus = Literal[
+    "pending", "partially_paid", "payment_detected", "confirmed", "expired", "invalid"
+]
 BtcpayCheckoutStyle = Literal["standard", "btcpay_classic"]
 QrLogoMode = Literal["monero", "none", "custom"]
 
@@ -77,6 +79,8 @@ class InvoiceResponse(BaseModel):
     address: str
     subaddress_index: int | None = None
     amount_xmr: Decimal
+    amount_paid_xmr: str | None = None
+    amount_remaining_xmr: str | None = None
     status: InvoiceStatus
     confirmation_target: int
     confirmations: int = 0
@@ -157,6 +161,7 @@ class InvoiceStatusResponse(BaseModel):
     subaddress_index: int | None = None
     amount_xmr: Decimal
     amount_paid_xmr: str | None = None
+    amount_remaining_xmr: str | None = None
     status: InvoiceStatus
     confirmation_target: int
     confirmations: int = 0
@@ -237,6 +242,7 @@ class WebhookCreate(BaseModel):
     events: list[
         Literal[
             "invoice.created",
+            "invoice.partially_paid",
             "invoice.payment_detected",
             "invoice.confirmed",
             "invoice.expired",
@@ -245,6 +251,7 @@ class WebhookCreate(BaseModel):
     event_urls: dict[
         Literal[
             "invoice.created",
+            "invoice.partially_paid",
             "invoice.payment_detected",
             "invoice.confirmed",
             "invoice.expired",

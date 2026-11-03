@@ -110,7 +110,7 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
             db.query(Invoice)
             .filter(
                 or_(
-                    Invoice.status.in_(["pending", "payment_detected"]),
+                    Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
                     and_(
                         Invoice.status == "expired",
                         Invoice.expires_at.is_not(None),
@@ -266,19 +266,64 @@ def _reconcile_invoice(
                 "received_atomic": total_atomic,
             },
         )
-        if invoice.status == "pending" and is_after_expiry:
+        if invoice.status in ("pending", "partially_paid") and is_after_expiry:
             logger.info(
                 "Invoice expired",
-                extra={"invoice_id": str(invoice.id), "user_id": str(user.id)},
+                extra={
+                    "invoice_id": str(invoice.id),
+                    "user_id": str(user.id),
+                    "received_atomic": total_atomic,
+                },
             )
             invoice.status = "expired"
             db.add(invoice)
             db.commit()
             dispatch_webhooks(db, str(user.id), "invoice.expired", invoice)
             dispatch_btcpay_webhooks(db, str(user.id), "InvoiceExpired", invoice)
+            return True
+        if invoice.status == "pending" and total_atomic > 0:
+            logger.info(
+                "Invoice partially paid",
+                extra={
+                    "invoice_id": str(invoice.id),
+                    "user_id": str(user.id),
+                    "required_atomic": required_atomic,
+                    "received_atomic": total_atomic,
+                },
+            )
+            invoice.status = "partially_paid"
+            db.add(invoice)
+            db.commit()
+            _dispatch_partial_payment(db, user, invoice)
+        elif invoice.status == "partially_paid" and total_atomic <= 0:
+            # Previously observed funds disappeared (for example after a chain
+            # reorganization); return to awaiting funds without notifying.
+            logger.info(
+                "Invoice partial payment no longer observed",
+                extra={"invoice_id": str(invoice.id), "user_id": str(user.id)},
+            )
+            invoice.status = "pending"
+            db.add(invoice)
+            db.commit()
+        elif invoice.status == "partially_paid" and total_changed:
+            logger.info(
+                "Invoice partial payment amount changed",
+                extra={
+                    "invoice_id": str(invoice.id),
+                    "user_id": str(user.id),
+                    "required_atomic": required_atomic,
+                    "received_atomic": total_atomic,
+                },
+            )
+            _dispatch_partial_payment(db, user, invoice)
         return True
 
-    payment_transition = is_paid and invoice.status in ("pending", "expired")
+    was_partially_paid = invoice.status == "partially_paid"
+    payment_transition = is_paid and invoice.status in (
+        "pending",
+        "partially_paid",
+        "expired",
+    )
     if is_paid:
         detection_time = invoice.detected_at or now
         timing = classify_payment_timing(
@@ -307,7 +352,12 @@ def _reconcile_invoice(
         db.add(invoice)
         db.commit()
         dispatch_webhooks(db, str(user.id), "invoice.payment_detected", invoice)
-        dispatch_btcpay_webhooks(db, str(user.id), "InvoiceReceivedPayment", invoice)
+        if not was_partially_paid or total_changed:
+            # A final top-up is a newly received payment; an invoice that was
+            # already signalled for the same observed amount is not.
+            dispatch_btcpay_webhooks(
+                db, str(user.id), "InvoiceReceivedPayment", invoice
+            )
         dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaidInFull", invoice)
         dispatch_btcpay_webhooks(db, str(user.id), "InvoiceProcessing", invoice)
 
@@ -325,6 +375,11 @@ def _reconcile_invoice(
         dispatch_btcpay_webhooks(db, str(user.id), "InvoiceSettled", invoice)
         dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaymentSettled", invoice)
     return True
+
+
+def _dispatch_partial_payment(db: Session, user: User, invoice: Invoice) -> None:
+    dispatch_webhooks(db, str(user.id), "invoice.partially_paid", invoice)
+    dispatch_btcpay_webhooks(db, str(user.id), "InvoiceReceivedPayment", invoice)
 
 
 def eligible_allocation_transfers(

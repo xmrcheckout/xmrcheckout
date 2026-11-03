@@ -8,6 +8,7 @@ import time
 from requests import RequestException
 from sqlalchemy.orm import Session
 
+from .formatting import is_overpaid, is_partially_paid
 from .models import BtcpayWebhook, Invoice, InvoiceTransfer
 from .payment_timing import is_payment_after_expiry
 from .security import decrypt_secret
@@ -170,8 +171,8 @@ def _build_payload(
         "storeId": user_id,
         "invoiceId": str(invoice.id),
         "manuallyMarked": manually_marked,
-        "overPaid": False,
-        "partiallyPaid": False,
+        "overPaid": is_overpaid(invoice),
+        "partiallyPaid": is_partially_paid(invoice),
         "afterExpiration": is_payment_after_expiry(invoice),
         "metadata": invoice.metadata_json or {},
     }

@@ -8,7 +8,7 @@ from datetime import datetime
 from requests import RequestException
 from sqlalchemy.orm import Session
 
-from .formatting import format_xmr_amount
+from .formatting import format_xmr_amount, invoice_amounts
 from .models import Invoice, User, Webhook, WebhookDelivery
 from .security import decrypt_secret, encrypt_secret, generate_webhook_secret
 from .webhook_http import UnsafeWebhookUrl, post_webhook_with_redirects
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
+    amount_paid_xmr, amount_remaining_xmr = invoice_amounts(invoice)
     return {
         "event": event,
         "invoice": {
@@ -24,6 +25,8 @@ def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
             "address": invoice.address,
             "subaddress_index": invoice.subaddress_index,
             "amount_xmr": format_xmr_amount(invoice.amount_xmr),
+            "amount_paid_xmr": amount_paid_xmr,
+            "amount_remaining_xmr": amount_remaining_xmr,
             "status": invoice.status,
             "confirmation_target": invoice.confirmation_target,
             "confirmations": invoice.confirmations or 0,

@@ -27,7 +27,7 @@ from .config import (
     QR_STORAGE_DIR,
 )
 from .db import get_db
-from .formatting import atomic_to_xmr, format_xmr_amount
+from .formatting import atomic_to_xmr, format_xmr_amount, invoice_amounts
 from .invoice_limits import reserve_invoice_creation
 from .models import (
     Invoice,
@@ -84,6 +84,7 @@ router = APIRouter()
 
 WEBHOOK_EVENTS = (
     "invoice.created",
+    "invoice.partially_paid",
     "invoice.payment_detected",
     "invoice.confirmed",
     "invoice.expired",
@@ -354,8 +355,11 @@ def _invoice_response(
         qr_logo_data_url = None
     if not isinstance(qr_logo_data_url, str):
         qr_logo_data_url = None
+    amount_paid_xmr, amount_remaining_xmr = invoice_amounts(invoice)
     return response.model_copy(
         update={
+            "amount_paid_xmr": amount_paid_xmr,
+            "amount_remaining_xmr": amount_remaining_xmr,
             "invoice_url": _invoice_url(invoice, request),
             "qr_url": _qr_url(invoice, request),
             "warnings": warnings,
@@ -375,10 +379,9 @@ def _public_invoice_status_response(
     metadata = invoice.metadata_json or {}
     update: dict[str, Any] = {}
     if invoice.total_paid_atomic is not None:
-        total_paid = (Decimal(invoice.total_paid_atomic) / Decimal("1000000000000")).quantize(
-            Decimal("0.000000000001"), rounding=ROUND_DOWN
-        )
-        update["amount_paid_xmr"] = format_xmr_amount(total_paid)
+        amount_paid_xmr, amount_remaining_xmr = invoice_amounts(invoice)
+        update["amount_paid_xmr"] = amount_paid_xmr
+        update["amount_remaining_xmr"] = amount_remaining_xmr
     btcpay_data = metadata.get("btcpay") if isinstance(metadata, dict) else None
     if isinstance(btcpay_data, dict):
         amount = btcpay_data.get("amount")
@@ -1259,7 +1262,7 @@ def list_invoices_for_user(
         query = query.filter(Invoice.status == status_filter)
     if active_only:
         query = query.filter(
-            Invoice.status.in_(["pending", "payment_detected", "confirmed"])
+            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
         )
     if q:
         needle = q.strip()
@@ -1314,7 +1317,7 @@ def list_invoices_for_user(
         total_query = total_query.filter(Invoice.status == status_filter)
     if active_only:
         total_query = total_query.filter(
-            Invoice.status.in_(["pending", "payment_detected", "confirmed"])
+            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
         )
     if q:
         needle = q.strip()
@@ -1376,7 +1379,7 @@ def export_invoices_csv(
         query = query.filter(Invoice.status == status_filter)
     if active_only:
         query = query.filter(
-            Invoice.status.in_(["pending", "payment_detected", "confirmed"])
+            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
         )
     if q:
         needle = q.strip()
@@ -1418,6 +1421,8 @@ def export_invoices_csv(
                 "id",
                 "status",
                 "amount_xmr",
+                "amount_paid_xmr",
+                "amount_remaining_xmr",
                 "confirmation_target",
                 "confirmations",
                 "paid_after_expiry",
@@ -1437,6 +1442,7 @@ def export_invoices_csv(
         buffer.truncate(0)
 
         for invoice in query.yield_per(500):
+            amount_paid_xmr, amount_remaining_xmr = invoice_amounts(invoice)
             metadata = invoice.metadata_json
             if metadata is None:
                 metadata_value = ""
@@ -1447,6 +1453,8 @@ def export_invoices_csv(
                     str(invoice.id),
                     invoice.status,
                     format_xmr_amount(invoice.amount_xmr),
+                    amount_paid_xmr,
+                    amount_remaining_xmr,
                     invoice.confirmation_target,
                     invoice.confirmations or 0,
                     bool(invoice.paid_after_expiry),

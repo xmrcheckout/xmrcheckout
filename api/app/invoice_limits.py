@@ -45,7 +45,7 @@ def reserve_invoice_creation(
         db.query(func.count(Invoice.id))
         .filter(
             Invoice.user_id == locked.id,
-            Invoice.status.in_(["pending", "payment_detected"]),
+            Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
             or_(Invoice.expires_at.is_(None), Invoice.expires_at > now),
         )
         .scalar()

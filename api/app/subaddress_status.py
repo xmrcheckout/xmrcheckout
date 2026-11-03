@@ -73,15 +73,15 @@ def availability(user: User, history: list[Invoice], allocations: list[Subaddres
         row.latest_closure_at = max(closed) if closed else None
         if inconsistent or (issued and not previous):
             row.category, row.code = "needs_review", "inconsistent_history"
-        elif any(item.status not in ("pending", "payment_detected", "confirmed", "expired") for item in previous):
+        elif any(item.status not in ("pending", "partially_paid", "payment_detected", "confirmed", "expired") for item in previous):
             row.category, row.code = "needs_review", "invalid_prior_invoice"
         elif any((item.status == "confirmed" and item.confirmed_at is None) or
                  (item.status == "expired" and item.expires_at is None) for item in previous):
             row.category, row.code = "needs_review", "missing_closure_time"
-        elif any(item.status in ("pending", "payment_detected") for item in previous):
+        elif any(item.status in ("pending", "partially_paid", "payment_detected") for item in previous):
             row.category = "reserved"
             row.code = ("awaiting_invoice_status_update" if any(
-                item.status == "pending" and item.expires_at is not None and utc(item.expires_at) <= now
+                item.status in ("pending", "partially_paid") and item.expires_at is not None and utc(item.expires_at) <= now
                 for item in previous) else "active_invoice")
         elif previous:
             row.cooldown_complete_at = reuse_ready_at(previous)

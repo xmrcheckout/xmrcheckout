@@ -160,6 +160,8 @@ def _resolve_btcpay_amount(
 
 def _btcpay_status(invoice: Invoice) -> tuple[str, str]:
     additional_status = _btcpay_additional_status(invoice)
+    if invoice.status == "partially_paid":
+        return "New", additional_status
     if invoice.status == "payment_detected":
         return "Processing", additional_status
     if invoice.status == "confirmed":

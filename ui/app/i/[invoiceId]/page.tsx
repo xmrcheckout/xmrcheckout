@@ -6,7 +6,7 @@ import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
 import InvoicePaymentDetails from "../../../components/invoice-payment-details";
 import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../components/invoice-status-auto-refresh";
 import Timestamp from "../../../components/timestamp";
-import StatusBadge, { type StatusTone } from "../../../components/status-badge";
+import StatusBadge from "../../../components/status-badge";
 import StatusRefreshButton from "../../../components/status-refresh-button";
 import {
   invoiceStatusLabel,
@@ -58,68 +58,35 @@ type SystemStatusResponse = {
   wallet_rpc: "ok" | "unreachable";
   daemon: "ok" | "unreachable" | "unknown";
   reconciler: "ok" | "degraded" | "unavailable";
-  daemon_height: number | null;
-  invoice_reconcile_interval_seconds: number;
-  last_reconcile_started_at: string | null;
-  last_reconcile_completed_at: string | null;
-  last_reconcile_error: string | null;
-  last_reconcile_attempted_invoices: number;
-  last_reconcile_succeeded_invoices: number;
-  last_reconcile_failed_invoices: number;
 };
 
-const walletRpcBadge = (systemStatus: SystemStatusResponse | null) => {
-  if (!systemStatus) {
-    return {
-      label: "Wallet RPC unavailable",
-      tone: "pending" as StatusTone,
-    };
+const awaitingPaymentStatuses: InvoiceStatus[] = [
+  "pending",
+  "partially_paid",
+  "payment_detected",
+];
+
+const paymentCheckNotice = (
+  systemStatus: SystemStatusResponse | null,
+  status: InvoiceStatus,
+) => {
+  if (!awaitingPaymentStatuses.includes(status)) {
+    return null;
   }
-  if (systemStatus.wallet_rpc === "ok") {
+  const checkingWorks =
+    systemStatus?.wallet_rpc === "ok" &&
+    systemStatus.daemon !== "unreachable" &&
+    systemStatus.reconciler === "ok";
+  if (checkingWorks) {
     return {
-      label: "Wallet RPC ok",
-      tone: "success" as StatusTone,
+      delayed: false,
+      text: "This page updates automatically when your payment is seen. You can keep it open or come back later.",
     };
   }
   return {
-    label: "Wallet RPC down",
-    tone: "error" as StatusTone,
+    delayed: true,
+    text: "Payment checking is delayed right now. Payments sent to this address still go directly to the merchant's wallet and will appear here once checking resumes.",
   };
-};
-
-const daemonBadge = (systemStatus: SystemStatusResponse | null) => {
-  if (!systemStatus) {
-    return {
-      label: "Daemon unavailable",
-      tone: "pending" as StatusTone,
-    };
-  }
-  if (systemStatus.daemon === "ok") {
-    return {
-      label: "Daemon connected",
-      tone: "success" as StatusTone,
-    };
-  }
-  if (systemStatus.daemon === "unknown") {
-    return {
-      label: "Daemon not configured",
-      tone: "pending" as StatusTone,
-    };
-  }
-  return {
-    label: "Daemon down",
-    tone: "error" as StatusTone,
-  };
-};
-
-const reconcilerBadge = (systemStatus: SystemStatusResponse | null) => {
-  if (!systemStatus || systemStatus.reconciler === "unavailable") {
-    return { label: "Detection unavailable", tone: "pending" as StatusTone };
-  }
-  if (systemStatus.reconciler === "ok") {
-    return { label: "Detection healthy", tone: "success" as StatusTone };
-  }
-  return { label: "Detection degraded", tone: "error" as StatusTone };
 };
 
 export default async function BtcpayModalInvoicePage({
@@ -210,10 +177,7 @@ export default async function BtcpayModalInvoicePage({
     invoice.status === "payment_detected" || invoice.status === "confirmed";
   const createdTimestamp = invoice.created_at;
   const expiresTimestamp = invoice.expires_at;
-  const lastReconcileCompleted = systemStatus?.last_reconcile_completed_at ?? null;
-  const walletStatusBadge = walletRpcBadge(systemStatus);
-  const daemonStatusBadge = daemonBadge(systemStatus);
-  const reconcilerStatusBadge = reconcilerBadge(systemStatus);
+  const checkNotice = paymentCheckNotice(systemStatus, invoice.status);
   const isBtcpayInvoice = Boolean(
     invoice.btcpay_amount && invoice.btcpay_currency,
   );
@@ -339,66 +303,22 @@ export default async function BtcpayModalInvoicePage({
                 </p>
               </div>
             </div>
-            <details className="border-t border-stroke px-5 py-4">
-              <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-                Detection details
-              </summary>
-              <div className="mt-4 grid gap-4">
-                <div className="flex flex-wrap gap-2">
-                  <StatusBadge
-                    label={walletStatusBadge.label}
-                    tone={walletStatusBadge.tone}
-                  />
-                  <StatusBadge
-                    label={daemonStatusBadge.label}
-                    tone={daemonStatusBadge.tone}
-                  />
-                  <StatusBadge
-                    label={reconcilerStatusBadge.label}
-                    tone={reconcilerStatusBadge.tone}
-                  />
-                </div>
-                <dl className="grid gap-4 text-sm sm:grid-cols-3">
-                  <div>
-                    <dt className="text-xs font-semibold text-ink-soft">
-                      Block height
-                    </dt>
-                    <dd className="mt-1 font-semibold">
-                      {systemStatus?.daemon_height?.toLocaleString() ??
-                        "Unavailable"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold text-ink-soft">
-                      Detection poll
-                    </dt>
-                    <dd className="mt-1 font-semibold">
-                      {systemStatus?.invoice_reconcile_interval_seconds ?? 30}s
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold text-ink-soft">
-                      Last scan
-                    </dt>
-                    <dd
-                      className="mt-1 font-semibold"
-                    >
-                      <Timestamp value={lastReconcileCompleted} />
-                    </dd>
-                  </div>
-                </dl>
-                {systemStatus?.last_reconcile_error ? (
-                  <p className="border-l-2 border-red-400 pl-3 text-sm text-red-700">
-                    Detection error: {systemStatus.last_reconcile_error}
-                  </p>
-                ) : null}
+            <div className="grid gap-2 border-t border-stroke px-5 py-4">
+              {checkNotice ? (
                 <p
-                  className="text-xs text-ink-soft"
+                  className={
+                    checkNotice.delayed
+                      ? "border-l-2 border-amber-400 pl-3 text-sm text-ink"
+                      : "text-sm text-ink-soft"
+                  }
                 >
-                  Created <Timestamp value={createdTimestamp} />
+                  {checkNotice.text}
                 </p>
-              </div>
-            </details>
+              ) : null}
+              <p className="text-xs text-ink-soft">
+                Created <Timestamp value={createdTimestamp} />
+              </p>
+            </div>
             {checkoutContinueAvailable ? (
               <div className="border-t border-stroke bg-sand/50 px-5 py-4">
                 <a

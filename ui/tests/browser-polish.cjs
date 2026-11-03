@@ -35,6 +35,12 @@ const { contrast } = require('./browser-contrast.cjs');
         await page.evaluate(()=>document.documentElement.style.fontSize='200%');
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path+' enlarged overflow');
       }
+      if(width===1440) {
+        for (const [path,label] of [['/docs','Documentation'],['/docs/integrations','Integration Recipes'],['/faq','FAQ'],['/guides','Guides'],['/tour','Demo'],['/invoice','Check Invoice']]) {
+          await page.goto(base+path,{waitUntil:'networkidle'});
+          assert.equal(await page.title(),label+' | XMR Checkout',path+' title');
+        }
+      }
       await page.goto(base+'/',{waitUntil:'networkidle'});
       if(width<768) {
         const menu=page.locator('.mobile-nav > summary');await menu.click();

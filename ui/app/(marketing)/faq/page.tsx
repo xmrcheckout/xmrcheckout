@@ -5,7 +5,7 @@ import PageIntroBand from "../../../components/page-intro-band";
 import { areDonationsEnabled } from "../../../lib/donations";
 
 export const metadata: Metadata = {
-  title: "Monero Checkout FAQ",
+  title: "FAQ",
   description:
     "Frequently asked questions about XMR Checkout: non-custodial Monero invoices with view-only detection.",
   alternates: {

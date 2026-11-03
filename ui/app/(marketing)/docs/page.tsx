@@ -7,7 +7,7 @@ import CopyCodeBlock from "../../../components/copy-code-block";
 import StatusBadge from "../../../components/status-badge";
 
 export const metadata: Metadata = {
-  title: "Monero Payment API Documentation",
+  title: "Documentation",
   description:
     "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
   alternates: {

@@ -4,7 +4,7 @@ import InvoiceStatusLookup from "../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../components/page-intro-band";
 
 export const metadata: Metadata = {
-  title: "Monero Invoice Status Lookup",
+  title: "Check Invoice",
   description:
     "Check Monero invoice detection and confirmation progress using a public invoice ID.",
   alternates: {

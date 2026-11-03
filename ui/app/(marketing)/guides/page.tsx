@@ -4,7 +4,7 @@ import Link from "next/link";
 import PageIntroBand from "../../../components/page-intro-band";
 
 export const metadata: Metadata = {
-  title: "Monero Checkout Guides",
+  title: "Guides",
   description:
     "Practical guides for adding Monero payment and donation links, running self-hosted XMR Checkout, and integrating invoices and webhooks.",
   alternates: {

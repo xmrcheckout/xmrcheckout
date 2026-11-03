@@ -6,7 +6,7 @@ import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
 
 export const metadata: Metadata = {
-  title: "Monero Checkout Integration Recipes",
+  title: "Integration Recipes",
   description:
     "Practical integration recipes for connecting Monero invoices, public payment pages, and webhooks to your store.",
   alternates: {

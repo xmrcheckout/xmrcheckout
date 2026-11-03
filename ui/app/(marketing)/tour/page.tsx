@@ -11,7 +11,7 @@ import WebhookSection from "../../../components/webhook-section";
 import WorkspaceNav from "../../../components/workspace-nav";
 
 export const metadata: Metadata = {
-  title: "Monero Checkout Demo",
+  title: "Demo",
   description:
     "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
   alternates: {

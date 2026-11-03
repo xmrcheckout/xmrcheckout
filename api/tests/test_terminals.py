@@ -16,6 +16,8 @@ from app import payment_links, reconciler, routes, terminals
 from app.db import Base, SessionLocal, engine
 from app.models import Invoice, InvoiceTransfer, User
 
+REAL_FREE_ADDRESSES = terminals.free_addresses
+
 
 @unittest.skipUnless(make_url(str(engine.url)).database == "payment_link_tests", "requires isolated payment_link_tests database")
 class TerminalIntegrationTests(unittest.TestCase):
@@ -153,6 +155,16 @@ class TerminalIntegrationTests(unittest.TestCase):
         self.assertEqual(status["available_addresses"], 150)
         self.assertFalse(status["low_addresses"])
         self.assertNotIn("url", status)
+
+    def test_status_survives_unavailable_capacity_and_is_not_cached(self):
+        _, auth = self.create_terminal()
+        with patch.object(terminals, "free_addresses", REAL_FREE_ADDRESSES), \
+                patch.object(terminals, "merchant_status", side_effect=RuntimeError("derivation failed")):
+            response = requests.get(self.base + "/api/core/terminal/status", headers=auth, timeout=10)
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertIsNone(response.json()["available_addresses"])
+        self.assertFalse(response.json()["low_addresses"])
+        self.assertEqual(response.headers.get("cache-control"), "no-store")
 
     def test_fast_pass_checks_only_open_terminal_invoices(self):
         _, auth = self.create_terminal()

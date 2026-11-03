@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.orm import Session
@@ -25,8 +25,15 @@ from .schemas import InvoiceCreateUser
 from .security import hash_api_key
 from .subaddress_status import merchant_status
 
-router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+def no_store(response: Response):
+    # Terminal links and invoice status must never be cached by browsers or proxies.
+    response.headers["Cache-Control"] = "no-store"
+
+
+router = APIRouter(dependencies=[Depends(no_store)])
 
 TERMINAL_CURRENCIES = ("XMR",) + SUPPORTED_CURRENCIES
 LOW_ADDRESS_WARNING = 20
@@ -154,8 +161,13 @@ def current_terminal(authorization: str | None = Header(default=None), db: Sessi
     return terminal
 
 
-def free_addresses(db: Session, user: User) -> int:
-    counts = merchant_status(db, user)["counts"]
+def free_addresses(db: Session, user: User) -> int | None:
+    try:
+        counts = merchant_status(db, user)["counts"]
+    except Exception:
+        # Capacity is advisory here; invoice creation still enforces it.
+        logger.warning("Terminal address availability unavailable user=%s", user.id)
+        return None
     return counts.get("never_issued", 0) + counts.get("eligible_for_reuse", 0)
 
 
@@ -169,7 +181,7 @@ def terminal_status(db: Session = Depends(get_db), terminal: Terminal = Depends(
         **serialize(terminal),
         "currencies": list(TERMINAL_CURRENCIES),
         "available_addresses": available,
-        "low_addresses": available < LOW_ADDRESS_WARNING,
+        "low_addresses": available is not None and available < LOW_ADDRESS_WARNING,
     }
 
 
@@ -206,7 +218,7 @@ def create_sale(
     if attempt:
         existing = db.query(Invoice).filter(Invoice.terminal_id == terminal.id, Invoice.terminal_attempt_id == attempt).first()
         if existing:
-            return JSONResponse(sale_response(db, existing, request), status_code=200)
+            return JSONResponse(sale_response(db, existing, request), status_code=200, headers={"Cache-Control": "no-store"})
     metadata = {"origin": "terminal", "terminal": {"id": str(terminal.id), "name": terminal.name, "note": sale.note}}
     amounts = {"amount_xmr": amount} if currency == "XMR" else {"amount_fiat": amount, "currency": currency}
     payload = InvoiceCreateUser(

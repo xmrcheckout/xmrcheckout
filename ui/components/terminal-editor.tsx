@@ -5,6 +5,7 @@ import { useEffect, useId, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import QRCode from "qrcode";
 import { saveTerminal, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
+import ConfirmSubmitButton from "./confirm-submit-button";
 import CopyCodeBlock from "./copy-code-block";
 
 export type TerminalData = {
@@ -13,12 +14,9 @@ export type TerminalData = {
 };
 const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-3 py-2 text-ink";
 
-function Buttons({ existing }: { existing: boolean }) {
+function SaveButton({ existing }: { existing: boolean }) {
   const { pending } = useFormStatus();
-  return <div className="flex flex-wrap gap-3">
-    <button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? "Saving…" : existing ? "Save terminal" : "Create terminal"}</button>
-    {existing ? <button disabled={pending} formNoValidate name="mode" value="rotate" className="min-h-11 rounded-full border border-stroke px-5 py-2">Create new link</button> : null}
-  </div>;
+  return <button disabled={pending} className="min-h-11 justify-self-start rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? "Saving…" : existing ? "Save terminal" : "Create terminal"}</button>;
 }
 
 function NewLink({ url }: { url: string }) {
@@ -34,8 +32,9 @@ function NewLink({ url }: { url: string }) {
 
 export default function TerminalEditor({ terminal, currencies }: { terminal?: TerminalData; currencies: string[] }) {
   const [state, action] = useFormState<TerminalState, FormData>(saveTerminal, { error: "", success: "", url: "" });
+  const [rotated, rotate] = useFormState<TerminalState, FormData>(saveTerminal, { error: "", success: "", url: "" });
   const prefix = useId();
-  return <form action={action} className="grid min-w-0 gap-4">
+  return <div className="grid min-w-0 gap-6"><form action={action} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={terminal?.id ?? ""} />
     <div><label htmlFor={`${prefix}-name`}>Name</label><input id={`${prefix}-name`} name="name" defaultValue={terminal?.name ?? ""} required maxLength={100} placeholder="Front counter" className={inputClass} /></div>
     <div className="grid gap-4 sm:grid-cols-3">
@@ -48,6 +47,14 @@ export default function TerminalEditor({ terminal, currencies }: { terminal?: Te
     <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="enabled" defaultChecked={terminal?.enabled ?? true} />Enabled</label>
     <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
     {state.url ? <NewLink url={state.url} /> : null}
-    <Buttons existing={!!terminal} />
-  </form>;
+    <SaveButton existing={!!terminal} />
+  </form>
+  {terminal ? <form action={rotate} className="grid min-w-0 gap-3 border-t border-stroke pt-4">
+    <input type="hidden" name="id" value={terminal.id} />
+    <input type="hidden" name="mode" value="rotate" />
+    <p className="text-sm text-ink-soft">Lost the device or the link? Create a new link. The current link stops working immediately.</p>
+    <ConfirmSubmitButton label="Create new link" confirmLabel="Replace link" description="The device using the current link will stop working until you open the new link on it." />
+    <p role="status" className={rotated.error ? "text-red-700" : "text-ink"}>{rotated.error || rotated.success}</p>
+    {rotated.url ? <NewLink url={rotated.url} /> : null}
+  </form> : null}</div>;
 }

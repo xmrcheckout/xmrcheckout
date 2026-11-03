@@ -34,6 +34,15 @@ function initialKey(): string | null {
 function moneroUri(address: string, amount: string) {
   return `monero:${address}?${new URLSearchParams({ tx_amount: formatXmrAmount(amount) }).toString()}`;
 }
+function newAttemptKey(): string {
+  if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+  // randomUUID needs a secure context; plain-HTTP self-hosted installs fall back to getRandomValues.
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
 function decimalsFor(currency: string) {
   return currency === "XMR" ? 12 : currency === "JPY" || currency === "KRW" ? 0 : 2;
 }
@@ -127,6 +136,8 @@ export default function TerminalScreen() {
 
   function press(value: string) {
     setError("");
+    // A retry key belongs to one exact sale; any edit starts a new one.
+    attempt.current = null;
     if (value === "⌫") return setAmount(current => current.slice(0, -1));
     setAmount(current => {
       const next = value === "." ? (current.includes(".") ? current : (current || "0") + ".") : current === "0" ? value : current + value;
@@ -139,13 +150,14 @@ export default function TerminalScreen() {
   async function charge() {
     if (!amount || Number(amount) <= 0) return setError("Enter an amount.");
     setBusy(true); setError("");
-    attempt.current ??= crypto.randomUUID();
+    attempt.current ??= newAttemptKey();
     try {
       const { response, data } = await call("/invoices", {
         method: "POST", headers: { "Idempotency-Key": attempt.current },
         body: JSON.stringify({ amount: amount.replace(/\.$/, ""), currency, note }),
       });
-      if (response.ok) { setSale(data); attempt.current = null; }
+      attempt.current = null;
+      if (response.ok) setSale(data);
       else setError(errorDetail(data, "Could not create the invoice. Try again."));
     } catch (exc) {
       // Retrying with the same key returns the same invoice if the first request succeeded.
@@ -224,7 +236,7 @@ export default function TerminalScreen() {
     <div className="grid w-full max-w-sm gap-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-sans text-lg font-semibold">{terminal?.name ?? "Terminal"}</h1>
-        <select aria-label="Currency" value={currency} onChange={event => { setCurrency(event.target.value); setAmount(""); }} className="min-h-11 rounded-xl border border-stroke bg-white px-3">
+        <select aria-label="Currency" value={currency} onChange={event => { setCurrency(event.target.value); setAmount(""); attempt.current = null; }} className="min-h-11 rounded-xl border border-stroke bg-white px-3">
           {currencies.map(code => <option key={code}>{code}</option>)}
         </select>
       </div>
@@ -233,10 +245,11 @@ export default function TerminalScreen() {
       <div className="grid grid-cols-3 gap-3">
         {KEYS.map(value => <button key={value} onClick={() => press(value)} aria-label={value === "⌫" ? "Delete" : value} className="min-h-16 rounded-2xl border border-stroke bg-white text-2xl font-semibold active:bg-stroke">{value}</button>)}
       </div>
-      <label className="grid gap-1 text-sm">Note (optional)<input value={note} maxLength={200} onChange={event => setNote(event.target.value)} className="min-h-11 rounded-xl border border-stroke bg-white px-3 text-base" placeholder="2 coffees" /></label>
+      <label className="grid gap-1 text-sm">Note (optional)<input value={note} maxLength={200} onChange={event => { setNote(event.target.value); attempt.current = null; }} className="min-h-11 rounded-xl border border-stroke bg-white px-3 text-base" placeholder="2 coffees" /></label>
       {error ? <p role="alert" className="text-red-700">{error}</p> : null}
       <button onClick={charge} disabled={busy || !terminal} className="min-h-16 rounded-full bg-ink text-xl font-semibold text-cream disabled:opacity-60">{busy ? "Creating invoice…" : "Charge"}</button>
       {currency !== "XMR" ? <p className="text-center text-xs text-ink-soft">{currency} amounts are converted to XMR at a reference rate when the invoice is created.</p> : null}
+      <button onClick={() => { if (window.confirm("Remove this terminal from this device? You will need the terminal link again to use it.")) forget(); }} className="mx-auto min-h-11 px-4 text-sm text-ink-soft underline underline-offset-4">Forget this terminal</button>
     </div>
   </main>;
 }

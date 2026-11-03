@@ -570,6 +570,35 @@ HTTP 429 responses, quote failures, and allocation diagnostics in service logs.
 For rollback, disable links, restore preceding application images/configuration,
 and retain additive tables and invoice records.
 
+### In-person terminals
+
+Follow the [in-person checkout guide](https://xmrcheckout.com/guides/in-person-monero-checkout) for the merchant walkthrough.
+
+In Dashboard → Terminals, create a terminal and open its link (`/terminal#k=…`)
+on the device at the till. The terminal key travels in the URL fragment, is
+stored only as a hash, and is shown once; "Create new link" replaces it. A
+terminal key can create invoices, read the status of its own invoices, and
+cancel its own unpaid invoices (by expiring them now). It cannot read other
+invoices, change settings, or use the merchant API. Resetting the merchant API
+key does not change terminal links; disable or replace them separately.
+
+Terminal invoices use the terminal's confirmation target (default 0) and expiry
+(default 15 minutes), are tagged with `terminal_id` and `metadata.terminal`, and
+appear in the normal invoice list, CSV export, and webhook events. Merchant
+invoice limits and address capacity apply; the public payment-link allowance
+does not. Between full reconciliation cycles the reconciler refreshes the wallet
+and checks open terminal invoices every `TERMINAL_RECONCILE_INTERVAL_SECONDS`
+(default 5), so unconfirmed payments are reported within seconds. Each refresh
+is a wallet-rpc call per merchant with an open terminal sale; raise the interval
+if wallet-rpc load matters more than speed.
+
+Management API: authenticated GET/POST `/api/core/terminals`, PATCH
+`/api/core/terminals/{id}`, and POST `/api/core/terminals/{id}/rotate`.
+Terminal API (`Authorization: Terminal <key>`): GET `/api/core/terminal/status`,
+POST `/api/core/terminal/invoices` (amount, currency, optional note, optional
+UUID `Idempotency-Key`), GET `/api/core/terminal/invoices/{id}`, and POST
+`/api/core/terminal/invoices/{id}/cancel`.
+
 Payment-link verification uses isolated fixtures. Run the Python suite against a
 throwaway PostgreSQL database named `payment_link_tests` to enable its HTTP and
 concurrency tests; set `SUBADDRESS_DATABASE_TESTS=1` for allocation integration

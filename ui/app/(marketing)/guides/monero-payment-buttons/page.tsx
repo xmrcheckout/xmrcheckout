@@ -5,7 +5,7 @@ import CopyCodeBlock from "../../../../components/copy-code-block";
 import { paymentButtonHtml } from "../../../../lib/payment-button";
 
 const title = "Accept Monero with payment and donation links";
-const description = "Accept payments or fixed-amount donations directly to your wallet. Share a reusable Monero link or embed an HTML button without programming.";
+const description = "Accept payments or donations directly to your wallet. Share a reusable Monero link or embed an HTML button without programming.";
 export const metadata: Metadata = {
   title, description,
   alternates: { canonical: "/guides/monero-payment-buttons" },
@@ -19,17 +19,17 @@ const sections = [["setup", "Configure your product"], ["embed", "Copy your butt
 
 export default function PaymentButtonsGuide() {
   return <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
-    <PageIntroBand eyebrow="Guide · Payment links" id="payment-buttons-title" title={title} description={<p>Accept Monero on an independent website without WooCommerce or an API integration. Use payment links for products, services, or fixed-amount donations to your own wallet. Configure the amount in the dashboard, then paste a button into an HTML block or share a reusable link.</p>} />
+    <PageIntroBand eyebrow="Guide · Payment links" id="payment-buttons-title" title={title} description={<p>Accept Monero on an independent website without WooCommerce or an API integration. Use payment links for products, services, or donations to your own wallet. Configure a fixed amount or let the customer enter one in the dashboard, then paste a button into an HTML block or share a reusable link.</p>} />
     <nav aria-label="Payment button guide sections" className="mt-6 grid gap-2 rounded-surface border border-stroke bg-card p-3 sm:grid-cols-2">
       {sections.map(([id, label]) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center rounded-xl px-3 py-2 font-semibold hover:bg-white/70">{label}</a>)}
     </nav>
     <div className="mt-8 grid gap-6">
       <section id="setup" aria-labelledby="setup-title" className={sectionClass}>
-        <h2 id="setup-title" className="font-sans text-2xl font-semibold">Configure a fixed-amount link</h2>
+        <h2 id="setup-title" className="font-sans text-2xl font-semibold">Configure a payment link</h2>
         <ol className="mt-4 list-decimal space-y-3 pl-5">
           <li>Connect your wallet using your primary address and private view key. Never submit a private spend key or recovery seed. Customer payments go directly to your wallet.</li>
           <li>Open <Link href="/dashboard?tab=payment-links" className={linkClass}>Dashboard → Payment links</Link>, then choose <strong>Create payment link</strong>.</li>
-          <li>Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount. Customer-entered amounts are not supported.</li>
+          <li>Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount, or select <strong>Customer enters the amount</strong> to let the customer type it (see <a href="#donations" className={linkClass}>donations</a>).</li>
           <li>Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL and a <a href="#confirmation-message" className={linkClass}>confirmation message</a> shown after payment.</li>
           <li>Leave <strong>Enable new purchases</strong> selected and save. Set Button text to customize the graphic label (up to 32 characters). The default is “Buy with Monero”. Copy controls appear in the payment-link list; copy the updated HTML after changing the label. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity.</li>
         </ol>
@@ -75,13 +75,13 @@ export default function PaymentButtonsGuide() {
         <p className="mt-3">Use <strong>Disable payment link</strong> to stop new purchases. Existing invoices remain valid and continue detection. Re-enable a link through its settings after correcting any unsupported saved currency or other invalid settings.</p>
       </section>
       <section id="donations" aria-labelledby="donations-title" className={sectionClass}>
-        <h2 id="donations-title" className="font-sans text-2xl font-semibold">Accept fixed-amount Monero donations</h2>
+        <h2 id="donations-title" className="font-sans text-2xl font-semibold">Accept Monero donations</h2>
         <p className="mt-4">Creators, maintainers, and other recipients can use payment links to receive voluntary contributions directly to their own wallet. Each successful submission creates a separate invoice with payment detection and confirmation progress.</p>
         <ol className="mt-4 list-decimal space-y-3 pl-5">
-          <li>Create a payment link with a title such as “Support my project” and choose a fixed XMR amount. Set <strong>Button text</strong> to <strong>Donate with Monero</strong>.</li>
+          <li>Create a payment link with a title such as “Support my project” and choose <strong>Customer enters the amount</strong>. Set <strong>Button text</strong> to <strong>Donate with Monero</strong>. Optionally set a minimum amount in XMR to avoid very small invoices.</li>
           <li>Share the reusable URL on your profile or website, or copy the HTML button from the dashboard. You can attach the URL to your own “Support this project” button too.</li>
-          <li>To offer several preset amounts, create a separate link for each amount. Donors cannot enter their own amount on these links.</li>
-          <li>Keep the review step enabled if opening a shared URL should not create an invoice. Automatic creation is optional and consumes capacity when an active browser requests an invoice.</li>
+          <li>Donors enter an amount and choose XMR or a supported fiat-reference currency on the review page, then create their invoice. To offer preset amounts instead, create a separate fixed-amount link for each.</li>
+          <li>Customer-entered links always show the review page. For fixed-amount links, keep the review step enabled if opening a shared URL should not create an invoice. Automatic creation is optional and consumes capacity when an active browser requests an invoice.</li>
         </ol>
         <p className="mt-4">Each contribution is a separate payment initiated in the donor’s wallet. These links do not provide recurring collection or donor management. A supported fiat-reference amount is converted to an informational XMR amount at invoice creation; no rate or fiat outcome is guaranteed.</p>
         <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_DONATION_LINK_TOKEN", "Donate with Monero")}</CopyCodeBlock>

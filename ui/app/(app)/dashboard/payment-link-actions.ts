@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 export type PaymentLinkState = { error: string; success: string; fieldErrors: Record<string, string> };
-const fields: Record<string, string> = { title: "title", description: "description", button_text: "button_text", amount_xmr: "amount", amount_fiat: "amount", currency: "currency", confirmation_target: "confirmation_target", checkout_continue_url: "checkout_continue_url", confirmation_message: "confirmation_message" };
+const fields: Record<string, string> = { title: "title", description: "description", button_text: "button_text", amount_xmr: "amount", amount_fiat: "amount", currency: "currency", confirmation_target: "confirmation_target", checkout_continue_url: "checkout_continue_url", confirmation_message: "confirmation_message", minimum_amount_xmr: "minimum_amount_xmr" };
 export async function savePaymentLink(_state: PaymentLinkState, form: FormData): Promise<PaymentLinkState> {
   const fieldErrors: Record<string, string> = {};
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
@@ -12,18 +12,21 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
   const id = String(form.get("id") ?? "");
   const currency = String(form.get("currency") ?? "XMR");
   const disabling = form.get("mode") === "disable" && !!id;
+  const customerAmount = form.get("amount_mode") === "customer";
   try {
     const response = await fetch(`${process.env.API_BASE_URL ?? "http://localhost:8000"}/api/core/payment-links${id ? `/${encodeURIComponent(id)}` : ""}`, {
       method: id ? "PATCH" : "POST", cache: "no-store",
       headers: { Authorization: `ApiKey ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify(disabling ? { enabled: false } : { title: form.get("title"), description: form.get("description"),
-        amount_xmr: currency === "XMR" ? form.get("amount") : null,
-        amount_fiat: currency === "XMR" ? null : form.get("amount"), currency: currency === "XMR" ? null : currency,
+        customer_amount: customerAmount,
+        minimum_amount_xmr: customerAmount ? String(form.get("minimum_amount_xmr") ?? "").trim() || null : null,
+        amount_xmr: customerAmount || currency !== "XMR" ? null : form.get("amount"),
+        amount_fiat: customerAmount || currency === "XMR" ? null : form.get("amount"), currency: customerAmount || currency === "XMR" ? null : currency,
         confirmation_target: Number(form.get("confirmation_target")),
         checkout_continue_url: String(form.get("checkout_continue_url") ?? "").trim() || null,
         confirmation_message: String(form.get("confirmation_message") ?? "").trim() || null,
         button_text: form.get("button_text"),
-        auto_create_invoice: form.get("auto_create_invoice") === "on",
+        auto_create_invoice: !customerAmount && form.get("auto_create_invoice") === "on",
         enabled: form.get("enabled") === "on" }),
     });
     if (!response.ok) {
@@ -32,7 +35,8 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
         const field = Array.isArray(issue.loc) ? issue.loc.findLast((part: string) => Object.hasOwn(fields, part)) : null;
         if (field && !fieldErrors[fields[field]]) fieldErrors[fields[field]] = typeof issue.msg === "string" ? issue.msg.replace(/^Value error, /, "") : "Check this field.";
       }
-      return { error: typeof data?.detail === "string" ? data.detail : "Check the highlighted fields and payment-link settings.", success: "", fieldErrors };
+      const general = Array.isArray(data?.detail) && Object.keys(fieldErrors).length === 0 && typeof data.detail[0]?.msg === "string" ? data.detail[0].msg.replace(/^Value error, /, "") : null;
+      return { error: typeof data?.detail === "string" ? data.detail : general ?? "Check the highlighted fields and payment-link settings.", success: "", fieldErrors };
     }
     revalidatePath("/dashboard");
     return { error: "", success: disabling ? "Payment link disabled." : "Payment link saved. Your copyable link and button are listed below.", fieldErrors };

@@ -8,6 +8,7 @@ export type PaymentLinkData = {
   button_text: string; id: string; title: string; description: string; amount_xmr: string | null;
   amount_fiat: string | null; currency: string | null; confirmation_target: number;
   auto_create_invoice: boolean; checkout_continue_url: string | null; confirmation_message: string | null; enabled: boolean; url: string; action_url: string;
+  customer_amount: boolean; minimum_amount_xmr: string | null;
 };
 const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-3 py-2 text-ink";
 function Buttons({ canDisable }: { canDisable: boolean }) {
@@ -15,13 +16,14 @@ function Buttons({ canDisable }: { canDisable: boolean }) {
   return <div className="flex flex-wrap gap-3"><button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? "Saving…" : "Save payment link"}</button>{canDisable ? <button disabled={pending} formNoValidate name="mode" value="disable" className="min-h-11 rounded-full border border-stroke px-5 py-2">Disable payment link</button> : null}</div>;
 }
 export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null }) {
-  const empty = { button_text: "Buy with Monero", title: "", description: "", amount: "", currency: "XMR", confirmation_target: String(defaultTarget), checkout_continue_url: "", confirmation_message: "" };
-  const [values, setValues] = useState(link ? { button_text: link.button_text, title: link.title, description: link.description, amount: link.amount_xmr ?? link.amount_fiat ?? "", currency: link.currency ?? "XMR", confirmation_target: String(link.confirmation_target), checkout_continue_url: link.checkout_continue_url ?? "", confirmation_message: link.confirmation_message ?? "" } : empty);
+  const empty = { button_text: "Buy with Monero", title: "", description: "", amount: "", currency: "XMR", confirmation_target: String(defaultTarget), checkout_continue_url: "", confirmation_message: "", minimum_amount_xmr: "" };
+  const [values, setValues] = useState(link ? { button_text: link.button_text, title: link.title, description: link.description, amount: link.amount_xmr ?? link.amount_fiat ?? "", currency: link.currency ?? "XMR", confirmation_target: String(link.confirmation_target), checkout_continue_url: link.checkout_continue_url ?? "", confirmation_message: link.confirmation_message ?? "", minimum_amount_xmr: link.minimum_amount_xmr ?? "" } : empty);
+  const [customerAmount, setCustomerAmount] = useState(link?.customer_amount ?? false);
   const [automatic, setAutomatic] = useState(link?.auto_create_invoice ?? false);
   const [enabled, setEnabled] = useState(link?.enabled ?? true);
   const [state, action] = useFormState<PaymentLinkState, FormData>(async (previous, data) => {
     const result = await savePaymentLink(previous, data);
-    if (result.success && !link) { setValues(empty); setEnabled(true); setAutomatic(false); }
+    if (result.success && !link) { setValues(empty); setEnabled(true); setAutomatic(false); setCustomerAmount(false); }
     if (result.success === "Payment link disabled.") setEnabled(false);
     return result;
   }, { error: "", success: "", fieldErrors: {} });
@@ -43,12 +45,19 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies 
       <p className="mt-2 text-sm text-ink-soft">Up to 32 characters. Replaces “Buy with Monero” in the graphic. Copy the updated HTML after changing this text.</p>
     </div>
     <div><label htmlFor={`${prefix}-description`}>Description</label><textarea {...props("description")} maxLength={2000} />{error("description")}</div>
-    <div className="grid gap-4 sm:grid-cols-2">
+    <fieldset className="grid gap-2"><legend>Amount</legend>
+      <label className="flex min-h-11 items-center gap-3"><input type="radio" name="amount_mode" value="fixed" checked={!customerAmount} onChange={() => setCustomerAmount(false)} />Fixed amount set by you</label>
+      <label className="flex min-h-11 items-center gap-3"><input type="radio" name="amount_mode" value="customer" checked={customerAmount} onChange={() => { setCustomerAmount(true); setAutomatic(false); }} />Customer enters the amount</label>
+      <p className="text-sm text-ink-soft">Use a customer-entered amount for donations and contributions. The customer types an amount and chooses XMR or a supported fiat reference currency before the invoice is created.</p>
+    </fieldset>
+    {customerAmount ? <div><label htmlFor={`${prefix}-minimum_amount_xmr`}>Minimum amount in XMR (optional)</label><input {...props("minimum_amount_xmr")} type="number" min="0.000000000001" step="any" />{error("minimum_amount_xmr")}
+      <p className="mt-2 text-sm text-ink-soft">Leave blank for no minimum. Fiat-reference amounts are compared after conversion to XMR.</p>
+    </div> : <><div className="grid gap-4 sm:grid-cols-2">
       <div><label htmlFor={`${prefix}-amount`}>Fixed amount</label><input {...props("amount")} type="number" min="0.000000000001" step="any" required />{error("amount")}</div>
       <div><label htmlFor={`${prefix}-currency`}>Amount currency</label><select {...props("currency")}><option>XMR</option>{unknown ? <option value={values.currency}>{values.currency} — {currencies ? "unsupported" : "unverified"}</option> : null}{currencies?.map(currency => <option key={currency}>{currency}</option>)}</select>{error("currency")}</div>
     </div>
     {unknown && currencies ? <p className="text-sm text-red-700">Choose a supported currency before saving. You can still disable this link.</p> : null}
-    {!currencies ? <p role="status">Currency choices are unavailable. Refresh to retrieve them; your saved settings are preserved.</p> : null}
+    {!currencies ? <p role="status">Currency choices are unavailable. Refresh to retrieve them; your saved settings are preserved.</p> : null}</>}
     <p className="text-sm text-ink-soft">Fiat-reference amounts are converted to XMR when each invoice is created. Estimates do not lock rates or guarantee a fiat outcome.</p>
     <div><label htmlFor={`${prefix}-confirmation_target`}>Required confirmations</label><input {...props("confirmation_target")} type="number" min="0" max="10" step="1" required />{error("confirmation_target")}</div>
     <p className="text-sm text-ink-soft">Zero confirmations accepts detection without waiting for a block confirmation.</p>
@@ -59,7 +68,8 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies 
       <p className="mt-2 text-sm text-ink-soft">Shown to the buyer on the invoice page only after the required confirmations; web links become clickable. Every buyer of this link sees the same text, and with zero confirmations it appears as soon as the payment is detected. Plain text, up to 2,000 characters. Changes apply to new invoices. <a className="underline underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">Use it for downloads, keys or instructions</a>.</p>
     </div>
     <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="enabled" checked={enabled} onChange={event => setEnabled(event.target.checked)} />Enable new purchases</label>
-    <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="auto_create_invoice" checked={automatic} onChange={event => setAutomatic(event.target.checked)} />Skip review and create invoice automatically</label>
+    <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="auto_create_invoice" checked={automatic} disabled={customerAmount} onChange={event => setAutomatic(event.target.checked)} />Skip review and create invoice automatically</label>
+    {customerAmount ? <p className="text-sm text-ink-soft">Automatic creation is unavailable when the customer enters the amount.</p> : null}
     <p className="text-sm text-ink-soft">Visits can create unpaid invoices and consume your public invoice allowance and address capacity. Reopening in the same tab resumes the current invoice. Automated browsers can also trigger creation.</p>
     <p className="text-sm text-ink-soft">Disabling stops new purchases. Existing invoices continue to be checked.</p>
     <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>

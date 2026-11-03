@@ -50,7 +50,7 @@ export default function GuidesPage() {
           <Link className={cardClass} href="/guides/monero-payment-buttons">
             <p className="text-sm font-semibold text-ink-soft">For websites, creators, and freelancers</p>
             <h2 className="mt-2 font-sans text-2xl font-semibold group-hover:underline group-hover:underline-offset-4">Accept Monero with payment and donation links</h2>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">Accept payments or fixed-amount donations to your own wallet. Copy HTML or share a reusable URL, and track a separate invoice for each submission.</p>
+            <p className="mt-3 text-sm leading-relaxed text-ink-soft">Accept payments or donations to your own wallet. Copy HTML or share a reusable URL, and track a separate invoice for each submission.</p>
             <span className="mt-5 inline-flex text-sm font-semibold text-ink">Read the payment button guide →</span>
           </Link>
           <Link className={cardClass} href="/guides/self-hosted-monero-checkout">

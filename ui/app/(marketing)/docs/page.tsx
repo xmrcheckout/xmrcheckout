@@ -57,7 +57,7 @@ const endpointGroups = [
     {
       "method": "POST",
       "path": "/api/core/payment-links",
-      "description": "Create a fixed-amount payment link; returns 201 with reusable and form-action URLs."
+      "description": "Create a fixed-amount or customer-entered-amount payment link; returns 201 with reusable and form-action URLs."
     },
     {
       "method": "PATCH",
@@ -83,7 +83,7 @@ const endpointGroups = [
     {
       "method": "POST",
       "path": "/api/core/public/payment-links/{token}/invoices",
-      "description": "Submit an empty HTML form to create an invoice and receive a 303 redirect."
+      "description": "Submit an HTML form (empty, or amount and currency for customer-entered links) to create an invoice and receive a 303 redirect."
     }
   ]
 },
@@ -328,11 +328,12 @@ const endpointRequirements = [
   "auth": "API key",
   "required": [
     "title",
-    "amount_xmr OR amount_fiat",
+    "amount_xmr OR amount_fiat OR customer_amount: true",
     "currency (when using amount_fiat)"
   ],
   "optional": [
     "description",
+    "minimum_amount_xmr (customer_amount links only)",
     "confirmation_target",
     "checkout_continue_url",
     "confirmation_message",
@@ -341,6 +342,7 @@ const endpointRequirements = [
   "notes": [
     "Title: 1–200 characters; description: up to 2000. Amounts must be positive and below 1000000; at most 12 decimal places for XMR or 2 for fiat-reference inputs.",
     "Use supported_currencies from the status endpoint. Saves do not contact the quote provider.",
+    "customer_amount (default false): the customer enters the amount and chooses XMR or a supported fiat-reference currency at purchase. Such links store no amount, cannot use auto_create_invoice, and may set minimum_amount_xmr (12 decimal places); fiat-reference amounts are compared after conversion.",
     "Confirmation target: 0–10, defaulting to the merchant profile at save time. Enabled defaults to true. Invoices use the configured default lifetime (one hour by default).",
     "Return URLs require HTTPS, with HTTP allowed for localhost and 127.0.0.1. Metadata and expiry overrides are not supported on templates.",
     "confirmation_message: optional plain text up to 2000 characters (no control characters other than newline and tab; blank becomes null). Each invoice keeps a snapshot, and the public invoice status returns it only after confirmation.",
@@ -382,7 +384,7 @@ const endpointRequirements = [
   ],
   "optional": [],
   "notes": [
-    "Returns title, description, amount_xmr, amount_fiat, currency, confirmation_target, and action_url. Disabled or unknown links return 404.",
+    "Returns title, description, amount_xmr, amount_fiat, currency, confirmation_target, customer_amount, minimum_amount_xmr, supported_currencies, and action_url. Disabled or unknown links return 404.",
     "Reading or previewing a link never creates an invoice. The reusable /pay/{token} URL is the hosted product review page."
   ]
 },
@@ -392,11 +394,12 @@ const endpointRequirements = [
   "auth": "None",
   "required": [
     "token (public path identifier)",
-    "empty form body"
+    "empty form body (fixed links) OR amount and currency (customer_amount links)"
   ],
   "optional": [],
   "notes": [
-    "No API key, cookies, or JavaScript are required. Rejects query parameters and non-empty bodies with 400; all purchase settings come from the saved template.",
+    "No API key, cookies, or JavaScript are required. Rejects query parameters with 400. Fixed links reject non-empty bodies; customer_amount links accept only amount and currency as a form or JSON body of string values. All other purchase settings come from the saved template.",
+    "Customer amounts follow template precision rules (12 decimal places for XMR, 2 for fiat references, positive and below 1000000). Amounts below minimum_amount_xmr return 422 without creating an invoice.",
     "Success returns 303 to the hosted invoice; it does not return invoice JSON. Application errors are HTML, including unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). Applicable responses include Retry-After.",
     "The default allowance is 10 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
     "There is no duplicate-submission recovery or automatic retry. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying."
@@ -903,7 +906,7 @@ Content-Type: application/json
 
         <section id="payment-links" aria-labelledby="payment-links-title" className="mt-10 grid min-w-0 scroll-mt-24 gap-5 break-words rounded-surface border border-stroke bg-card p-5 sm:p-8">
           <h2 id="payment-links-title" className="font-sans text-2xl font-semibold">Reusable payment links and HTML buttons</h2>
-          <p>Merchants can configure a fixed amount in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first unless the merchant enables auto_create_invoice (default false). Automatic mode creates an invoice from the active browser and resumes the same attempt in the same tab.</p>
+          <p>Merchants can configure a fixed amount, or let the customer enter the amount, in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first unless the merchant enables auto_create_invoice (default false). Automatic mode creates an invoice from the active browser and resumes the same attempt in the same tab.</p>
           <p><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the merchant setup guide</Link> for wallet prerequisites, embedding, capacity, fulfillment, and <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">confirmation messages</Link> such as download links shown after payment. The API operations below support managing those same templates from an integration.</p>
           <details className="min-w-0 rounded-xl border border-stroke p-4">
             <summary className="min-h-11 cursor-pointer font-semibold">API examples and response behavior</summary>
@@ -934,7 +937,7 @@ Content-Type: application/json
   "window_hours": 24,
   "retrieved_at": "2026-10-30T12:00:00Z"
 }`}</code></CopyCodeBlock>
-            <p className="mt-3">A form sends an empty public POST, without merchant credentials. Automatic clients may send a UUID Idempotency-Key header and Accept: application/json. A new attempt returns 201; replay returns 200 with the same invoice_url, status, and expires_at. Save the key before requesting creation and retain it after interrupted responses. GET and HEAD never create invoices. An illustrative successful exchange is:</p>
+            <p className="mt-3">A fixed-amount form sends an empty public POST, without merchant credentials; a customer-entered-amount form sends only amount and currency (for example amount=0.05&amp;currency=XMR). Automatic clients may send a UUID Idempotency-Key header and Accept: application/json. A new attempt returns 201; replay returns 200 with the same invoice_url, status, and expires_at. Save the key before requesting creation and retain it after interrupted responses. GET and HEAD never create invoices. An illustrative successful exchange is:</p>
             <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 0

@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from .formatting import format_xmr_amount, invoice_amounts
 from .models import Invoice, User, Webhook, WebhookDelivery
+from .public_origin import public_origin
 from .security import decrypt_secret, encrypt_secret, generate_webhook_secret
 from .webhook_http import UnsafeWebhookUrl, post_webhook_with_redirects
 
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
     amount_paid_xmr, amount_remaining_xmr = invoice_amounts(invoice)
+    invoice_url = f"{public_origin(None)}/i/{invoice.id}"
     return {
         "event": event,
         "invoice": {
@@ -37,6 +39,8 @@ def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
             "expires_at": _isoformat(invoice.expires_at),
             "detected_at": _isoformat(invoice.detected_at),
             "confirmed_at": _isoformat(invoice.confirmed_at),
+            "invoice_url": invoice_url,
+            "receipt_url": f"{invoice_url}/receipt",
         },
     }
 

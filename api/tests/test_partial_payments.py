@@ -1,3 +1,4 @@
+import os
 import unittest
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
@@ -141,6 +142,19 @@ class PartialPaymentPayloadTests(unittest.TestCase):
         self.assertEqual(payload["invoice"]["amount_paid_xmr"], "0.25")
         self.assertEqual(payload["invoice"]["amount_remaining_xmr"], "0.75")
         self.assertEqual(payload["invoice"]["status"], "partially_paid")
+
+    def test_native_payload_includes_invoice_and_receipt_urls(self):
+        invoice = _invoice(XMR, "confirmed")
+        with patch.dict(os.environ, {"SITE_URL": "https://shop.example/"}):
+            payload = webhooks.build_webhook_payload("invoice.confirmed", invoice)
+        self.assertEqual(
+            payload["invoice"]["invoice_url"],
+            f"https://shop.example/i/{invoice.id}",
+        )
+        self.assertEqual(
+            payload["invoice"]["receipt_url"],
+            f"https://shop.example/i/{invoice.id}/receipt",
+        )
 
     def test_overpayment_has_no_remaining_amount(self):
         payload = webhooks.build_webhook_payload(

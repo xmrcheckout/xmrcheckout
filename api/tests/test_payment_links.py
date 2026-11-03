@@ -96,6 +96,8 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
                 connection.execute(text("ALTER TABLE payment_links DROP COLUMN auto_create_invoice"))
                 connection.execute(text("ALTER TABLE payment_links DROP COLUMN button_text"))
                 connection.execute(text("ALTER TABLE payment_links DROP COLUMN confirmation_message"))
+                connection.execute(text("ALTER TABLE payment_links DROP COLUMN customer_amount"))
+                connection.execute(text("ALTER TABLE payment_links DROP COLUMN minimum_amount_xmr"))
                 connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_id CASCADE"))
                 connection.execute(text("ALTER TABLE invoices DROP COLUMN payment_link_attempt_id"))
                 connection.execute(text("INSERT INTO payment_links (id,user_id,token,title,description,confirmation_target,enabled) VALUES (:id,:user,'legacy','Legacy','',2,true)"), {"id": uuid4(), "user": uuid4()})
@@ -106,6 +108,8 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
                 self.assertEqual(connection.execute(text("SELECT button_text FROM payment_links WHERE token='legacy'")).scalar_one(), "Buy with Monero")
                 self.assertFalse(connection.execute(text("SELECT auto_create_invoice FROM payment_links WHERE token='legacy'")).scalar_one())
                 self.assertIsNone(connection.execute(text("SELECT confirmation_message FROM payment_links WHERE token='legacy'")).scalar_one())
+                self.assertFalse(connection.execute(text("SELECT customer_amount FROM payment_links WHERE token='legacy'")).scalar_one())
+                self.assertIsNone(connection.execute(text("SELECT minimum_amount_xmr FROM payment_links WHERE token='legacy'")).scalar_one())
                 connection.execute(text("SELECT payment_link_id,payment_link_attempt_id FROM invoices"))
                 self.assertIsNotNone(connection.execute(text("SELECT indexname FROM pg_indexes WHERE schemaname=:schema AND indexname='invoice_payment_link_attempt'"), {"schema": schema}).scalar_one())
         finally:
@@ -396,9 +400,66 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             self.assertEqual(requests.post(a + "/invoices", allow_redirects=False).status_code, 303)
 
 
+    def open_settings(self, **changes):
+        return {"title": "Support my project", "description": "", "amount_xmr": None, "customer_amount": True, "confirmation_target": 1, **changes}
+
+    def test_customer_amount_settings(self):
+        data, url = self.create(**self.open_settings(minimum_amount_xmr="0.01"))
+        self.assertTrue(data["customer_amount"])
+        self.assertEqual(data["minimum_amount_xmr"], "0.010000000000")
+        self.assertIsNone(data["amount_xmr"])
+        public = requests.get(url).json()
+        self.assertTrue(public["customer_amount"])
+        self.assertIn("EUR", public["supported_currencies"])
+        endpoint = self.base + "/api/core/payment-links/" + data["id"]
+        for invalid in (self.open_settings(amount_xmr="1"), self.open_settings(amount_fiat="5", currency="EUR"),
+                        self.open_settings(auto_create_invoice=True), self.open_settings(minimum_amount_xmr="0.0000000000001"),
+                        {**self.settings, "minimum_amount_xmr": "0.1"}):
+            response = requests.patch(endpoint, headers=self.headers, json=invalid)
+            self.assertEqual(response.status_code, 422, (invalid, response.text))
+        self.assertEqual(requests.patch(endpoint, headers=self.headers, json={"enabled": False}).status_code, 200)
+        enabled = requests.patch(endpoint, headers=self.headers, json={"enabled": True})
+        self.assertEqual(enabled.status_code, 200, enabled.text)
+        fixed = requests.patch(endpoint, headers=self.headers, json=self.settings).json()
+        self.assertFalse(fixed["customer_amount"])
+        self.assertIsNone(fixed["minimum_amount_xmr"])
+
+    def test_customer_amount_purchase(self):
+        from decimal import Decimal
+        from app.rates import QuoteResult
+        _, url = self.create(**self.open_settings(minimum_amount_xmr="0.01"))
+        response = requests.post(url + "/invoices", data={"amount": "0.05", "currency": "XMR"}, allow_redirects=False)
+        self.assertEqual(response.status_code, 303, response.text)
+        with patch.object(routes, "get_xmr_rate", return_value=QuoteResult(Decimal("100"), "EUR", "fixture", datetime.now(timezone.utc))):
+            response = requests.post(url + "/invoices", json={"amount": "5", "currency": "eur"}, headers={"Accept": "application/json"})
+            self.assertEqual(response.status_code, 201, response.text)
+            below = requests.post(url + "/invoices", json={"amount": "0.5", "currency": "EUR"}, headers={"Accept": "application/json"})
+            self.assertEqual(below.status_code, 422, below.text)
+            self.assertIn("minimum of 0.01 XMR", below.json()["detail"])
+        with SessionLocal() as db:
+            invoices = db.query(Invoice).filter(Invoice.user_id == self.user_id).order_by(Invoice.created_at).all()
+            self.assertEqual([invoice.amount_xmr for invoice in invoices], [Decimal("0.05"), Decimal("0.05")])
+            self.assertEqual(invoices[0].metadata_json["payment_link"]["amount_source"], "customer")
+            self.assertEqual(invoices[1].metadata_json["quote"]["source"], "fixture")
+
+    def test_customer_amount_rejects_overrides(self):
+        _, url = self.create(**self.open_settings())
+        for kwargs in ({"data": {"amount": "1", "currency": "XMR", "amount_xmr": "2"}}, {"data": {"amount": "1"}},
+                       {"data": {"amount": "1", "currency": "DOGE"}}, {"data": {"amount": "-1", "currency": "XMR"}},
+                       {"data": {"amount": "0", "currency": "XMR"}}, {"data": {"amount": "1e3", "currency": "XMR"}},
+                       {"data": {"amount": "1.001", "currency": "EUR"}}, {"data": {"amount": "1", "currency": "XMR", "x": "y" * 300}},
+                       {"data": "amount=1&amount=2&currency=XMR", "headers": {"Content-Type": "application/x-www-form-urlencoded"}},
+                       {"json": {"amount": 1, "currency": "XMR"}}, {"data": "amount=1", "headers": {"Content-Type": "text/plain"}}, {}):
+            self.assertEqual(requests.post(url + "/invoices", **kwargs).status_code, 400, kwargs)
+        self.assertEqual(requests.post(url + "/invoices?amount=1&currency=XMR").status_code, 400)
+        with SessionLocal() as db:
+            self.assertEqual(db.query(Invoice).filter(Invoice.user_id == self.user_id).count(), 0)
+
+
 class PaymentLinkValidationTests(unittest.TestCase):
     def test_invalid_templates(self):
         from pydantic import ValidationError
         for payload in ({"title": " ", "amount_xmr": "1"}, {"title": "T", "amount_xmr": "0.0000000000001"}, {"title": "T", "amount_fiat": "20.001", "currency": "EUR"}, {"title": "T", "amount_xmr": "1", "checkout_continue_url": "javascript:alert(1)"}, {"title": "T", "amount_xmr": "1", "metadata": {"wallet": "override"}}):
             with self.assertRaises(ValidationError):
                 payment_links.PaymentLinkInput(**payload)
+

@@ -214,5 +214,7 @@ class PaymentLink(Base):
     enabled = Column(Boolean, nullable=False, default=True)
     auto_create_invoice = Column(Boolean, nullable=False, default=False, server_default="false")
     button_text = Column(String(32), nullable=False, default="Buy with Monero", server_default="Buy with Monero")
+    customer_amount = Column(Boolean, nullable=False, default=False, server_default="false")
+    minimum_amount_xmr = Column(Numeric(18, 12), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

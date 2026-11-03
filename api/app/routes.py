@@ -1144,6 +1144,7 @@ def create_invoice_for_user(
 def create_invoice_for_merchant(
     payload: InvoiceCreateUser, request: Request, db: Session, user: User,
     *, payment_link_id: UUID | None = None, payment_link_attempt_id: UUID | None = None,
+    minimum_amount_xmr: Decimal | None = None,
 ):
     """Shared native/public creation; callers establish merchant authorization."""
     confirmation_target = payload.confirmation_target
@@ -1157,6 +1158,12 @@ def create_invoice_for_merchant(
         requested_amount_fiat=payload.amount_fiat,
         requested_currency=payload.currency,
     )
+    # Checked before any allowance or address is reserved.
+    if minimum_amount_xmr is not None and resolved_amount < minimum_amount_xmr:
+        raise HTTPException(
+            status_code=422,
+            detail=f"The amount is below this link's minimum of {format(minimum_amount_xmr.normalize(), 'f')} XMR.",
+        )
     if warnings is not None and len(warnings) == 0:
         warnings = None
     metadata = payload.metadata or {}

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import BtcpayModalBridge from "../../../components/btcpay-modal-bridge";
 import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
+import CopyIconButton from "../../../components/copy-icon-button";
 import InvoicePaymentDetails from "../../../components/invoice-payment-details";
 import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../components/invoice-status-auto-refresh";
 import Timestamp from "../../../components/timestamp";
@@ -20,6 +21,9 @@ export const metadata: Metadata = {
 };
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost"
+).replace(/\/+$/, "");
 
 
 type InvoiceStatusResponse = {
@@ -183,8 +187,9 @@ export default async function BtcpayModalInvoicePage({
   );
   const useClassicCheckout =
     isBtcpayInvoice && invoice.btcpay_checkout_style === "btcpay_classic";
-  const shouldShowBtcpayActions =
-    isBtcpayInvoice && invoice.status === "confirmed";
+  const isConfirmed = invoice.status === "confirmed";
+  const receiptHref = `/i/${encodeURIComponent(invoiceId)}/receipt`;
+  const invoicePageUrl = `${siteUrl}/i/${encodeURIComponent(invoiceId)}`;
   const checkoutContinueAvailable =
     !isBtcpayInvoice &&
     invoice.status === "confirmed" &&
@@ -315,6 +320,12 @@ export default async function BtcpayModalInvoicePage({
                   {checkNotice.text}
                 </p>
               ) : null}
+              {checkNotice ? (
+                <div className="flex items-center gap-2 text-sm text-ink-soft">
+                  <p>Save this page&apos;s link to check your payment later.</p>
+                  <CopyIconButton value={invoicePageUrl} label="Payment page link" />
+                </div>
+              ) : null}
               <p className="text-xs text-ink-soft">
                 Created <Timestamp value={createdTimestamp} />
               </p>
@@ -332,15 +343,19 @@ export default async function BtcpayModalInvoicePage({
             ) : null}
           </section>
 
-          {shouldShowBtcpayActions ? (
+          {isConfirmed ? (
             <div className="mt-6 grid gap-3">
               <a
-                className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
-                href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
+                className={
+                  checkoutContinueAvailable
+                    ? "inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                    : "inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                }
+                href={receiptHref}
               >
                 View receipt
               </a>
-              {invoice.btcpay_redirect_url ? (
+              {isBtcpayInvoice && invoice.btcpay_redirect_url ? (
                 <a
                   className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
                   href={invoice.btcpay_redirect_url}

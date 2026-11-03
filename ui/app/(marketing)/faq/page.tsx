@@ -170,6 +170,20 @@ const faqItems: FaqItem[] = [
     ),
   },
   {
+    question: "How do customers get a receipt?",
+    category: "operations",
+    answer: (
+      <>
+        <p className="text-ink-soft">
+          Once a payment is confirmed, the payment page links to a receipt the
+          customer can print or save. XMR Checkout does not collect customer
+          email addresses or send email. If you email your customers, include
+          the receipt_url from the invoice.confirmed webhook.
+        </p>
+      </>
+    ),
+  },
+  {
     question: "What happens if XMR Checkout is down when a customer pays?",
     category: "operations",
     answer: (

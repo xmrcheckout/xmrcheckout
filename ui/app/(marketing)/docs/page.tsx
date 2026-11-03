@@ -1148,6 +1148,10 @@ Content-Type: application/json
                 Payloads include amount_paid_xmr and amount_remaining_xmr
               </li>
               <li>
+                Payloads include invoice_url (customer payment page) and
+                receipt_url (receipt shown after confirmation)
+              </li>
+              <li>
                 An invoice that expires while underpaid is reported as expired
                 with its received amount
               </li>

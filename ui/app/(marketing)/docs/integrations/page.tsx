@@ -190,6 +190,12 @@ export default function IntegrationsPage() {
                   <span className="font-mono text-ink">invoice.id</span>
                 </li>
               </ul>
+              <p className="mt-3">
+                Webhook payloads include{" "}
+                <span className="font-mono text-ink">receipt_url</span>. XMR
+                Checkout does not email customers; send the receipt link from
+                your own system if you want customers to get one.
+              </p>
             </div>
           </div>
 
@@ -459,6 +465,7 @@ app.post("/xmrcheckout/webhook", (req, res) => {
 
   if (event === "invoice.confirmed" && orderId) {
     // Mark your order paid here.
+    // Optionally send invoice.receipt_url to your customer from your own system.
   }
 
   return res.sendStatus(204);
@@ -546,6 +553,7 @@ $orderId = $invoice["metadata"]["order_id"] ?? null;
 
 if ($event === "invoice.confirmed" && $orderId) {
   // Mark your order paid here.
+  // Optionally send $invoice["receipt_url"] to your customer from your own system.
 }
 
 http_response_code(204);`}</code>
@@ -620,6 +628,7 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
 
     if event == "invoice.confirmed" and order_id:
         # Mark your order paid here.
+        # Optionally send invoice["receipt_url"] to your customer from your own system.
         pass
 
     return None`}</code>

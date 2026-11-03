@@ -11,14 +11,22 @@ import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
+import {
+  hasPartialAmount,
+  invoiceStatusLabel,
+  invoiceStatusTones,
+  type InvoiceStatus,
+} from "../lib/invoice-status";
 
 type InvoicePaymentDetailsProps = {
   address: string;
   amount: string;
+  amountPaid?: string | null;
+  amountRemaining?: string | null;
   hasDetectedPayment: boolean;
   expiresAt?: string | null;
   expiryRetrievedAt?: string;
-  status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
+  status: InvoiceStatus;
   confirmationTarget: number;
   confirmations: number;
   qrLogoMode?: "monero" | "none" | "custom" | null;
@@ -35,6 +43,8 @@ const buildMoneroUri = (address: string, amount: string) => {
 export default function InvoicePaymentDetails({
   address,
   amount,
+  amountPaid = null,
+  amountRemaining = null,
   hasDetectedPayment,
   expiresAt,
   expiryRetrievedAt,
@@ -54,18 +64,32 @@ export default function InvoicePaymentDetails({
   } = useXmrUsdRate(enableFiatEstimate);
   const isInvalid = status === "invalid";
   const isExpired = status === "expired";
-  const canSendPayment = status === "pending";
+  const hasPartial = hasPartialAmount(amountPaid, amountRemaining);
+  const isPartiallyPaid = status === "partially_paid" && hasPartial;
+  const isExpiredUnderpaid = isExpired && hasPartial;
+  const canSendPayment = status === "pending" || status === "partially_paid";
   const shouldPromptPayment =
     canSendPayment && !hasDetectedPayment && !isInvalid;
-  const formattedAmount = useMemo(() => formatXmrAmount(amount), [amount]);
+  // A partially paid invoice requests only the remaining amount.
+  const requestedAmount =
+    isPartiallyPaid && amountRemaining ? amountRemaining : amount;
+  const formattedAmount = useMemo(
+    () => formatXmrAmount(requestedAmount),
+    [requestedAmount],
+  );
+  const formattedTotal = useMemo(() => formatXmrAmount(amount), [amount]);
+  const formattedPaid = useMemo(
+    () => (amountPaid ? formatXmrAmount(amountPaid) : null),
+    [amountPaid],
+  );
   const uri = useMemo(
     () => buildMoneroUri(address, formattedAmount),
     [address, formattedAmount],
   );
   const amountValue = useMemo(() => {
-    const parsed = Number.parseFloat(amount);
+    const parsed = Number.parseFloat(requestedAmount);
     return Number.isFinite(parsed) ? parsed : null;
-  }, [amount]);
+  }, [requestedAmount]);
   const usdEstimate = useMemo(() => {
     if (!usdRate || amountValue === null || amountValue <= 0) {
       return null;
@@ -125,23 +149,18 @@ export default function InvoicePaymentDetails({
     usdRateSource === "coingecko"
       ? "CoinGecko spot rate"
       : "external spot rate";
-  const statusLabel =
-    status === "pending"
-      ? "Awaiting funds"
-      : status === "payment_detected"
-        ? "Payment detected"
-        : status === "confirmed"
-          ? "Confirmed"
-          : status === "expired"
-            ? "Expired"
-            : "Invalid";
+  const statusLabel = invoiceStatusLabel(status, amountPaid, amountRemaining);
   const confirmationLabel = `${confirmationTarget} confirmation${
     confirmationTarget === 1 ? "" : "s"
   }`;
   const heading = isInvalid
     ? "Invoice marked invalid. Do not send payment."
-    : isExpired
+    : isExpiredUnderpaid
+      ? "Invoice expired before the full amount arrived. Do not send further payment."
+      : isExpired
       ? "Invoice expired. Do not send payment."
+      : isPartiallyPaid
+      ? "Partial payment received. Send the remaining amount to the same address."
       : hasDetectedPayment
         ? status === "confirmed"
           ? `Payment confirmed on-chain at ${confirmationLabel}.`
@@ -149,14 +168,7 @@ export default function InvoicePaymentDetails({
         : "Send the exact amount to this address.";
   const showCopyActions = canSendPayment;
   const showPaymentUri = canSendPayment;
-  const statusTone: StatusTone =
-    status === "pending"
-      ? "pending"
-      : status === "payment_detected"
-        ? "detected"
-        : status === "confirmed"
-          ? "success"
-          : "error";
+  const statusTone: StatusTone = invoiceStatusTones[status];
 
   return (
     <section className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
@@ -172,6 +184,11 @@ export default function InvoicePaymentDetails({
           </div>
           <StatusBadge label={statusLabel} tone={statusTone} />
         </div>
+        {(isPartiallyPaid || isExpiredUnderpaid) && formattedPaid ? (
+          <p className="mt-4 text-sm font-semibold text-cream/80">
+            Received {formattedPaid} of {formattedTotal} XMR.
+          </p>
+        ) : null}
         {isInvalid || isExpired ? (
           <p className="mt-4 border-l-2 border-red-300 pl-3 text-sm font-semibold text-red-100">
             Contact the merchant to request a new invoice.
@@ -186,7 +203,7 @@ export default function InvoicePaymentDetails({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="text-xs font-semibold text-ink-soft">
-                Exact amount
+                {isPartiallyPaid ? "Remaining amount" : "Exact amount"}
               </p>
               <p className="mt-2 break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.5rem)] font-semibold leading-tight text-ink">
                 {formattedAmount} XMR
@@ -195,7 +212,7 @@ export default function InvoicePaymentDetails({
             {showCopyActions ? (
               <CopyIconButton
                 value={formattedAmount}
-                label="Copy exact amount"
+                label={isPartiallyPaid ? "Copy remaining amount" : "Copy exact amount"}
               />
             ) : null}
           </div>
@@ -213,6 +230,9 @@ export default function InvoicePaymentDetails({
 
           {shouldPromptPayment ? (
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">
+            {isPartiallyPaid
+              ? `Send only the remaining amount. The ${formattedPaid ?? ""} XMR already received counts toward this invoice. `
+              : ""}
             Your wallet adds the network fee on top. Do not subtract it from the
             amount shown.
           </p>

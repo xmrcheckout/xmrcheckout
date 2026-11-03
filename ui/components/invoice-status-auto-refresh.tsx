@@ -6,6 +6,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import Timestamp from "./timestamp";
+import type { InvoiceStatus } from "../lib/invoice-status";
 
 const RefreshContext = createContext<{
   refresh: () => void;
@@ -25,7 +26,7 @@ type InvoiceStatusAutoRefreshProps = {
   retrievedAt?: string;
   error?: boolean;
   statusMessage?: string;
-  status?: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
+  status?: InvoiceStatus;
 };
 
 export default function InvoiceStatusAutoRefresh({

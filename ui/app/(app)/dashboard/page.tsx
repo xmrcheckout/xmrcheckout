@@ -4,6 +4,12 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { dashboardDestination } from "../../../lib/wallet-connection";
+import {
+  invoiceStatusLabel,
+  invoiceStatuses,
+  invoiceStatusTones,
+  type InvoiceStatus,
+} from "../../../lib/invoice-status";
 
 import ApiKeySection from "../../../components/api-key-section";
 import BtcpayCheckoutStyleSection from "../../../components/btcpay-checkout-style-section";
@@ -28,16 +34,8 @@ export const metadata: Metadata = {
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 const tabs = ["overview", "invoices", "payment-links", "webhooks", "profile", "health"] as const;
 const webhookTabs = ["settings", "history"] as const;
-const invoiceStatuses = [
-  "pending",
-  "payment_detected",
-  "confirmed",
-  "expired",
-  "invalid",
-] as const;
 type DashboardTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
-type InvoiceStatus = (typeof invoiceStatuses)[number];
 type InvoiceStatusFilter = InvoiceStatus | "active" | "all";
 
 type DashboardSearchParams = Record<string, string | string[] | undefined>;
@@ -47,6 +45,8 @@ type InvoiceSummary = {
   address: string;
   subaddress_index?: number | null;
   amount_xmr: string;
+  amount_paid_xmr?: string | null;
+  amount_remaining_xmr?: string | null;
   status: InvoiceStatus;
   confirmation_target: number;
   confirmations?: number | null;
@@ -75,8 +75,7 @@ type WebhookDeliverySummary = {
   invoice_address: string | null;
   invoice_subaddress_index: number | null;
   invoice_amount_xmr: string | null;
-  invoice_status:
-    "pending" | "payment_detected" | "confirmed" | "expired" | "invalid" | null;
+  invoice_status: InvoiceStatus | null;
   http_status: number | null;
   error_message: string | null;
   created_at: string;
@@ -133,22 +132,6 @@ const reconcilerBadge = (systemStatus: SystemStatusSummary | null) => {
     return { tone: "success" as StatusTone, label: "Healthy" };
   }
   return { tone: "error" as StatusTone, label: "Degraded" };
-};
-
-const formatStatus = (status: InvoiceStatus) => {
-  if (status === "payment_detected") {
-    return "Payment detected";
-  }
-  if (status === "pending") {
-    return "Awaiting funds";
-  }
-  if (status === "confirmed") {
-    return "Confirmed";
-  }
-  if (status === "invalid") {
-    return "Invalid";
-  }
-  return "Expired";
 };
 
 export default async function DashboardPage({
@@ -366,6 +349,9 @@ export default async function DashboardPage({
   const awaitingConfirmationCount = allInvoices.filter(
     (invoice) => invoice.status === "payment_detected",
   ).length;
+  const partiallyPaidCount = allInvoices.filter(
+    (invoice) => invoice.status === "partially_paid",
+  ).length;
   const confirmedCount = allInvoices.filter(
     (invoice) => invoice.status === "confirmed",
   ).length;
@@ -378,21 +364,18 @@ export default async function DashboardPage({
     invoiceId: invoice.id,
     detail: `Created ${new Date(invoice.created_at).toLocaleString()}`,
     href: `/invoice/${invoice.id}`,
-    status: formatStatus(invoice.status),
-    tone:
-      invoice.status === "confirmed"
-        ? ("success" as StatusTone)
-        : invoice.status === "payment_detected"
-          ? ("detected" as StatusTone)
-          : invoice.status === "pending"
-            ? ("pending" as StatusTone)
-            : ("error" as StatusTone),
+    status: invoiceStatusLabel(
+      invoice.status,
+      invoice.amount_paid_xmr,
+      invoice.amount_remaining_xmr,
+    ),
+    tone: invoiceStatusTones[invoice.status],
     dotClass:
       invoice.status === "confirmed"
         ? "bg-sage"
         : invoice.status === "payment_detected"
           ? "bg-monero"
-          : invoice.status === "pending"
+          : invoice.status === "pending" || invoice.status === "partially_paid"
             ? "bg-clay"
             : "bg-red-500",
   }));
@@ -436,6 +419,14 @@ export default async function DashboardPage({
       href: "/dashboard?tab=invoices&status=payment_detected",
       accentClass: "border-t-monero",
       valueClass: "text-monero",
+    },
+    {
+      title: "Partially paid",
+      value: partiallyPaidCount.toString(),
+      detail: "Received less than requested so far.",
+      href: "/dashboard?tab=invoices&status=partially_paid",
+      accentClass: "border-t-amber-400",
+      valueClass: "text-amber-900",
     },
     {
       title: "Confirmed",
@@ -509,7 +500,7 @@ export default async function DashboardPage({
               <InvoiceAddressAvailability status={addressStatus} />
 
               <div
-                className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
                 aria-label="Merchant metrics"
               >
                 {overviewMetrics.map((item) => (

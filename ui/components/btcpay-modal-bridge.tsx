@@ -2,12 +2,7 @@
 
 import { useEffect } from "react";
 
-type InvoiceStatus =
-  | "pending"
-  | "payment_detected"
-  | "confirmed"
-  | "expired"
-  | "invalid";
+import type { InvoiceStatus } from "../lib/invoice-status";
 
 type BtcpayModalBridgeProps = {
   invoiceId: string;
@@ -16,6 +11,8 @@ type BtcpayModalBridgeProps = {
 
 const statusMap: Record<InvoiceStatus, string> = {
   pending: "New",
+  // BTCPay keeps underpaid invoices in "New" (additional status PaidPartial).
+  partially_paid: "New",
   payment_detected: "Processing",
   // BTCPay's postMessage contract requires this exact protocol value.
   // https://docs.btcpayserver.org/Development/ecommerce-integration-guide/

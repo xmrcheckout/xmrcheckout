@@ -5,9 +5,12 @@ import BtcpayModalBridge from "../../../../components/btcpay-modal-bridge";
 import CopyIconButton from "../../../../components/copy-icon-button";
 import PrintButton from "../../../../components/print-button";
 import Timestamp from "../../../../components/timestamp";
-import StatusBadge, {
-  type StatusTone,
-} from "../../../../components/status-badge";
+import StatusBadge from "../../../../components/status-badge";
+import {
+  invoiceStatusLabels as statusLabels,
+  invoiceStatusTones as statusTones,
+  type InvoiceStatus,
+} from "../../../../lib/invoice-status";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -16,8 +19,6 @@ export const metadata: Metadata = {
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
-type InvoiceStatus =
-  "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type InvoiceStatusResponse = {
   id: string;
@@ -93,22 +94,6 @@ const resolveQrSrc = (invoiceId: string, qrUrl: string | null | undefined) => {
 
 const closeLinkClassName =
   "inline-flex items-center justify-center rounded-full border border-stroke bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden";
-
-const statusLabels: Record<InvoiceStatus, string> = {
-  pending: "Awaiting funds",
-  payment_detected: "Payment detected",
-  confirmed: "Confirmed",
-  expired: "Expired",
-  invalid: "Invalid",
-};
-
-const statusTones: Record<InvoiceStatus, StatusTone> = {
-  pending: "pending",
-  payment_detected: "detected",
-  confirmed: "success",
-  expired: "error",
-  invalid: "error",
-};
 
 export default async function BtcpayReceiptPage({
   params,

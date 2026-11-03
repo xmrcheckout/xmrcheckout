@@ -9,9 +9,13 @@ import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatXmrAmount } from "../lib/formatting";
+import {
+  hasPartialAmount,
+  invoiceStatusLabel,
+  invoiceStatusTones,
+  type InvoiceStatus,
+} from "../lib/invoice-status";
 
-type InvoiceStatus =
-  "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type QuotePayload = {
   fiat_amount: string;
@@ -26,6 +30,7 @@ type BtcpayClassicCheckoutProps = {
   address: string;
   amountXmr: string;
   amountPaidXmr: string | null;
+  amountRemainingXmr?: string | null;
   btcpayAmount: string | null;
   btcpayCurrency: string | null;
   quote: QuotePayload | null;
@@ -77,9 +82,16 @@ const formatReturnLabel = (redirectUrl: string) => {
 const statusMessage = (
   status: InvoiceStatus,
   confirmationTarget: number,
+  hasPartial = false,
 ): string => {
   if (status === "invalid") {
     return "Invoice marked invalid. Do not send payment.";
+  }
+  if (status === "expired" && hasPartial) {
+    return "Invoice expired before the full amount arrived. Do not send further payment.";
+  }
+  if (status === "partially_paid") {
+    return "Partial payment received. Send the remaining amount to the same address.";
   }
   if (status === "expired") {
     return "Invoice expired. Do not send payment.";
@@ -98,6 +110,7 @@ export default function BtcpayClassicCheckout({
   address,
   amountXmr,
   amountPaidXmr,
+  amountRemainingXmr = null,
   btcpayAmount,
   btcpayCurrency,
   quote,
@@ -115,19 +128,27 @@ export default function BtcpayClassicCheckout({
 }: BtcpayClassicCheckoutProps) {
   const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const hasPartial = hasPartialAmount(amountPaidXmr, amountRemainingXmr);
+  const isPartiallyPaid = status === "partially_paid" && hasPartial;
   const formattedAmount = useMemo(
     () => formatXmrAmount(amountXmr),
     [amountXmr],
   );
-  const formattedPaidAmount = useMemo(() => {
-    if (!amountPaidXmr) {
-      return formattedAmount;
-    }
-    return formatXmrAmount(amountPaidXmr);
-  }, [amountPaidXmr, formattedAmount]);
+  const formattedPaidAmount = useMemo(
+    () => (amountPaidXmr ? formatXmrAmount(amountPaidXmr) : null),
+    [amountPaidXmr],
+  );
+  // A partially paid invoice requests only the remaining amount.
+  const formattedRequestedAmount = useMemo(
+    () =>
+      isPartiallyPaid && amountRemainingXmr
+        ? formatXmrAmount(amountRemainingXmr)
+        : formattedAmount,
+    [amountRemainingXmr, formattedAmount, isPartiallyPaid],
+  );
   const uri = useMemo(
-    () => buildMoneroUri(address, formattedAmount),
-    [address, formattedAmount],
+    () => buildMoneroUri(address, formattedRequestedAmount),
+    [address, formattedRequestedAmount],
   );
   const totalFiat =
     btcpayAmount && btcpayCurrency && btcpayCurrency !== "XMR"
@@ -195,7 +216,7 @@ export default function BtcpayClassicCheckout({
     };
   }, [uri, qrLogoMode]);
 
-  const canSendPayment = status === "pending";
+  const canSendPayment = status === "pending" || status === "partially_paid";
   const resolvedQrLogoMode = qrLogoMode ?? "monero";
   const resolvedLogoSrc =
     resolvedQrLogoMode === "custom"
@@ -203,24 +224,12 @@ export default function BtcpayClassicCheckout({
       : resolvedQrLogoMode === "monero"
         ? "/monero-logo.svg"
         : null;
-  const statusTone: StatusTone =
-    status === "pending"
-      ? "pending"
-      : status === "payment_detected"
-        ? "detected"
-        : status === "confirmed"
-          ? "success"
-          : "error";
-  const statusLabel =
-    status === "pending"
-      ? "Awaiting funds"
-      : status === "payment_detected"
-        ? "Payment detected"
-        : status === "confirmed"
-          ? "Confirmed"
-          : status === "expired"
-            ? "Expired"
-            : "Invalid";
+  const statusTone: StatusTone = invoiceStatusTones[status];
+  const statusLabel = invoiceStatusLabel(
+    status,
+    amountPaidXmr,
+    amountRemainingXmr,
+  );
 
   if (status === "confirmed") {
     return (
@@ -279,7 +288,9 @@ export default function BtcpayClassicCheckout({
           </div>
           <div className="flex items-center justify-between gap-4 py-3">
             <dt className="text-ink-soft">Amount paid</dt>
-            <dd className="font-semibold">{formattedPaidAmount} XMR</dd>
+            <dd className="font-semibold">
+              {formattedPaidAmount ? `${formattedPaidAmount} XMR` : "-"}
+            </dd>
           </div>
         </dl>
 
@@ -313,20 +324,30 @@ export default function BtcpayClassicCheckout({
           <StatusBadge label={statusLabel} tone={statusTone} />
         </div>
         <p className="mt-2 text-sm text-cream/70">
-          {status === "payment_detected" ? `Payment detected. ${confirmations}/${confirmationTarget} confirmations.` : statusMessage(status, confirmationTarget)}
+          {status === "payment_detected" ? `Payment detected. ${confirmations}/${confirmationTarget} confirmations.` : statusMessage(status, confirmationTarget, hasPartial)}
         </p>
+        {isPartiallyPaid ? (
+          <p className="mt-3 text-xs font-semibold text-cream/70">
+            Remaining amount
+          </p>
+        ) : null}
         <div className="mt-3 flex flex-wrap items-start justify-center gap-3">
           <p className="min-w-0 break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.3rem)] font-semibold leading-tight">
-            {formattedAmount} XMR
+            {formattedRequestedAmount} XMR
           </p>
           {canSendPayment ? (
             <CopyIconButton
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cream/25 bg-cream/10 text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
-              value={formattedAmount}
-              label="Copy exact amount"
+              value={formattedRequestedAmount}
+              label={isPartiallyPaid ? "Copy remaining amount" : "Copy exact amount"}
             />
           ) : null}
         </div>
+        {hasPartial && formattedPaidAmount && status !== "invalid" ? (
+          <p className="mt-2 text-sm font-semibold text-cream/80">
+            Received {formattedPaidAmount} of {formattedAmount} XMR.
+          </p>
+        ) : null}
         {canSendPayment ? <InvoiceExpiry expiresAt={expiresAt ?? null} retrievedAt={expiryRetrievedAt} /> : null}
       </header>
       <InvoiceRefreshFeedback className="border-b border-stroke px-6 py-3 text-xs text-ink-soft" />
@@ -375,7 +396,7 @@ export default function BtcpayClassicCheckout({
                 : "QR code is loading. You can also copy the payment address and exact amount into your wallet."
               : status === "payment_detected"
                 ? `${confirmations}/${confirmationTarget} confirmations. No further payment is requested. Waiting for confirmations.`
-                : statusMessage(status, confirmationTarget)}
+                : statusMessage(status, confirmationTarget, hasPartial)}
           </p>
         ) : null}
       </div>
@@ -424,6 +445,12 @@ export default function BtcpayClassicCheckout({
             <dt className="text-ink-soft">Network cost</dt>
             <dd className="font-semibold">Added by wallet</dd>
           </div>
+          {hasPartial && formattedPaidAmount ? (
+            <div className="flex items-center justify-between gap-4 py-2.5">
+              <dt className="text-ink-soft">Amount received</dt>
+              <dd className="font-semibold">{formattedPaidAmount} XMR</dd>
+            </div>
+          ) : null}
         </dl>
       </details>
 

@@ -10,6 +10,7 @@ import {
   type WebhookRedeliverState,
 } from "../app/(app)/dashboard/actions";
 import StatusBadge from "./status-badge";
+import type { InvoiceStatus } from "../lib/invoice-status";
 
 type WebhookDeliverySummary = {
   id: string;
@@ -20,8 +21,7 @@ type WebhookDeliverySummary = {
   invoice_address: string | null;
   invoice_subaddress_index: number | null;
   invoice_amount_xmr: string | null;
-  invoice_status:
-    "pending" | "payment_detected" | "confirmed" | "expired" | "invalid" | null;
+  invoice_status: InvoiceStatus | null;
   http_status: number | null;
   error_message: string | null;
   created_at: string;

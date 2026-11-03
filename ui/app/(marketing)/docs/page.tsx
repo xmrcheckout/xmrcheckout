@@ -473,7 +473,11 @@ const endpointRequirements = [
       "created_from (ISO timestamp)",
       "created_to (ISO timestamp)",
     ],
-    notes: ["Returns invoices excluding archived entries."],
+    notes: [
+      "Returns invoices excluding archived entries.",
+      "Status is one of: pending, partially_paid, payment_detected, confirmed, expired, invalid.",
+      "Each invoice includes amount_paid_xmr and amount_remaining_xmr, derived from observed incoming transfers.",
+    ],
   },
   {
     method: "GET",
@@ -489,7 +493,7 @@ const endpointRequirements = [
       "created_from",
       "created_to",
     ],
-    notes: ["Returns CSV with invoice rows."],
+    notes: ["Returns CSV with invoice rows, including amount_paid_xmr and amount_remaining_xmr columns."],
   },
   {
     method: "GET",
@@ -531,7 +535,8 @@ const endpointRequirements = [
     optional: ["url", "event_urls", "events"],
     notes: [
       "Provide url for all selected events unless every event is mapped in event_urls.",
-      "Events must be one of: invoice.created, invoice.payment_detected, invoice.confirmed, invoice.expired.",
+      "Events must be one of: invoice.created, invoice.partially_paid, invoice.payment_detected, invoice.confirmed, invoice.expired.",
+      "invoice.partially_paid is sent each time the received amount changes while it is still below the requested amount, before expiry.",
       "Every destination must use HTTPS and resolve only to public IP addresses; redirects are checked again before delivery.",
     ],
   },
@@ -1081,9 +1086,20 @@ Content-Type: application/json
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>invoice.created</li>
+              <li>
+                invoice.partially_paid (part of the requested amount was
+                received before expiry)
+              </li>
               <li>invoice.payment_detected</li>
               <li>invoice.confirmed</li>
               <li>invoice.expired</li>
+              <li>
+                Payloads include amount_paid_xmr and amount_remaining_xmr
+              </li>
+              <li>
+                An invoice that expires while underpaid is reported as expired
+                with its received amount
+              </li>
               <li>Deliveries include the X-Webhook-Secret header</li>
               <li>
                 Destinations must use HTTPS and resolve only to public IP

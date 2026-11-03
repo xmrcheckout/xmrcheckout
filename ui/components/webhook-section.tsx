@@ -29,6 +29,11 @@ const webhookEvents = [
     label: "invoice.created",
   },
   {
+    event: "invoice.partially_paid",
+    key: "invoice_partially_paid",
+    label: "invoice.partially_paid",
+  },
+  {
     event: "invoice.payment_detected",
     key: "invoice_payment_detected",
     label: "invoice.payment_detected",

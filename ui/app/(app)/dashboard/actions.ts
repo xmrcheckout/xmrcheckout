@@ -129,6 +129,7 @@ export async function redeliverWebhookDeliveryTourAction(
 
 const webhookEventKeys = [
   { event: "invoice.created", key: "invoice_created" },
+  { event: "invoice.partially_paid", key: "invoice_partially_paid" },
   { event: "invoice.payment_detected", key: "invoice_payment_detected" },
   { event: "invoice.confirmed", key: "invoice_confirmed" },
   { event: "invoice.expired", key: "invoice_expired" },

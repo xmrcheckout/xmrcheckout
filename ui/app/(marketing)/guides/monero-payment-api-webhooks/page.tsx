@@ -145,6 +145,7 @@ export default function ApiWebhookGuidePage() {
               Register a public HTTPS endpoint through the dashboard or the API,
               then select the events you want to receive. Native events include{" "}
               <span className="font-mono text-ink">invoice.created</span>,{" "}
+              <span className="font-mono text-ink">invoice.partially_paid</span>,{" "}
               <span className="font-mono text-ink">invoice.payment_detected</span>,{" "}
               <span className="font-mono text-ink">invoice.confirmed</span>, and{" "}
               <span className="font-mono text-ink">invoice.expired</span>.

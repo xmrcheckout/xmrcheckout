@@ -55,7 +55,7 @@ export default function AutomaticPaymentLink({ token, actionUrl }: { token: stri
         const result: Result = await response.json();
         const destination = new URL(result.invoice_url);
         if (destination.origin !== window.location.origin || !/^\/invoice\/[0-9a-f-]+$/i.test(destination.pathname)) throw new Error("Invalid invoice response");
-        const live = result.status === "payment_detected" || (result.status === "pending" && (!result.expires_at || Date.parse(result.expires_at) > Date.now()));
+        const live = result.status === "payment_detected" || ((result.status === "pending" || result.status === "partially_paid") && (!result.expires_at || Date.parse(result.expires_at) > Date.now()));
         if (live) window.location.replace(destination.href);
         else { setPrevious(result); setPhase("previous"); }
       } catch (error) {
@@ -82,7 +82,7 @@ export default function AutomaticPaymentLink({ token, actionUrl }: { token: stri
     {phase === "creating" || phase === "error" ? <p role="status">{message}</p> : null}
     {phase === "error" ? <button type="button" className={buttonClass} disabled={waiting} onClick={() => setRetry(value => value + 1)}>{waiting ? "Wait before retrying" : "Retry same checkout attempt"}</button> : null}
     {phase === "previous" && previous ? <>
-      <p>Your previous invoice is {previous.status === "pending" ? "expired" : previous.status.replaceAll("_", " ")}. Start another purchase only if you intend to place another order.</p>
+      <p>Your previous invoice is {previous.status === "pending" || previous.status === "partially_paid" ? "expired" : previous.status.replaceAll("_", " ")}. Start another purchase only if you intend to place another order.</p>
       <a className={buttonClass} href={previous.invoice_url}>View previous invoice</a>
       <a className={buttonClass} href={`/pay/${encodeURIComponent(token)}?new=1`}>Start another purchase</a>
     </> : null}

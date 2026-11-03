@@ -9,6 +9,10 @@ import PageIntroBand from "../../../../components/page-intro-band";
 import Timestamp from "../../../../components/timestamp";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
 import { areDonationsEnabled } from "../../../../lib/donations";
+import {
+  invoiceStatusLabel,
+  type InvoiceStatus,
+} from "../../../../lib/invoice-status";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -17,14 +21,14 @@ export const metadata: Metadata = {
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
-type InvoiceStatus =
-  "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type InvoiceStatusResponse = {
   id: string;
   address: string;
   subaddress_index: number | null;
   amount_xmr: string;
+  amount_paid_xmr?: string | null;
+  amount_remaining_xmr?: string | null;
   status: InvoiceStatus;
   confirmation_target: number;
   confirmations: number;
@@ -41,6 +45,9 @@ const statusDescription = (
 ) => {
   if (status === "pending") {
     return "Awaiting on-chain detection of your donation.";
+  }
+  if (status === "partially_paid") {
+    return "Part of the donation was received. Send the remaining amount to complete it.";
   }
   if (status === "payment_detected") {
     return `Payment detected. ${confirmations}/${confirmationTarget} confirmations.`;
@@ -73,7 +80,7 @@ export default async function DonateStatusDetailPage({
     : null;
   const retrievedAt = invoice ? new Date().toISOString() : undefined;
   const statusMessage = invoice
-    ? `${invoice.status === "pending" ? "Awaiting funds" : invoice.status.replaceAll("_", " ")}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    ? `${invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr)}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
     : "";
 
   if (response.status === 404) {
@@ -200,6 +207,8 @@ export default async function DonateStatusDetailPage({
         <InvoicePaymentDetails
           address={invoice.address}
           amount={invoice.amount_xmr}
+          amountPaid={invoice.amount_paid_xmr ?? null}
+          amountRemaining={invoice.amount_remaining_xmr ?? null}
           hasDetectedPayment={hasDetectedPayment}
           expiresAt={invoice.expires_at}
           expiryRetrievedAt={retrievedAt}

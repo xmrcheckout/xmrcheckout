@@ -8,6 +8,11 @@ import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../compo
 import Timestamp from "../../../components/timestamp";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import StatusRefreshButton from "../../../components/status-refresh-button";
+import {
+  invoiceStatusLabel,
+  invoiceStatusTones,
+  type InvoiceStatus,
+} from "../../../lib/invoice-status";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -16,8 +21,6 @@ export const metadata: Metadata = {
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
-type InvoiceStatus =
-  "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
 
 type InvoiceStatusResponse = {
   id: string;
@@ -25,6 +28,7 @@ type InvoiceStatusResponse = {
   subaddress_index: number | null;
   amount_xmr: string;
   amount_paid_xmr?: string | null;
+  amount_remaining_xmr?: string | null;
   status: InvoiceStatus;
   confirmation_target: number;
   confirmations: number;
@@ -118,30 +122,6 @@ const reconcilerBadge = (systemStatus: SystemStatusResponse | null) => {
   return { label: "Detection degraded", tone: "error" as StatusTone };
 };
 
-const formatStatus = (status: InvoiceStatus) => {
-  if (status === "payment_detected") {
-    return "Payment detected";
-  }
-  if (status === "pending") {
-    return "Awaiting funds";
-  }
-  if (status === "confirmed") {
-    return "Confirmed";
-  }
-  if (status === "invalid") {
-    return "Invalid";
-  }
-  return "Expired";
-};
-
-const statusTones: Record<InvoiceStatus, StatusTone> = {
-  pending: "pending",
-  payment_detected: "detected",
-  confirmed: "success",
-  expired: "error",
-  invalid: "error",
-};
-
 export default async function BtcpayModalInvoicePage({
   params,
 }: {
@@ -163,7 +143,7 @@ export default async function BtcpayModalInvoicePage({
     : null;
   const retrievedAt = invoice ? new Date().toISOString() : undefined;
   const statusMessage = invoice
-    ? `${invoice.status === "pending" ? "Awaiting funds" : invoice.status.replaceAll("_", " ")}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    ? `${invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr)}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
     : "";
 
   if (response.status === 404 || response.status === 422) {
@@ -219,7 +199,11 @@ export default async function BtcpayModalInvoicePage({
   const systemStatus = systemStatusResponse.ok
     ? ((await systemStatusResponse.json().catch(() => null)) as SystemStatusResponse | null)
     : null;
-  const statusLabel = formatStatus(invoice.status);
+  const statusLabel = invoiceStatusLabel(
+    invoice.status,
+    invoice.amount_paid_xmr,
+    invoice.amount_remaining_xmr,
+  );
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
   const hasDetectedPayment =
@@ -275,6 +259,7 @@ export default async function BtcpayModalInvoicePage({
             address={invoice.address}
             amountXmr={invoice.amount_xmr}
             amountPaidXmr={invoice.amount_paid_xmr ?? null}
+            amountRemainingXmr={invoice.amount_remaining_xmr ?? null}
             btcpayAmount={invoice.btcpay_amount ?? null}
             btcpayCurrency={invoice.btcpay_currency ?? null}
             quote={invoice.quote ?? null}
@@ -314,6 +299,8 @@ export default async function BtcpayModalInvoicePage({
           <InvoicePaymentDetails
             address={invoice.address}
             amount={invoice.amount_xmr}
+            amountPaid={invoice.amount_paid_xmr ?? null}
+            amountRemaining={invoice.amount_remaining_xmr ?? null}
             hasDetectedPayment={hasDetectedPayment}
             expiresAt={invoice.expires_at}
             expiryRetrievedAt={retrievedAt}
@@ -331,7 +318,7 @@ export default async function BtcpayModalInvoicePage({
                 <StatusBadge
                   className="mt-2"
                   label={statusLabel}
-                  tone={statusTones[invoice.status]}
+                  tone={invoiceStatusTones[invoice.status]}
                 />
               </div>
               <div className="px-5 py-4">

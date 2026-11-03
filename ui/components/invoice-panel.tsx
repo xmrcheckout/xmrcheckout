@@ -11,6 +11,13 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
+import {
+  hasPartialAmount,
+  invoiceStatusLabel,
+  invoiceStatusLabels,
+  invoiceStatusTones,
+  type InvoiceStatus,
+} from "../lib/invoice-status";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
 import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
 import { useBrowserOrigin } from "../lib/use-browser-origin";
@@ -36,7 +43,9 @@ type InvoiceItem = {
   address: string;
   subaddress_index?: number | null;
   amount_xmr: string;
-  status: "pending" | "payment_detected" | "confirmed" | "expired" | "invalid";
+  amount_paid_xmr?: string | null;
+  amount_remaining_xmr?: string | null;
+  status: InvoiceStatus;
   confirmation_target: number;
   confirmations?: number | null;
   paid_after_expiry?: boolean;
@@ -81,21 +90,12 @@ const initialArchiveState: ArchiveInvoiceState = {
   archivedId: null,
 };
 
-const formatStatus = (status: InvoiceItem["status"]) => {
-  if (status === "payment_detected") {
-    return "Payment detected";
-  }
-  if (status === "pending") {
-    return "Awaiting funds";
-  }
-  if (status === "confirmed") {
-    return "Confirmed";
-  }
-  if (status === "invalid") {
-    return "Invalid";
-  }
-  return "Expired";
-};
+const formatStatus = (invoice: InvoiceItem) =>
+  invoiceStatusLabel(
+    invoice.status,
+    invoice.amount_paid_xmr,
+    invoice.amount_remaining_xmr,
+  );
 
 const formatTimestamp = (value: string | null) => {
   if (!value) {
@@ -114,8 +114,9 @@ const invoiceStatusOptions: {
 }[] = [
   { value: "active", label: "Active" },
   { value: "all", label: "All" },
-  { value: "pending", label: "Awaiting funds" },
-  { value: "payment_detected", label: "Payment detected" },
+  { value: "pending", label: invoiceStatusLabels.pending },
+  { value: "partially_paid", label: invoiceStatusLabels.partially_paid },
+  { value: "payment_detected", label: invoiceStatusLabels.payment_detected },
   { value: "confirmed", label: "Confirmed" },
   { value: "expired", label: "Expired" },
   { value: "invalid", label: "Invalid" },
@@ -1004,16 +1005,19 @@ export default function InvoicePanel({
     }
     if (statusFilter === "active") {
       list = list.filter((invoice) =>
-        ["pending", "payment_detected", "confirmed"].includes(invoice.status),
+        ["pending", "partially_paid", "payment_detected", "confirmed"].includes(
+          invoice.status,
+        ),
       );
     }
 
     const statusRank: Record<InvoiceItem["status"], number> = {
       pending: 0,
-      payment_detected: 1,
-      confirmed: 2,
-      expired: 3,
-      invalid: 4,
+      partially_paid: 1,
+      payment_detected: 2,
+      confirmed: 3,
+      expired: 4,
+      invalid: 5,
     };
 
     const compare = (a: InvoiceItem, b: InvoiceItem) => {
@@ -1189,18 +1193,8 @@ export default function InvoicePanel({
     }
     return order === "asc" ? " (asc)" : " (desc)";
   };
-  const statusTone = (status: InvoiceItem["status"]): StatusTone => {
-    if (status === "payment_detected") {
-      return "detected";
-    }
-    if (status === "confirmed") {
-      return "success";
-    }
-    if (status === "expired" || status === "invalid") {
-      return "error";
-    }
-    return "pending";
-  };
+  const statusTone = (status: InvoiceItem["status"]): StatusTone =>
+    invoiceStatusTones[status];
 
   const applySearch = () => {
     router.push(buildInvoicesHref({ q: searchInput }));
@@ -1387,6 +1381,15 @@ export default function InvoicePanel({
                         <p className="mt-1 break-all font-mono text-lg font-semibold text-ink">
                           {formatXmrAmount(invoice.amount_xmr)} XMR
                         </p>
+                        {hasPartialAmount(
+                          invoice.amount_paid_xmr,
+                          invoice.amount_remaining_xmr,
+                        ) ? (
+                          <p className="mt-1 text-xs font-semibold text-amber-900">
+                            Received{" "}
+                            {formatXmrAmount(invoice.amount_paid_xmr ?? "0")} XMR
+                          </p>
+                        ) : null}
                       </div>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -1400,7 +1403,7 @@ export default function InvoicePanel({
                         />
                       ) : null}
                       <StatusBadge
-                        label={formatStatus(invoice.status)}
+                        label={formatStatus(invoice)}
                         tone={statusTone(invoice.status)}
                       />
                       <span className="ml-auto text-xs font-semibold text-ink-soft">
@@ -1561,7 +1564,7 @@ export default function InvoicePanel({
                             </button>
                           ) : !invoice.archived_at ? (
                             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                              {formatStatus(invoice.status)} invoices cannot be
+                              {invoiceStatusLabels[invoice.status]} invoices cannot be
                               archived.
                             </p>
                           ) : null}
@@ -1685,11 +1688,20 @@ export default function InvoicePanel({
                           </td>
                           <td className="break-all px-4 py-3 align-top font-mono text-sm font-semibold text-ink">
                             <span>{formatXmrAmount(invoice.amount_xmr)}</span>{" "}<span className="inline-block">XMR</span>
+                            {hasPartialAmount(
+                              invoice.amount_paid_xmr,
+                              invoice.amount_remaining_xmr,
+                            ) ? (
+                              <span className="mt-1 block font-sans text-xs text-amber-900">
+                                Received{" "}
+                                {formatXmrAmount(invoice.amount_paid_xmr ?? "0")} XMR
+                              </span>
+                            ) : null}
                           </td>
                           <td className="px-4 py-3 align-top">
                             <StatusBadge
                               className="px-2 py-1 leading-tight"
-                              label={formatStatus(invoice.status)}
+                              label={formatStatus(invoice)}
                               tone={statusTone(invoice.status)}
                             />
                           </td>
@@ -1857,7 +1869,7 @@ export default function InvoicePanel({
                                     </button>
                                   ) : !invoice.archived_at ? (
                                     <p className="text-sm text-ink-soft">
-                                      {formatStatus(invoice.status)} invoices
+                                      {invoiceStatusLabels[invoice.status]} invoices
                                       cannot be archived.
                                     </p>
                                   ) : null}

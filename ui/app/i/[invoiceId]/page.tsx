@@ -309,6 +309,7 @@ export default async function BtcpayModalInvoicePage({
             confirmations={confirmations}
             qrLogoMode={invoice.qr_logo ?? "monero"}
             qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
+            quote={invoice.quote ?? null}
           />
 
           <section className="mt-4 overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">

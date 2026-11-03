@@ -9,7 +9,11 @@ import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
 import Timestamp from "./timestamp";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
-import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
+import {
+  formatFiatAmount,
+  formatUsdAmount,
+  formatXmrAmount,
+} from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
 import {
   hasPartialAmount,
@@ -17,6 +21,14 @@ import {
   invoiceStatusTones,
   type InvoiceStatus,
 } from "../lib/invoice-status";
+
+export type InvoiceFiatQuote = {
+  fiat_amount: string;
+  fiat_currency: string;
+  rate: string;
+  source: string;
+  quoted_at: string;
+};
 
 type InvoicePaymentDetailsProps = {
   address: string;
@@ -32,6 +44,7 @@ type InvoicePaymentDetailsProps = {
   qrLogoMode?: "monero" | "none" | "custom" | null;
   qrLogoDataUrl?: string | null;
   enableFiatEstimate?: boolean;
+  quote?: InvoiceFiatQuote | null;
 };
 
 const buildMoneroUri = (address: string, amount: string) => {
@@ -54,6 +67,7 @@ export default function InvoicePaymentDetails({
   qrLogoMode,
   qrLogoDataUrl,
   enableFiatEstimate = true,
+  quote = null,
 }: InvoicePaymentDetailsProps) {
   const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -61,7 +75,7 @@ export default function InvoicePaymentDetails({
     rate: usdRate,
     updatedAt: usdRateUpdatedAt,
     source: usdRateSource,
-  } = useXmrUsdRate(enableFiatEstimate);
+  } = useXmrUsdRate(enableFiatEstimate && !quote);
   const isInvalid = status === "invalid";
   const isExpired = status === "expired";
   const hasPartial = hasPartialAmount(amountPaid, amountRemaining);
@@ -90,12 +104,17 @@ export default function InvoicePaymentDetails({
     const parsed = Number.parseFloat(requestedAmount);
     return Number.isFinite(parsed) ? parsed : null;
   }, [requestedAmount]);
+  const merchantPrice = useMemo(
+    () =>
+      quote ? formatFiatAmount(quote.fiat_amount, quote.fiat_currency) : null,
+    [quote],
+  );
   const usdEstimate = useMemo(() => {
-    if (!usdRate || amountValue === null || amountValue <= 0) {
+    if (quote || !usdRate || amountValue === null || amountValue <= 0) {
       return null;
     }
     return formatUsdAmount(usdRate * amountValue);
-  }, [usdRate, amountValue]);
+  }, [quote, usdRate, amountValue]);
 
   useEffect(() => {
     let active = true;
@@ -238,7 +257,22 @@ export default function InvoicePaymentDetails({
           </p>
           ) : null}
 
-          {usdEstimate ? (
+          {quote && merchantPrice ? (
+            <div className="mt-3 text-sm text-ink-soft">
+              <p>Merchant price: {merchantPrice}</p>
+              <details className="mt-1 w-fit text-xs">
+                <summary className="cursor-pointer select-none underline underline-offset-4">
+                  About this price
+                </summary>
+                <p className="mt-2 max-w-[52ch] leading-relaxed">
+                  Converted to XMR at {quote.rate}{" "}
+                  {quote.fiat_currency.toUpperCase()}/XMR ({quote.source}) at{" "}
+                  <Timestamp value={quote.quoted_at} />. This invoice is due in
+                  XMR. The rate was not locked.
+                </p>
+              </details>
+            </div>
+          ) : usdEstimate ? (
             <div className="mt-3 text-sm text-ink-soft">
               <p>Approx. USD reference: ~{usdEstimate}</p>
               <details className="mt-1 w-fit text-xs">

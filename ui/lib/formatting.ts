@@ -11,14 +11,26 @@ export const formatXmrAmount = (value: string | number): string => {
   return trimmedFraction ? `${whole}.${trimmedFraction}` : whole;
 };
 
-export const formatUsdAmount = (value: number): string => {
-  if (!Number.isFinite(value)) {
+export const formatFiatAmount = (
+  value: number | string,
+  currency: string,
+): string => {
+  const numeric = typeof value === "string" ? Number.parseFloat(value) : value;
+  if (!Number.isFinite(numeric)) {
     return "";
   }
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-  }).format(value);
+  const code = currency.trim().toUpperCase();
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
+    }).format(numeric);
+  } catch {
+    return `${numeric.toFixed(2)} ${code}`;
+  }
 };
+
+export const formatUsdAmount = (value: number): string =>
+  formatFiatAmount(value, "USD");

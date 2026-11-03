@@ -212,6 +212,7 @@ export default async function InvoiceStatusDetailPage({
             confirmations={confirmations}
           qrLogoMode={invoice.qr_logo ?? "monero"}
           qrLogoDataUrl={invoice.qr_logo_data_url ?? null}
+          quote={invoice.quote ?? null}
         />
 
         <aside className="overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
@@ -266,11 +267,6 @@ export default async function InvoiceStatusDetailPage({
             This status page is public. Anyone with the link can view the
             current invoice state.
           </p>
-      {invoice.quote ? <div className="mt-4 rounded-xl border border-stroke p-4 text-sm">
-        <p>Original reference: {invoice.quote.fiat_amount} {invoice.quote.fiat_currency}. This invoice is defined in XMR.</p>
-        <p>Informational rate: {invoice.quote.rate} {invoice.quote.fiat_currency} per XMR. Source: {invoice.quote.source}. Quoted at: <Timestamp value={invoice.quote.quoted_at} />.</p>
-        <p>This estimate does not lock a rate or guarantee a fiat outcome.</p>
-      </div> : null}
         </aside>
       </div>
 

@@ -78,12 +78,13 @@ class TransferIsolationTests(unittest.TestCase):
 
     def test_cooldown_uses_latest_closure_and_blocks_active_or_unknown(self):
         now = datetime.now(timezone.utc)
+        cooldown = timedelta(seconds=pool_status.SUBADDRESS_REUSE_COOLDOWN_SECONDS)
         closed = SimpleNamespace(status="confirmed", confirmed_at=now, expires_at=None)
-        self.assertEqual(allocator.reuse_ready_at([closed]), now + timedelta(days=7))
+        self.assertEqual(allocator.reuse_ready_at([closed]), now + cooldown)
         for status in ["pending", "payment_detected", "invalid"]:
             self.assertIsNone(allocator.reuse_ready_at([closed, SimpleNamespace(status=status)]))
         expired = SimpleNamespace(status="expired", expires_at=now + timedelta(days=1))
-        self.assertEqual(allocator.reuse_ready_at([closed, expired]), now + timedelta(days=8))
+        self.assertEqual(allocator.reuse_ready_at([closed, expired]), now + timedelta(days=1) + cooldown)
         self.assertIsNone(allocator.reuse_ready_at([SimpleNamespace(status="confirmed", confirmed_at=None)]))
 
 
@@ -135,15 +136,17 @@ class AllocationDatabaseTests(unittest.TestCase):
 
     def populate(self, age=8):
         with self.Session.begin() as db:
-            for index in range(1, 101):
+            for index in range(1, pool_status.MAX_SUBADDRESS_INDEX + 1):
                 db.add(Invoice(id=uuid4(), user_id=self.user_id, address=f"address-{index}",
                     subaddress_index=index, amount_xmr=Decimal("1"), status="expired", confirmation_target=1,
                     expires_at=datetime.now(timezone.utc) - timedelta(days=age)))
 
-    def test_first_hundred_never_reuse_and_next_is_blocked(self):
-        # Raise only the rate quota in this fixture; real active limits remain intact.
-        with patch("app.invoice_limits.INVOICE_CREATION_RATE_LIMIT", 1000):
-            self.assertEqual([self.issue()[1] for _ in range(100)], list(range(1, 101)))
+    def test_full_pool_never_reuses_and_next_is_blocked(self):
+        size = pool_status.MAX_SUBADDRESS_INDEX
+        # Raise only the quotas in this fixture so the whole pool can be issued at once.
+        with patch("app.invoice_limits.INVOICE_CREATION_RATE_LIMIT", 1000), \
+                patch("app.invoice_limits.INVOICE_ACTIVE_LIMIT", 1000):
+            self.assertEqual([self.issue()[1] for _ in range(size)], list(range(1, size + 1)))
         self.snapshot_mock.assert_not_called()
         with self.assertRaises(HTTPException) as raised:
             self.issue()
@@ -175,7 +178,7 @@ class AllocationDatabaseTests(unittest.TestCase):
             rows = db.query(SubaddressAllocation).all()
             self.assertEqual(len(rows), 2)
             self.assertTrue(all(row.cutoff_height == 100 and "historical" in row.excluded_txids for row in rows))
-            self.assertEqual(db.query(Invoice).filter(Invoice.status == "expired").count(), 100)
+            self.assertEqual(db.query(Invoice).filter(Invoice.status == "expired").count(), pool_status.MAX_SUBADDRESS_INDEX)
 
     def test_reconciliation_lock_blocks_allocation_without_consuming_quota(self):
         # The reconciler uses this same session-level lock across invoice commits.

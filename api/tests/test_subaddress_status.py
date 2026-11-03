@@ -51,7 +51,7 @@ class AvailabilityRulesTests(unittest.TestCase):
                     self.invoice(10, subaddress_index=11)]
         orphan = SimpleNamespace(invoice_id=uuid4(), address="address-12", subaddress_index=12, generation=1)
         rows = status.availability(self.user, invoices, [orphan], self.now)
-        self.assertEqual(len(rows), 100)
+        self.assertEqual(len(rows), status.MAX_SUBADDRESS_INDEX)
         expected = {1: ("never_issued", "never_issued"), 2: ("eligible_for_reuse", "cooldown_complete"),
                     3: ("cooling_down", "reuse_cooldown"), 4: ("reserved", "awaiting_invoice_status_update"),
                     5: ("reserved", "active_invoice"), 6: ("needs_review", "invalid_prior_invoice"),
@@ -61,18 +61,19 @@ class AvailabilityRulesTests(unittest.TestCase):
                     12: ("needs_review", "inconsistent_history")}
         for index, values in expected.items():
             self.assertEqual((rows[index - 1].category, rows[index - 1].code), values)
-        self.assertEqual(sum(sum(row.category == category for row in rows) for category in status.CATEGORIES), 100)
+        self.assertEqual(sum(sum(row.category == category for row in rows) for category in status.CATEGORIES), status.MAX_SUBADDRESS_INDEX)
         self.assertNotIn("fixture-secret", json.dumps([row.report() for row in rows], default=str))
 
     def test_latest_closure_boundary_and_legacy_history(self):
         older = self.invoice(1, subaddress_index=None)
-        newer = self.invoice(1, "confirmed", confirmed_at=self.now - timedelta(days=7))
+        newer = self.invoice(1, "confirmed", confirmed_at=self.now - timedelta(seconds=status.SUBADDRESS_REUSE_COOLDOWN_SECONDS))
         row = status.availability(self.user, [older, newer], [], self.now)[0]
         self.assertEqual(row.category, "eligible_for_reuse")
         self.assertEqual(row.cooldown_complete_at, self.now)
         self.assertEqual(row.latest_closure_at, newer.confirmed_at)
-        self.user.subaddress_start_index = 99
-        self.assertEqual([row.index for row in status.availability(self.user, [], [], self.now)], [100])
+        self.user.subaddress_start_index = status.MAX_SUBADDRESS_INDEX - 1
+        self.assertEqual([row.index for row in status.availability(self.user, [], [], self.now)],
+                         [status.MAX_SUBADDRESS_INDEX])
 
     def test_failure_categories_never_include_rpc_messages(self):
         exc = RPCError({"code": -7, "message": "fixture-password fixture-view-key raw-payload"})
@@ -115,7 +116,7 @@ class StatusDatabaseTests(unittest.TestCase):
         event.remove(self.engine, "before_cursor_execute", capture)
         self.assertTrue(all(statement.lstrip().upper().startswith("SELECT") for statement in statements))
         self.snapshot_mock.assert_not_called()
-        self.assertEqual(report["counts"]["never_issued"], 100)
+        self.assertEqual(report["counts"]["never_issued"], status.MAX_SUBADDRESS_INDEX)
         _, index = self.issue()
         self.assertEqual(index, 1)
         report = self.report()
@@ -228,7 +229,7 @@ class StatusDatabaseTests(unittest.TestCase):
         self.assertEqual(response.headers["Cache-Control"], "no-store")
         self.assertEqual(response.json()["counts"]["reserved"], 1)
         other_response = requests.get(path, headers={"Authorization": "ApiKey other-fixture-key"}, timeout=5)
-        self.assertEqual(other_response.json()["counts"]["never_issued"], 100)
+        self.assertEqual(other_response.json()["counts"]["never_issued"], status.MAX_SUBADDRESS_INDEX)
         self.assertNotIn("fixture-api-key", response.text)
         self.assertNotIn("fixture-view-key", response.text)
         health = requests.get(base + "/api/core/public/system/status", timeout=5)

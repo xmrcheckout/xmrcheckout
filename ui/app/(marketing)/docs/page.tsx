@@ -1039,8 +1039,8 @@ Content-Type: application/json
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>Subaddress index shown on each invoice</li>
               <li>Wallet lookahead controls discovery</li>
-              <li>Subaddresses cycle through indices 1 to 100</li>
-              <li>Wallets may require adding the index to view funds</li>
+              <li>Subaddresses cycle through indices 1 to 199</li>
+              <li>All invoice addresses are within the default range every Monero wallet watches</li>
             </ul>
           </div>
           <div className="rounded-surface border border-stroke border-t-4 border-t-monero bg-white/70 p-6 shadow-soft">

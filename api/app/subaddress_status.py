@@ -9,7 +9,10 @@ from .models import Invoice, SnapshotStatus, SubaddressAllocation, User
 from .security import decrypt_secret
 from .subaddress_derivation import derive_subaddress
 
-MAX_SUBADDRESS_INDEX = 100
+# A freshly restored wallet with default settings watches minor indices 0-199
+# in account 0 (wallet2 SUBADDRESS_LOOKAHEAD_MINOR = 200), whatever its restore
+# height. Staying within it means merchants never need to raise their lookahead.
+MAX_SUBADDRESS_INDEX = 199
 CATEGORIES = ("never_issued", "eligible_for_reuse", "reserved", "cooling_down", "needs_review")
 
 

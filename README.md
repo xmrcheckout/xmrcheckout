@@ -138,15 +138,19 @@ cp .env.example .env
 
 ### Invoice address reuse
 
-Each merchant uses the existing pool of up to 100 invoice subaddresses in account
-0. Never-issued addresses are used first. After the pool has been issued, an
-address can be reused only when all its previous invoices are confirmed or
-expired, and seven days have passed since the latest confirmation or expiry.
+Each merchant uses a pool of up to 199 invoice subaddresses (indices 1-199) in
+account 0. All invoice addresses are within the default range every Monero
+wallet watches, so merchants never need to raise their wallet's subaddress
+lookahead. Never-issued addresses are used first. After the pool has been
+issued, an address can be reused only when all its previous invoices are
+confirmed or expired, and three days have passed since the latest confirmation
+or expiry.
 Archiving an invoice does not release its address. Pending or payment-detected
 invoices continue to reserve their address until reconciliation closes them.
 
-Set `SUBADDRESS_REUSE_COOLDOWN_SECONDS` to a positive number of seconds to change
-the seven-day default (`604800`). If every address is reserved or cooling down,
+Set `SUBADDRESS_REUSE_COOLDOWN_SECONDS` to change the three-day default
+(`259200`). It must be longer than `LATE_PAYMENT_LOOKBACK_HOURS`, so an address
+is never reused while its previous invoice is still watched for late payments. If every address is reserved or cooling down,
 invoice creation returns HTTP 429 with `Retry-After`. When closure timestamps are
 missing, the address remains unavailable. Existing merchant quotas also apply.
 
@@ -534,7 +538,7 @@ Public creations share the merchant's existing invoice and address limits and
 `PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (default 10 successful creations per rolling
 24 hours, across all links). The public POST endpoint is additionally limited at
 Nginx to 6 requests per minute per client IP, burst 3. A malicious visitor can
-consume the public allowance. Existing address reuse and seven-day cooldown
+consume the public allowance. Existing address reuse and three-day cooldown
 still apply; a fresh invoice does not guarantee a never-used address. Raising
 the daily allowance does not expand the address pool.
 

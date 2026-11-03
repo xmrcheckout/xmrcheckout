@@ -1,0 +1,10 @@
+{
+  "name": "Monero terminal",
+  "short_name": "Terminal",
+  "start_url": "/terminal",
+  "scope": "/terminal",
+  "display": "standalone",
+  "background_color": "#f8f2e9",
+  "theme_color": "#f8f2e9",
+  "icons": [{ "src": "/logo.png", "sizes": "1024x1024", "type": "image/png" }]
+}

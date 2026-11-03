@@ -87,6 +87,20 @@ const endpointGroups = [
     }
   ]
 },
+{
+  "title": "Terminals",
+  "auth": "API key (management) or terminal key (sales)",
+  "items": [
+    { "method": "GET", "path": "/api/core/terminals", "description": "List the merchant’s in-person checkout terminals." },
+    { "method": "POST", "path": "/api/core/terminals", "description": "Create a terminal; returns 201 with its link, shown only once." },
+    { "method": "PATCH", "path": "/api/core/terminals/{terminal_id}", "description": "Rename, enable or disable, or change a terminal’s defaults." },
+    { "method": "POST", "path": "/api/core/terminals/{terminal_id}/rotate", "description": "Replace the terminal link; the previous link stops working." },
+    { "method": "GET", "path": "/api/core/terminal/status", "description": "Terminal key: read the terminal’s settings and free invoice addresses." },
+    { "method": "POST", "path": "/api/core/terminal/invoices", "description": "Terminal key: create an invoice for an in-person sale." },
+    { "method": "GET", "path": "/api/core/terminal/invoices/{invoice_id}", "description": "Terminal key: read the status of an invoice this terminal created." },
+    { "method": "POST", "path": "/api/core/terminal/invoices/{invoice_id}/cancel", "description": "Terminal key: end an unpaid sale by expiring its invoice now." }
+  ]
+},
   {
     title: "Connect wallet",
     auth: "None",
@@ -403,6 +417,40 @@ const endpointRequirements = [
     "Success returns 303 to the hosted invoice; it does not return invoice JSON. Application errors are HTML, including unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). Applicable responses include Retry-After.",
     "The default allowance is 10 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
     "There is no duplicate-submission recovery or automatic retry. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying."
+  ]
+},
+{
+  "method": "POST",
+  "path": "/api/core/terminals",
+  "auth": "API key",
+  "required": ["name"],
+  "optional": ["default_currency (XMR or a supported fiat reference, default XMR)", "confirmation_target (0-10, default 0)", "expiry_minutes (2-60, default 15)", "enabled (default true)"],
+  "notes": [
+    "Returns the terminal settings and url, which ends in #k= followed by the terminal key. The key is stored only as a hash and is never returned again; rotate to replace it.",
+    "A terminal key can create invoices, read the status of its own invoices, and cancel its own unpaid invoices. It cannot read other invoices, change settings, or use other endpoints."
+  ]
+},
+{
+  "method": "POST",
+  "path": "/api/core/terminal/invoices",
+  "auth": "Authorization: Terminal <key>",
+  "required": ["amount (string)", "currency (XMR or a supported fiat reference)"],
+  "optional": ["note (up to 200 characters)", "Idempotency-Key header (UUID)"],
+  "notes": [
+    "Uses the terminal’s confirmation target and expiry. Fiat-reference amounts are converted to XMR at creation; the rate is informational only.",
+    "Returns 201 with invoice status fields, note, and invoice_url. Replaying the same Idempotency-Key returns 200 with the same invoice. Merchant invoice limits and address capacity apply; the public payment-link allowance does not.",
+    "Open terminal invoices are checked about every 5 seconds, including unconfirmed transactions, so a confirmation target of 0 reports detection within seconds."
+  ]
+},
+{
+  "method": "POST",
+  "path": "/api/core/terminal/invoices/{invoice_id}/cancel",
+  "auth": "Authorization: Terminal <key>",
+  "required": ["invoice_id (created by this terminal)"],
+  "optional": [],
+  "notes": [
+    "Sets the invoice to expire now when it is pending with nothing received; otherwise returns 409. Late payments to a cancelled invoice are still detected and reported as paid after expiry.",
+    "The invoice address is held for the usual reuse period after expiry."
   ]
 },
   {

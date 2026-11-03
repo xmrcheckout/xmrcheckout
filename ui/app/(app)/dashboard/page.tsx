@@ -25,6 +25,7 @@ import WebhookHistoryPanel from "../../../components/webhook-history-panel";
 import WebhookSecretSection from "../../../components/webhook-secret-section";
 import WebhookSection from "../../../components/webhook-section";
 import PaymentLinks from "../../../components/payment-links";
+import Terminals from "../../../components/terminals";
 import WorkspaceNav from "../../../components/workspace-nav";
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
-const tabs = ["overview", "invoices", "payment-links", "webhooks", "profile", "health"] as const;
+const tabs = ["overview", "invoices", "payment-links", "terminals", "webhooks", "profile", "health"] as const;
 const webhookTabs = ["settings", "history"] as const;
 type DashboardTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
@@ -92,6 +93,7 @@ type ProfileSummary = {
 
 const dashboardNavItems = [
   { value: "payment-links", href: "/dashboard?tab=payment-links", label: "Payment links", detail: "Reusable HTML buttons" },
+  { value: "terminals", href: "/dashboard?tab=terminals", label: "Terminals", detail: "In-person checkout" },
   {
     value: "overview",
     href: "/dashboard?tab=overview",
@@ -216,7 +218,7 @@ export default async function DashboardPage({
   let offset = activeTab === "invoices" ? (invoicePage - 1) * invoiceLimit : 0;
   let total = 0;
   const items: InvoiceSummary[] = [];
-  if (activeTab !== "payment-links") do {
+  if (activeTab !== "payment-links" && activeTab !== "terminals") do {
     const invoiceUrl = new URL(`${apiBaseUrl}/api/core/invoices`);
     invoiceUrl.searchParams.set("limit", invoiceLimit.toString());
     invoiceUrl.searchParams.set("offset", offset.toString());
@@ -680,6 +682,7 @@ export default async function DashboardPage({
           ) : null}
 
           {activeTab === "payment-links" ? <PaymentLinks /> : null}
+          {activeTab === "terminals" ? <Terminals /> : null}
           {activeTab === "health" ? (
             <div className="grid min-w-0 grid-cols-1 gap-6">
               <SystemHealthPanel status={systemStatus} />

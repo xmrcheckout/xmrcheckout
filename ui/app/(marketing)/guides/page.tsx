@@ -53,6 +53,12 @@ export default function GuidesPage() {
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">Accept payments or donations to your own wallet. Copy HTML or share a reusable URL, and track a separate invoice for each submission.</p>
             <span className="mt-5 inline-flex text-sm font-semibold text-ink">Read the payment button guide →</span>
           </Link>
+          <Link className={cardClass} href="/guides/in-person-monero-checkout">
+            <p className="text-sm font-semibold text-ink-soft">For cafés, market stalls, and shops</p>
+            <h2 className="mt-2 font-sans text-2xl font-semibold group-hover:underline group-hover:underline-offset-4">Accept Monero in person with a terminal</h2>
+            <p className="mt-3 text-sm leading-relaxed text-ink-soft">Turn a tablet or phone into a till. Type the amount, show a QR code, and see the payment arrive in seconds.</p>
+            <span className="mt-5 inline-flex text-sm font-semibold text-ink">Read the terminal guide →</span>
+          </Link>
           <Link className={cardClass} href="/guides/self-hosted-monero-checkout">
             <p className="flex items-center gap-2 text-sm font-semibold text-ink-soft">
               <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />

@@ -21,6 +21,8 @@ export function invoiceContext(metadata: unknown): { title: string | null; detai
     try { woo = record(record(JSON.parse(data.posData)).WooCommerce); } catch { /* Malformed optional metadata has no display context. */ }
   }
   const order = text(data.order_id) || text(woo['Order Number']) || text(woo['Order ID']) || (typeof woo['Order ID'] === 'number' ? String(woo['Order ID']) : null);
-  const details = [text(data.description), text(product.title), order ? `Order ${order}` : null, text(data.recipient_name)].filter((value): value is string => Boolean(value));
+  const terminal = record(data.terminal);
+  const sale = text(terminal.name) ? `Terminal: ${text(terminal.name)}${text(terminal.note) ? ` · ${text(terminal.note)}` : ''}` : null;
+  const details = [text(data.description), text(product.title), sale, order ? `Order ${order}` : null, text(data.recipient_name)].filter((value): value is string => Boolean(value));
   return { title: details[0] ?? null, details: [...new Set(details)] };
 }

@@ -10,6 +10,7 @@ from .db import Base, engine
 from .config import DONATIONS_ENABLED
 from .btcpay_routes import router as btcpay_router
 from .payment_links import router as payment_links_router
+from .terminals import router as terminals_router
 from .routes import router
 from .allocation_diagnostics import AllocationError
 
@@ -71,6 +72,10 @@ def startup():
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_id UUID"))
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS payment_link_attempt_id UUID"))
             connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS invoice_payment_link_attempt ON invoices (payment_link_id, payment_link_attempt_id)"))
+            connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS terminal_id UUID"))
+            connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS terminal_attempt_id UUID"))
+            connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS invoice_terminal_attempt ON invoices (terminal_id, terminal_attempt_id)"))
+            connection.execute(text("CREATE INDEX IF NOT EXISTS invoice_terminal_id ON invoices (terminal_id) WHERE terminal_id IS NOT NULL"))
             connection.execute(
                 text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS user_id UUID")
             )
@@ -404,3 +409,4 @@ app.include_router(router)
 app.include_router(btcpay_router)
 
 app.include_router(payment_links_router)
+app.include_router(terminals_router)

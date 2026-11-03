@@ -316,6 +316,18 @@ class MoneroWalletService:
             )
             return self._get_transfers_for_address_locked(backend, address)
 
+    def refresh_wallet(self, user: User) -> None:
+        """Ask wallet-rpc to scan now, including the transaction pool."""
+        view_key = decrypt_secret(user.view_key_encrypted)
+        wallet_name = self._wallet_name(user, user.payment_address, view_key)
+        backend = self._backend_for_wallet_name(wallet_name)
+        with self._wallet_rpc_lock(backend, operation="refresh_wallet"):
+            self._ensure_wallet_ready_locked(
+                backend=backend, wallet_name=wallet_name,
+                payment_address=user.payment_address, view_key=view_key,
+            )
+            backend.client.raw_request("refresh")
+
     def snapshot_address(self, user: User, address: str) -> tuple[int, list[TransferDetail]]:
         """Refresh and snapshot under the wallet lock before reissuing an address."""
         view_key = decrypt_secret(user.view_key_encrypted)

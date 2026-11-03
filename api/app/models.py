@@ -24,6 +24,8 @@ class Invoice(Base):
     user_id = Column(UUID(as_uuid=True), nullable=True, index=True)
     payment_link_id = Column(UUID(as_uuid=True), nullable=True)
     payment_link_attempt_id = Column(UUID(as_uuid=True), nullable=True)
+    terminal_id = Column(UUID(as_uuid=True), nullable=True)
+    terminal_attempt_id = Column(UUID(as_uuid=True), nullable=True)
     __table_args__ = (UniqueConstraint("payment_link_id", "payment_link_attempt_id", name="invoice_payment_link_attempt"),)
     wallet_address = Column(String, nullable=True, index=True)
     address = Column(String, nullable=False)
@@ -218,3 +220,20 @@ class PaymentLink(Base):
     minimum_amount_xmr = Column(Numeric(18, 12), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class Terminal(Base):
+    """In-person checkout screen. Its secret can only create and read its own invoices."""
+    __tablename__ = "terminals"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
+    name = Column(String(100), nullable=False)
+    token_hash = Column(String(64), nullable=False, unique=True, index=True)
+    default_currency = Column(String(3), nullable=False, default="XMR", server_default="XMR")
+    confirmation_target = Column(Integer, nullable=False, default=0, server_default="0")
+    expiry_minutes = Column(Integer, nullable=False, default=15, server_default="15")
+    enabled = Column(Boolean, nullable=False, default=True, server_default="true")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    last_used_at = Column(DateTime(timezone=True), nullable=True)

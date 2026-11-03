@@ -16,7 +16,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from .btcpay_webhooks import dispatch_btcpay_webhooks
-from .config import INVOICE_RECONCILE_INTERVAL_SECONDS, LATE_PAYMENT_LOOKBACK_HOURS
+from .config import (
+    INVOICE_RECONCILE_INTERVAL_SECONDS,
+    LATE_PAYMENT_LOOKBACK_HOURS,
+    TERMINAL_RECONCILE_INTERVAL_SECONDS,
+)
 from .db import SessionLocal, engine
 from .models import Invoice, InvoiceTransfer, SubaddressAllocation, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail, wallet_error_summary
@@ -95,32 +99,58 @@ def main() -> None:
         finally:
             if status_db is not None:
                 status_db.close()
-        time.sleep(INVOICE_RECONCILE_INTERVAL_SECONDS)
+        _wait_with_terminal_checks(service, INVOICE_RECONCILE_INTERVAL_SECONDS)
 
 
-def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
+def _wait_with_terminal_checks(service: MoneroWalletService, seconds: float) -> None:
+    """Sleep until the next full cycle, checking open terminal invoices meanwhile."""
+    deadline = time.monotonic() + seconds
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            return
+        time.sleep(min(TERMINAL_RECONCILE_INTERVAL_SECONDS, remaining))
+        if deadline - time.monotonic() <= 0:
+            return
+        try:
+            service.begin_reconcile_cycle()
+            _reconcile_invoices(service, terminal_only=True)
+        except Exception as exc:
+            logger.warning("Terminal invoice check failed: %s", exc)
+
+
+def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = False) -> ReconcileSummary:
     db: Session = SessionLocal()
     attempted = 0
     succeeded = 0
     failed = 0
     try:
         now = datetime.now(timezone.utc)
-        late_cutoff = _expired_invoice_cutoff(db, now=now)
+        if terminal_only:
+            # Only recent invoices that a terminal screen may still be showing.
+            criteria = and_(
+                Invoice.terminal_id.is_not(None),
+                Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
+                Invoice.created_at >= now - timedelta(hours=2),
+            )
+        else:
+            late_cutoff = _expired_invoice_cutoff(db, now=now)
+            criteria = or_(
+                Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
+                and_(
+                    Invoice.status == "expired",
+                    Invoice.expires_at.is_not(None),
+                    Invoice.expires_at >= late_cutoff,
+                ),
+            )
         invoices = (
             db.query(Invoice)
-            .filter(
-                or_(
-                    Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
-                    and_(
-                        Invoice.status == "expired",
-                        Invoice.expires_at.is_not(None),
-                        Invoice.expires_at >= late_cutoff,
-                    ),
-                )
-            )
+            .filter(criteria)
             .order_by(Invoice.created_at.asc())
             .all()
         )
+        if terminal_only and not invoices:
+            return ReconcileSummary(attempted=0, succeeded=0, failed=0)
         user_groups: dict[object, list[Invoice]] = {}
         for invoice in invoices:
             attempted += 1
@@ -154,7 +184,10 @@ def _reconcile_invoices(service: MoneroWalletService) -> ReconcileSummary:
                 )
                 continue
             try:
-                service.ensure_wallet_ready(user)
+                if terminal_only:
+                    service.refresh_wallet(user)
+                else:
+                    service.ensure_wallet_ready(user)
             except Exception as exc:
                 failed += len(user_invoices)
                 logger.warning(

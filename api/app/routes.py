@@ -1145,6 +1145,7 @@ def create_invoice_for_merchant(
     payload: InvoiceCreateUser, request: Request, db: Session, user: User,
     *, payment_link_id: UUID | None = None, payment_link_attempt_id: UUID | None = None,
     minimum_amount_xmr: Decimal | None = None,
+    terminal_id: UUID | None = None, terminal_attempt_id: UUID | None = None,
 ):
     """Shared native/public creation; callers establish merchant authorization."""
     confirmation_target = payload.confirmation_target
@@ -1211,6 +1212,8 @@ def create_invoice_for_merchant(
         id=invoice_id,
         payment_link_id=payment_link_id,
         payment_link_attempt_id=payment_link_attempt_id,
+        terminal_id=terminal_id,
+        terminal_attempt_id=terminal_attempt_id,
         user_id=user.id,
         wallet_address=user.payment_address,
         address=address,

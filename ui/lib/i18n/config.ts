@@ -1,6 +1,6 @@
 // Supported interface languages. English is the source language: every other
 // catalog is merged over it, so a missing translation shows English text.
-export const locales = ["en", "es", "ru"] as const;
+export const locales = ["en", "es", "ru", "de"] as const;
 export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "en";
@@ -11,6 +11,7 @@ export const localeNames: Record<Locale, string> = {
   en: "English",
   es: "Español",
   ru: "Русский",
+  de: "Deutsch",
 };
 
 export const isLocale = (value: unknown): value is Locale =>

@@ -80,3 +80,34 @@ Formal *вы* throughout, lowercase. "Merchant" is *продавец*, "customer
 | выплата, вывод/снятие средств | "payout" / withdrawal implies custody |
 | баланс | "balance" implies held funds |
 | платёжная компания | "payments company" |
+
+## German (`de`)
+
+Formal *Sie* throughout. "Merchant" is *der Händler*, "customer" is
+*der Kunde*. Common English terms used by German Monero users stay as is:
+*Wallet* (feminine, *die Wallet*), *View-Key*, *Spend-Key*, *Seed*, *Webhook*,
+*Dashboard*.
+
+| English | German |
+| --- | --- |
+| checkout | Checkout / Zahlungsseite (product name "XMR Checkout" stays as is) |
+| invoice | Rechnung |
+| payment detected | Zahlung erkannt |
+| confirmation | Bestätigung |
+| view-only / view key | nur Lesezugriff / Wallet mit Lesezugriff / privater View-Key |
+| spend key / seed | Spend-Key / Wiederherstellungs-Seed |
+| subaddress | Subadresse |
+| expired | abgelaufen |
+| on-chain | in der Blockchain |
+| fiat (reference) | Fiat-Richtwert / Richtkurs |
+| custody / non-custodial | Verwahrung / ohne Verwahrung |
+| reconciler | Abgleichdienst |
+| self-host | selbst hosten |
+
+| Avoid (German) | Why |
+| --- | --- |
+| Zahlungsabwickler, Zahlungsdienstleister, Prozessor | implies a payment processor; allowed only as "kein Zahlungsabwickler" |
+| Abrechnung, abrechnen | "settlement" |
+| Auszahlung, auszahlen, Abhebung, abheben | "payout" / withdrawal implies custody |
+| Guthaben, Saldo, Kontostand | "balance" implies held funds |
+| Zahlungsunternehmen | "payments company" |

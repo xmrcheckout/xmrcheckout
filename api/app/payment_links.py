@@ -24,12 +24,12 @@ from .routes import _get_user_for_api_key, create_invoice_for_merchant
 from .schemas import InvoiceCreateUser, check_amount_precision
 from .security import require_api_key
 from .public_origin import public_origin
+from .rates import SUPPORTED_CURRENCIES
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 PUBLIC_PAYMENT_LINK_DAILY_LIMIT = max(1, int(os.getenv("PUBLIC_PAYMENT_LINK_DAILY_LIMIT", "10")))
 
-SUPPORTED_CURRENCIES = ("USD", "EUR", "GBP", "CAD", "AUD", "NZD", "CHF", "JPY", "CNY", "HKD", "SGD", "INR", "BRL", "MXN", "SEK", "NOK", "DKK", "ZAR", "PLN", "KRW")
 
 
 class PaymentLinkState(BaseModel):

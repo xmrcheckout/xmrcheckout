@@ -18,34 +18,43 @@ class RateCacheTests(unittest.TestCase):
 
     @patch.object(rates, "COINGECKO_API_KEY", "test-key")
     @patch.object(rates.requests, "get")
-    def test_cache_is_scoped_by_currency(self, mock_get):
-        usd_response = Mock()
-        usd_response.json.return_value = {"monero": {"usd": 125.5}}
-        eur_response = Mock()
-        eur_response.json.return_value = {"monero": {"eur": 115.25}}
-        mock_get.side_effect = [usd_response, eur_response]
+    def test_one_request_fetches_and_caches_every_currency(self, mock_get):
+        response = Mock()
+        response.json.return_value = {"monero": {"usd": 125.5, "eur": 115.25}}
+        mock_get.return_value = response
 
         usd = rates.get_xmr_rate("USD")
         eur = rates.get_xmr_rate("eur")
         cached_usd = rates.get_xmr_rate("usd")
 
         self.assertEqual(str(usd.rate), "125.5")
+        self.assertEqual(eur.currency, "EUR")
         self.assertEqual(str(eur.rate), "115.25")
         self.assertIs(cached_usd, usd)
-        self.assertEqual(mock_get.call_count, 2)
+        self.assertEqual(mock_get.call_count, 1)
+        requested = mock_get.call_args.kwargs["params"]["vs_currencies"].split(",")
+        self.assertEqual(requested, [code.lower() for code in rates.SUPPORTED_CURRENCIES])
 
     @patch.object(rates, "COINGECKO_API_KEY", "test-key")
     @patch.object(rates.requests, "get")
-    def test_unsupported_currency_is_rejected(self, mock_get):
-        response = Mock()
-        response.json.return_value = {"monero": {}}
-        mock_get.return_value = response
-
+    def test_unsupported_currency_is_rejected_without_a_request(self, mock_get):
         with self.assertRaisesRegex(
             rates.UnsupportedCurrencyError,
             "Unsupported fiat currency",
         ):
             rates.get_xmr_rate("ZZZ")
+        mock_get.assert_not_called()
+
+    @patch.object(rates, "COINGECKO_API_KEY", "test-key")
+    @patch.object(rates.requests, "get")
+    def test_missing_rate_in_reply_is_an_upstream_error(self, mock_get):
+        response = Mock()
+        response.json.return_value = {"monero": {"eur": 115.25}}
+        mock_get.return_value = response
+
+        with self.assertRaises(ValueError) as context:
+            rates.get_xmr_rate("USD")
+        self.assertNotIsInstance(context.exception, rates.UnsupportedCurrencyError)
 
     @patch.object(rates, "COINGECKO_API_KEY", "")
     def test_missing_api_key_is_reported(self):

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { formatFiatAmount, formatXmrAmount } from "../lib/formatting";
+import { useI18n } from "./i18n-provider";
+import LanguageSwitcher from "./language-switcher";
 
 type TerminalStatus = {
   name: string; default_currency: string; confirmation_target: number; expiry_minutes: number;
@@ -54,6 +56,7 @@ function errorDetail(data: unknown, fallback: string) {
 }
 
 export default function TerminalScreen() {
+  const { locale, t } = useI18n();
   // Rendered client-only, so the fragment and storage are available on first render.
   const [key, setKey] = useState<string | null>(initialKey);
   const [terminal, setTerminal] = useState<TerminalStatus | null>(null);
@@ -75,11 +78,11 @@ export default function TerminalScreen() {
     });
     const data = await response.json().catch(() => null);
     if (response.status === 401 || response.status === 403) {
-      setFatal(errorDetail(data, "This terminal link is no longer valid."));
+      setFatal(errorDetail(data, t("terminal.linkInvalid")));
       throw new Error("unauthorized");
     }
     return { response, data };
-  }, [key]);
+  }, [key, t]);
 
   // The secret arrives in the URL fragment; it is kept on this device and removed from the address bar.
   useEffect(() => {
@@ -90,11 +93,11 @@ export default function TerminalScreen() {
     try {
       const { response, data } = await call("/status");
       if (response.ok) setTerminal(data);
-      else setError(errorDetail(data, "Terminal settings are unavailable. Check the connection."));
+      else setError(errorDetail(data, t("terminal.settingsUnavailable")));
     } catch (exc) {
-      if ((exc as Error).message !== "unauthorized") setError("Cannot reach the checkout service. Check the connection.");
+      if ((exc as Error).message !== "unauthorized") setError(t("terminal.unreachable"));
     }
-  }, [call]);
+  }, [call, t]);
 
   useEffect(() => {
     if (!key) return;
@@ -104,12 +107,12 @@ export default function TerminalScreen() {
         const data = await response.json().catch(() => null);
         if (!active) return;
         if (response.ok) { setTerminal(data); setCurrency(data.default_currency); }
-        else if (response.status === 401 || response.status === 403) setFatal(errorDetail(data, "This terminal link is no longer valid."));
-        else setError(errorDetail(data, "Terminal settings are unavailable. Check the connection."));
+        else if (response.status === 401 || response.status === 403) setFatal(errorDetail(data, t("terminal.linkInvalid")));
+        else setError(errorDetail(data, t("terminal.settingsUnavailable")));
       })
-      .catch(() => { if (active) setError("Cannot reach the checkout service. Check the connection."); });
+      .catch(() => { if (active) setError(t("terminal.unreachable")); });
     return () => { active = false; };
-  }, [key]);
+  }, [key, t]);
 
   const dueUri = sale ? moneroUri(sale.address, sale.status === "partially_paid" && sale.amount_remaining_xmr ? sale.amount_remaining_xmr : sale.amount_xmr) : null;
   useEffect(() => {
@@ -148,7 +151,7 @@ export default function TerminalScreen() {
   }
 
   async function charge() {
-    if (!amount || Number(amount) <= 0) return setError("Enter an amount.");
+    if (!amount || Number(amount) <= 0) return setError(t("terminal.enterAmount"));
     setBusy(true); setError("");
     attempt.current ??= newAttemptKey();
     try {
@@ -158,10 +161,10 @@ export default function TerminalScreen() {
       });
       attempt.current = null;
       if (response.ok) setSale(data);
-      else setError(errorDetail(data, "Could not create the invoice. Try again."));
+      else setError(errorDetail(data, t("terminal.createFailed")));
     } catch (exc) {
       // Retrying with the same key returns the same invoice if the first request succeeded.
-      if ((exc as Error).message !== "unauthorized") setError("Connection lost. Tap Charge again to retry safely.");
+      if ((exc as Error).message !== "unauthorized") setError(t("terminal.connectionLostCharge"));
     } finally { setBusy(false); }
   }
 
@@ -171,8 +174,8 @@ export default function TerminalScreen() {
     try {
       const { response, data } = await call(`/invoices/${sale.id}/cancel`, { method: "POST" });
       if (response.ok) newSale();
-      else { setError(errorDetail(data, "Could not cancel.")); const refreshed = await call(`/invoices/${sale.id}`); if (refreshed.response.ok) setSale(refreshed.data); }
-    } catch { setError("Connection lost. Try again."); } finally { setBusy(false); }
+      else { setError(errorDetail(data, t("terminal.cancelFailed"))); const refreshed = await call(`/invoices/${sale.id}`); if (refreshed.response.ok) setSale(refreshed.data); }
+    } catch { setError(t("terminal.connectionLost")); } finally { setBusy(false); }
   }
 
   function newSale() {
@@ -186,47 +189,47 @@ export default function TerminalScreen() {
 
   const shell = "flex min-h-dvh flex-col items-center justify-center bg-cream px-4 py-6 text-ink";
   if (!key || fatal) return <main className={shell}><div className="max-w-md text-center">
-    <h1 className="font-sans text-3xl font-semibold">Terminal unavailable</h1>
-    <p className="mt-4" role="alert">{fatal || "Open the terminal link from your dashboard on this device."}</p>
-    {fatal ? <button onClick={forget} className="mt-6 min-h-12 rounded-full border border-stroke px-6">Forget this terminal</button> : null}
+    <h1 className="font-sans text-3xl font-semibold">{t("terminal.unavailable")}</h1>
+    <p className="mt-4" role="alert">{fatal || t("terminal.openFromDashboard")}</p>
+    {fatal ? <button onClick={forget} className="mt-6 min-h-12 rounded-full border border-stroke px-6">{t("terminal.forget")}</button> : null}
   </div></main>;
 
   if (sale) {
     const remaining = sale.status === "partially_paid" && sale.amount_remaining_xmr;
     const due = remaining || sale.amount_xmr;
-    const fiat = sale.quote ? formatFiatAmount(sale.quote.fiat_amount, sale.quote.fiat_currency) : null;
+    const fiat = sale.quote ? formatFiatAmount(sale.quote.fiat_amount, sale.quote.fiat_currency, locale) : null;
     const seconds = sale.expires_at ? Math.max(0, Math.floor((Date.parse(sale.expires_at) - now) / 1000)) : null;
     if (sale.status === "confirmed" || sale.status === "payment_detected") {
       const waiting = sale.status === "payment_detected";
       return <main className={`${shell} ${waiting ? "" : "bg-emerald-50"}`} aria-live="polite">
         <div className="max-w-md text-center">
           <p className={`mx-auto grid size-28 place-items-center rounded-full text-6xl ${waiting ? "bg-amber-100 text-amber-800" : "bg-emerald-600 text-white"}`} aria-hidden="true">{waiting ? "…" : "✓"}</p>
-          <h1 className="mt-6 font-sans text-4xl font-semibold">{waiting ? "Payment seen" : sale.confirmation_target === 0 ? "Payment seen" : "Payment confirmed"}</h1>
+          <h1 className="mt-6 font-sans text-4xl font-semibold">{waiting ? t("terminal.seen") : sale.confirmation_target === 0 ? t("terminal.seen") : t("invoicePage.timelineConfirmed")}</h1>
           <p className="mt-3 text-xl">{formatXmrAmount(sale.amount_xmr)} XMR{fiat ? ` · ${fiat}` : ""}</p>
-          {waiting ? <p className="mt-3">Waiting for confirmations: {sale.confirmations} of {sale.confirmation_target}</p> : null}
-          {sale.confirmation_target === 0 && !waiting ? <p className="mt-3 text-sm text-ink-soft">Seen on the network, not yet in a block.</p> : null}
+          {waiting ? <p className="mt-3">{t("terminal.waiting", { confirmations: sale.confirmations, target: sale.confirmation_target })}</p> : null}
+          {sale.confirmation_target === 0 && !waiting ? <p className="mt-3 text-sm text-ink-soft">{t("terminal.notInBlock")}</p> : null}
           {sale.note ? <p className="mt-2 text-ink-soft">{sale.note}</p> : null}
-          <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">New sale</button>
+          <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">{t("terminal.newSale")}</button>
         </div>
       </main>;
     }
     if (sale.status === "expired" || sale.status === "invalid") {
       return <main className={shell}><div className="max-w-md text-center">
-        <h1 className="font-sans text-3xl font-semibold">{sale.status === "invalid" ? "Invoice invalid" : "Sale expired"}</h1>
-        {sale.amount_paid_xmr && Number(sale.amount_paid_xmr) > 0 ? <p className="mt-3">{formatXmrAmount(sale.amount_paid_xmr)} XMR was received for this invoice. Check it in the dashboard.</p> : <p className="mt-3">No payment was seen.</p>}
-        <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">New sale</button>
+        <h1 className="font-sans text-3xl font-semibold">{sale.status === "invalid" ? t("terminal.invalid") : t("terminal.expired")}</h1>
+        {sale.amount_paid_xmr && Number(sale.amount_paid_xmr) > 0 ? <p className="mt-3">{t("terminal.receivedCheck", { amount: formatXmrAmount(sale.amount_paid_xmr) })}</p> : <p className="mt-3">{t("terminal.noPayment")}</p>}
+        <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">{t("terminal.newSale")}</button>
       </div></main>;
     }
     return <main className={shell}>
       <div className="grid w-full max-w-md justify-items-center gap-4 text-center">
-        <p className="text-sm uppercase tracking-wide text-ink-soft">{terminal?.name} · Scan with a Monero wallet</p>
+        <p className="text-sm uppercase tracking-wide text-ink-soft">{terminal?.name} · {t("pay.scan")}</p>
         <p className="font-sans text-4xl font-semibold break-all">{formatXmrAmount(due)} XMR</p>
-        {remaining ? <p className="font-semibold text-amber-800">Partial payment received. Send the remaining amount.</p> : fiat ? <p className="text-lg text-ink-soft">{fiat} reference</p> : null}
-        {qr ? <Image src={qr} alt={`Monero payment QR code for ${formatXmrAmount(due)} XMR`} width={320} height={320} unoptimized className="w-full max-w-[min(80vw,360px)] rounded-2xl bg-white p-3" /> : <div className="aspect-square w-full max-w-[360px] animate-pulse rounded-2xl bg-white" />}
+        {remaining ? <p className="font-semibold text-amber-800">{t("terminal.partial")}</p> : fiat ? <p className="text-lg text-ink-soft">{t("terminal.fiatReference", { amount: fiat })}</p> : null}
+        {qr ? <Image src={qr} alt={t("terminal.qrAlt", { amount: formatXmrAmount(due) })} width={320} height={320} unoptimized className="w-full max-w-[min(80vw,360px)] rounded-2xl bg-white p-3" /> : <div className="aspect-square w-full max-w-[360px] animate-pulse rounded-2xl bg-white" />}
         {sale.note ? <p className="text-ink-soft">{sale.note}</p> : null}
-        <p className="text-sm text-ink-soft" aria-live="off">{seconds !== null ? `Expires in ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` : null} · Watching for payment…</p>
+        <p className="text-sm text-ink-soft" aria-live="off">{seconds !== null ? t("terminal.expiresIn", { time: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` }) : null} · {t("terminal.watching")}</p>
         {error ? <p role="alert" className="text-red-700">{error}</p> : null}
-        <button onClick={cancel} disabled={busy || Boolean(remaining)} className="min-h-12 w-full rounded-full border border-stroke px-6 disabled:opacity-50">Cancel sale</button>
+        <button onClick={cancel} disabled={busy || Boolean(remaining)} className="min-h-12 w-full rounded-full border border-stroke px-6 disabled:opacity-50">{t("terminal.cancel")}</button>
       </div>
     </main>;
   }
@@ -235,21 +238,22 @@ export default function TerminalScreen() {
   return <main className={shell}>
     <div className="grid w-full max-w-sm gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="font-sans text-lg font-semibold">{terminal?.name ?? "Terminal"}</h1>
-        <select aria-label="Currency" value={currency} onChange={event => { setCurrency(event.target.value); setAmount(""); attempt.current = null; }} className="min-h-11 rounded-xl border border-stroke bg-white px-3">
+        <h1 className="font-sans text-lg font-semibold">{terminal?.name ?? t("terminal.title")}</h1>
+        <select aria-label={t("paymentLink.currency")} value={currency} onChange={event => { setCurrency(event.target.value); setAmount(""); attempt.current = null; }} className="min-h-11 rounded-xl border border-stroke bg-white px-3">
           {currencies.map(code => <option key={code}>{code}</option>)}
         </select>
       </div>
-      {terminal?.low_addresses ? <p role="status" className="rounded-xl bg-amber-100 p-3 text-sm text-amber-900">Only {terminal.available_addresses} invoice addresses are free. Unpaid and cancelled sales hold an address for three days.</p> : null}
+      {terminal?.low_addresses ? <p role="status" className="rounded-xl bg-amber-100 p-3 text-sm text-amber-900">{t("terminal.lowAddresses", { count: terminal.available_addresses })}</p> : null}
       <output aria-live="polite" className="block rounded-2xl bg-white p-5 text-right font-sans text-5xl font-semibold break-all">{amount || "0"}<span className="ml-2 text-xl text-ink-soft">{currency}</span></output>
       <div className="grid grid-cols-3 gap-3">
-        {KEYS.map(value => <button key={value} onClick={() => press(value)} aria-label={value === "⌫" ? "Delete" : value} className="min-h-16 rounded-2xl border border-stroke bg-white text-2xl font-semibold active:bg-stroke">{value}</button>)}
+        {KEYS.map(value => <button key={value} onClick={() => press(value)} aria-label={value === "⌫" ? t("terminal.delete") : value} className="min-h-16 rounded-2xl border border-stroke bg-white text-2xl font-semibold active:bg-stroke">{value}</button>)}
       </div>
-      <label className="grid gap-1 text-sm">Note (optional)<input value={note} maxLength={200} onChange={event => { setNote(event.target.value); attempt.current = null; }} className="min-h-11 rounded-xl border border-stroke bg-white px-3 text-base" placeholder="2 coffees" /></label>
+      <label className="grid gap-1 text-sm">{t("terminal.note")}<input value={note} maxLength={200} onChange={event => { setNote(event.target.value); attempt.current = null; }} className="min-h-11 rounded-xl border border-stroke bg-white px-3 text-base" placeholder={t("terminal.notePlaceholder")} /></label>
       {error ? <p role="alert" className="text-red-700">{error}</p> : null}
-      <button onClick={charge} disabled={busy || !terminal} className="min-h-16 rounded-full bg-ink text-xl font-semibold text-cream disabled:opacity-60">{busy ? "Creating invoice…" : "Charge"}</button>
-      {currency !== "XMR" ? <p className="text-center text-xs text-ink-soft">{currency} amounts are converted to XMR at a reference rate when the invoice is created.</p> : null}
-      <button onClick={() => { if (window.confirm("Remove this terminal from this device? You will need the terminal link again to use it.")) forget(); }} className="mx-auto min-h-11 px-4 text-sm text-ink-soft underline underline-offset-4">Forget this terminal</button>
+      <button onClick={charge} disabled={busy || !terminal} className="min-h-16 rounded-full bg-ink text-xl font-semibold text-cream disabled:opacity-60">{busy ? t("terminal.creating") : t("terminal.charge")}</button>
+      {currency !== "XMR" ? <p className="text-center text-xs text-ink-soft">{t("terminal.conversionNote", { currency })}</p> : null}
+      <button onClick={() => { if (window.confirm(t("terminal.forgetConfirm"))) forget(); }} className="mx-auto min-h-11 px-4 text-sm text-ink-soft underline underline-offset-4">{t("terminal.forget")}</button>
+      <LanguageSwitcher className="mx-auto text-ink-soft" />
     </div>
   </main>;
 }

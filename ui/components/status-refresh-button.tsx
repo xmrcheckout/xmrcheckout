@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useI18n } from "./i18n-provider";
 import { useInvoiceRefresh } from "./invoice-status-auto-refresh";
 
 type StatusRefreshButtonProps = {
@@ -10,9 +11,10 @@ type StatusRefreshButtonProps = {
 };
 
 export default function StatusRefreshButton({
-  label = "Refresh",
+  label,
   className = "",
 }: StatusRefreshButtonProps) {
+  const { t } = useI18n();
   const router = useRouter();
   const shared = useInvoiceRefresh();
   const [localPending, startTransition] = useTransition();
@@ -47,10 +49,10 @@ export default function StatusRefreshButton({
         <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
         <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
       </svg>
-      {isRefreshing ? "Refreshing..." : label}
+      {isRefreshing ? t("refresh.refreshing") : label ?? t("refresh.refresh")}
     </button>
     <span className="sr-only" role="status">
-      {isRefreshing ? "Refreshing status." : requested ? "Refresh finished. See current status." : ""}
+      {isRefreshing ? t("refresh.refreshingStatus") : requested ? t("refresh.finished") : ""}
     </span>
     </>
   );

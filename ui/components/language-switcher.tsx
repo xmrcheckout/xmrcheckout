@@ -1,0 +1,35 @@
+"use client";
+
+import { useId } from "react";
+
+import { setLocaleAction } from "../app/locale-actions";
+import { localeNames, locales } from "../lib/i18n/config";
+import { useI18n } from "./i18n-provider";
+
+export default function LanguageSwitcher({ className = "" }: { className?: string }) {
+  const { locale, t } = useI18n();
+  const id = useId();
+  return (
+    <form action={setLocaleAction} className={`flex items-center gap-2 text-sm ${className}`}>
+      <label htmlFor={id}>{t("language.label")}</label>
+      <select
+        id={id}
+        name="locale"
+        defaultValue={locale}
+        onChange={(event) => event.currentTarget.form?.requestSubmit()}
+        className="min-h-9 rounded-lg border border-stroke bg-white px-2 py-1 text-ink"
+      >
+        {locales.map((code) => (
+          <option key={code} value={code} lang={code}>
+            {localeNames[code]}
+          </option>
+        ))}
+      </select>
+      <noscript>
+        <button type="submit" className="underline underline-offset-4">
+          {t("language.apply")}
+        </button>
+      </noscript>
+    </form>
+  );
+}

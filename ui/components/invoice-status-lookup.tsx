@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { invoiceLookupId } from "../lib/invoice-display";
+import { useI18n } from "./i18n-provider";
 
 type InvoiceStatusLookupProps = {
   initialValue?: string;
@@ -13,6 +14,7 @@ export default function InvoiceStatusLookup({
   initialValue = "",
   compact = false,
 }: InvoiceStatusLookupProps) {
+  const { t } = useI18n();
   const router = useRouter();
   const inputId = useId();
   const errorId = useId();
@@ -23,12 +25,12 @@ export default function InvoiceStatusLookup({
     event.preventDefault();
     const trimmed = invoiceId.trim();
     if (!trimmed) {
-      setError("Enter an invoice id to continue.");
+      setError(t("lookup.empty"));
       return;
     }
     const id = invoiceLookupId(trimmed, window.location.origin);
     if (!id) {
-      setError("Enter a complete invoice ID or an invoice link from this site.");
+      setError(t("lookup.invalid"));
       return;
     }
     setError(null);
@@ -44,7 +46,7 @@ export default function InvoiceStatusLookup({
         className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
         htmlFor={inputId}
       >
-        Invoice ID or link
+        {t("lookup.label")}
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <input
@@ -56,7 +58,7 @@ export default function InvoiceStatusLookup({
           type="text"
           value={invoiceId}
           onChange={(event) => { setInvoiceId(event.target.value); setError(null); }}
-          placeholder="Paste the complete invoice ID or link"
+          placeholder={t("lookup.placeholder")}
           autoComplete="off"
           spellCheck={false}
           required
@@ -65,12 +67,12 @@ export default function InvoiceStatusLookup({
           className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="submit"
         >
-          Check status
+          {t("lookup.submit")}
         </button>
       </div>
       {compact ? null : (
         <p className="text-sm text-ink-soft">
-          Read-only status view. The invoice page checks for updates every 30 seconds.
+          {t("lookup.note")}
         </p>
       )}
       {error ? (

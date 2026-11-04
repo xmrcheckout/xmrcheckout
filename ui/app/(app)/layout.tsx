@@ -2,14 +2,17 @@ import Link from "next/link";
 
 import "../(marketing)/marketing.css";
 import SiteHeader from "../../components/site-header";
+import LanguageSwitcher from "../../components/language-switcher";
 import { areDonationsEnabled } from "../../lib/donations";
+import { getI18n } from "../../lib/i18n/server";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const donationsEnabled = areDonationsEnabled();
+  const { t } = await getI18n();
 
   return (
     <div>
@@ -17,7 +20,7 @@ export default function AppLayout({
       {children}
       <footer className="site-footer">
         <div className="site-footer-copy">
-          <p>XMR Checkout · Open source. Self-hostable.</p>
+          <p>{t("footer.tagline")}</p>
           <p>
             <Link
               className="underline underline-offset-4"
@@ -26,11 +29,12 @@ export default function AppLayout({
               GitHub
             </Link>
           </p>
+          <LanguageSwitcher />
         </div>
         {donationsEnabled ? (
           <div className="donate-entry">
             <Link className="donate-link" href="/donate">
-              Donate
+              {t("footer.donate")}
             </Link>
           </div>
         ) : null}

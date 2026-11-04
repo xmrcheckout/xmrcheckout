@@ -14,11 +14,15 @@ import {
   invoiceStatusTones,
   type InvoiceStatus,
 } from "../../../lib/invoice-status";
+import LanguageSwitcher from "../../../components/language-switcher";
+import { getI18n } from "../../../lib/i18n/server";
+import type { Translate } from "../../../lib/i18n/translate";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Payment Request",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t("checkout.metaTitle") };
+}
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 const siteUrl = (
@@ -73,6 +77,7 @@ const awaitingPaymentStatuses: InvoiceStatus[] = [
 const paymentCheckNotice = (
   systemStatus: SystemStatusResponse | null,
   status: InvoiceStatus,
+  t: Translate,
 ) => {
   if (!awaitingPaymentStatuses.includes(status)) {
     return null;
@@ -84,12 +89,12 @@ const paymentCheckNotice = (
   if (checkingWorks) {
     return {
       delayed: false,
-      text: "This page updates automatically when your payment is seen. You can keep it open or come back later.",
+      text: t("checkout.checkingWorks"),
     };
   }
   return {
     delayed: true,
-    text: "Payment checking is delayed right now. Payments sent to this address still go directly to the merchant's wallet and will appear here once checking resumes.",
+    text: t("checkout.checkingDelayed"),
   };
 };
 
@@ -99,6 +104,7 @@ export default async function BtcpayModalInvoicePage({
   params: Promise<{ invoiceId: string }>;
 }) {
   const { invoiceId } = await params;
+  const { t } = await getI18n();
   const [response, systemStatusResponse] = await Promise.all([
     fetch(
       `${apiBaseUrl}/api/core/public/invoice/${encodeURIComponent(invoiceId)}`,
@@ -114,7 +120,11 @@ export default async function BtcpayModalInvoicePage({
     : null;
   const retrievedAt = invoice ? new Date().toISOString() : undefined;
   const statusMessage = invoice
-    ? `${invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr)}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    ? t("checkout.statusAnnouncement", {
+        status: invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr, t),
+        confirmations: invoice.confirmations,
+        target: invoice.confirmation_target,
+      })
     : "";
 
   if (response.status === 404 || response.status === 422) {
@@ -122,12 +132,12 @@ export default async function BtcpayModalInvoicePage({
       <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
         <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <section className="w-full max-w-lg rounded-surface border border-stroke bg-card p-6 shadow-card">
-          <h1 className="font-sans text-2xl font-semibold">{response.status === 422 ? "Invalid invoice ID" : "Invoice not found"}</h1>
+          <h1 className="font-sans text-2xl font-semibold">{response.status === 422 ? t("checkout.invalidId") : t("checkout.notFound")}</h1>
           <p className="mt-3 text-sm text-ink-soft">
-            {response.status === 422 ? "Enter the complete invoice ID in UUID format." : "Check that you have the complete invoice link."}
-            {" "}Do not send payment. Contact the merchant for a valid invoice link.
+            {response.status === 422 ? t("checkout.invalidIdHelp") : t("checkout.notFoundHelp")}
+            {" "}{t("checkout.doNotPay")}
           </p>
-          <Link className="mt-5 inline-flex min-h-11 items-center underline" href="/invoice">Look up an invoice</Link>
+          <Link className="mt-5 inline-flex min-h-11 items-center underline" href="/invoice">{t("checkout.lookUp")}</Link>
         </section>
       </main>
     );
@@ -151,14 +161,13 @@ export default async function BtcpayModalInvoicePage({
                 className="h-2.5 w-2.5 rounded-full bg-monero"
                 aria-hidden="true"
               />
-              Direct-to-wallet checkout
+              {t("checkout.eyebrow")}
             </p>
-            <h1 className="mt-2 text-2xl font-semibold">Status unavailable</h1>
+            <h1 className="mt-2 text-2xl font-semibold">{t("checkout.statusUnavailable")}</h1>
           </header>
           <div className="px-6 py-5">
             <p className="text-sm leading-relaxed text-ink-soft">
-              We could not load this invoice status. Refresh the page or try
-              again later.
+              {t("checkout.loadFailed")}
             </p>
           </div>
         </section>
@@ -174,6 +183,7 @@ export default async function BtcpayModalInvoicePage({
     invoice.status,
     invoice.amount_paid_xmr,
     invoice.amount_remaining_xmr,
+    t,
   );
   const confirmations = Math.max(0, invoice.confirmations ?? 0);
   const confirmationTarget = Math.max(0, invoice.confirmation_target);
@@ -181,7 +191,7 @@ export default async function BtcpayModalInvoicePage({
     invoice.status === "payment_detected" || invoice.status === "confirmed";
   const createdTimestamp = invoice.created_at;
   const expiresTimestamp = invoice.expires_at;
-  const checkNotice = paymentCheckNotice(systemStatus, invoice.status);
+  const checkNotice = paymentCheckNotice(systemStatus, invoice.status, t);
   const isBtcpayInvoice = Boolean(
     invoice.btcpay_amount && invoice.btcpay_currency,
   );
@@ -215,13 +225,13 @@ export default async function BtcpayModalInvoicePage({
                   className="h-2.5 w-2.5 rounded-full bg-monero"
                   aria-hidden="true"
                 />
-                Direct-to-wallet checkout
+                {t("checkout.eyebrow")}
               </p>
               <h1 className="mt-1 font-sans text-xl font-semibold text-ink">
-                Payment request
+                {t("checkout.paymentRequest")}
               </h1>
             </div>
-            <StatusRefreshButton label="Refresh" />
+            <StatusRefreshButton />
           </div>
           <BtcpayClassicCheckout
             invoiceId={invoiceId}
@@ -256,13 +266,13 @@ export default async function BtcpayModalInvoicePage({
                   className="h-2.5 w-2.5 rounded-full bg-monero"
                   aria-hidden="true"
                 />
-                Direct-to-wallet checkout
+                {t("checkout.eyebrow")}
               </p>
               <h1 className="mt-1 font-sans text-xl font-semibold text-ink">
-                Payment request
+                {t("checkout.paymentRequest")}
               </h1>
             </div>
-            <StatusRefreshButton label="Refresh" />
+            <StatusRefreshButton />
           </div>
 
           <InvoicePaymentDetails
@@ -284,7 +294,7 @@ export default async function BtcpayModalInvoicePage({
           <section className="mt-4 overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">
             <div className="grid divide-y divide-stroke sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               <div className="px-5 py-4">
-                <p className="text-xs font-semibold text-ink-soft">Status</p>
+                <p className="text-xs font-semibold text-ink-soft">{t("checkout.status")}</p>
                 <StatusBadge
                   className="mt-2"
                   label={statusLabel}
@@ -293,14 +303,14 @@ export default async function BtcpayModalInvoicePage({
               </div>
               <div className="px-5 py-4">
                 <p className="text-xs font-semibold text-ink-soft">
-                  Confirmations
+                  {t("checkout.confirmations")}
                 </p>
                 <p className="mt-2 text-lg font-semibold">
                   {confirmations}/{confirmationTarget}
                 </p>
               </div>
               <div className="px-5 py-4">
-                <p className="text-xs font-semibold text-ink-soft">Expires</p>
+                <p className="text-xs font-semibold text-ink-soft">{t("checkout.expires")}</p>
                 <p
                   className="mt-2 text-sm font-semibold"
                 >
@@ -322,12 +332,12 @@ export default async function BtcpayModalInvoicePage({
               ) : null}
               {checkNotice ? (
                 <div className="flex items-center gap-2 text-sm text-ink-soft">
-                  <p>Save this page&apos;s link to check your payment later.</p>
-                  <CopyIconButton value={invoicePageUrl} label="Payment page link" />
+                  <p>{t("checkout.saveLink")}</p>
+                  <CopyIconButton value={invoicePageUrl} label={t("checkout.pageLinkLabel")} />
                 </div>
               ) : null}
               <p className="text-xs text-ink-soft">
-                Created <Timestamp value={createdTimestamp} />
+                {t("checkout.created")} <Timestamp value={createdTimestamp} />
               </p>
             </div>
             {checkoutContinueAvailable ? (
@@ -337,7 +347,7 @@ export default async function BtcpayModalInvoicePage({
                   href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
                   rel="noreferrer"
                 >
-                  Continue to merchant
+                  {t("checkout.continueToMerchant")}
                 </a>
               </div>
             ) : null}
@@ -353,7 +363,7 @@ export default async function BtcpayModalInvoicePage({
                 }
                 href={receiptHref}
               >
-                View receipt
+                {t("checkout.viewReceipt")}
               </a>
               {isBtcpayInvoice && invoice.btcpay_redirect_url ? (
                 <a
@@ -362,13 +372,14 @@ export default async function BtcpayModalInvoicePage({
                   target="_top"
                   rel="noreferrer"
                 >
-                  Return to store
+                  {t("checkout.returnToStore")}
                 </a>
               ) : null}
             </div>
           ) : null}
         </div>
       )}
+      <LanguageSwitcher className="mx-auto mt-8 w-full max-w-4xl justify-center px-1 text-ink-soft" />
     </main>
     </InvoiceStatusAutoRefresh>
   );

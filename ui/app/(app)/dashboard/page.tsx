@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { dashboardDestination } from "../../../lib/wallet-connection";
+import { getI18n } from "../../../lib/i18n/server";
 import {
   invoiceStatusLabel,
   invoiceStatuses,
@@ -142,6 +143,7 @@ export default async function DashboardPage({
   searchParams: Promise<DashboardSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
+  const { t } = await getI18n();
   const destinationParams = new URLSearchParams();
   for (const [key, value] of Object.entries(resolvedSearchParams)) {
     if (typeof value === "string") destinationParams.set(key, value);
@@ -370,6 +372,7 @@ export default async function DashboardPage({
       invoice.status,
       invoice.amount_paid_xmr,
       invoice.amount_remaining_xmr,
+      t,
     ),
     tone: invoiceStatusTones[invoice.status],
     dotClass:

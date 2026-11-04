@@ -1,6 +1,9 @@
 "use client";
 
+import { useI18n } from "./i18n-provider";
+
 export default function BtcpayModalCloseButton() {
+  const { t } = useI18n();
   const handleClick = () => {
     if (typeof window === "undefined" || !window.parent) {
       return;
@@ -14,7 +17,7 @@ export default function BtcpayModalCloseButton() {
       type="button"
       onClick={handleClick}
     >
-      Close
+      {t("common.close")}
     </button>
   );
 }

@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 
+import { useI18n } from "./i18n-provider";
+
 export default function InvoiceStatusActions() {
+  const { t } = useI18n();
   return (
     <div className="flex flex-wrap gap-3">
       <Link
         className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/75 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
         href="/invoice"
       >
-        Check another invoice
+        {t("invoicePage.checkAnother")}
       </Link>
     </div>
   );

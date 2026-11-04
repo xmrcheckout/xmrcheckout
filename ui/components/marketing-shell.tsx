@@ -4,8 +4,10 @@ import { cookies } from "next/headers";
 
 import "../app/(marketing)/marketing.css";
 import LoginModal from "./login-modal";
+import LanguageSwitcher from "./language-switcher";
 import SiteHeader from "./site-header";
 import { areDonationsEnabled } from "../lib/donations";
+import { getI18n } from "../lib/i18n/server";
 
 export default async function MarketingShell({
   children,
@@ -16,6 +18,7 @@ export default async function MarketingShell({
   const apiKey = cookieStore.get("xmrcheckout_api_key")?.value;
   const isAuthenticated = Boolean(apiKey);
   const donationsEnabled = areDonationsEnabled();
+  const { t } = await getI18n();
 
   return (
     <div className="marketing-shell">
@@ -40,7 +43,7 @@ export default async function MarketingShell({
       <footer className="site-footer site-footer-dark">
         <div className="site-footer-copy">
           <p>
-            XMR Checkout · Open source. Self-hostable.
+            {t("footer.tagline")}
           </p>
           <p>
             <Link
@@ -50,11 +53,12 @@ export default async function MarketingShell({
               GitHub
             </Link>
           </p>
+          <LanguageSwitcher />
         </div>
         {donationsEnabled ? (
           <div className="donate-entry">
             <Link className="donate-link" href="/donate">
-              Donate
+              {t("footer.donate")}
             </Link>
           </div>
         ) : null}

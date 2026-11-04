@@ -13,11 +13,14 @@ import {
   invoiceStatusLabel,
   type InvoiceStatus,
 } from "../../../../lib/invoice-status";
+import { getI18n } from "../../../../lib/i18n/server";
+import type { Translate } from "../../../../lib/i18n/translate";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Donation Request",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t("donate.requestMetaTitle") };
+}
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
@@ -42,18 +45,19 @@ const statusDescription = (
   status: InvoiceStatus,
   confirmationTarget: number,
   confirmations: number,
+  t: Translate,
 ) => {
   if (status === "pending") {
-    return "Awaiting on-chain detection of your donation.";
+    return t("donate.statusPending");
   }
   if (status === "partially_paid") {
-    return "Part of the donation was received. Send the remaining amount to complete it.";
+    return t("donate.statusPartial");
   }
   if (status === "payment_detected") {
-    return `Payment detected. ${confirmations}/${confirmationTarget} confirmations.`;
+    return t("invoicePage.statusDetected", { confirmations, target: confirmationTarget });
   }
   if (status === "confirmed") {
-    return `Donation confirmed on-chain at ${confirmationTarget} confirmations.`;
+    return t("donate.statusConfirmed", { target: confirmationTarget });
   }
   if (status === "invalid") {
     return "";
@@ -70,6 +74,7 @@ export default async function DonateStatusDetailPage({
     notFound();
   }
   const { invoiceId } = await params;
+  const { t } = await getI18n();
   const response = await fetch(
     `${apiBaseUrl}/api/core/public/donation/${encodeURIComponent(invoiceId)}`,
     { cache: "no-store" },
@@ -80,7 +85,11 @@ export default async function DonateStatusDetailPage({
     : null;
   const retrievedAt = invoice ? new Date().toISOString() : undefined;
   const statusMessage = invoice
-    ? `${invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr)}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    ? t("checkout.statusAnnouncement", {
+        status: invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr, t),
+        confirmations: invoice.confirmations,
+        target: invoice.confirmation_target,
+      })
     : "";
 
   if (response.status === 404) {
@@ -95,13 +104,13 @@ export default async function DonateStatusDetailPage({
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
         <PageIntroBand
-          description="The donation id does not match a known invoice. Check the id and try again."
-          eyebrow="Donation lookup"
+          description={t("donate.notFoundHelp")}
+          eyebrow={t("donate.lookupEyebrow")}
           id="donation-not-found"
-          title="Donation invoice not found"
+          title={t("donate.notFound")}
         />
         <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 className="text-lg font-semibold">Check another invoice</h2>
+          <h2 className="text-lg font-semibold">{t("invoicePage.checkAnother")}</h2>
           <div className="mt-4 max-w-2xl">
             <InvoiceStatusLookup initialValue={invoiceId} compact />
           </div>
@@ -123,13 +132,13 @@ export default async function DonateStatusDetailPage({
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
         <PageIntroBand
-          description="We could not load this donation status. Refresh the page or try again later."
-          eyebrow="Donation lookup"
+          description={t("donate.loadFailed")}
+          eyebrow={t("donate.lookupEyebrow")}
           id="donation-unavailable"
-          title="Status unavailable"
+          title={t("checkout.statusUnavailable")}
         />
         <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 className="text-lg font-semibold">Try the lookup again</h2>
+          <h2 className="text-lg font-semibold">{t("invoicePage.tryLookupAgain")}</h2>
           <div className="mt-4 max-w-2xl">
             <InvoiceStatusLookup initialValue={invoiceId} compact />
           </div>
@@ -150,14 +159,14 @@ export default async function DonateStatusDetailPage({
   }[] = [];
 
   timelineItems.push({
-    label: "Donation created",
+    label: t("donate.timelineCreated"),
     timestamp: invoice.created_at,
     state: "complete",
   });
 
   if (invoice.detected_at) {
     timelineItems.push({
-      label: "Donation detected",
+      label: t("donate.timelineDetected"),
       timestamp: invoice.detected_at,
       state: "complete",
     });
@@ -165,7 +174,7 @@ export default async function DonateStatusDetailPage({
 
   if (invoice.confirmed_at) {
     timelineItems.push({
-      label: "Donation confirmed",
+      label: t("donate.timelineConfirmed"),
       timestamp: invoice.confirmed_at,
       state: "complete",
     });
@@ -173,7 +182,7 @@ export default async function DonateStatusDetailPage({
 
   if (invoice.status === "expired") {
     timelineItems.push({
-      label: "Donation expired",
+      label: t("donate.timelineExpired"),
       timestamp: invoice.expires_at,
       state: "complete",
     });
@@ -197,10 +206,11 @@ export default async function DonateStatusDetailPage({
           invoice.status,
           confirmationTarget,
           confirmations,
+          t,
         )}
-        eyebrow="Direct-to-wallet donation"
+        eyebrow={t("donate.eyebrow")}
         id="donation-request-title"
-        title="Make a donation"
+        title={t("donate.title")}
       />
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
@@ -221,16 +231,16 @@ export default async function DonateStatusDetailPage({
           <div className="flex items-center justify-between gap-3 border-b border-stroke px-5 py-4">
             <div>
               <p className="text-xs font-semibold text-ink-soft">
-                Donation context
+                {t("donate.context")}
               </p>
-              <h2 className="mt-1 text-lg font-semibold">Request details</h2>
+              <h2 className="mt-1 text-lg font-semibold">{t("donate.details")}</h2>
             </div>
-            <StatusRefreshButton label="Refresh" />
+            <StatusRefreshButton />
           </div>
           <dl className="divide-y divide-stroke px-5 py-2 text-sm">
             <div className="py-3">
               <dt className="text-xs font-semibold text-ink-soft">
-                Donation ID
+                {t("donate.id")}
               </dt>
               <dd className="mt-1 break-all font-mono text-xs text-ink">
                 {invoiceId}
@@ -238,7 +248,7 @@ export default async function DonateStatusDetailPage({
             </div>
             <div className="grid grid-cols-2 gap-4 py-3">
               <div>
-                <dt className="text-xs font-semibold text-ink-soft">Created</dt>
+                <dt className="text-xs font-semibold text-ink-soft">{t("checkout.created")}</dt>
                 <dd
                   className="mt-1 text-sm font-semibold"
                 >
@@ -246,7 +256,7 @@ export default async function DonateStatusDetailPage({
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold text-ink-soft">Expires</dt>
+                <dt className="text-xs font-semibold text-ink-soft">{t("checkout.expires")}</dt>
                 <dd
                   className="mt-1 text-sm font-semibold"
                 >
@@ -256,8 +266,7 @@ export default async function DonateStatusDetailPage({
             </div>
           </dl>
           <p className="border-t border-stroke bg-sand/50 px-5 py-4 text-xs leading-relaxed text-ink-soft">
-            This status page is public. Anyone with the link can view the
-            current donation state.
+            {t("donate.publicNotice")}
           </p>
         </aside>
       </div>
@@ -267,7 +276,7 @@ export default async function DonateStatusDetailPage({
         aria-labelledby="donation-timeline"
       >
         <h2 className="text-xl font-semibold" id="donation-timeline">
-          Donation timeline
+          {t("donate.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...timelineItems].reverse().map((item) => (

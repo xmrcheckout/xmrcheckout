@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Crimson_Pro, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import I18nProvider from "../components/i18n-provider";
+import { getCatalog } from "../lib/i18n/catalogs";
+import { getI18n } from "../lib/i18n/server";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -18,49 +21,49 @@ const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost"
 ).replace(/\/+$/, "");
 const siteName = "XMR Checkout";
-const siteDescription =
-  "Accept Monero with your own wallet using self-hosted invoice pages, view-only payment detection, APIs, and webhooks.";
+const openGraphLocales = { en: "en_US", es: "es_ES" } as const;
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
-    template: "%s | XMR Checkout",
-  },
-  description: siteDescription,
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteUrl,
-    siteName,
-    title: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
-    description: siteDescription,
-  },
-  twitter: {
-    card: "summary",
-    title: "Self-Hosted Monero Checkout for Merchants | XMR Checkout",
-    description: siteDescription,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale, t } = await getI18n();
+  const title = t("site.defaultTitle");
+  const description = t("site.description");
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: title, template: "%s | XMR Checkout" },
+    description,
+    openGraph: {
+      type: "website",
+      locale: openGraphLocales[locale],
+      url: siteUrl,
+      siteName,
+      title,
+      description,
+    },
+    twitter: { card: "summary", title, description },
+  };
+}
 
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: siteName,
-  url: siteUrl,
-  description: siteDescription,
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { locale, t } = await getI18n();
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: siteUrl,
+    description: t("site.description"),
+    inLanguage: locale,
+  };
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${crimsonPro.variable}`}>
+    <html lang={locale} className={`${spaceGrotesk.variable} ${crimsonPro.variable}`}>
       <body>
-        <a className="skip-link" href="#main-content">Skip to main content</a>
-        {children}
+        <a className="skip-link" href="#main-content">{t("site.skipLink")}</a>
+        <I18nProvider locale={locale} messages={getCatalog(locale)}>
+          {children}
+        </I18nProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}

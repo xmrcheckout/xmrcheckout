@@ -1,6 +1,5 @@
 type RelativeTimeInput = string | number | Date | null | undefined;
 
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 const parseRelativeTime = (value: RelativeTimeInput) => {
   if (value === null || value === undefined) {
@@ -14,7 +13,8 @@ const parseRelativeTime = (value: RelativeTimeInput) => {
   return timestamp;
 };
 
-export const formatRelativeTime = (value: RelativeTimeInput) => {
+export const formatRelativeTime = (value: RelativeTimeInput, locale: string) => {
+  const relativeTimeFormatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   const timestamp = parseRelativeTime(value);
   if (timestamp === null) {
     return null;

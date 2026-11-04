@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { getI18n } from "../lib/i18n/server";
+import type { Translate } from "../lib/i18n/translate";
 import { formatRelativeTime } from "./relative-time";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import StatusRefreshButton from "./status-refresh-button";
@@ -44,14 +46,15 @@ const connectionBadge = (
   return { label: value ? "Unavailable" : "Unknown", tone: "error" as StatusTone };
 };
 
-const displayRelativeTime = (value: string | null | undefined) =>
-  formatRelativeTime(value) ?? "Not recorded";
+const displayRelativeTime = (value: string | null | undefined, locale: string, t: Translate) =>
+  formatRelativeTime(value, locale) ?? t("time.notRecorded");
 
-export default function SystemHealthPanel({ status }: SystemHealthPanelProps) {
+export default async function SystemHealthPanel({ status }: SystemHealthPanelProps) {
+  const { locale, t } = await getI18n();
   const overall = healthBadge(status);
   const wallet = connectionBadge(status?.wallet_rpc);
   const daemon = connectionBadge(status?.daemon);
-  const completedAt = displayRelativeTime(status?.last_reconcile_completed_at);
+  const completedAt = displayRelativeTime(status?.last_reconcile_completed_at, locale, t);
   const attempted = status?.last_reconcile_attempted_invoices ?? 0;
   const succeeded = status?.last_reconcile_succeeded_invoices ?? 0;
   const failed = status?.last_reconcile_failed_invoices ?? 0;

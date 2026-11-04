@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { utcTimestamp } from "../lib/timestamps";
+import { getI18n } from "../lib/i18n/server";
+import type { Translate } from "../lib/i18n/translate";
 import DiagnosticReference from "./diagnostic-reference";
 import StatusRefreshButton from "./status-refresh-button";
 
@@ -29,7 +31,7 @@ export type SubaddressStatus = {
   } | null;
 };
 
-const timestamp = (value: string | null) => value ? utcTimestamp(value) : "Not recorded";
+const timestamp = (value: string | null, t: Translate) => value ? utcTimestamp(value, t) : t("time.notRecorded");
 
 const explanations: Record<string, string> = {
   never_issued: "Never issued",
@@ -52,12 +54,13 @@ const failures: Record<string, string> = {
   snapshot_unavailable: "A safe view-only snapshot could not be completed.",
 };
 
-export default function InvoiceAddressAvailability({ status, full = false, showRefresh = true, compact = false }: {
+export default async function InvoiceAddressAvailability({ status, full = false, showRefresh = true, compact = false }: {
   status: SubaddressStatus | null;
   full?: boolean;
   compact?: boolean;
   showRefresh?: boolean;
 }) {
+  const { t } = await getI18n();
   const snapshot = status?.snapshot;
   const eligible = status ? status.counts.never_issued + status.counts.eligible_for_reuse : null;
   if (compact) return (
@@ -72,7 +75,7 @@ export default function InvoiceAddressAvailability({ status, full = false, showR
       {!status ? <p className="mt-2 text-sm" role="status">Unavailable. Refresh to try again.</p> : <>
         {eligible === 0 ? <p className="mt-2 text-sm font-semibold" role="status">No invoice addresses are currently eligible.</p> : null}
         {status.counts.needs_review > 0 ? <p className="mt-2 text-sm font-semibold" role="status">Needs review: {status.counts.needs_review}. Check System health for details.</p> : null}
-        <p className="mt-2 text-xs text-ink-soft">Status retrieved: <time dateTime={status.retrieved_at}>{timestamp(status.retrieved_at)}</time></p>
+        <p className="mt-2 text-xs text-ink-soft">Status retrieved: <time dateTime={status.retrieved_at}>{timestamp(status.retrieved_at, t)}</time></p>
       </>}
       <details className="mt-2">
         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay">Address availability details</summary>
@@ -103,21 +106,21 @@ export default function InvoiceAddressAvailability({ status, full = false, showR
               <div key={label}><dt className="text-sm text-ink-soft">{label}</dt><dd className="mt-1 font-mono text-2xl font-semibold">{value}</dd></div>
             ))}
           </dl>
-          <p className="mt-4 text-sm text-ink-soft">Status retrieved: <time dateTime={status.retrieved_at}>{timestamp(status.retrieved_at)}</time></p>
+          <p className="mt-4 text-sm text-ink-soft">Status retrieved: <time dateTime={status.retrieved_at}>{timestamp(status.retrieved_at, t)}</time></p>
         </>
       ) : <p className="mt-4" role="status">Unavailable. Refresh to try again.</p>}
       <p className="mt-2 text-sm text-ink-soft">Address eligibility does not guarantee invoice creation. Pending invoices, wallet availability, and creation limits still apply.</p>
       {!full ? <Link className="mt-3 inline-block min-h-11 py-2 text-sm font-semibold underline underline-offset-4" href="/dashboard?tab=health">View address and snapshot details in System health</Link> : status ? (
         <>
           <p className="mt-3 text-sm">Supported pool: {status.pool_size}. Reuse cooldown: {status.cooldown_seconds.toLocaleString("en-GB")} seconds.</p>
-          {status.earliest_estimated_eligibility_at ? <p className="mt-2 text-sm">Earliest estimated eligibility: {timestamp(status.earliest_estimated_eligibility_at)}. This is an estimate, not a creation guarantee.</p> : null}
+          {status.earliest_estimated_eligibility_at ? <p className="mt-2 text-sm">Earliest estimated eligibility: {timestamp(status.earliest_estimated_eligibility_at, t)}. This is an estimate, not a creation guarantee.</p> : null}
           <div className="mt-5 border-t border-stroke pt-4">
             <h3 className="font-semibold">Latest view-only snapshot</h3>
             {snapshot ? (
               <div className="mt-2 grid min-w-0 gap-2 text-sm">
-                <p>Latest attempt: {timestamp(snapshot.attempted_at)} — {snapshot.outcome === "succeeded" ? "Successful" : snapshot.outcome === "failed" ? "Failed" : "In progress"}</p>
-                <p>Completed: {timestamp(snapshot.completed_at)}{snapshot.duration_ms !== null ? ` (${snapshot.duration_ms} ms)` : ""}</p>
-                <p>Last successful snapshot: {timestamp(snapshot.last_success_at)}</p>
+                <p>Latest attempt: {timestamp(snapshot.attempted_at, t)} — {snapshot.outcome === "succeeded" ? "Successful" : snapshot.outcome === "failed" ? "Failed" : "In progress"}</p>
+                <p>Completed: {timestamp(snapshot.completed_at, t)}{snapshot.duration_ms !== null ? ` (${snapshot.duration_ms} ms)` : ""}</p>
+                <p>Last successful snapshot: {timestamp(snapshot.last_success_at, t)}</p>
                 {snapshot.outcome === "failed" ? <p className="text-red-700">{failures[snapshot.failure_category ?? ""] ?? failures.snapshot_unavailable} No address was reused by this failed attempt.</p> : null}
                 <DiagnosticReference value={snapshot.attempt_id} />
               </div>
@@ -130,8 +133,8 @@ export default function InvoiceAddressAvailability({ status, full = false, showR
               {status.addresses.map((address) => (
                 <li key={address.index} className="min-w-0 py-3 text-sm">
                   <p className="font-semibold">Index {address.index}: {explanations[address.code] ?? "Needs review"}</p>
-                  {address.latest_closure_at ? <p>Latest closure: {timestamp(address.latest_closure_at)}</p> : null}
-                  {address.cooldown_complete_at ? <p>Estimated eligibility: {timestamp(address.cooldown_complete_at)}</p> : null}
+                  {address.latest_closure_at ? <p>Latest closure: {timestamp(address.latest_closure_at, t)}</p> : null}
+                  {address.cooldown_complete_at ? <p>Estimated eligibility: {timestamp(address.cooldown_complete_at, t)}</p> : null}
                   {address.code === "awaiting_invoice_status_update" ? <p>The pending invoice has passed its expiry. Its address stays reserved until its status updates.</p> : null}
                   {address.invoice_ids.length ? <details className="mt-1"><summary className="min-h-11 cursor-pointer py-2 focus-visible:ring-2 focus-visible:ring-clay">Related invoices ({address.invoice_ids.length})</summary><ul className="grid gap-2">{address.invoice_ids.map((id) => <li className="break-all" key={id}><Link className="font-mono underline underline-offset-4" href={`/dashboard?tab=invoices&status=all&archived=1&q=${id}`}>{id}</Link></li>)}</ul></details> : null}
                 </li>

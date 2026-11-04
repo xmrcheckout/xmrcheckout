@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { utcTimestamp } from "../lib/timestamps";
+import { getI18n } from "../lib/i18n/server";
 import { formatXmrAmount } from "../lib/formatting";
 import Image from "next/image";
 import { cookies } from "next/headers";
@@ -10,6 +11,7 @@ import CopyCodeBlock from "./copy-code-block";
 import PaymentLinkEditor, { type PaymentLinkData } from "./payment-link-editor";
 
 export default async function PaymentLinks() {
+  const { t } = await getI18n();
   const key = (await cookies()).get("xmrcheckout_api_key")?.value;
   const base = process.env.API_BASE_URL ?? "http://localhost:8000";
   const headers = { Authorization: `ApiKey ${key}` };
@@ -47,7 +49,7 @@ export default async function PaymentLinks() {
     </section>
     <section aria-label="Public invoice allowance" className="rounded-2xl border border-stroke p-5">
       <h3 className="text-xl font-semibold">Public invoice allowance</h3>
-      {usage ? <><p className="mt-3">{usage.remaining} remaining · {usage.used} used · Limit {usage.daily_limit} per rolling {usage.window_hours} hours</p><p className="mt-2 break-words text-sm">Status retrieved: <time dateTime={usage.retrieved_at}>{utcTimestamp(usage.retrieved_at)}</time></p></> : <p role="status">Allowance unavailable. Refresh to try again.</p>}
+      {usage ? <><p className="mt-3">{usage.remaining} remaining · {usage.used} used · Limit {usage.daily_limit} per rolling {usage.window_hours} hours</p><p className="mt-2 break-words text-sm">Status retrieved: <time dateTime={usage.retrieved_at}>{utcTimestamp(usage.retrieved_at, t)}</time></p></> : <p role="status">Allowance unavailable. Refresh to try again.</p>}
       <p className="my-3 text-sm">Allowance and address capacity are shared across your payment links. These snapshots do not reserve capacity.</p>
       <StatusRefreshButton label="Refresh allowance and addresses" />
     </section>

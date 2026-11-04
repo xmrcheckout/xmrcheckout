@@ -15,6 +15,8 @@ import {
   formatXmrAmount,
 } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
+import { fill } from "../lib/i18n/rich";
+import { useI18n } from "./i18n-provider";
 import {
   hasPartialAmount,
   invoiceStatusLabel,
@@ -69,6 +71,7 @@ export default function InvoicePaymentDetails({
   enableFiatEstimate = true,
   quote = null,
 }: InvoicePaymentDetailsProps) {
+  const { locale, t } = useI18n();
   const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const {
@@ -106,15 +109,15 @@ export default function InvoicePaymentDetails({
   }, [requestedAmount]);
   const merchantPrice = useMemo(
     () =>
-      quote ? formatFiatAmount(quote.fiat_amount, quote.fiat_currency) : null,
-    [quote],
+      quote ? formatFiatAmount(quote.fiat_amount, quote.fiat_currency, locale) : null,
+    [quote, locale],
   );
   const usdEstimate = useMemo(() => {
     if (quote || !usdRate || amountValue === null || amountValue <= 0) {
       return null;
     }
-    return formatUsdAmount(usdRate * amountValue);
-  }, [quote, usdRate, amountValue]);
+    return formatUsdAmount(usdRate * amountValue, locale);
+  }, [quote, usdRate, amountValue, locale]);
 
   useEffect(() => {
     let active = true;
@@ -166,25 +169,22 @@ export default function InvoicePaymentDetails({
         : null;
   const estimateSourceLabel =
     usdRateSource === "coingecko"
-      ? "CoinGecko spot rate"
-      : "external spot rate";
-  const statusLabel = invoiceStatusLabel(status, amountPaid, amountRemaining);
-  const confirmationLabel = `${confirmationTarget} confirmation${
-    confirmationTarget === 1 ? "" : "s"
-  }`;
+      ? t("pay.sourceCoingecko")
+      : t("pay.sourceExternal");
+  const statusLabel = invoiceStatusLabel(status, amountPaid, amountRemaining, t);
   const heading = isInvalid
-    ? "Invoice marked invalid. Do not send payment."
+    ? t("pay.headingInvalid")
     : isExpiredUnderpaid
-      ? "Invoice expired before the full amount arrived. Do not send further payment."
+      ? t("pay.headingExpiredUnderpaid")
       : isExpired
-      ? "Invoice expired. Do not send payment."
+      ? t("pay.headingExpired")
       : isPartiallyPaid
-      ? "Partial payment received. Send the remaining amount to the same address."
+      ? t("pay.headingPartial")
       : hasDetectedPayment
         ? status === "confirmed"
-          ? `Payment confirmed on-chain at ${confirmationLabel}.`
-          : `Payment detected. ${confirmations}/${confirmationTarget} confirmations.`
-        : "Send the exact amount to this address.";
+          ? t("pay.headingConfirmed", { count: confirmationTarget })
+          : t("pay.headingDetected", { confirmations, target: confirmationTarget })
+        : t("pay.headingSend");
   const showCopyActions = canSendPayment;
   const showPaymentUri = canSendPayment;
   const statusTone: StatusTone = invoiceStatusTones[status];
@@ -195,7 +195,7 @@ export default function InvoicePaymentDetails({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold text-cream/70">
-              Payment details
+              {t("pay.details")}
             </p>
             <h2 className="mt-2 font-sans text-2xl font-semibold leading-tight">
               {heading}
@@ -205,12 +205,12 @@ export default function InvoicePaymentDetails({
         </div>
         {(isPartiallyPaid || isExpiredUnderpaid) && formattedPaid ? (
           <p className="mt-4 text-sm font-semibold text-cream/80">
-            Received {formattedPaid} of {formattedTotal} XMR.
+            {t("pay.received", { paid: formattedPaid, total: formattedTotal })}
           </p>
         ) : null}
         {isInvalid || isExpired ? (
           <p className="mt-4 border-l-2 border-red-300 pl-3 text-sm font-semibold text-red-100">
-            Contact the merchant to request a new invoice.
+            {t("pay.requestNew")}
           </p>
         ) : null}
       </header>
@@ -222,7 +222,7 @@ export default function InvoicePaymentDetails({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="text-xs font-semibold text-ink-soft">
-                {isPartiallyPaid ? "Remaining amount" : "Exact amount"}
+                {isPartiallyPaid ? t("pay.remainingAmount") : t("pay.exactAmount")}
               </p>
               <p className="mt-2 break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.5rem)] font-semibold leading-tight text-ink">
                 {formattedAmount} XMR
@@ -231,7 +231,7 @@ export default function InvoicePaymentDetails({
             {showCopyActions ? (
               <CopyIconButton
                 value={formattedAmount}
-                label={isPartiallyPaid ? "Copy remaining amount" : "Copy exact amount"}
+                label={isPartiallyPaid ? t("pay.copyRemaining") : t("pay.copyExact")}
               />
             ) : null}
           </div>
@@ -243,46 +243,51 @@ export default function InvoicePaymentDetails({
                 className="mt-4 min-h-11 inline-flex w-full items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
                 href={uri}
               >
-                Open wallet
+                {t("pay.openWallet")}
               </a>
           ) : null}
 
           {shouldPromptPayment ? (
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">
             {isPartiallyPaid
-              ? `Send only the remaining amount. The ${formattedPaid ?? ""} XMR already received counts toward this invoice. `
+              ? `${t("pay.sendRemainingOnly", { paid: formattedPaid ?? "" })} `
               : ""}
-            Your wallet adds the network fee on top. Do not subtract it from the
-            amount shown.
+            {t("pay.feeNote")}
           </p>
           ) : null}
 
           {quote && merchantPrice ? (
             <div className="mt-3 text-sm text-ink-soft">
-              <p>Merchant price: {merchantPrice}</p>
+              <p>{t("pay.merchantPrice", { price: merchantPrice })}</p>
               <details className="mt-1 w-fit text-xs">
                 <summary className="cursor-pointer select-none underline underline-offset-4">
-                  About this price
+                  {t("pay.aboutPrice")}
                 </summary>
                 <p className="mt-2 max-w-[52ch] leading-relaxed">
-                  Converted to XMR at {quote.rate}{" "}
-                  {quote.fiat_currency.toUpperCase()}/XMR ({quote.source}) at{" "}
-                  <Timestamp value={quote.quoted_at} />. This invoice is due in
-                  XMR. The rate was not locked.
+                  {fill(
+                    t("pay.priceDetail", {
+                      rate: quote.rate,
+                      currency: quote.fiat_currency.toUpperCase(),
+                      source: quote.source,
+                    }),
+                    { time: <Timestamp value={quote.quoted_at} /> },
+                  )}
                 </p>
               </details>
             </div>
           ) : usdEstimate ? (
             <div className="mt-3 text-sm text-ink-soft">
-              <p>Approx. USD reference: ~{usdEstimate}</p>
+              <p>{t("pay.usdReference", { amount: usdEstimate })}</p>
               <details className="mt-1 w-fit text-xs">
                 <summary className="cursor-pointer select-none underline underline-offset-4">
-                  About this estimate
+                  {t("pay.aboutEstimate")}
                 </summary>
                 <p className="mt-2 max-w-[52ch] leading-relaxed">
-                  Reference only, uses {estimateSourceLabel}
-                  {usdRateUpdatedAt ? <> from <Timestamp value={new Date(usdRateUpdatedAt).toISOString()} /></> : null}. Not a
-                  quote or guarantee.
+                  {usdRateUpdatedAt
+                    ? fill(t("pay.estimateDetailTimed", { source: estimateSourceLabel }), {
+                        time: <Timestamp value={new Date(usdRateUpdatedAt).toISOString()} />,
+                      })
+                    : t("pay.estimateDetail", { source: estimateSourceLabel })}
                 </p>
               </details>
             </div>
@@ -292,10 +297,10 @@ export default function InvoicePaymentDetails({
             <div className="mt-6 border-t border-stroke pt-5">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs font-semibold text-ink-soft">
-                  Payment address
+                  {t("pay.address")}
                 </p>
                 {showCopyActions ? (
-                  <CopyIconButton value={address} label="Copy payment address" />
+                  <CopyIconButton value={address} label={t("pay.copyAddress")} />
                 ) : null}
               </div>
               <p className="mt-3 break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink sm:text-sm">
@@ -307,12 +312,12 @@ export default function InvoicePaymentDetails({
           {showPaymentUri ? (
             <details className="mt-5 border-t border-stroke pt-5">
               <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-                Advanced wallet URI
+                {t("pay.advancedUri")}
               </summary>
               <div className="mt-4 grid gap-3">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-xs font-semibold text-ink-soft">URI</p>
-                  <CopyIconButton value={uri} label="Copy wallet URI" />
+                  <CopyIconButton value={uri} label={t("pay.copyUri")} />
                 </div>
                 <p className="break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink">
                   {uri}
@@ -325,7 +330,7 @@ export default function InvoicePaymentDetails({
 
         <div className="grid content-center justify-items-center bg-sand/60 px-5 py-6 sm:px-7">
           <p className="justify-self-start text-xs font-semibold text-ink-soft lg:justify-self-center">
-            {canSendPayment ? "Scan with a Monero wallet" : status === "payment_detected" ? "Confirmation progress" : status === "confirmed" ? "Payment complete" : "Payment unavailable"}
+            {canSendPayment ? t("pay.scan") : status === "payment_detected" ? t("pay.progress") : status === "confirmed" ? t("pay.complete") : t("pay.unavailable")}
           </p>
           {canSendPayment && qrDataUrl ? (
             <>
@@ -333,7 +338,7 @@ export default function InvoicePaymentDetails({
                 <Image
                   className="h-full w-full bg-white"
                   src={qrDataUrl}
-                  alt="Payment request QR"
+                  alt={t("pay.qrAlt")}
                   width={240}
                   height={240}
                   unoptimized
@@ -343,7 +348,7 @@ export default function InvoicePaymentDetails({
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(16,18,23,0.12)]">
                       <Image
                         src={resolvedLogoSrc}
-                        alt="QR logo"
+                        alt={t("pay.qrLogoAlt")}
                         width={32}
                         height={32}
                         unoptimized={resolvedQrLogoMode === "custom"}
@@ -357,16 +362,16 @@ export default function InvoicePaymentDetails({
           ) : !isExpired && !isInvalid ? (
             <p className="mt-4 border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
               {isExpired
-                ? "This invoice is no longer valid. Contact the merchant to request a new invoice."
+                ? t("pay.noLongerValid")
                 : isInvalid
-                  ? "Payment entry is unavailable for this invoice state."
+                  ? t("pay.entryUnavailable")
                 : status === "payment_detected"
-                  ? `${confirmations}/${confirmationTarget} confirmations. No further payment is requested. Waiting for confirmations.`
+                  ? t("pay.waitingConfirmations", { confirmations, target: confirmationTarget })
                   : status === "confirmed"
-                    ? "The confirmation target has been reached. No further payment is requested."
+                    ? t("pay.targetReached")
                     : qrFailed
-                      ? "QR code could not be generated. Copy the payment address and exact amount into your wallet."
-                      : "QR code is loading. You can also copy the payment address and exact amount into your wallet."}
+                      ? t("pay.qrFailed")
+                      : t("pay.qrLoading")}
             </p>
           ) : null}
 

@@ -1,4 +1,5 @@
 import type { StatusTone } from "../components/status-badge";
+import type { Translate } from "./i18n/translate";
 
 export const invoiceStatuses = [
   "pending",
@@ -11,14 +12,9 @@ export const invoiceStatuses = [
 
 export type InvoiceStatus = (typeof invoiceStatuses)[number];
 
-export const invoiceStatusLabels: Record<InvoiceStatus, string> = {
-  pending: "Awaiting funds",
-  partially_paid: "Partially paid",
-  payment_detected: "Payment detected",
-  confirmed: "Confirmed",
-  expired: "Expired",
-  invalid: "Invalid",
-};
+/** Plain status name, e.g. "Awaiting funds". */
+export const invoiceStatusName = (status: InvoiceStatus, t: Translate): string =>
+  t(`invoiceStatus.${status}`);
 
 export const invoiceStatusTones: Record<InvoiceStatus, StatusTone> = {
   pending: "pending",
@@ -47,9 +43,10 @@ export const hasPartialAmount = (
 /** Badge label that keeps an underpaid expiry visible to the merchant. */
 export const invoiceStatusLabel = (
   status: InvoiceStatus,
-  amountPaidXmr?: string | null,
-  amountRemainingXmr?: string | null,
+  amountPaidXmr: string | null | undefined,
+  amountRemainingXmr: string | null | undefined,
+  t: Translate,
 ): string =>
   status === "expired" && hasPartialAmount(amountPaidXmr, amountRemainingXmr)
-    ? "Expired · underpaid"
-    : invoiceStatusLabels[status];
+    ? t("invoiceStatus.expiredUnderpaid")
+    : invoiceStatusName(status, t);

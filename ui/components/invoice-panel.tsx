@@ -11,10 +11,12 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
+import type { Translate } from "../lib/i18n/translate";
+import { useI18n } from "./i18n-provider";
 import {
   hasPartialAmount,
   invoiceStatusLabel,
-  invoiceStatusLabels,
+  invoiceStatusName,
   invoiceStatusTones,
   type InvoiceStatus,
 } from "../lib/invoice-status";
@@ -90,11 +92,12 @@ const initialArchiveState: ArchiveInvoiceState = {
   archivedId: null,
 };
 
-const formatStatus = (invoice: InvoiceItem) =>
+const formatStatus = (invoice: InvoiceItem, t: Translate) =>
   invoiceStatusLabel(
     invoice.status,
     invoice.amount_paid_xmr,
     invoice.amount_remaining_xmr,
+    t,
   );
 
 const formatTimestamp = (value: string | null) => {
@@ -108,18 +111,18 @@ const formatTimestamp = (value: string | null) => {
   }).format(new Date(value));
 };
 
-const invoiceStatusOptions: {
+const invoiceStatusOptions = (t: Translate): {
   value: InvoiceItem["status"] | "active" | "all";
   label: string;
-}[] = [
+}[] => [
   { value: "active", label: "Active" },
   { value: "all", label: "All" },
-  { value: "pending", label: invoiceStatusLabels.pending },
-  { value: "partially_paid", label: invoiceStatusLabels.partially_paid },
-  { value: "payment_detected", label: invoiceStatusLabels.payment_detected },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "expired", label: "Expired" },
-  { value: "invalid", label: "Invalid" },
+  { value: "pending", label: invoiceStatusName("pending", t) },
+  { value: "partially_paid", label: invoiceStatusName("partially_paid", t) },
+  { value: "payment_detected", label: invoiceStatusName("payment_detected", t) },
+  { value: "confirmed", label: invoiceStatusName("confirmed", t) },
+  { value: "expired", label: invoiceStatusName("expired", t) },
+  { value: "invalid", label: invoiceStatusName("invalid", t) },
 ];
 
 type CreateInvoiceModalProps = {
@@ -941,6 +944,7 @@ export default function InvoicePanel({
   pageSize = 25,
   total = activeInvoices.length,
 }: InvoicePanelProps) {
+  const { t } = useI18n();
   const router = useRouter();
   const normalizedBasePath = basePath.replace(/\/+$/, "") || "/";
   const [archiveState, archiveAction] = useFormState(
@@ -1290,7 +1294,7 @@ export default function InvoicePanel({
         <div className="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr))] gap-3">
           <label className="grid min-w-0 gap-2 break-words text-xs font-semibold invoice-status-select">Status
             <select aria-label="Status" className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
-              {invoiceStatusOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+              {invoiceStatusOptions(t).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </label>
           <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">Sort by
@@ -1309,7 +1313,7 @@ export default function InvoicePanel({
           role="group"
           aria-label="Invoice status filters"
         >
-          {invoiceStatusOptions.map((option) => (
+          {invoiceStatusOptions(t).map((option) => (
             <Link
               key={option.value}
               className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 ${
@@ -1403,7 +1407,7 @@ export default function InvoicePanel({
                         />
                       ) : null}
                       <StatusBadge
-                        label={formatStatus(invoice)}
+                        label={formatStatus(invoice, t)}
                         tone={statusTone(invoice.status)}
                       />
                       <span className="ml-auto text-xs font-semibold text-ink-soft">
@@ -1564,7 +1568,7 @@ export default function InvoicePanel({
                             </button>
                           ) : !invoice.archived_at ? (
                             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                              {invoiceStatusLabels[invoice.status]} invoices cannot be
+                              {invoiceStatusName(invoice.status, t)} invoices cannot be
                               archived.
                             </p>
                           ) : null}
@@ -1701,7 +1705,7 @@ export default function InvoicePanel({
                           <td className="px-4 py-3 align-top">
                             <StatusBadge
                               className="px-2 py-1 leading-tight"
-                              label={formatStatus(invoice)}
+                              label={formatStatus(invoice, t)}
                               tone={statusTone(invoice.status)}
                             />
                           </td>
@@ -1869,7 +1873,7 @@ export default function InvoicePanel({
                                     </button>
                                   ) : !invoice.archived_at ? (
                                     <p className="text-sm text-ink-soft">
-                                      {invoiceStatusLabels[invoice.status]} invoices
+                                      {invoiceStatusName(invoice.status, t)} invoices
                                       cannot be archived.
                                     </p>
                                   ) : null}

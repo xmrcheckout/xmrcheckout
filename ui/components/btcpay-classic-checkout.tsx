@@ -15,6 +15,8 @@ import {
   invoiceStatusTones,
   type InvoiceStatus,
 } from "../lib/invoice-status";
+import type { Translate } from "../lib/i18n/translate";
+import { useI18n } from "./i18n-provider";
 
 
 type QuotePayload = {
@@ -53,13 +55,13 @@ const buildMoneroUri = (address: string, amount: string) => {
   return `monero:${address}?${params.toString()}`;
 };
 
-const formatFiatAmount = (value: string, currency: string) => {
+const formatFiatAmount = (value: string, currency: string, locale: string) => {
   const amount = Number.parseFloat(value);
   if (!Number.isFinite(amount)) {
     return `${value} ${currency}`;
   }
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       maximumFractionDigits: 2,
@@ -70,39 +72,42 @@ const formatFiatAmount = (value: string, currency: string) => {
   }
 };
 
-const formatReturnLabel = (redirectUrl: string) => {
+const formatReturnLabel = (redirectUrl: string, t: Translate) => {
   try {
     const parsed = new URL(redirectUrl);
-    return parsed.hostname ? `Return to ${parsed.hostname}` : "Return to store";
+    return parsed.hostname
+      ? t("classic.returnTo", { host: parsed.hostname })
+      : t("checkout.returnToStore");
   } catch {
-    return "Return to store";
+    return t("checkout.returnToStore");
   }
 };
 
 const statusMessage = (
   status: InvoiceStatus,
   confirmationTarget: number,
-  hasPartial = false,
+  hasPartial: boolean,
+  t: Translate,
 ): string => {
   if (status === "invalid") {
-    return "Invoice marked invalid. Do not send payment.";
+    return t("pay.headingInvalid");
   }
   if (status === "expired" && hasPartial) {
-    return "Invoice expired before the full amount arrived. Do not send further payment.";
+    return t("pay.headingExpiredUnderpaid");
   }
   if (status === "partially_paid") {
-    return "Partial payment received. Send the remaining amount to the same address.";
+    return t("pay.headingPartial");
   }
   if (status === "expired") {
-    return "Invoice expired. Do not send payment.";
+    return t("pay.headingExpired");
   }
   if (status === "confirmed") {
-    return `Payment confirmed at ${confirmationTarget} confirmations.`;
+    return t("classic.confirmedAt", { count: confirmationTarget });
   }
   if (status === "payment_detected") {
-    return "Payment detected. Awaiting confirmations.";
+    return t("classic.detectedAwaiting");
   }
-  return "Awaiting funds.";
+  return t("classic.awaitingFunds");
 };
 
 export default function BtcpayClassicCheckout({
@@ -126,6 +131,7 @@ export default function BtcpayClassicCheckout({
   qrLogoMode,
   qrLogoDataUrl,
 }: BtcpayClassicCheckoutProps) {
+  const { locale, t } = useI18n();
   const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const hasPartial = hasPartialAmount(amountPaidXmr, amountRemainingXmr);
@@ -152,11 +158,11 @@ export default function BtcpayClassicCheckout({
   );
   const totalFiat =
     btcpayAmount && btcpayCurrency && btcpayCurrency !== "XMR"
-      ? formatFiatAmount(btcpayAmount, btcpayCurrency)
+      ? formatFiatAmount(btcpayAmount, btcpayCurrency, locale)
       : null;
   const exchangeRate =
     quote?.rate && quote.fiat_currency
-      ? `1 XMR = ${formatFiatAmount(quote.rate, quote.fiat_currency)}`
+      ? `1 XMR = ${formatFiatAmount(quote.rate, quote.fiat_currency, locale)}`
       : null;
 
   useEffect(() => {
@@ -229,6 +235,7 @@ export default function BtcpayClassicCheckout({
     status,
     amountPaidXmr,
     amountRemainingXmr,
+    t,
   );
 
   if (status === "confirmed") {
@@ -250,44 +257,44 @@ export default function BtcpayClassicCheckout({
             </svg>
           </div>
           <p className="mt-4 text-sm font-semibold text-cream/70">
-            Payment request
+            {t("checkout.paymentRequest")}
           </p>
-          <h2 className="mt-1 text-2xl font-semibold">Payment confirmed</h2>
-          <StatusBadge className="mt-4" label="Confirmed" tone="success" />
+          <h2 className="mt-1 text-2xl font-semibold">{t("invoicePage.timelineConfirmed")}</h2>
+          <StatusBadge className="mt-4" label={t("invoiceStatus.confirmed")} tone="success" />
         </header>
       <InvoiceRefreshFeedback className="border-b border-stroke px-6 py-3 text-xs text-ink-soft" />
 
         <dl className="divide-y divide-stroke px-6 py-3 text-sm text-ink">
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="text-ink-soft">Invoice id</dt>
+            <dt className="text-ink-soft">{t("checkout.invoiceId")}</dt>
             <dd className="max-w-[60%] truncate text-right font-semibold">
               {invoiceId}
             </dd>
           </div>
           {orderNumber || orderId ? (
             <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-ink-soft">Order id</dt>
+              <dt className="text-ink-soft">{t("classic.orderId")}</dt>
               <dd className="font-semibold">{orderNumber ?? orderId}</dd>
             </div>
           ) : null}
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="text-ink-soft">Total price</dt>
+            <dt className="text-ink-soft">{t("classic.totalPrice")}</dt>
             <dd className="font-semibold">{formattedAmount} XMR</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="text-ink-soft">Total fiat</dt>
+            <dt className="text-ink-soft">{t("classic.totalFiat")}</dt>
             <dd className="font-semibold">{totalFiat ?? "-"}</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="text-ink-soft">Exchange rate</dt>
+            <dt className="text-ink-soft">{t("classic.exchangeRate")}</dt>
             <dd className="font-semibold">{exchangeRate ?? "-"}</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="text-ink-soft">Network cost</dt>
-            <dd className="font-semibold">Added by wallet</dd>
+            <dt className="text-ink-soft">{t("classic.networkCost")}</dt>
+            <dd className="font-semibold">{t("classic.addedByWallet")}</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-3">
-            <dt className="text-ink-soft">Amount paid</dt>
+            <dt className="text-ink-soft">{t("classic.amountPaid")}</dt>
             <dd className="font-semibold">
               {formattedPaidAmount ? `${formattedPaidAmount} XMR` : "-"}
             </dd>
@@ -299,7 +306,7 @@ export default function BtcpayClassicCheckout({
             className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
             href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
           >
-            View receipt
+            {t("checkout.viewReceipt")}
           </a>
           {redirectUrl ? (
             <a
@@ -308,7 +315,7 @@ export default function BtcpayClassicCheckout({
               target="_top"
               rel="noreferrer"
             >
-              {formatReturnLabel(redirectUrl)}
+              {formatReturnLabel(redirectUrl, t)}
             </a>
           ) : null}
         </div>
@@ -320,15 +327,15 @@ export default function BtcpayClassicCheckout({
     <section className="min-w-0 overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
       <header className="bg-ink px-6 py-6 text-center text-cream">
         <div className="flex flex-wrap items-center justify-center gap-2">
-          <p className="text-sm font-semibold text-cream/70">Payment request</p>
+          <p className="text-sm font-semibold text-cream/70">{t("checkout.paymentRequest")}</p>
           <StatusBadge label={statusLabel} tone={statusTone} />
         </div>
         <p className="mt-2 text-sm text-cream/70">
-          {status === "payment_detected" ? `Payment detected. ${confirmations}/${confirmationTarget} confirmations.` : statusMessage(status, confirmationTarget, hasPartial)}
+          {status === "payment_detected" ? t("pay.headingDetected", { confirmations, target: confirmationTarget }) : statusMessage(status, confirmationTarget, hasPartial, t)}
         </p>
         {isPartiallyPaid ? (
           <p className="mt-3 text-xs font-semibold text-cream/70">
-            Remaining amount
+            {t("pay.remainingAmount")}
           </p>
         ) : null}
         <div className="mt-3 flex flex-wrap items-start justify-center gap-3">
@@ -339,13 +346,13 @@ export default function BtcpayClassicCheckout({
             <CopyIconButton
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cream/25 bg-cream/10 text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
               value={formattedRequestedAmount}
-              label={isPartiallyPaid ? "Copy remaining amount" : "Copy exact amount"}
+              label={isPartiallyPaid ? t("pay.copyRemaining") : t("pay.copyExact")}
             />
           ) : null}
         </div>
         {hasPartial && formattedPaidAmount && status !== "invalid" ? (
           <p className="mt-2 text-sm font-semibold text-cream/80">
-            Received {formattedPaidAmount} of {formattedAmount} XMR.
+            {t("pay.received", { paid: formattedPaidAmount, total: formattedAmount })}
           </p>
         ) : null}
         {canSendPayment ? <InvoiceExpiry expiresAt={expiresAt ?? null} retrievedAt={expiryRetrievedAt} /> : null}
@@ -358,7 +365,7 @@ export default function BtcpayClassicCheckout({
             className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
             href={uri}
           >
-            Open wallet
+            {t("pay.openWallet")}
           </a>
         </div>
       ) : null}
@@ -369,7 +376,7 @@ export default function BtcpayClassicCheckout({
             <Image
               className="h-full w-full"
               src={qrDataUrl}
-              alt="Payment request QR"
+              alt={t("pay.qrAlt")}
               width={260}
               height={260}
               unoptimized
@@ -379,7 +386,7 @@ export default function BtcpayClassicCheckout({
                 <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_6px_12px_rgba(16,18,23,0.12)]">
                   <Image
                     src={resolvedLogoSrc}
-                    alt="QR logo"
+                    alt={t("pay.qrLogoAlt")}
                     width={38}
                     height={38}
                     unoptimized={resolvedQrLogoMode === "custom"}
@@ -392,11 +399,11 @@ export default function BtcpayClassicCheckout({
           <p className="rounded-xl border border-stroke bg-cream/70 px-4 py-3 text-sm font-semibold text-ink-soft">
             {canSendPayment
               ? qrFailed
-                ? "QR code could not be generated. Copy the payment address and exact amount into your wallet."
-                : "QR code is loading. You can also copy the payment address and exact amount into your wallet."
+                ? t("pay.qrFailed")
+                : t("pay.qrLoading")
               : status === "payment_detected"
-                ? `${confirmations}/${confirmationTarget} confirmations. No further payment is requested. Waiting for confirmations.`
-                : statusMessage(status, confirmationTarget, hasPartial)}
+                ? t("pay.waitingConfirmations", { confirmations, target: confirmationTarget })
+                : statusMessage(status, confirmationTarget, hasPartial, t)}
           </p>
         ) : null}
       </div>
@@ -405,8 +412,8 @@ export default function BtcpayClassicCheckout({
         {canSendPayment ? (
           <>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-semibold text-ink-soft">Address</p>
-              <CopyIconButton value={address} label="Copy payment address" />
+              <p className="text-xs font-semibold text-ink-soft">{t("classic.address")}</p>
+              <CopyIconButton value={address} label={t("pay.copyAddress")} />
             </div>
             <p className="mt-3 break-all bg-sand/60 px-3 py-3 font-mono text-xs leading-relaxed text-ink">
               {address}
@@ -414,40 +421,40 @@ export default function BtcpayClassicCheckout({
           </>
         ) : status === "expired" ? (
           <p className="border-l-2 border-red-400 pl-3 text-sm leading-relaxed text-red-700">
-            Contact the merchant to request a new invoice.
+            {t("pay.requestNew")}
           </p>
         ) : (
           <p className="border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
-            {status === "payment_detected" ? "No further payment is requested. Waiting for confirmations." : "Invoice marked invalid. Do not send payment."}
+            {status === "payment_detected" ? t("classic.noFurtherPayment") : t("pay.headingInvalid")}
           </p>
         )}
       </div>
 
       <details className="group border-t border-stroke px-6 py-5">
         <summary className="flex cursor-pointer items-center justify-center gap-2 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
-          <span className="group-open:hidden">View payment details</span>
-          <span className="hidden group-open:inline">Hide payment details</span>
+          <span className="group-open:hidden">{t("classic.viewDetails")}</span>
+          <span className="hidden group-open:inline">{t("classic.hideDetails")}</span>
         </summary>
         <dl className="mt-4 divide-y divide-stroke text-sm text-ink">
           <div className="flex items-center justify-between gap-4 py-2.5">
-            <dt className="text-ink-soft">Total price</dt>
+            <dt className="text-ink-soft">{t("classic.totalPrice")}</dt>
             <dd className="font-semibold">{formattedAmount} XMR</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-2.5">
-            <dt className="text-ink-soft">Total fiat</dt>
+            <dt className="text-ink-soft">{t("classic.totalFiat")}</dt>
             <dd className="font-semibold">{totalFiat ?? "-"}</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-2.5">
-            <dt className="text-ink-soft">Exchange rate</dt>
+            <dt className="text-ink-soft">{t("classic.exchangeRate")}</dt>
             <dd className="text-right font-semibold">{exchangeRate ?? "-"}</dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-2.5">
-            <dt className="text-ink-soft">Network cost</dt>
-            <dd className="font-semibold">Added by wallet</dd>
+            <dt className="text-ink-soft">{t("classic.networkCost")}</dt>
+            <dd className="font-semibold">{t("classic.addedByWallet")}</dd>
           </div>
           {hasPartial && formattedPaidAmount ? (
             <div className="flex items-center justify-between gap-4 py-2.5">
-              <dt className="text-ink-soft">Amount received</dt>
+              <dt className="text-ink-soft">{t("classic.amountReceived")}</dt>
               <dd className="font-semibold">{formattedPaidAmount} XMR</dd>
             </div>
           ) : null}

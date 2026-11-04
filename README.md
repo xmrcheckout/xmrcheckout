@@ -24,6 +24,7 @@ It uses a wallet address and private view key for detection. It never asks for s
 - [Self-hosted deployment](#self-hosted-deployment-docker-compose)
 - [Self-hosted deployment (no Docker)](#self-hosted-deployment-no-docker)
 - [Development (API)](#development-api-python)
+- [Translating the UI](#translating-the-ui)
 
 ## Who it's for
 
@@ -481,6 +482,27 @@ server {
   }
 }
 ```
+
+## Translating the UI
+
+The UI picks its language from the visitor's choice in the footer language
+menu (stored in the `xmrcheckout_locale` cookie), else the browser's
+`Accept-Language` header, else English. Supported: English and Spanish.
+
+UI text lives in `ui/messages/<locale>.json`. `en.json` is the source; any key
+missing from another catalog shows in English. To add a language:
+
+1. Copy `ui/messages/en.json` to `ui/messages/<code>.json` and translate the
+   values, following `ui/messages/GLOSSARY.md`. Keep `{placeholders}` and
+   `<tag>` markers unchanged.
+2. Add the code to `locales` and `localeNames` in `ui/lib/i18n/config.ts`, and
+   to `ui/lib/i18n/catalogs.ts`.
+3. Add the language's forbidden terms to `ui/messages/GLOSSARY.md` and to
+   `ui/tests/i18n.test.mjs`.
+4. Run `npm test` in `ui/`.
+
+XMR amounts, addresses, payment URIs and IDs are never localized. Amounts
+always use `.` as the decimal separator so copied values stay valid in wallets.
 
 ## Development (API, Python)
 

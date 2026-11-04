@@ -11,6 +11,7 @@ import {
 } from "../app/(marketing)/donate/actions";
 import { formatUsdAmount } from "../lib/formatting";
 import { useXmrUsdRate } from "../lib/use-xmr-usd-rate";
+import { useI18n } from "./i18n-provider";
 
 const initialState: DonationState = {
   error: null,
@@ -18,6 +19,7 @@ const initialState: DonationState = {
 };
 
 export default function DonationForm() {
+  const { locale, t } = useI18n();
   const router = useRouter();
   const [state, formAction] = useFormState(createDonationAction, initialState);
   const [amountInput, setAmountInput] = useState("");
@@ -32,8 +34,8 @@ export default function DonationForm() {
     if (!usdRate || !shouldLoadRate || amountValue === null) {
       return null;
     }
-    return formatUsdAmount(usdRate * amountValue);
-  }, [amountValue, shouldLoadRate, usdRate]);
+    return formatUsdAmount(usdRate * amountValue, locale);
+  }, [amountValue, shouldLoadRate, usdRate, locale]);
 
   useEffect(() => {
     if (state.invoiceId) {
@@ -48,7 +50,7 @@ export default function DonationForm() {
           className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
           htmlFor="donation_amount"
         >
-          Amount (XMR)
+          {t("donate.amountLabel")}
         </label>
         <input
           className="mt-2 min-h-12 w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-base text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
@@ -66,18 +68,17 @@ export default function DonationForm() {
       <div className="min-h-[3rem] text-sm text-ink-soft" aria-live="polite">
         {usdEstimate ? (
           <>
-            <p>Approx. USD reference: ~{usdEstimate}</p>
+            <p>{t("pay.usdReference", { amount: usdEstimate })}</p>
             <p className="mt-1 text-xs">
-              CoinGecko spot reference only. This is not a quote, rate lock, or
-              guarantee.
+              {t("donate.estimateNote")}
             </p>
           </>
         ) : null}
         {shouldLoadRate && rateStatus === "loading" ? (
-          <p>Loading USD reference...</p>
+          <p>{t("donate.rateLoading")}</p>
         ) : null}
         {shouldLoadRate && rateStatus === "error" ? (
-          <p>USD reference unavailable. You can still continue with XMR.</p>
+          <p>{t("donate.rateError")}</p>
         ) : null}
       </div>
 
@@ -92,13 +93,13 @@ export default function DonationForm() {
           className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
           href="/"
         >
-          Back home
+          {t("donate.backHome")}
         </Link>
         <button
           className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
           type="submit"
         >
-          Create donation request
+          {t("donate.create")}
         </button>
       </div>
     </form>

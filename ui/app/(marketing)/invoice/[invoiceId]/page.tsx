@@ -14,11 +14,14 @@ import {
   invoiceStatusLabel,
   type InvoiceStatus,
 } from "../../../../lib/invoice-status";
+import { getI18n } from "../../../../lib/i18n/server";
+import type { Translate } from "../../../../lib/i18n/translate";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = {
-  title: "Payment Request",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t("checkout.metaTitle") };
+}
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
@@ -50,22 +53,23 @@ const statusDescription = (
   status: InvoiceStatus,
   confirmationTarget: number,
   confirmations: number,
-  hasPartial = false,
+  hasPartial: boolean,
+  t: Translate,
 ) => {
   if (status === "pending") {
-    return "Waiting for a payment to be detected on-chain.";
+    return t("invoicePage.statusPending");
   }
   if (status === "partially_paid") {
-    return "Part of the amount was received. Send the remaining amount to complete this invoice.";
+    return t("invoicePage.statusPartial");
   }
   if (status === "expired" && hasPartial) {
-    return "This invoice expired before the full amount was received. Contact the merchant.";
+    return t("invoicePage.statusExpiredPartial");
   }
   if (status === "payment_detected") {
-    return `Payment detected. ${confirmations}/${confirmationTarget} confirmations.`;
+    return t("invoicePage.statusDetected", { confirmations, target: confirmationTarget });
   }
   if (status === "confirmed") {
-    return `Payment confirmed on-chain at ${confirmationTarget} confirmations.`;
+    return t("invoicePage.statusConfirmed", { target: confirmationTarget });
   }
   if (status === "invalid") {
     return "";
@@ -79,6 +83,7 @@ export default async function InvoiceStatusDetailPage({
   params: Promise<{ invoiceId: string }>;
 }) {
   const { invoiceId } = await params;
+  const { t } = await getI18n();
   const response = await fetch(
     `${apiBaseUrl}/api/core/public/invoice/${encodeURIComponent(invoiceId)}`,
     {
@@ -91,7 +96,11 @@ export default async function InvoiceStatusDetailPage({
     : null;
   const retrievedAt = invoice ? new Date().toISOString() : undefined;
   const statusMessage = invoice
-    ? `${invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr)}. ${invoice.confirmations}/${invoice.confirmation_target} confirmations.`
+    ? t("checkout.statusAnnouncement", {
+        status: invoiceStatusLabel(invoice.status, invoice.amount_paid_xmr, invoice.amount_remaining_xmr, t),
+        confirmations: invoice.confirmations,
+        target: invoice.confirmation_target,
+      })
     : "";
 
   if (response.status === 404 || response.status === 422) notFound();
@@ -108,13 +117,13 @@ export default async function InvoiceStatusDetailPage({
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
         <InvoiceRefreshFeedback />
         <PageIntroBand
-          description="We could not load this invoice status. Refresh the page or try again later."
-          eyebrow="Invoice lookup"
+          description={t("checkout.loadFailed")}
+          eyebrow={t("invoicePage.lookupEyebrow")}
           id="invoice-unavailable"
-          title="Status unavailable"
+          title={t("checkout.statusUnavailable")}
         />
         <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 className="text-lg font-semibold">Try the lookup again</h2>
+          <h2 className="text-lg font-semibold">{t("invoicePage.tryLookupAgain")}</h2>
           <div className="mt-4 max-w-2xl">
             <InvoiceStatusLookup initialValue={invoiceId} compact />
           </div>
@@ -143,14 +152,14 @@ export default async function InvoiceStatusDetailPage({
   }[] = [];
 
   timelineItems.push({
-    label: "Invoice created",
+    label: t("invoicePage.timelineCreated"),
     timestamp: invoice.created_at,
     state: "complete",
   });
 
   if (invoice.detected_at) {
     timelineItems.push({
-      label: "Payment detected",
+      label: t("invoicePage.timelineDetected"),
       timestamp: invoice.detected_at,
       state: "complete",
     });
@@ -158,7 +167,7 @@ export default async function InvoiceStatusDetailPage({
 
   if (invoice.confirmed_at) {
     timelineItems.push({
-      label: "Payment confirmed",
+      label: t("invoicePage.timelineConfirmed"),
       timestamp: invoice.confirmed_at,
       state: "complete",
     });
@@ -166,7 +175,7 @@ export default async function InvoiceStatusDetailPage({
 
   if (invoice.status === "expired") {
     timelineItems.push({
-      label: "Invoice expired",
+      label: t("invoicePage.timelineExpired"),
       timestamp: invoice.expires_at,
       state: "complete",
     });
@@ -191,10 +200,11 @@ export default async function InvoiceStatusDetailPage({
           confirmationTarget,
           confirmations,
           hasPartialAmount(invoice.amount_paid_xmr, invoice.amount_remaining_xmr),
+          t,
         )}
-        eyebrow="Direct-to-wallet invoice"
+        eyebrow={t("invoicePage.eyebrow")}
         id="payment-request-title"
-        title={invoice.product_title || "Payment request"}
+        title={invoice.product_title || t("checkout.paymentRequest")}
       />
 
       {invoice.product_description ? <p className="mt-4 whitespace-pre-wrap break-words">{invoice.product_description}</p> : null}
@@ -219,17 +229,17 @@ export default async function InvoiceStatusDetailPage({
           <div className="flex items-center justify-between gap-3 border-b border-stroke px-5 py-4">
             <div>
               <p className="text-xs font-semibold text-ink-soft">
-                Invoice context
+                {t("invoicePage.context")}
               </p>
-              <h2 className="mt-1 text-lg font-semibold">Invoice details</h2>
+              <h2 className="mt-1 text-lg font-semibold">{t("invoicePage.details")}</h2>
             </div>
-            <StatusRefreshButton label="Refresh" />
+            <StatusRefreshButton />
           </div>
 
           <dl className="divide-y divide-stroke px-5 py-2 text-sm">
             <div className="py-3">
               <dt className="text-xs font-semibold text-ink-soft">
-                Invoice ID
+                {t("checkout.invoiceId")}
               </dt>
               <dd className="mt-1 break-all font-mono text-xs text-ink">
                 {invoiceId}
@@ -237,7 +247,7 @@ export default async function InvoiceStatusDetailPage({
             </div>
             <div className="grid grid-cols-2 gap-4 py-3">
               <div>
-                <dt className="text-xs font-semibold text-ink-soft">Created</dt>
+                <dt className="text-xs font-semibold text-ink-soft">{t("checkout.created")}</dt>
                 <dd
                   className="mt-1 text-sm font-semibold"
                 >
@@ -245,7 +255,7 @@ export default async function InvoiceStatusDetailPage({
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold text-ink-soft">Expires</dt>
+                <dt className="text-xs font-semibold text-ink-soft">{t("checkout.expires")}</dt>
                 <dd
                   className="mt-1 text-sm font-semibold"
                 >
@@ -255,7 +265,7 @@ export default async function InvoiceStatusDetailPage({
             </div>
             <div className="py-3">
               <dt className="text-xs font-semibold text-ink-soft">
-                Confirmations
+                {t("checkout.confirmations")}
               </dt>
               <dd className="mt-1 text-sm font-semibold">
                 {confirmations}/{confirmationTarget}
@@ -264,8 +274,7 @@ export default async function InvoiceStatusDetailPage({
           </dl>
 
           <p className="border-t border-stroke bg-sand/50 px-5 py-4 text-xs leading-relaxed text-ink-soft">
-            This status page is public. Anyone with the link can view the
-            current invoice state.
+            {t("invoicePage.publicNotice")}
           </p>
         </aside>
       </div>
@@ -275,7 +284,7 @@ export default async function InvoiceStatusDetailPage({
         aria-labelledby="invoice-timeline"
       >
         <h2 className="text-xl font-semibold" id="invoice-timeline">
-          Invoice timeline
+          {t("invoicePage.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...timelineItems].reverse().map((item) => (
@@ -295,7 +304,7 @@ export default async function InvoiceStatusDetailPage({
 
       {confirmationMessage ? (
         <section aria-labelledby="confirmation-message-heading" className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 id="confirmation-message-heading" className="text-lg font-semibold">Message from the merchant</h2>
+          <h2 id="confirmation-message-heading" className="text-lg font-semibold">{t("invoicePage.merchantMessage")}</h2>
           <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words text-ink">
             {linkifyMessage(confirmationMessage).map((segment, index) =>
               segment.kind === "link" ? (
@@ -307,7 +316,7 @@ export default async function InvoiceStatusDetailPage({
               ),
             )}
           </p>
-          <p className="mt-3 text-sm text-ink-soft">Written by the merchant. Contact them with your invoice ID if anything is missing.</p>
+          <p className="mt-3 text-sm text-ink-soft">{t("invoicePage.merchantMessageNote")}</p>
         </section>
       ) : null}
 
@@ -318,10 +327,10 @@ export default async function InvoiceStatusDetailPage({
             href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
             rel="noreferrer"
           >
-            Continue to merchant
+            {t("checkout.continueToMerchant")}
           </a>
         ) : null}
-        {invoice.payment_link_url ? <a href={invoice.payment_link_url} className="inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold">Start another purchase</a> : null}
+        {invoice.payment_link_url ? <a href={invoice.payment_link_url} className="inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold">{t("invoicePage.startAnother")}</a> : null}
         <InvoiceStatusActions />
       </section>
     </main>

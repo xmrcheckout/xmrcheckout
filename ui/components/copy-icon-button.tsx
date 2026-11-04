@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useI18n } from "./i18n-provider";
+
 type CopyIconButtonProps = {
   value: string;
   label: string;
@@ -13,6 +15,7 @@ export default function CopyIconButton({
   label,
   className,
 }: CopyIconButtonProps) {
+  const { t } = useI18n();
   const [copyFailed, setCopyFailed] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -31,16 +34,16 @@ export default function CopyIconButton({
   return (
     <>
       {copyFailed ? <div className="min-w-0 text-sm text-red-700" role="alert">
-        <p>Could not copy. Select and copy the text manually.</p>
+        <p>{t("common.copyFailed")}</p>
         <code className="block break-all select-text">{value}</code>
       </div> : null}
       <span className="sr-only" role="status" aria-live="polite">
-        {copied ? `${label} copied to clipboard` : ""}
+        {copied ? t("common.copiedToClipboard", { label }) : ""}
       </span>
       <button
         type="button"
         aria-label={label}
-        title={copied ? "Copied" : label}
+        title={copied ? t("common.copied") : label}
         onClick={handleCopy}
         className={
           className ??

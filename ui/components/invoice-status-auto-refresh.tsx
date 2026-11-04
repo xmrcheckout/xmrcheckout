@@ -5,6 +5,7 @@ import {
   useTransition, type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "./i18n-provider";
 import Timestamp from "./timestamp";
 import type { InvoiceStatus } from "../lib/invoice-status";
 
@@ -70,21 +71,22 @@ export default function InvoiceStatusAutoRefresh({
 
 export function InvoiceRefreshFeedback({ className = "mx-auto mb-4 max-w-4xl text-sm text-ink-soft" }: { className?: string }) {
   const state = useInvoiceRefresh();
+  const { t } = useI18n();
   if (!state) return null;
   return (
     <div className={className}>
       <p>{state.status === "confirmed" || state.status === "invalid"
-        ? "Automatic checks stopped."
+        ? t("refresh.stopped")
         : state.status === "expired"
-          ? `Status checks every ${state.intervalMs / 1000}s for any later detection.`
-          : `Checks every ${state.intervalMs / 1000}s.`}</p>
-      <p title="Time of the successful status request, not the latest blockchain observation.">
-        {state.retrievedAt ? <>Status retrieved: <Timestamp value={state.retrievedAt} />.</> : "Status has not been retrieved yet."}
+          ? t("refresh.expiredInterval", { seconds: state.intervalMs / 1000 })
+          : t("refresh.interval", { seconds: state.intervalMs / 1000 })}</p>
+      <p title={t("refresh.retrievedHint")}>
+        {state.retrievedAt ? <>{t("refresh.retrieved")} <Timestamp value={state.retrievedAt} />.</> : t("refresh.notRetrieved")}
       </p>
       <p role="status" aria-live="polite" aria-atomic="true" className={state.error ? "mt-2 text-red-700" : "sr-only"}>
-        {state.error ? state.retrievedAt ? "Status unavailable. The last successful check has not changed. Retry to check again." : "Status unavailable. Retry to check again." : state.statusMessage}
+        {state.error ? state.retrievedAt ? t("refresh.errorWithLast") : t("refresh.error") : state.statusMessage}
       </p>
-      {state.error ? <button type="button" className="mt-2 min-h-11 rounded-full border border-stroke px-4 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-ink" onClick={state.refresh} disabled={state.pending} aria-busy={state.pending}>{state.pending ? "Refreshing…" : "Retry"}</button> : null}
+      {state.error ? <button type="button" className="mt-2 min-h-11 rounded-full border border-stroke px-4 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-ink" onClick={state.refresh} disabled={state.pending} aria-busy={state.pending}>{state.pending ? t("refresh.refreshing") : t("refresh.retry")}</button> : null}
     </div>
   );
 }

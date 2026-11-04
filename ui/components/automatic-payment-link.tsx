@@ -2,8 +2,20 @@
 
 import { useEffect, useState } from "react";
 
+import { useI18n } from "./i18n-provider";
+
 type Result = { invoice_url: string; status: string; expires_at: string | null };
+const previousStatusKeys: Record<string, string> = {
+  pending: "expired",
+  partially_paid: "expired",
+  expired: "expired",
+  confirmed: "confirmed",
+  invalid: "invalid",
+  payment_detected: "payment_detected",
+};
+
 export default function AutomaticPaymentLink({ token, actionUrl }: { token: string; actionUrl: string }) {
+  const { t } = useI18n();
   const [phase, setPhase] = useState("fallback");
   const [message, setMessage] = useState("");
   const [previous, setPrevious] = useState<Result | null>(null);
@@ -33,10 +45,10 @@ export default function AutomaticPaymentLink({ token, actionUrl }: { token: stri
         return;
       }
       setPhase("creating");
-      setMessage("Creating your invoice…");
+      setMessage(t("autoLink.creating"));
       try {
         const endpoint = new URL(actionUrl, window.location.href);
-        if (endpoint.origin !== window.location.origin) throw new Error("Checkout origin mismatch");
+        if (endpoint.origin !== window.location.origin) throw new Error(t("autoLink.originMismatch"));
         const response = await fetch(endpoint, {
           method: "POST", cache: "no-store", credentials: "omit",
           headers: { Accept: "application/json", "Idempotency-Key": attempt },
@@ -50,18 +62,18 @@ export default function AutomaticPaymentLink({ token, actionUrl }: { token: stri
             timer = setTimeout(() => setWaiting(false), Math.min(seconds * 1000, 2147483647));
           }
           const error = await response.json().catch(() => null);
-          throw new Error(typeof error?.detail === "string" ? error.detail : "Checkout is temporarily unavailable.");
+          throw new Error(typeof error?.detail === "string" ? error.detail : t("autoLink.unavailable"));
         }
         const result: Result = await response.json();
         const destination = new URL(result.invoice_url);
-        if (destination.origin !== window.location.origin || !/^\/invoice\/[0-9a-f-]+$/i.test(destination.pathname)) throw new Error("Invalid invoice response");
+        if (destination.origin !== window.location.origin || !/^\/invoice\/[0-9a-f-]+$/i.test(destination.pathname)) throw new Error(t("autoLink.invalidResponse"));
         const live = result.status === "payment_detected" || ((result.status === "pending" || result.status === "partially_paid") && (!result.expires_at || Date.parse(result.expires_at) > Date.now()));
         if (live) window.location.replace(destination.href);
         else { setPrevious(result); setPhase("previous"); }
       } catch (error) {
         if (disposed) return;
         setPhase("error");
-        setMessage(`${error instanceof Error ? error.message : "Could not confirm invoice creation."} Creation may already have succeeded. Retry this same attempt to recover its invoice, or contact the merchant.`);
+        setMessage(t("autoLink.error", { reason: error instanceof Error ? error.message : t("autoLink.notConfirmed") }));
       }
     }
     void start();
@@ -74,17 +86,17 @@ export default function AutomaticPaymentLink({ token, actionUrl }: { token: stri
       document.removeEventListener("visibilitychange", activate);
       document.removeEventListener("prerenderingchange", activate);
     };
-  }, [token, actionUrl, retry]);
+  }, [token, actionUrl, retry, t]);
 
   const buttonClass = "inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold disabled:opacity-50";
-  return <section aria-label="Automatic checkout" className="grid gap-4">
-    {phase !== "fallback" ? <style>{".automatic-review { display: none; }"}</style> : <p>Automatic checkout requires JavaScript and browser storage. You can create an invoice below.</p>}
+  return <section aria-label={t("autoLink.label")} className="grid gap-4">
+    {phase !== "fallback" ? <style>{".automatic-review { display: none; }"}</style> : <p>{t("autoLink.fallback")}</p>}
     {phase === "creating" || phase === "error" ? <p role="status">{message}</p> : null}
-    {phase === "error" ? <button type="button" className={buttonClass} disabled={waiting} onClick={() => setRetry(value => value + 1)}>{waiting ? "Wait before retrying" : "Retry same checkout attempt"}</button> : null}
+    {phase === "error" ? <button type="button" className={buttonClass} disabled={waiting} onClick={() => setRetry(value => value + 1)}>{waiting ? t("autoLink.wait") : t("autoLink.retry")}</button> : null}
     {phase === "previous" && previous ? <>
-      <p>Your previous invoice is {previous.status === "pending" || previous.status === "partially_paid" ? "expired" : previous.status.replaceAll("_", " ")}. Start another purchase only if you intend to place another order.</p>
-      <a className={buttonClass} href={previous.invoice_url}>View previous invoice</a>
-      <a className={buttonClass} href={`/pay/${encodeURIComponent(token)}?new=1`}>Start another purchase</a>
+      <p>{t(`autoLink.previous.${previousStatusKeys[previous.status] ?? "expired"}`)} {t("autoLink.anotherOnlyIfIntended")}</p>
+      <a className={buttonClass} href={previous.invoice_url}>{t("autoLink.viewPrevious")}</a>
+      <a className={buttonClass} href={`/pay/${encodeURIComponent(token)}?new=1`}>{t("invoicePage.startAnother")}</a>
     </> : null}
   </section>;
 }

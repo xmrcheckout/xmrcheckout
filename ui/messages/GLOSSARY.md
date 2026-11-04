@@ -309,3 +309,44 @@ need only the `other` form.
 | 余额 | "balance" implies held funds |
 | 支付公司 | "payments company" |
 | 发票 | a formal tax document (fapiao) in China; XMR Checkout does not issue one |
+
+## Ukrainian (`uk`)
+
+Formal *ви* throughout, lowercase. "Merchant" is *продавець*, "customer" is
+*покупець*. Use the typographic apostrophe (’) in words such as *з’єднання*,
+*пам’ятає*, *необов’язково*, and «» quotes for UI labels. Menu labels of
+wallets without a Ukrainian interface (e.g. *Settings → Wallet*) stay in
+English. Plural messages need `one`, `few`, `many` and `other`.
+
+| English | Ukrainian |
+| --- | --- |
+| checkout | оплата / сторінка оплати (product name "XMR Checkout" stays as is) |
+| invoice | рахунок (plural *рахунки*) |
+| payment request | запит на оплату |
+| payment detected | платіж виявлено |
+| confirmation / confirmation target | підтвердження / цільова кількість підтверджень |
+| view-only / view key | лише для перегляду / ключ перегляду |
+| spend key / seed | ключ витрачання / сид-фраза |
+| wallet | гаманець |
+| primary address / subaddress | основна адреса / підадреса |
+| expired | термін дії минув |
+| on-chain | у блокчейні |
+| fiat (reference) | фіатна валюта (довідково) |
+| conversion | перерахунок |
+| custody / non-custodial | зберігання коштів / некастодіальний |
+| reconciler / reconciliation | сервіс звірки / звірка |
+| allowance | ліміт |
+| relay (events) | пересилати |
+| webhook / endpoint | вебхук / кінцева точка |
+| dashboard | панель керування |
+| terminal | термінал |
+| self-host | розмістити у себе |
+
+| Avoid (Ukrainian) | Why |
+| --- | --- |
+| процесор, процесинг, еквайринг | implies a payment processor or acquirer; allowed only as "не є платіжним процесором" |
+| розрахунок, взаєморозрахунки | "settlement" (use *перерахунок* for conversion, *звірка* for reconciliation) |
+| виплата, виведення/зняття коштів | "payout" / withdrawal implies custody |
+| баланс, залишок коштів | "balance" implies held funds |
+| платіжна компанія | "payments company" |
+| рахунок-фактура | a formal tax document; XMR Checkout does not issue one |

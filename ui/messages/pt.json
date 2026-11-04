@@ -1453,7 +1453,7 @@
       "composeRef": "Ler a referência de implantação com Docker Compose →",
       "dockerEyebrow": "03 · Implante com Docker",
       "dockerTitle": "Parta do ambiente de exemplo e escolha o caminho do seu nó.",
-      "dockerBody": "Copie o modelo de ambiente, defina os valores do banco de dados e da API, configure a URL do site e adicione as configurações da carteira somente leitura. Depois, escolha se o serviço de conciliação deve usar um daemon de terceiros ou um daemon local iniciado pelo perfil do Compose.",
+      "dockerBody": "Copie o modelo de ambiente, defina os valores do banco de dados e da API, configure a URL do site e adicione as configurações da carteira somente leitura. Depois, defina a URL do daemon. O serviço de conciliação confia no que o daemon informa, então use o daemon local iniciado pelo perfil do Compose ou outro daemon que você opere ou em que confie.",
       "commandExample": "Exemplo de comando",
       "dockerNote": "Um daemon local precisa terminar de sincronizar antes que a detecção de pagamentos seja confiável. Se você usar os shards de wallet-rpc incluídos, mantenha estável a ordem das URLs configuradas, porque ela determina a qual shard pertence cada carteira somente leitura.",
       "verifyEyebrow": "04 · Verifique a detecção",

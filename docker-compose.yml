@@ -49,7 +49,7 @@ services:
       MONERO_WALLET_RPC_PASSWORD: ${MONERO_WALLET_RPC_PASSWORD}
       MONERO_WALLET_RPC_WALLET_PASSWORD: ${MONERO_WALLET_RPC_WALLET_PASSWORD}
       MONERO_WALLET_RPC_WALLET_DIR: ${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}
-      MONERO_DAEMON_URL: ${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}
+      MONERO_DAEMON_URL: ${MONERO_DAEMON_URL:?Set MONERO_DAEMON_URL in .env (see README, Choose a Monero daemon)}
       MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS: ${MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS:-15}
       MONERO_WALLET_READY_TIMEOUT_SECONDS: ${MONERO_WALLET_READY_TIMEOUT_SECONDS:-60}
       MONERO_WALLET_READY_POLL_INTERVAL_SECONDS: ${MONERO_WALLET_READY_POLL_INTERVAL_SECONDS:-1}
@@ -89,7 +89,7 @@ services:
       MONERO_WALLET_RPC_PASSWORD: ${MONERO_WALLET_RPC_PASSWORD}
       MONERO_WALLET_RPC_WALLET_PASSWORD: ${MONERO_WALLET_RPC_WALLET_PASSWORD}
       MONERO_WALLET_RPC_WALLET_DIR: ${MONERO_WALLET_RPC_WALLET_DIR:-/wallets}
-      MONERO_DAEMON_URL: ${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}
+      MONERO_DAEMON_URL: ${MONERO_DAEMON_URL:?Set MONERO_DAEMON_URL in .env (see README, Choose a Monero daemon)}
       MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS: ${MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS:-15}
       MONERO_WALLET_READY_TIMEOUT_SECONDS: ${MONERO_WALLET_READY_TIMEOUT_SECONDS:-60}
       MONERO_WALLET_READY_POLL_INTERVAL_SECONDS: ${MONERO_WALLET_READY_POLL_INTERVAL_SECONDS:-1}
@@ -170,9 +170,9 @@ services:
         "18083",
         "--confirm-external-bind",
         "--daemon-address",
-        "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "${MONERO_DAEMON_URL:?Set MONERO_DAEMON_URL in .env (see README, Choose a Monero daemon)}",
         "--daemon-ssl",
-        "disabled",
+        "autodetect",
         "--rpc-login",
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
@@ -215,9 +215,9 @@ services:
         "18083",
         "--confirm-external-bind",
         "--daemon-address",
-        "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "${MONERO_DAEMON_URL:?Set MONERO_DAEMON_URL in .env (see README, Choose a Monero daemon)}",
         "--daemon-ssl",
-        "disabled",
+        "autodetect",
         "--rpc-login",
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",
@@ -260,9 +260,9 @@ services:
         "18083",
         "--confirm-external-bind",
         "--daemon-address",
-        "${MONERO_DAEMON_URL:-http://xmr-node.cakewallet.com:18081}",
+        "${MONERO_DAEMON_URL:?Set MONERO_DAEMON_URL in .env (see README, Choose a Monero daemon)}",
         "--daemon-ssl",
-        "disabled",
+        "autodetect",
         "--rpc-login",
         "${MONERO_WALLET_RPC_USER}:${MONERO_WALLET_RPC_PASSWORD}",
         "--wallet-dir",

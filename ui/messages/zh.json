@@ -1443,7 +1443,7 @@
       "composeRef": "阅读 Docker Compose 部署参考 →",
       "dockerEyebrow": "03 · 使用 Docker 部署",
       "dockerTitle": "从示例环境开始，选择你的节点方案。",
-      "dockerBody": "复制环境模板，设置数据库和 API 的值，配置站点 URL，并添加只读钱包设置。然后选择对账服务是使用第三方守护进程，还是使用由 Compose 配置启动的本地守护进程。",
+      "dockerBody": "复制环境模板，设置数据库和 API 的值，配置站点 URL，并添加只读钱包设置。然后设置守护进程 URL。对账服务信任守护进程报告的数据，因此请使用由 Compose 配置启动的本地守护进程，或你自己运行或信任的其他守护进程。",
       "commandExample": "命令示例",
       "dockerNote": "本地守护进程必须完成同步后，付款检测才可靠。如果你使用内置的 wallet-rpc 分片，请保持其配置的 URL 顺序稳定，因为它决定了只读钱包所属的分片。",
       "verifyEyebrow": "04 · 验证检测",

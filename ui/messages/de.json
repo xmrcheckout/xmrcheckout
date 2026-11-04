@@ -1453,7 +1453,7 @@
       "composeRef": "Referenz zur Bereitstellung mit Docker Compose lesen →",
       "dockerEyebrow": "03 · Mit Docker bereitstellen",
       "dockerTitle": "Beginnen Sie mit der Beispielumgebung und wählen Sie Ihren Node-Weg.",
-      "dockerBody": "Kopieren Sie die Umgebungsvorlage, setzen Sie die Datenbank- und API-Werte, konfigurieren Sie die Website-URL und fügen Sie die Einstellungen der Wallet mit Lesezugriff hinzu. Wählen Sie dann, ob der Abgleichdienst einen Daemon eines Drittanbieters oder einen lokalen, über das Compose-Profil gestarteten Daemon verwenden soll.",
+      "dockerBody": "Kopieren Sie die Umgebungsvorlage, setzen Sie die Datenbank- und API-Werte, konfigurieren Sie die Website-URL und fügen Sie die Einstellungen der Wallet mit Lesezugriff hinzu. Setzen Sie dann die Daemon-URL. Der Abgleichdienst vertraut den Angaben des Daemons. Verwenden Sie daher den lokalen, über das Compose-Profil gestarteten Daemon oder einen anderen Daemon, den Sie selbst betreiben oder dem Sie vertrauen.",
       "commandExample": "Befehlsbeispiel",
       "dockerNote": "Ein lokaler Daemon muss vollständig synchronisiert sein, bevor die Zahlungserkennung zuverlässig ist. Wenn Sie die mitgelieferten wallet-rpc-Shards verwenden, halten Sie die Reihenfolge ihrer konfigurierten URLs stabil, da sie die Shard-Zuordnung der Wallets mit Lesezugriff bestimmt.",
       "verifyEyebrow": "04 · Erkennung überprüfen",

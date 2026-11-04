@@ -1453,7 +1453,7 @@
       "composeRef": "Lire la référence du déploiement Docker Compose →",
       "dockerEyebrow": "03 · Déployer avec Docker",
       "dockerTitle": "Partez de l’environnement d’exemple et choisissez votre nœud.",
-      "dockerBody": "Copiez le modèle d’environnement, définissez les valeurs de la base de données et de l’API, configurez l’URL du site et ajoutez les paramètres du portefeuille en lecture seule. Choisissez ensuite si le service de rapprochement doit utiliser un démon tiers ou un démon local démarré par le profil Compose.",
+      "dockerBody": "Copiez le modèle d’environnement, définissez les valeurs de la base de données et de l’API, configurez l’URL du site et ajoutez les paramètres du portefeuille en lecture seule. Définissez ensuite l’URL du démon. Le service de rapprochement se fie à ce que le démon indique : utilisez le démon local démarré par le profil Compose, ou un autre démon que vous gérez ou en qui vous avez confiance.",
       "commandExample": "Exemple de commande",
       "dockerNote": "Un démon local doit terminer sa synchronisation avant que la détection des paiements soit fiable. Si vous utilisez les fragments wallet-rpc fournis, gardez l’ordre de leurs URL configurées stable, car il détermine à quel fragment appartient chaque portefeuille en lecture seule.",
       "verifyEyebrow": "04 · Vérifier la détection",

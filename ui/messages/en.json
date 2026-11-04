@@ -1453,7 +1453,7 @@
       "composeRef": "Read the Docker Compose deployment reference →",
       "dockerEyebrow": "03 · Deploy with Docker",
       "dockerTitle": "Start from the example environment and choose your node path.",
-      "dockerBody": "Copy the environment template, set the database and API values, configure the site URL, and add the view-only wallet settings. Then choose whether the reconciler should use a third-party daemon or a local daemon started by the Compose profile.",
+      "dockerBody": "Copy the environment template, set the database and API values, configure the site URL, and add the view-only wallet settings. Then set the daemon URL. The reconciler trusts what the daemon reports, so use the local daemon started by the Compose profile, or another daemon you run or trust.",
       "commandExample": "Command example",
       "dockerNote": "A local daemon must finish syncing before payment detection is reliable. If you use the bundled wallet-rpc shards, keep their configured URL ordering stable because it determines shard ownership for view-only wallets.",
       "verifyEyebrow": "04 · Verify detection",

@@ -129,10 +129,10 @@ export default async function SelfHostedGuidePage() {
             </p>
             <pre className={codeClass} tabIndex={0} role="region" aria-label={t("guides.selfHost.commandExample")}>
               <code>{`cp .env.example .env
-docker compose up --build -d
+docker compose --profile local-daemon up --build -d
 
-# If you are running the bundled Monero daemon:
-docker compose --profile local-daemon up --build -d`}</code>
+# If MONERO_DAEMON_URL points to a daemon outside this stack:
+docker compose up --build -d`}</code>
             </pre>
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
               {t("guides.selfHost.dockerNote")}

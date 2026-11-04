@@ -1473,7 +1473,7 @@
       "composeRef": "Przeczytaj opis wdrożenia z Docker Compose →",
       "dockerEyebrow": "03 · Wdróż z Dockerem",
       "dockerTitle": "Zacznij od przykładowego środowiska i wybierz sposób korzystania z węzła.",
-      "dockerBody": "Skopiuj szablon środowiska, ustaw wartości bazy danych i API, skonfiguruj adres strony i dodaj ustawienia portfela tylko do odczytu. Następnie zdecyduj, czy usługa uzgadniania ma używać zewnętrznego demona, czy lokalnego demona uruchamianego przez profil Compose.",
+      "dockerBody": "Skopiuj szablon środowiska, ustaw wartości bazy danych i API, skonfiguruj adres strony i dodaj ustawienia portfela tylko do odczytu. Następnie ustaw adres URL demona. Usługa uzgadniania ufa temu, co zgłasza demon, więc używaj lokalnego demona uruchamianego przez profil Compose albo innego demona, którym zarządzasz lub któremu ufasz.",
       "commandExample": "Przykład polecenia",
       "dockerNote": "Lokalny demon musi zakończyć synchronizację, zanim wykrywanie płatności stanie się niezawodne. Jeśli używasz dołączonych shardów wallet-rpc, nie zmieniaj kolejności ich skonfigurowanych adresów URL, ponieważ określa ona, do którego sharda należy każdy portfel tylko do odczytu.",
       "verifyEyebrow": "04 · Sprawdź wykrywanie",

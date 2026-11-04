@@ -1453,7 +1453,7 @@
       "composeRef": "Lee la referencia de despliegue con Docker Compose →",
       "dockerEyebrow": "03 · Despliega con Docker",
       "dockerTitle": "Parte del entorno de ejemplo y elige cómo conectarte a un nodo.",
-      "dockerBody": "Copia la plantilla de entorno, define los valores de la base de datos y de la API, configura la URL del sitio y añade los ajustes de la billetera de solo lectura. Después elige si el conciliador usará un daemon de terceros o un daemon local iniciado por el perfil de Compose.",
+      "dockerBody": "Copia la plantilla de entorno, define los valores de la base de datos y de la API, configura la URL del sitio y añade los ajustes de la billetera de solo lectura. Después define la URL del daemon. El conciliador confía en lo que informa el daemon, así que usa el daemon local iniciado por el perfil de Compose u otro daemon que gestiones o en el que confíes.",
       "commandExample": "Ejemplo de comando",
       "dockerNote": "Un daemon local debe terminar de sincronizarse antes de que la detección de pagos sea fiable. Si usas los fragmentos de wallet-rpc incluidos, mantén estable el orden de sus URL configuradas, porque determina qué fragmento gestiona cada billetera de solo lectura.",
       "verifyEyebrow": "04 · Verifica la detección",

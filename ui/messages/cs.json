@@ -1473,7 +1473,7 @@
       "composeRef": "Přečíst referenci k nasazení přes Docker Compose →",
       "dockerEyebrow": "03 · Nasaďte přes Docker",
       "dockerTitle": "Začněte ukázkovým prostředím a zvolte způsob připojení k uzlu.",
-      "dockerBody": "Zkopírujte šablonu prostředí, nastavte hodnoty databáze a API, nastavte URL webu a přidejte nastavení peněženky pouze pro prohlížení. Pak zvolte, zda má služba sesouhlasení používat daemon třetí strany, nebo lokální daemon spuštěný profilem Compose.",
+      "dockerBody": "Zkopírujte šablonu prostředí, nastavte hodnoty databáze a API, nastavte URL webu a přidejte nastavení peněženky pouze pro prohlížení. Pak nastavte URL daemonu. Služba sesouhlasení důvěřuje tomu, co daemon hlásí, proto použijte lokální daemon spuštěný profilem Compose nebo jiný daemon, který provozujete nebo kterému důvěřujete.",
       "commandExample": "Ukázka příkazu",
       "dockerNote": "Lokální daemon musí dokončit synchronizaci, než bude detekce plateb spolehlivá. Pokud používáte přibalené shardy wallet-rpc, zachovejte stálé pořadí jejich nastavených URL, protože určuje, který shard spravuje kterou peněženku pouze pro prohlížení.",
       "verifyEyebrow": "04 · Ověřte detekci",

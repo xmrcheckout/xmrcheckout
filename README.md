@@ -235,13 +235,19 @@ addresses. Loopback, private, link-local, and other special-use destinations
 are rejected, including at redirect hops. This restriction applies to both the
 native API and the BTCPay-compatible API.
 
-3. Choose a Monero daemon source:
-- **Use a third-party daemon (default):**
-  - Leave `MONERO_DAEMON_URL` as-is (the default points at a public Monero daemon).
-- **Run your own daemon via Docker Compose:**
-  - Set `MONERO_DAEMON_URL=http://monerod:18081`
+3. Choose a Monero daemon (`MONERO_DAEMON_URL` is required; the stack will not
+   start without it):
+- The view-only wallet trusts the blocks the daemon reports. A hostile daemon, or
+  anyone on the network path to it, can show payments that never happened. Use a
+  daemon you run or trust.
+- **Run your own daemon via Docker Compose (recommended):**
+  - Keep `MONERO_DAEMON_URL=http://monerod:18081` (the `.env.example` value)
   - Start the stack with the `local-daemon` profile (see step 5)
   - Note: initial sync can take a long time and uses significant disk; payment detection won’t be reliable until the daemon is synced.
+- **Use a daemon you run or trust elsewhere:**
+  - Set `MONERO_DAEMON_URL` to its URL. wallet-rpc does not check the daemon's
+    TLS certificate in this setup, so HTTPS alone does not make an untrusted
+    daemon or network path safe.
 
 4. Choose a wallet-rpc target and provision view-only wallets:
 - Use the bundled wallet-rpc containers:
@@ -256,22 +262,19 @@ native API and the BTCPay-compatible API.
   - The reconciler uses the configured external URLs. The bundled shards may
     remain running but are not selected for invoice detection.
 
-5. Start the stack:
-
-```
-docker compose up --build -d
-```
-
-This command starts the API, UI, reconciler, and bundled wallet-rpc shards.
-
-If you’re running the bundled `monerod` service:
+5. Start the stack with the bundled `monerod` service:
 
 ```
 docker compose --profile local-daemon up --build -d
 ```
 
-The `local-daemon` profile adds `monerod`; payment detection services remain
-part of the default stack.
+This starts the API, UI, reconciler, bundled wallet-rpc shards, and `monerod`.
+
+If you use a daemon outside this stack:
+
+```
+docker compose up --build -d
+```
 
 ### Troubleshooting first payment detection
 

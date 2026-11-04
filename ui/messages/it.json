@@ -1453,7 +1453,7 @@
       "composeRef": "Leggi il riferimento all'installazione con Docker Compose →",
       "dockerEyebrow": "03 · Installa con Docker",
       "dockerTitle": "Parti dall'ambiente di esempio e scegli come usare il nodo.",
-      "dockerBody": "Copia il modello d'ambiente, imposta i valori del database e dell'API, configura l'URL del sito e aggiungi le impostazioni del portafoglio in sola lettura. Poi scegli se il servizio di riconciliazione deve usare un daemon di terzi o un daemon locale avviato dal profilo Compose.",
+      "dockerBody": "Copia il modello d'ambiente, imposta i valori del database e dell'API, configura l'URL del sito e aggiungi le impostazioni del portafoglio in sola lettura. Poi imposta l'URL del daemon. Il servizio di riconciliazione si fida di ciò che il daemon riporta, quindi usa il daemon locale avviato dal profilo Compose o un altro daemon che gestisci o di cui ti fidi.",
       "commandExample": "Esempio di comando",
       "dockerNote": "Un daemon locale deve completare la sincronizzazione prima che il rilevamento dei pagamenti sia affidabile. Se usi gli shard wallet-rpc inclusi, mantieni stabile l'ordine degli URL configurati, perché determina a quale shard appartiene ogni portafoglio in sola lettura.",
       "verifyEyebrow": "04 · Verifica il rilevamento",

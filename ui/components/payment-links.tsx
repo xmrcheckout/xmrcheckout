@@ -44,7 +44,6 @@ export default async function PaymentLinks() {
         </div>
         <CopyCodeBlock className={codeClass} label={`${variant === "dark" ? "Dark" : "Light"} badge HTML`}>{badgeHtml(siteUrl, variant)}</CopyCodeBlock>
       </div>)}
-      <p className="text-sm text-ink-soft">To help people find you, you can also list your business in a public Monero merchant directory. <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#let-people-find-you">How to get listed</Link></p>
     </section>
     <section aria-label="Public invoice allowance" className="rounded-2xl border border-stroke p-5">
       <h3 className="text-xl font-semibold">Public invoice allowance</h3>

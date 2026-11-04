@@ -23,7 +23,8 @@ from app.payment_timing import PaymentTiming, classify_payment_timing, effective
 
 
 class _FakeQuery:
-    def __init__(self, model, invoices, user, transfers):
+    def __init__(self, model, invoices, user, transfers, db=None):
+        self.db = db
         self.model = model
         self.invoices = invoices
         self.user = user
@@ -45,6 +46,10 @@ class _FakeQuery:
             )
         return []
 
+    def update(self, values, **_kwargs):
+        self.db.updates.append(values)
+        return 0
+
     def first(self):
         if self.model is Invoice:
             return self.invoices[0] if self.invoices else None
@@ -57,9 +62,10 @@ class _FakeDb:
         self.user = user
         self.transfers = transfers or []
         self.deleted = []
+        self.updates = []
 
     def query(self, model):
-        return _FakeQuery(model, self.invoices, self.user, self.transfers)
+        return _FakeQuery(model, self.invoices, self.user, self.transfers, self)
 
     def add(self, _value):
         return None
@@ -588,34 +594,111 @@ class BtcpayTimingTests(unittest.TestCase):
 
 
 class OutageCatchupTests(unittest.TestCase):
-    def test_last_successful_cycle_anchors_expired_invoice_cutoff(self):
-        now = datetime(2026, 8, 25, 10, 0, tzinfo=timezone.utc)
-        last_completed = now - timedelta(days=6)
+    def test_finished_cycle_with_failures_still_advances_completion(self):
+        with patch.object(reconciler, "_safe_update_reconciler_status") as update:
+            reconciler._record_cycle_result(Mock(), reconciler.ReconcileSummary(3, 2, 1))
+        kwargs = update.call_args.kwargs
+        self.assertIsNotNone(kwargs["completed_at"])
+        self.assertEqual(kwargs["error_message"], "1 of 3 invoice checks failed")
+        self.assertEqual(kwargs["failed_invoices"], 1)
+
+    def test_clean_cycle_clears_error(self):
+        with patch.object(reconciler, "_safe_update_reconciler_status") as update:
+            reconciler._record_cycle_result(Mock(), reconciler.ReconcileSummary(2, 2, 0))
+        self.assertIsNone(update.call_args.kwargs["error_message"])
+        self.assertIsNotNone(update.call_args.kwargs["completed_at"])
+
+    def test_only_successful_checks_are_recorded(self):
+        user_id = "user-1"
+        invoices = [_pending_invoice("one", user_id), _pending_invoice("two", user_id)]
+        user = SimpleNamespace(
+            id=user_id,
+            payment_address="merchant-address",
+            view_key_encrypted="encrypted-view-key",
+        )
+        db = _FakeDb(invoices, user)
+        service = Mock()
+        service.get_transfers_for_address.side_effect = [[], RuntimeError("rpc failed")]
+        recorded = []
+
+        with (
+            patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
+            patch.object(
+                reconciler,
+                "_record_successful_checks",
+                side_effect=lambda _db, ids, _at: recorded.append(list(ids)),
+            ),
+        ):
+            reconciler._reconcile_invoices(service)
+
+        self.assertEqual(recorded, [["one"]])
+
+    def test_record_successful_checks_updates_in_one_statement(self):
+        db = _FakeDb([], None)
+        checked_at = datetime(2026, 11, 4, tzinfo=timezone.utc)
+        reconciler._record_successful_checks(db, ["one", "two"], checked_at)
+        reconciler._record_successful_checks(db, [], checked_at)
+        self.assertEqual(db.updates, [{Invoice.last_checked_at: checked_at}])
+
+
+class InvoiceCheckingDelayedTests(unittest.TestCase):
+    def _db(self, row):
         db = Mock()
-        db.query.return_value.filter.return_value.first.return_value = SimpleNamespace(
-            last_reconcile_completed_at=last_completed
+        db.query.return_value.filter.return_value.first.return_value = row
+        return db
+
+    def _healthy_row(self, now, *, failed=0):
+        return SystemStatus(
+            name="reconciler",
+            last_reconcile_started_at=now - timedelta(seconds=5),
+            last_reconcile_completed_at=now - timedelta(seconds=5),
+            last_reconcile_error="1 of 2 invoice checks failed" if failed else None,
+            last_reconcile_failed_invoices=failed,
         )
 
-        with patch.object(reconciler, "LATE_PAYMENT_LOOKBACK_HOURS", 48):
-            cutoff = reconciler._expired_invoice_cutoff(db, now=now)
+    def _invoice(self, now, *, status="pending", last_checked_at=None, age=60):
+        return SimpleNamespace(
+            status=status,
+            last_checked_at=last_checked_at,
+            created_at=now - timedelta(seconds=age),
+        )
 
-        self.assertEqual(cutoff, last_completed - timedelta(hours=48))
+    def test_other_merchants_failures_do_not_delay_this_invoice(self):
+        now = datetime.now(timezone.utc)
+        db = self._db(self._healthy_row(now, failed=1))
+        invoice = self._invoice(now, last_checked_at=now - timedelta(seconds=30))
+        self.assertFalse(routes._invoice_checking_delayed(db, invoice, now=now))
 
-    def test_missing_or_future_completion_uses_current_time(self):
-        now = datetime(2026, 8, 25, 10, 0, tzinfo=timezone.utc)
-        db = Mock()
-        status = SimpleNamespace(last_reconcile_completed_at=now + timedelta(days=1))
-        db.query.return_value.filter.return_value.first.return_value = status
+    def test_invoice_not_checked_recently_is_delayed(self):
+        now = datetime.now(timezone.utc)
+        db = self._db(self._healthy_row(now))
+        invoice = self._invoice(now, last_checked_at=now - timedelta(minutes=10), age=3600)
+        self.assertTrue(routes._invoice_checking_delayed(db, invoice, now=now))
 
-        with patch.object(reconciler, "LATE_PAYMENT_LOOKBACK_HOURS", 48):
-            future_cutoff = reconciler._expired_invoice_cutoff(db, now=now)
-        status.last_reconcile_completed_at = None
-        with patch.object(reconciler, "LATE_PAYMENT_LOOKBACK_HOURS", 48):
-            missing_cutoff = reconciler._expired_invoice_cutoff(db, now=now)
+    def test_new_invoice_uses_creation_time(self):
+        now = datetime.now(timezone.utc)
+        db = self._db(self._healthy_row(now))
+        self.assertFalse(routes._invoice_checking_delayed(db, self._invoice(now, age=20), now=now))
+        self.assertTrue(routes._invoice_checking_delayed(db, self._invoice(now, age=3600), now=now))
 
-        expected = now - timedelta(hours=48)
-        self.assertEqual(future_cutoff, expected)
-        self.assertEqual(missing_cutoff, expected)
+    def test_unavailable_reconciler_delays_every_open_invoice(self):
+        now = datetime.now(timezone.utc)
+        row = SystemStatus(
+            name="reconciler",
+            last_reconcile_started_at=now - timedelta(minutes=10),
+            last_reconcile_completed_at=now - timedelta(minutes=10),
+            last_reconcile_failed_invoices=0,
+        )
+        invoice = self._invoice(now, last_checked_at=now - timedelta(seconds=30))
+        self.assertTrue(routes._invoice_checking_delayed(self._db(row), invoice, now=now))
+
+    def test_closed_invoice_is_never_delayed(self):
+        now = datetime.now(timezone.utc)
+        db = self._db(None)
+        for status in ("confirmed", "expired", "invalid"):
+            invoice = self._invoice(now, status=status, age=86400)
+            self.assertFalse(routes._invoice_checking_delayed(db, invoice, now=now))
 
 
 class ReconcilerStatusTests(unittest.TestCase):

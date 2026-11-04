@@ -184,6 +184,35 @@ def _reconciler_state(
     return "ok"
 
 
+def _invoice_checking_delayed(
+    db: Session,
+    invoice: Invoice,
+    *,
+    now: datetime | None = None,
+) -> bool:
+    """Whether this invoice's own payment checks are behind.
+
+    Only the reconciler being down or this invoice going unchecked counts, so
+    one merchant's failing checks never show a delay to other merchants' buyers.
+    """
+    if invoice.status not in ("pending", "partially_paid", "payment_detected"):
+        return False
+    current_time = now or datetime.now(timezone.utc)
+    reconciler_status = (
+        db.query(SystemStatus).filter(SystemStatus.name == "reconciler").first()
+    )
+    if _reconciler_state(reconciler_status, now=current_time) == "unavailable":
+        return True
+    reference = invoice.last_checked_at or invoice.created_at
+    if reference is None:
+        return True
+    if reference.tzinfo is None:
+        reference = reference.replace(tzinfo=timezone.utc)
+    # Generous margin: one full cycle across all merchants can take a while.
+    delayed_after_seconds = max(INVOICE_RECONCILE_INTERVAL_SECONDS * 10, 300)
+    return current_time - reference > timedelta(seconds=delayed_after_seconds)
+
+
 def _load_public_system_status(db: Session) -> SystemStatusResponse:
     reconciler_status = (
         db.query(SystemStatus).filter(SystemStatus.name == "reconciler").first()
@@ -443,6 +472,7 @@ def _public_invoice_status_response(
             site = public_origin(request)
             update["payment_link_url"] = f"{site}/pay/{link.token}?new=1"
     update["qr_url"] = _qr_url(invoice, request)
+    update["checking_delayed"] = _invoice_checking_delayed(db, invoice)
     return response.model_copy(update=update)
 
 

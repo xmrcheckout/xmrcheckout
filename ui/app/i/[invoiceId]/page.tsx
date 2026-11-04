@@ -41,6 +41,7 @@ type InvoiceStatusResponse = {
   confirmation_target: number;
   confirmations: number;
   checkout_continue_available?: boolean;
+  checking_delayed?: boolean;
   created_at: string;
   expires_at: string | null;
   detected_at: string | null;
@@ -76,16 +77,18 @@ const awaitingPaymentStatuses: InvoiceStatus[] = [
 
 const paymentCheckNotice = (
   systemStatus: SystemStatusResponse | null,
-  status: InvoiceStatus,
+  invoice: InvoiceStatusResponse,
   t: Translate,
 ) => {
-  if (!awaitingPaymentStatuses.includes(status)) {
+  if (!awaitingPaymentStatuses.includes(invoice.status)) {
     return null;
   }
+  // The reconciler state is shared by all merchants, so only this invoice's
+  // own check status decides whether its checks are delayed.
   const checkingWorks =
     systemStatus?.wallet_rpc === "ok" &&
     systemStatus.daemon !== "unreachable" &&
-    systemStatus.reconciler === "ok";
+    invoice.checking_delayed !== true;
   if (checkingWorks) {
     return {
       delayed: false,
@@ -191,7 +194,7 @@ export default async function BtcpayModalInvoicePage({
     invoice.status === "payment_detected" || invoice.status === "confirmed";
   const createdTimestamp = invoice.created_at;
   const expiresTimestamp = invoice.expires_at;
-  const checkNotice = paymentCheckNotice(systemStatus, invoice.status, t);
+  const checkNotice = paymentCheckNotice(systemStatus, invoice, t);
   const isBtcpayInvoice = Boolean(
     invoice.btcpay_amount && invoice.btcpay_currency,
   );

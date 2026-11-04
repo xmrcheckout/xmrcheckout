@@ -118,6 +118,17 @@ def startup():
             connection.execute(
                 text("UPDATE invoices SET confirmations = 0 WHERE confirmations IS NULL")
             )
+            # Existing invoices start as checked now, so already-expired ones
+            # are not all re-checked at once; the default is dropped afterwards.
+            connection.execute(
+                text(
+                    "ALTER TABLE invoices "
+                    "ADD COLUMN IF NOT EXISTS last_checked_at TIMESTAMP WITH TIME ZONE DEFAULT now()"
+                )
+            )
+            connection.execute(
+                text("ALTER TABLE invoices ALTER COLUMN last_checked_at DROP DEFAULT")
+            )
             connection.execute(
                 text("CREATE INDEX IF NOT EXISTS ix_invoices_user_id ON invoices (user_id)")
             )

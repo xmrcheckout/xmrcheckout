@@ -227,6 +227,31 @@ class AllocationDatabaseTests(unittest.TestCase):
                 self.assertEqual(old.status, "expired")
             self.assertEqual({row.txid for row in db.query(InvoiceTransfer).all()}, {"fresh", "top-up"})
 
+    def test_expired_invoice_stays_watched_until_checked_after_its_window(self):
+        now = datetime.now(timezone.utc)
+
+        def expired(name, expires_ago, last_checked_at):
+            return Invoice(id=uuid4(), user_id=self.user_id, address=name, amount_xmr=Decimal("1"),
+                           status="expired", confirmation_target=1,
+                           expires_at=now - expires_ago, last_checked_at=last_checked_at,
+                           metadata_json={"name": name})
+
+        with self.Session.begin() as db:
+            db.add_all([
+                expired("in-window", timedelta(hours=1), now),
+                expired("never-checked", timedelta(days=10), None),
+                # Its merchant's checks failed since before the window ended.
+                expired("checks-failing", timedelta(days=10), now - timedelta(days=10)),
+                expired("done", timedelta(days=10), now - timedelta(days=1)),
+            ])
+        with self.Session() as db, patch.object(reconciler, "LATE_PAYMENT_LOOKBACK_HOURS", 48):
+            rows = db.query(Invoice).filter(reconciler._expired_invoice_needs_check(now=now)).all()
+            self.assertEqual({row.address for row in rows}, {"in-window", "never-checked", "checks-failing"})
+            failing = next(row for row in rows if row.address == "checks-failing")
+            reconciler._record_successful_checks(db, [failing.id], now)
+            rows = db.query(Invoice).filter(reconciler._expired_invoice_needs_check(now=now)).all()
+            self.assertEqual({row.address for row in rows}, {"in-window", "never-checked"})
+
 class AdditionalIsolationTests(unittest.TestCase):
     def test_newly_discovered_history_stays_excluded_after_reorg(self):
         allocation = SimpleNamespace(invoice_id=uuid4(), cutoff_height=100, excluded_txids=[])

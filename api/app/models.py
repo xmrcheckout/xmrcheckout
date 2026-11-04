@@ -43,6 +43,8 @@ class Invoice(Base):
     expires_at = Column(DateTime(timezone=True), nullable=True)
     detected_at = Column(DateTime(timezone=True), nullable=True)
     confirmed_at = Column(DateTime(timezone=True), nullable=True)
+    # When the reconciler last read this invoice's address successfully.
+    last_checked_at = Column(DateTime(timezone=True), nullable=True)
 
 
 class InvoiceTransfer(Base):

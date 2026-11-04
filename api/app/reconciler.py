@@ -76,25 +76,7 @@ def main() -> None:
                 started_at=datetime.now(timezone.utc),
             )
             summary = _reconcile_invoices(service)
-            if summary.failed:
-                _safe_update_reconciler_status(
-                    status_db,
-                    error_message=(
-                        f"{summary.failed} of {summary.attempted} invoice checks failed"
-                    ),
-                    attempted_invoices=summary.attempted,
-                    succeeded_invoices=summary.succeeded,
-                    failed_invoices=summary.failed,
-                )
-            else:
-                _safe_update_reconciler_status(
-                    status_db,
-                    completed_at=datetime.now(timezone.utc),
-                    error_message=None,
-                    attempted_invoices=summary.attempted,
-                    succeeded_invoices=summary.succeeded,
-                    failed_invoices=summary.failed,
-                )
+            _record_cycle_result(status_db, summary)
         except Exception as exc:
             logger.exception("Invoice reconcile failed: %s", exc)
             if status_db is None:
@@ -148,6 +130,24 @@ def _wait_with_terminal_checks(service: MoneroWalletService, seconds: float) -> 
             logger.warning("Terminal invoice check failed: %s", exc)
 
 
+def _record_cycle_result(status_db: Session, summary: ReconcileSummary) -> None:
+    # A finished cycle counts as completed even if some checks failed; the
+    # failures are still reported, and each invoice tracks its own last
+    # successful check.
+    _safe_update_reconciler_status(
+        status_db,
+        completed_at=datetime.now(timezone.utc),
+        error_message=(
+            f"{summary.failed} of {summary.attempted} invoice checks failed"
+            if summary.failed
+            else None
+        ),
+        attempted_invoices=summary.attempted,
+        succeeded_invoices=summary.succeeded,
+        failed_invoices=summary.failed,
+    )
+
+
 def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = False) -> ReconcileSummary:
     db: Session = SessionLocal()
     attempted = 0
@@ -163,14 +163,9 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
                 Invoice.created_at >= now - timedelta(hours=2),
             )
         else:
-            late_cutoff = _expired_invoice_cutoff(db, now=now)
             criteria = or_(
                 Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
-                and_(
-                    Invoice.status == "expired",
-                    Invoice.expires_at.is_not(None),
-                    Invoice.expires_at >= late_cutoff,
-                ),
+                _expired_invoice_needs_check(now=now),
             )
         invoices = (
             db.query(Invoice)
@@ -226,6 +221,8 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
                     wallet_error_summary(exc),
                 )
                 continue
+            checked_at = datetime.now(timezone.utc)
+            checked_ids = []
             for invoice in user_invoices:
                 with _invoice_advisory_lock(f"allocation:{user.id}") as acquired:
                     if not acquired:
@@ -236,8 +233,10 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
                         continue
                     if _reconcile_invoice(db, service, user, invoice):
                         succeeded += 1
+                        checked_ids.append(invoice.id)
                     else:
                         failed += 1
+            _record_successful_checks(db, checked_ids, checked_at)
         return ReconcileSummary(
             attempted=attempted,
             succeeded=succeeded,
@@ -245,6 +244,20 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
         )
     finally:
         db.close()
+
+
+def _record_successful_checks(db: Session, invoice_ids: list, checked_at: datetime) -> None:
+    if not invoice_ids:
+        return
+    try:
+        db.query(Invoice).filter(Invoice.id.in_(invoice_ids)).update(
+            {Invoice.last_checked_at: checked_at},
+            synchronize_session=False,
+        )
+        db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+        logger.warning("Unable to record successful invoice checks", exc_info=True)
 
 
 def _reconcile_invoice(
@@ -738,23 +751,24 @@ def _xmr_to_atomic(amount: Decimal) -> int:
     return int(quantized)
 
 
-def _expired_invoice_cutoff(db: Session, *, now: datetime) -> datetime:
+def _expired_invoice_needs_check(*, now: datetime):
+    """Expired invoices still watched for late payments.
+
+    An invoice stays in the set while it is inside its late-payment window, and
+    afterwards until one check has succeeded after the window ended. A merchant
+    whose checks keep failing, or a reconciler outage, therefore never causes a
+    late payment to be missed, and other merchants' sets stop growing.
+    """
     lookback = timedelta(hours=max(0, LATE_PAYMENT_LOOKBACK_HOURS))
-    status_row = (
-        db.query(SystemStatus)
-        .filter(SystemStatus.name == "reconciler")
-        .first()
+    return and_(
+        Invoice.status == "expired",
+        Invoice.expires_at.is_not(None),
+        or_(
+            Invoice.expires_at >= now - lookback,
+            Invoice.last_checked_at.is_(None),
+            Invoice.last_checked_at < Invoice.expires_at + lookback,
+        ),
     )
-    last_completed = status_row.last_reconcile_completed_at if status_row else None
-    if last_completed is None:
-        anchor = now
-    else:
-        if last_completed.tzinfo is None:
-            last_completed = last_completed.replace(tzinfo=timezone.utc)
-        else:
-            last_completed = last_completed.astimezone(timezone.utc)
-        anchor = min(last_completed, now)
-    return anchor - lookback
 
 
 if __name__ == "__main__":

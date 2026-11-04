@@ -2267,15 +2267,16 @@ summary:focus-visible {
 .journey-text-strong { fill: var(--ink); font-size: 16px; font-weight: 600; }
 .journey-text-sub { fill: #45483f; font-size: 16px; }
 .journey-text-card { fill: var(--cream); font-size: 16px; font-weight: 600; }
+.journey-text-card-sub { fill: var(--cream); fill-opacity: .75; font-size: 14px; }
 @container (min-width: 440px) {
   .journey-art { margin-block: .75rem; }
   .journey-text-strong { font-size: 14px; }
   .journey-text-sub { font-size: 13.5px; }
   .journey-text-card { font-size: 14.5px; }
+  .journey-text-card-sub { font-size: 13px; }
 }
 .journey-coin { animation: journey-coin 1.5s cubic-bezier(.45, .05, .3, 1) backwards; }
 @keyframes journey-coin { from { transform: translateX(-30px); } to { transform: translateX(0); } }
-.journey-caption { margin: 0; padding: .7rem 1.25rem .85rem; border-top: 1px solid var(--stroke); font-size: .8125rem; line-height: 1.5; color: #53534d; }
 @media (prefers-reduced-motion: reduce) {
   .journey-coin { animation: none; }
 }

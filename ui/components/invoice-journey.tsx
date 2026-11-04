@@ -2,7 +2,7 @@ import { useId } from "react";
 
 import { JourneyIcon, MoneroCoin } from "./invoice-journey-icons";
 
-const artDescription = "A customer pays your wallet directly. XMR Checkout only watches with view-only access, cannot spend, and can optionally update your store.";
+const artDescription = "A customer pays your wallet directly. XMR Checkout creates invoices and confirms payments using view-only access, cannot spend, and can optionally update your store.";
 const payColor = "#b65b25";
 const infoColor = "#4d6a5a";
 const warmTint = "#e6a36f";
@@ -36,14 +36,15 @@ export function InvoiceJourney() {
           <path d="M116 64H282" fill="none" stroke={payColor} strokeWidth="3.5" markerEnd={`url(#${id}-pay)`} />
           <text className="journey-text-strong" x="158" y="38" textAnchor="middle">XMR</text>
 
-          <path d="M158 192V88" fill="none" stroke={infoColor} strokeWidth="2" strokeDasharray="5 5" markerEnd={`url(#${id}-info)`} />
+          <path d="M158 184V88" fill="none" stroke={infoColor} strokeWidth="2" strokeDasharray="5 5" markerEnd={`url(#${id}-info)`} />
           <text className="journey-text-strong" x="170" y="135">Watches,</text>
           <text className="journey-text-sub" x="170" y="154">can’t spend</text>
           <MoneroCoin cx={158} cy={64} r={16} className="journey-coin" />
 
-          <rect x="74" y="192" width="168" height="72" rx="14" fill="#101217" />
-          <image href="/logo.png" x="80" y="212" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
-          <text className="journey-text-card" x="117" y="233">XMR Checkout</text>
+          <rect x="34" y="184" width="208" height="92" rx="14" fill="#101217" />
+          <image href="/logo.png" x="62" y="198" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
+          <text className="journey-text-card" x="100" y="220">XMR Checkout</text>
+          <text className="journey-text-card-sub" x="138" y="257" textAnchor="middle">Invoices &amp; confirmations</text>
 
           <path d="M242 228H282" fill="none" stroke={infoColor} strokeWidth="2" strokeDasharray="5 5" markerEnd={`url(#${id}-info)`} />
           <rect x="286" y="180" width="106" height="96" rx="12" fill="#fffaf2" stroke="#8a735b" strokeWidth="1.25" strokeDasharray="4 4" />
@@ -52,7 +53,6 @@ export function InvoiceJourney() {
           <text className="journey-text-sub" x="339" y="261" textAnchor="middle">Optional</text>
         </svg>
       </div>
-      <p className="journey-caption">Confirmation time varies. An invoice target does not override wallet unlock rules.</p>
     </div>
   );
 }

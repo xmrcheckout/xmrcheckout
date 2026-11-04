@@ -210,7 +210,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
             }}
           />
           <button
-            className="min-h-11 min-w-11 absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full border border-stroke bg-white px-2.5 py-1 text-[0.7rem] font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+            className="min-w-11 absolute inset-y-1 right-1 rounded-lg border border-stroke bg-white px-2.5text-[0.7rem] font-semibold text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
             type="button"
             onClick={() => setIsViewKeyVisible((current) => !current)}
           >

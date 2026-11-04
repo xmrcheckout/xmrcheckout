@@ -27,8 +27,7 @@ export const formatFiatAmount = (
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: code,
-      maximumFractionDigits: 2,
-      minimumFractionDigits: 2,
+      // Each currency's standard decimals: 0 for JPY and KRW, 2 for most others.
     }).format(numeric);
   } catch {
     return `${numeric.toFixed(2)} ${code}`;

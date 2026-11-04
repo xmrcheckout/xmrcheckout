@@ -5,7 +5,7 @@ import { simulatedInvoice, simulatedStatuses, type SimulatedStatus, type Simulat
 import { useI18n } from "./i18n-provider";
 import StatusBadge from "./status-badge";
 
-type PreviewProps = { amount: string; target: number; description?: string; expiry?: string };
+type PreviewProps = { amount: string; amountText?: string; target: number; description?: string; expiry?: string };
 
 export function useSimulatedInvoice(target: number, initialStatus: SimulatedStatus = "pending", createdAt?: string, expiresAt?: string | null) {
   const [status, setStatus] = useState<SimulatedStatus>(initialStatus);
@@ -17,7 +17,7 @@ export default function SimulatedCheckoutPreview(props: PreviewProps) {
   return <SimulatedCheckoutDetails {...props} snapshot={snapshot} onStatusChange={setStatus} />;
 }
 
-export function SimulatedCheckoutDetails({ amount, target, description, expiry, snapshot, onStatusChange }: PreviewProps & { snapshot: SimulatedSnapshot; onStatusChange: (status: SimulatedStatus) => void }) {
+export function SimulatedCheckoutDetails({ amount, amountText, target, description, expiry, snapshot, onStatusChange }: PreviewProps & { snapshot: SimulatedSnapshot; onStatusChange: (status: SimulatedStatus) => void }) {
   const { status, confirmations } = snapshot;
   const { t } = useI18n();
   const label = (value: SimulatedStatus) => t(`demo.status.${value}`);
@@ -32,7 +32,7 @@ export function SimulatedCheckoutDetails({ amount, target, description, expiry, 
       {target === 0 ? <p className="text-sm">{t("demo.zeroTarget")}</p> : null}
       <div aria-live="polite" aria-atomic="true" className="grid gap-3">
         <StatusBadge label={label(status)} tone={status === "confirmed" ? "success" : status === "payment_detected" ? "detected" : status === "pending" ? "pending" : "error"} />
-        <p className="break-words font-mono text-2xl font-semibold">{amount} XMR</p>
+        <p className="break-words font-mono text-2xl font-semibold">{amountText ?? `${amount} XMR`}</p>
         {description ? <p className="break-words">{description}</p> : null}
         <p>{t("demo.exampleConfirmations", { done: confirmations, target })}</p>
         <p>{status === "expired" || status === "invalid" ? t("demo.doNotSend") : status === "pending" ? t("demo.instructionsHere") : t("demo.noFurther")}</p>

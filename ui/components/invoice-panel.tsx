@@ -375,7 +375,7 @@ function CreateInvoiceModal({
           {demoPreview ? (
             <div className="grid min-h-0 gap-4 overflow-y-auto">
               <p id="demo-ready" tabIndex={-1} role="status" className="font-semibold text-emerald-800">{t("dashboard.invoices.demoReady")}</p>
-              <SimulatedCheckoutPreview amount={amountMode === "fiat" ? (Number(amount) / (fiatRate || 1)).toFixed(12) : amount} target={Number(confirmationMode === "custom" ? confirmationTarget : defaultConfirmationTarget)} description={description} expiry={expiryMode === "custom" ? expiryValue || t("dashboard.invoices.customDateNotSet") : t("dashboard.invoices.sixtyMinutes")} />
+              <SimulatedCheckoutPreview amount={amount} amountText={amountMode === "fiat" ? draftXmrEstimateLabel : undefined} target={Number(confirmationMode === "custom" ? confirmationTarget : defaultConfirmationTarget)} description={description} expiry={expiryMode === "custom" ? expiryValue || t("dashboard.invoices.customDateNotSet") : t("dashboard.invoices.sixtyMinutes")} />
               <button type="button" className={secondaryButton} onClick={onClose}>{t("dashboard.invoices.done")}</button>
             </div>
           ) : state.invoiceId ? (

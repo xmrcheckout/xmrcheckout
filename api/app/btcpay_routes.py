@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_DOWN
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from .btcpay_schemas import (
@@ -346,6 +346,32 @@ def create_invoice(
     }
 
 
+BTCPAY_INVOICE_LIST_DEFAULT_TAKE = 50
+BTCPAY_INVOICE_LIST_MAX_TAKE = 100
+
+
+@router.get("/api/v1/stores/{store_id}/invoices")
+def list_invoices(
+    store_id: str,
+    request: Request,
+    skip: int = Query(0, ge=0),
+    take: int = Query(BTCPAY_INVOICE_LIST_DEFAULT_TAKE, ge=0),
+    user: User = Depends(_require_btcpay_user),
+    db: Session = Depends(get_db),
+):
+    _require_store(store_id, user)
+    take = min(take, BTCPAY_INVOICE_LIST_MAX_TAKE)
+    invoices = (
+        db.query(Invoice)
+        .filter(Invoice.user_id == user.id, Invoice.archived_at.is_(None))
+        .order_by(Invoice.created_at.desc())
+        .offset(skip)
+        .limit(take)
+        .all()
+    )
+    return [_btcpay_invoice_response(db, invoice, request) for invoice in invoices]
+
+
 @router.get("/api/v1/stores/{store_id}/invoices/{invoice_id}")
 def get_invoice(
     store_id: str,
@@ -372,6 +398,12 @@ def get_invoice(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invoice not found",
         )
+    return _btcpay_invoice_response(db, invoice, request)
+
+
+def _btcpay_invoice_response(
+    db: Session, invoice: Invoice, request: Request
+) -> dict[str, Any]:
     status_name, additional_status = _btcpay_status(invoice)
     amount, currency, btcpay_data = _btcpay_amount_currency(invoice)
     expiration_time = _epoch_seconds(invoice.expires_at)

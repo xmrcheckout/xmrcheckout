@@ -8,7 +8,7 @@ import { createTranslator, mergeMessages, splitRich } from '../lib/i18n/translat
 const root = new URL('..', import.meta.url).pathname;
 const load = (locale) => JSON.parse(readFileSync(join(root, 'messages', `${locale}.json`), 'utf8'));
 const en = load('en');
-const catalogs = { es: load('es'), ru: load('ru'), de: load('de') };
+const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr') };
 
 // Forbidden terms per DESIGN_PRINCIPLES.md §9 and messages/GLOSSARY.md.
 // Each entry is [pattern, allowed negation pattern or null].
@@ -17,6 +17,7 @@ const forbidden = {
   es: [[/procesador/i, /no es un procesador/i], [/liquida/i, null], [/desembols/i, null], [/\bretir/i, null], [/\bsaldo/i, null], [/empresa de pagos/i, null]],
   ru: [[/процессор|процессинг/i, /не (?:является )?платёжн\S* процессор\S*/i], [/расч[её]т/i, null], [/выплат/i, null], [/вывод средств|вывести средства|снятие средств/i, null], [/баланс/i, null], [/платёжн\S* компани/i, null]],
   de: [[/zahlungsabwickl|zahlungsdienstleist|prozessor/i, /kein(?:en)? (?:Zahlungsabwickler|Zahlungsdienstleister)/i], [/abrechn/i, null], [/auszahl/i, null], [/abheb|abhebung/i, null], [/guthaben|\bsaldo|kontostand/i, null], [/zahlungsunternehmen/i, null]],
+  fr: [[/processeur|prestataire de (?:services de )?paiement/i, /n['’]est pas un (?:processeur|prestataire)/i], [/règlement/i, null], [/versement/i, null], [/\bretrait|retirer/i, null], [/\bsolde/i, null], [/(?:société|entreprise) de paiement/i, null]],
 };
 
 const isPlural = (value) => value && typeof value === 'object' && typeof value.other === 'string';
@@ -35,12 +36,13 @@ const tags = (value) => strings(value).flatMap((text) => splitRich(text).map((s)
 test('locale matching follows Accept-Language preference and falls back to English', () => {
   assert.equal(matchLocale(null), 'en');
   assert.equal(matchLocale('es-MX,es;q=0.9,en;q=0.8'), 'es');
-  assert.equal(matchLocale('fr-FR,fr;q=0.9'), 'en');
-  assert.equal(matchLocale('fr;q=1, es;q=0.5, en;q=0.4'), 'es');
+  assert.equal(matchLocale('it-IT,it;q=0.9'), 'en');
+  assert.equal(matchLocale('it;q=1, es;q=0.5, en;q=0.4'), 'es');
   assert.equal(matchLocale('en;q=0.4, es;q=0.6'), 'es');
   assert.equal(matchLocale('es;q=0, en'), 'en');
   assert.equal(matchLocale('ru-RU,ru;q=0.9,en;q=0.8'), 'ru');
   assert.equal(matchLocale('de-DE,de;q=0.9,en;q=0.8'), 'de');
+  assert.equal(matchLocale('fr-FR,fr;q=0.9,en;q=0.8'), 'fr');
 });
 
 test('translator interpolates, pluralizes, and falls back to English', () => {

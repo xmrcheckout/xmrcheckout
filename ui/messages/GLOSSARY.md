@@ -111,3 +111,38 @@ Formal *Sie* throughout. "Merchant" is *der Händler*, "customer" is
 | Auszahlung, auszahlen, Abhebung, abheben | "payout" / withdrawal implies custody |
 | Guthaben, Saldo, Kontostand | "balance" implies held funds |
 | Zahlungsunternehmen | "payments company" |
+
+## French (`fr`)
+
+Formal *vous* throughout. "Merchant" is *le commerçant*, "customer" is
+*le client*. Use typographic apostrophes (’). *Webhook* stays as is, and
+menu labels of wallets without a French interface (e.g. *Settings → Wallet*)
+stay in English.
+
+| English | French |
+| --- | --- |
+| checkout | paiement / page de paiement (product name "XMR Checkout" stays as is) |
+| invoice | facture |
+| payment detected | paiement détecté |
+| confirmation | confirmation |
+| view-only / view key | en lecture seule / clé de visualisation (privée) |
+| spend key / seed | clé de dépense / phrase de récupération (seed) |
+| wallet | portefeuille |
+| subaddress | sous-adresse |
+| expired | expirée |
+| on-chain | sur la blockchain |
+| fiat (reference) | monnaie fiduciaire (de référence) |
+| custody / non-custodial | garde / sans garde des fonds |
+| reconciler | service de rapprochement |
+| allowance | quota |
+| endpoint | point de terminaison |
+| dashboard | tableau de bord |
+| self-host | auto-héberger |
+
+| Avoid (French) | Why |
+| --- | --- |
+| processeur / prestataire de paiement | implies a payment processor; allowed only as "n’est pas un processeur de paiement" |
+| règlement | "settlement" |
+| versement, retrait, retirer des fonds | "payout" / withdrawal implies custody |
+| solde | "balance" implies held funds |
+| société / entreprise de paiement | "payments company" |

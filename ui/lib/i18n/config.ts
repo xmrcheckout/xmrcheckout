@@ -1,6 +1,6 @@
 // Supported interface languages. English is the source language: every other
 // catalog is merged over it, so a missing translation shows English text.
-export const locales = ["en", "es"] as const;
+export const locales = ["en", "es", "ru"] as const;
 export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "en";
@@ -10,6 +10,7 @@ export const localeCookie = "xmrcheckout_locale";
 export const localeNames: Record<Locale, string> = {
   en: "English",
   es: "Español",
+  ru: "Русский",
 };
 
 export const isLocale = (value: unknown): value is Locale =>

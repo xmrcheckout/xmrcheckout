@@ -50,3 +50,33 @@ Informal *tú* throughout. "Merchant" is *el comercio*.
 | desembolso, retiro, retirar fondos | "payout" / withdrawal implies custody |
 | saldo | "balance" implies held funds |
 | empresa de pagos | "payments company" |
+
+## Russian (`ru`)
+
+Formal *вы* throughout, lowercase. "Merchant" is *продавец*, "customer" is
+*покупатель*. Use *ё* in *платёж*, *счёт*, *кошелёк*.
+
+| English | Russian |
+| --- | --- |
+| checkout | оплата / страница оплаты (product name "XMR Checkout" stays as is) |
+| invoice | счёт (plural *счета*) |
+| payment detected | платёж обнаружен |
+| confirmation | подтверждение |
+| view-only / view key | только для просмотра / ключ просмотра |
+| spend key / seed | ключ траты / сид-фраза |
+| wallet | кошелёк |
+| subaddress | субадрес |
+| expired | истёк (срок действия истёк) |
+| on-chain | в блокчейне |
+| fiat (reference) | фиатная валюта (справочный ориентир) |
+| webhook / endpoint | вебхук / конечная точка |
+| dashboard | панель управления |
+| self-host | разместить у себя |
+
+| Avoid (Russian) | Why |
+| --- | --- |
+| процессор, процессинг | implies a payment processor; allowed only as "не является платёжным процессором" |
+| расчёт, взаиморасчёты | "settlement" (use *пересчитывается* for conversion) |
+| выплата, вывод/снятие средств | "payout" / withdrawal implies custody |
+| баланс | "balance" implies held funds |
+| платёжная компания | "payments company" |

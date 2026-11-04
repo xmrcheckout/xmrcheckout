@@ -8,13 +8,14 @@ import { createTranslator, mergeMessages, splitRich } from '../lib/i18n/translat
 const root = new URL('..', import.meta.url).pathname;
 const load = (locale) => JSON.parse(readFileSync(join(root, 'messages', `${locale}.json`), 'utf8'));
 const en = load('en');
-const catalogs = { es: load('es') };
+const catalogs = { es: load('es'), ru: load('ru') };
 
 // Forbidden terms per DESIGN_PRINCIPLES.md §9 and messages/GLOSSARY.md.
 // Each entry is [pattern, allowed negation pattern or null].
 const forbidden = {
   en: [[/processor/i, /not a (?:payment )?processor/i], [/settle/i, null], [/payout/i, null], [/\bbalance/i, null], [/payments company/i, null]],
   es: [[/procesador/i, /no es un procesador/i], [/liquida/i, null], [/desembols/i, null], [/\bretir/i, null], [/\bsaldo/i, null], [/empresa de pagos/i, null]],
+  ru: [[/процессор|процессинг/i, /не (?:является )?платёжн\S* процессор\S*/i], [/расч[её]т/i, null], [/выплат/i, null], [/вывод средств|вывести средства|снятие средств/i, null], [/баланс/i, null], [/платёжн\S* компани/i, null]],
 };
 
 const isPlural = (value) => value && typeof value === 'object' && typeof value.other === 'string';
@@ -37,6 +38,7 @@ test('locale matching follows Accept-Language preference and falls back to Engli
   assert.equal(matchLocale('fr;q=1, es;q=0.5, en;q=0.4'), 'es');
   assert.equal(matchLocale('en;q=0.4, es;q=0.6'), 'es');
   assert.equal(matchLocale('es;q=0, en'), 'en');
+  assert.equal(matchLocale('ru-RU,ru;q=0.9,en;q=0.8'), 'ru');
 });
 
 test('translator interpolates, pluralizes, and falls back to English', () => {

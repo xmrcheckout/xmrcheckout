@@ -3,7 +3,7 @@ import { utcTimestamp } from "../lib/timestamps";
 import { formatXmrAmount } from "../lib/formatting";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { paymentButtonHtml, paymentButtonImageUrl } from "../lib/payment-button";
+import { badgeHtml, badgeImageUrl, paymentButtonHtml, paymentButtonImageUrl } from "../lib/payment-button";
 import InvoiceAddressAvailability from "./invoice-address-availability";
 import StatusRefreshButton from "./status-refresh-button";
 import CopyCodeBlock from "./copy-code-block";
@@ -25,6 +25,7 @@ export default async function PaymentLinks() {
   const currencies: string[] | null = usage?.supported_currencies ?? null;
   const links: PaymentLinkData[] = await response.json();
   const target = profile?.ok ? (await profile.json()).default_confirmation_target : 1;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost";
   const codeClass = "overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream";
   return <section className="grid min-w-0 gap-6">
     <div><h1 className="font-sans text-2xl font-semibold sm:text-3xl">Payment links</h1>
@@ -33,6 +34,18 @@ export default async function PaymentLinks() {
       <p className="mt-2 text-sm text-ink-soft">For contributions, use a title such as “Support my project”, set Button text to “Donate with Monero”, and choose “Customer enters the amount” so donors type their own amount. Recurring collection is not supported.</p>
       <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Payment link setup guide</Link></p>
     </div>
+    <section aria-labelledby="accept-monero-title" className="grid min-w-0 gap-4 rounded-2xl border border-stroke p-5">
+      <h2 id="accept-monero-title" className="text-xl font-semibold">Show that you accept Monero</h2>
+      <p className="text-sm text-ink-soft">Add a badge to your website so visitors know they can pay with Monero. The badge is a plain image hosted on this site; it carries no tracking or account details. Each payment link below also has a printable sign with a QR code for a counter, stall, or donation box.</p>
+      {(["dark", "light"] as const).map(variant => <div key={variant} className="grid min-w-0 gap-3">
+        <p>{variant === "dark" ? "Dark badge (for light backgrounds)" : "Light badge (for dark backgrounds)"}</p>
+        <div className={`grid min-w-0 justify-items-start rounded-xl border border-stroke p-4 ${variant === "dark" ? "bg-white/50" : "bg-ink"}`}>
+          <Image src={new URL(badgeImageUrl(siteUrl, variant)).pathname} alt="Monero accepted here" width={300} height={80} unoptimized className="h-auto max-w-full" />
+        </div>
+        <CopyCodeBlock className={codeClass} label={`${variant === "dark" ? "Dark" : "Light"} badge HTML`}>{badgeHtml(siteUrl, variant)}</CopyCodeBlock>
+      </div>)}
+      <p className="text-sm text-ink-soft">To help people find you, you can also list your business in a public Monero merchant directory. <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#let-people-find-you">How to get listed</Link></p>
+    </section>
     <section aria-label="Public invoice allowance" className="rounded-2xl border border-stroke p-5">
       <h3 className="text-xl font-semibold">Public invoice allowance</h3>
       {usage ? <><p className="mt-3">{usage.remaining} remaining · {usage.used} used · Limit {usage.daily_limit} per rolling {usage.window_hours} hours</p><p className="mt-2 break-words text-sm">Status retrieved: <time dateTime={usage.retrieved_at}>{utcTimestamp(usage.retrieved_at)}</time></p></> : <p role="status">Allowance unavailable. Refresh to try again.</p>}
@@ -57,6 +70,7 @@ export default async function PaymentLinks() {
         <CopyCodeBlock className={codeClass}>{paymentButtonHtml(link.url, link.button_text)}</CopyCodeBlock>
       </div>
       <p className="text-sm text-ink-soft">Paste into an HTML block on your website. {link.auto_create_invoice ? "Opening the graphic automatically requests an invoice." : "The graphic links to the payment review page; the customer creates an invoice from there."} No form or JavaScript is needed. You can also attach the reusable link to your own button.</p>
+      <p><Link className="font-semibold underline decoration-clay underline-offset-4" href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>Printable sign with QR code</Link></p>
       <details><summary className="min-h-11 cursor-pointer font-semibold">Edit settings</summary><PaymentLinkEditor currencies={currencies} link={link} /></details>
     </article>)}
   </section>;

@@ -90,3 +90,19 @@ pre:focus-visible {
   display: inline-block;
   padding-block: 0.2rem;
 }
+@media print {
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .print-sign {
+    border: 0 !important;
+    margin-top: 0 !important;
+    break-inside: avoid;
+  }
+}

@@ -1,5 +1,13 @@
 const assert = require("node:assert/strict");
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || "playwright");
+const QRCode = require("qrcode");
+const axePath = require.resolve("axe-core/axe.min.js");
+
+async function axeViolations(page) {
+  await page.addScriptTag({ path: axePath });
+  const result = await page.evaluate(() => window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] } }));
+  return result.violations.map(v => `${v.id}: ${v.nodes.map(n => n.target).join(", ")}`);
+}
 
 async function main() {
   const base = process.argv[2] || "http://127.0.0.1:3300";
@@ -27,6 +35,36 @@ async function main() {
       assert.match(snippet, /<img src=/);
       assert.equal(snippet.includes("<form"), false);
       assert.equal((await fetch(merchant, { method: "POST", body: snippet })).status, 204);
+      if (width === 1440) {
+        const badges = page.getByRole("region", { name: "Show that you accept Monero" });
+        await badges.getByRole("img", { name: "Monero accepted here" }).first().evaluate(image => image.decode());
+        await badges.getByRole("button", { name: "Copy code", exact: true }).first().click();
+        const badgeSnippet = await page.evaluate(() => navigator.clipboard.readText());
+        assert.match(badgeSnippet, /^<img src="[^"?]+\/badges\/monero-accepted-here\.svg" alt="Monero accepted here"/);
+        assert.equal((await fetch(badgeSnippet.match(/src="([^"]+)"/)[1].replace(/^https?:\/\/[^/]+/, base))).status, 200);
+        assert.deepEqual(await axeViolations(page), [], "Payment links tab with badges must pass WCAG 2.1 AA");
+        await card.getByRole("link", { name: "Printable sign with QR code", exact: true }).click();
+        await page.getByRole("heading", { name: "Printable sign", exact: true }).waitFor();
+        const sign = page.getByRole("article", { name: "Sign preview" });
+        await sign.getByText("0.1 XMR", { exact: true }).waitFor();
+        await sign.getByText("Scan to pay with Monero", { exact: true }).waitFor();
+        const qr = sign.getByRole("img", { name: "QR code for this payment link" });
+        await qr.evaluate(image => image.decode());
+        const expectedSvg = await QRCode.toString(base + "/pay/fixture-token", { type: "svg", margin: 1, errorCorrectionLevel: "M" });
+        assert.equal(decodeURIComponent((await qr.getAttribute("src")).split(",")[1]), expectedSvg, "Sign QR must encode the payment link URL");
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+        assert.deepEqual(await axeViolations(page), [], "Sign page must pass WCAG 2.1 AA");
+        await page.emulateMedia({ media: "print" });
+        assert.equal(await page.locator(".site-header").isVisible(), false, "Print must hide the site header");
+        assert.equal(await page.getByRole("button", { name: "Print sign" }).isVisible(), false, "Print must hide controls");
+        assert.equal(await qr.isVisible(), true);
+        await page.emulateMedia({ media: "screen" });
+        await page.getByRole("link", { name: "Back to payment links", exact: true }).click();
+        await page.getByRole("heading", { name: "Payment links", exact: true }).waitFor();
+        await page.goto(base + "/dashboard/payment-links/00000000-0000-4000-8000-000000000000/sign");
+        await page.getByRole("alert").filter({ hasText: "This payment link was not found." }).waitFor();
+        await page.goto(base + "/dashboard?tab=payment-links", { waitUntil: "networkidle" });
+      }
       if (width === 320) {
         const settings = card.locator("details");
         await settings.locator("summary").click();
@@ -68,9 +106,9 @@ async function main() {
       await page.keyboard.press("Enter");
       const editor = page.locator("details").filter({ hasText: "Create payment link" });
       await editor.getByLabel("Title", { exact: true }).fill("Fixture product");
-      await editor.getByLabel("Fixed amount").fill("0.1000000000001");
+      await editor.getByLabel("Fixed amount", { exact: true }).fill("0.1000000000001");
       await editor.getByRole("button", { name: "Save payment link" }).click();
-      const amount = editor.getByLabel("Fixed amount");
+      const amount = editor.getByLabel("Fixed amount", { exact: true });
       await page.waitForFunction(() => document.activeElement?.getAttribute("name") === "amount");
       assert.equal(await amount.getAttribute("aria-invalid"), "true");
       assert.equal(await amount.inputValue(), "0.1000000000001");
@@ -79,7 +117,7 @@ async function main() {
       await editor.getByRole("button", { name: "Save payment link" }).click();
       await editor.getByRole("status").filter({ hasText: "Payment link saved" }).waitFor();
       await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-      await page.getByRole("button", { name: "Copy code", exact: true }).first().click();
+      await page.locator("article").getByRole("button", { name: "Copy code", exact: true }).first().click();
       const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
       assert.equal(copied.origin, new URL(base).origin);
       assert.match(copied.pathname, /^\/pay\/[A-Za-z0-9_-]+$/);
@@ -189,7 +227,7 @@ async function main() {
     await unavailableStorage.goto(base + "/pay/fixture-token", { waitUntil: "networkidle" });
     await unavailableStorage.getByRole("button", { name: "Create invoice and pay with Monero" }).waitFor();
     await noStorage.close();
-    console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, graphic preview, copied cross-origin embed, automatic creation, resumption, explicit new purchase, response recovery, prerender protection, and manual fallbacks.");
+    console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, graphic preview, badge snippet, printable sign, copied cross-origin embed, automatic creation, resumption, explicit new purchase, response recovery, prerender protection, and manual fallbacks.");
   } finally { await browser.close(); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

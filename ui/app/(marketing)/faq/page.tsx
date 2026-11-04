@@ -1,306 +1,126 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import PageIntroBand from "../../../components/page-intro-band";
 import { areDonationsEnabled } from "../../../lib/donations";
+import { rich } from "../../../lib/i18n/rich";
+import { getI18n } from "../../../lib/i18n/server";
+import type { Translate } from "../../../lib/i18n/translate";
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description:
-    "Frequently asked questions about XMR Checkout: non-custodial Monero invoices with view-only detection.",
-  alternates: {
-    canonical: "/faq",
-  },
-  openGraph: {
-    type: "website",
-    url: "/faq",
-    siteName: "XMR Checkout",
-    title: "Monero Checkout FAQ | XMR Checkout",
-    description:
-      "Frequently asked questions about XMR Checkout: non-custodial Monero invoices with view-only detection.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return {
+    title: t("nav.faq"),
+    description: t("faq.metaDescription"),
+    alternates: { canonical: "/faq" },
+    openGraph: {
+      type: "website",
+      url: "/faq",
+      siteName: "XMR Checkout",
+      title: t("faq.metaTitle"),
+      description: t("faq.metaDescription"),
+    },
+  };
+}
 
 const donationsEnabled = areDonationsEnabled();
 
 export const dynamic = "force-dynamic";
 
+type FaqCategory = "custody" | "operations" | "comparisons";
+
 type FaqItem = {
   id?: string;
   question: string;
-  answer: React.ReactNode;
+  answer: ReactNode;
   category: FaqCategory;
 };
 
-type FaqCategory = "custody" | "operations" | "comparisons";
-
-const faqGroups: Array<{
-  id: FaqCategory;
-  label: string;
-  description: string;
-  accentClass: string;
-}> = [
-  {
-    id: "custody",
-    label: "Custody & access",
-    description: "Wallet permissions, sign-in data, and merchant control.",
-    accentClass: "bg-clay",
-  },
-  {
-    id: "operations",
-    label: "Operations & availability",
-    description: "Service cost, uptime, and safe failure behavior.",
-    accentClass: "bg-sage",
-  },
-  {
-    id: "comparisons",
-    label: "Comparisons & self-hosting",
-    description: "Deployment choices and differences from adjacent tools.",
-    accentClass: "bg-ink",
-  },
+const faqGroups: Array<{ id: FaqCategory; accentClass: string }> = [
+  { id: "custody", accentClass: "bg-clay" },
+  { id: "operations", accentClass: "bg-sage" },
+  { id: "comparisons", accentClass: "bg-ink" },
 ];
 
-function ComparisonYesNo({ value, label }: { value: boolean; label: string }) {
-  return (
-    <span className="inline-flex items-center justify-center">
-      <span
-        className={[
-          "inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold",
-          value ? "bg-sage/20 text-ink" : "bg-ink/10 text-ink-soft",
-        ].join(" ")}
-        aria-label={label}
-        title={label}
-      >
-        {value ? "✓" : "✕"}
-      </span>
-    </span>
-  );
+const linkClass = "underline underline-offset-4";
+const ctaClass = "font-semibold underline underline-offset-4";
+
+// Each answer is built from catalog keys under faq.items.<key>: q (question),
+// p1..pN (paragraphs), li1..liN (list items), after (paragraph after the list)
+// and cta (link text for the call-to-action link).
+type FaqDef = {
+  key: string;
+  id?: string;
+  category: FaqCategory;
+  paragraphs: number;
+  listItems?: number;
+  after?: boolean;
+  cta?: string;
+  showParagraph?: (index: number) => boolean;
+};
+
+const faqDefs: FaqDef[] = [
+  { key: "inPerson", id: "in-person-terminal", category: "operations", paragraphs: 2, cta: "/guides/in-person-monero-checkout" },
+  { key: "donations", id: "payment-link-donations", category: "operations", paragraphs: 2, cta: "/guides/monero-payment-buttons#donations" },
+  { key: "badge", id: "accepted-here-badge", category: "operations", paragraphs: 1, cta: "/guides/monero-payment-buttons#let-people-find-you" },
+  { key: "noWoo", category: "comparisons", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
+  { key: "vsQr", category: "operations", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
+  { key: "repeat", category: "operations", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
+  { key: "digital", category: "operations", paragraphs: 2, cta: "/guides/monero-payment-buttons#confirmation-message" },
+  { key: "custodial", category: "custody", paragraphs: 1 },
+  { key: "access", category: "custody", paragraphs: 1 },
+  { key: "setup", category: "custody", paragraphs: 1 },
+  { key: "email", category: "custody", paragraphs: 1 },
+  { key: "cost", category: "operations", paragraphs: 2, showParagraph: (index) => index !== 2 || donationsEnabled },
+  { key: "moveFunds", category: "custody", paragraphs: 1 },
+  { key: "receipt", category: "operations", paragraphs: 1 },
+  { key: "down", category: "operations", paragraphs: 1 },
+  { key: "hosted", category: "comparisons", paragraphs: 1, listItems: 4, after: true },
+  { key: "btcpay", category: "comparisons", paragraphs: 2, listItems: 3 },
+  { key: "selfHost", category: "comparisons", paragraphs: 2 },
+];
+
+const faqTags = {
+  strong: (text: string) => <span className="font-semibold text-ink">{text}</span>,
+  link: (text: string) => <Link className={linkClass} href="/donate">{text}</Link>,
+  github: (text: string) => <Link className={linkClass} href="https://github.com/xmrcheckout/xmrcheckout">{text}</Link>,
+  docs: (text: string) => <Link className={linkClass} href="/docs">{text}</Link>,
+  guide: (text: string) => <Link className={linkClass} href="/guides/self-hosted-monero-checkout">{text}</Link>,
+};
+
+const range = (count: number) => Array.from({ length: count }, (_, index) => index + 1);
+
+function faqItems(t: Translate): FaqItem[] {
+  return faqDefs.map((def) => {
+    const k = `faq.items.${def.key}`;
+    return {
+      id: def.id,
+      category: def.category,
+      question: t(`${k}.q`),
+      answer: (
+        <>
+          {range(def.paragraphs)
+            .filter((index) => def.showParagraph?.(index) ?? true)
+            .map((index) => (
+              <p className="text-ink-soft" key={`p${index}`}>{rich(t(`${k}.p${index}`), faqTags)}</p>
+            ))}
+          {def.listItems ? (
+            <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
+              {range(def.listItems).map((index) => (
+                <li key={`li${index}`}>{rich(t(`${k}.li${index}`), faqTags)}</li>
+              ))}
+            </ul>
+          ) : null}
+          {def.after ? <p className="mt-4 text-ink-soft">{t(`${k}.after`)}</p> : null}
+          {def.cta ? (
+            <p className="mt-3"><Link className={ctaClass} href={def.cta}>{t(`${k}.cta`)}</Link></p>
+          ) : null}
+        </>
+      ),
+    };
+  });
 }
-
-const faqItems: FaqItem[] = [
-  { id: "in-person-terminal", question: "Can I accept Monero in person at a shop or market stall?", category: "operations", answer: <><p className="text-ink-soft">Yes. Create a terminal in the dashboard and open its link on a tablet or phone at your till. Type the amount, the customer scans the QR code with their wallet, and the screen shows “Payment seen” once the payment reaches the network, usually within seconds. Funds go directly to your wallet.</p><p className="text-ink-soft">With zero confirmations the payment is not yet in a block and could in rare cases fail to confirm; require confirmations for larger amounts. Each sale uses one of your invoice addresses, and unpaid or cancelled sales hold theirs for three days.</p><p><Link className="font-semibold underline underline-offset-4" href="/guides/in-person-monero-checkout">Set up a terminal</Link></p></> },
-  { id: "payment-link-donations", question: "Can I use payment links to accept Monero donations?", category: "operations", answer: <><p className="text-ink-soft">Yes. Create a payment link to your own wallet, give it a title such as “Support my project”, choose Customer enters the amount, and set Button text to “Donate with Monero”. Share its reusable URL or copy the HTML button to your website. Each successful submission creates a separate XMR invoice; funds go directly to your wallet.</p><p className="text-ink-soft">Donors enter an amount in XMR or a supported fiat-reference currency; you can set a minimum in XMR. To offer preset amounts instead, create a fixed-amount link for each. Automatic recurring collection is not supported. Existing invoice allowances and address limits apply even when an invoice is never paid.</p><p><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons#donations">Set up a donation link</Link></p></> },
-  { id: "accepted-here-badge", question: "Do you have a “Monero accepted here” badge or sign?", category: "operations", answer: <><p className="text-ink-soft">Yes. Dashboard → Payment links has a “Monero accepted here” badge to copy into your website, and each payment link has a printable sign with a QR code for a counter, stall, or donation box. The badge is a plain image with no tracking.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons#let-people-find-you">Let people find you</Link></p></> },
-  { question: "Can I add a payment button without WooCommerce?", category: "comparisons", answer: <><p className="text-ink-soft">Yes. Configure a fixed XMR amount or a supported fiat-reference amount in Dashboard → Payment links, then copy an HTML button into your website. If your editor removes forms, use the reusable URL. No programming or WooCommerce integration is required.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons">Read the payment button guide</Link></p></> },
-  { question: "How is a reusable payment link different from a wallet QR code?", category: "operations", answer: <><p className="text-ink-soft">A static wallet QR code does not create a separate invoice for each purchase. A payment button requests a new invoice on submission. Opening the reusable URL first shows a review page; submitting there requests the invoice. The invoice has its own ID and payment status for reconciliation.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons">Read the payment button guide</Link></p></> },
-  { question: "Do repeated clicks reuse an invoice or guarantee a new address?", category: "operations", answer: <><p className="text-ink-soft">Separate submissions can create separate invoices; plain HTML has no duplicate-submission recovery. A fresh invoice does not guarantee an address that has never been used: the merchant address pool eventually reuses eligible addresses after its cooldown. Late payments after reuse can still be confused with newer invoices. Check the dashboard allowance and address availability, and contact the merchant before retrying an interrupted creation request.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons">Read the payment button guide</Link></p></> },
-  { question: "Can payment links deliver digital products such as ebooks?", category: "operations", answer: <><p className="text-ink-soft">Yes, with a confirmation message. Each payment link can show its own plain-text message on the invoice page after the required confirmations, such as a download link, a shared license key, or delivery instructions. To sell five ebooks, create five links, each with its own download link. The message is not sent to the browser before confirmation.</p><p className="text-ink-soft">Every buyer of a link sees the same message, and files are not hosted by XMR Checkout. For protected or per-buyer downloads, use expiring links or webhooks with the invoice ID. Payment links collect no buyer details.</p><p className="mt-3"><Link className="font-semibold underline underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">Set up a confirmation message</Link></p></> },
-  {
-    question: "Is XMR Checkout custodial?",
-    category: "custody",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          No. Payments go directly from the customer to your Monero wallet. XMR
-          Checkout only observes the blockchain to detect payments and update
-          invoice status.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "What wallet access does XMR Checkout require?",
-    category: "custody",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          The maximum permission we ask for is view-only access: your primary
-          address and your private view key. We never request spend keys and we
-          never request signing access.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "What does setup require?",
-    category: "custody",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          After signing in, create invoices from the dashboard or API.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "Do you require email or personal information?",
-    category: "custody",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          No. We do not require email or personal information. Your primary
-          address is the identifier for access, paired with your private view
-          key.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "What does XMR Checkout cost?",
-    category: "operations",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          Currently, xmrcheckout.com does not charge a service fee. You can also
-          self-host the open source stack if you prefer.
-        </p>
-        {donationsEnabled ? (
-          <p className="text-ink-soft">
-            If you find XMR Checkout useful, you can support development with{" "}
-            <Link className="underline underline-offset-4" href="/donate">
-              donations
-            </Link>
-            .
-          </p>
-        ) : null}
-      </>
-    ),
-  },
-  {
-    question:
-      "Can XMR Checkout move funds, issue refunds, or reverse payments?",
-    category: "custody",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          No. XMR Checkout does not sign transactions and cannot move funds on
-          your behalf. It is checkout software: create invoices, detect
-          payments, and relay status via API/webhooks.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "How do customers get a receipt?",
-    category: "operations",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          Once a payment is confirmed, the payment page links to a receipt the
-          customer can print or save. XMR Checkout does not collect customer
-          email addresses or send email. If you email your customers, include
-          the receipt_url from the invoice.confirmed webhook.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "What happens if XMR Checkout is down when a customer pays?",
-    category: "operations",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          Your wallet can still receive a valid on-chain payment because the
-          payment is customer → merchant wallet. If the service is unavailable,
-          you may temporarily lose invoice status updates until it comes back
-          online.
-        </p>
-      </>
-    ),
-  },
-  {
-    question:
-      "How does XMR Checkout differ from hosted services (e.g. NOWPayments)?",
-    category: "comparisons",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          The main differences are scope, custody model, and data collection:
-          XMR Checkout is Monero-only and does not require an account or email.
-        </p>
-        <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
-          <li>
-            <span className="font-semibold text-ink">Monero-only:</span> a
-            focused product without a multi-asset stack.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">No account/email:</span>{" "}
-            your primary address is the identifier.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">No custody:</span> payments
-            go directly to your wallet.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">Clear failure modes:</span>{" "}
-            downtime can delay status updates, but it does not affect on-chain
-            validity of payments.
-          </li>
-        </ul>
-        <p className="mt-4 text-ink-soft">
-          If you use a third-party service, review what keys and data it
-          requires, and whether it ever takes custody or intermediates funds.
-        </p>
-      </>
-    ),
-  },
-  {
-    question: "How does XMR Checkout differ from BTCPay Server?",
-    category: "comparisons",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          BTCPay Server is a general-purpose, self-hosted payment server with a
-          primary focus on Bitcoin and optional integrations for other assets
-          (including Monero via a plugin). XMR Checkout is intentionally focused
-          on Monero checkout and a minimal, deterministic core.
-        </p>
-        <p className="text-ink-soft">
-          Some hosted BTCPay deployments may not include the Monero plugin by
-          default. XMR Checkout provides a small compatibility layer so teams
-          can integrate without running a full BTCPay deployment.
-        </p>
-        <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
-          <li>
-            <span className="font-semibold text-ink">Monero-first UX:</span>{" "}
-            invoice and confirmation language is tailored to Monero.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">Fewer moving parts:</span>{" "}
-            a narrow scope keeps operations and audits simpler.
-          </li>
-          <li>
-            <span className="font-semibold text-ink">API/webhooks-first:</span>{" "}
-            designed to fit into existing order systems.
-          </li>
-        </ul>
-      </>
-    ),
-  },
-  {
-    question: "Can I self-host XMR Checkout?",
-    category: "comparisons",
-    answer: (
-      <>
-        <p className="text-ink-soft">
-          Yes. XMR Checkout is open source, and you can self-host it from the
-          official{" "}
-          <Link
-            className="underline underline-offset-4"
-            href="https://github.com/xmrcheckout/xmrcheckout"
-          >
-            GitHub repository
-          </Link>
-          .
-        </p>
-        <p className="text-ink-soft">
-          Start with{" "}
-          <Link className="underline underline-offset-4" href="/docs">
-            Documentation
-          </Link>{" "}
-          or the{" "}
-          <Link
-            className="underline underline-offset-4"
-            href="/guides/self-hosted-monero-checkout"
-          >
-            self-hosting guide
-          </Link>{" "}
-          for setup and integration details.
-        </p>
-      </>
-    ),
-  },
-];
 
 function FaqCard({ item }: { item: FaqItem }) {
   return (
@@ -323,21 +143,21 @@ function FaqCard({ item }: { item: FaqItem }) {
   );
 }
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const { t } = await getI18n();
+  const items = faqItems(t);
   return (
     <main id="main-content" tabIndex={-1} className="px-[6vw] pb-20 pt-8 text-ink">
       <section
         className="mx-auto w-full max-w-7xl"
-        aria-label="FAQ introduction"
+        aria-label={t("faq.introLabel")}
       >
         <PageIntroBand
-          eyebrow="FAQ"
+          eyebrow={t("faq.eyebrow")}
           id="faq-title"
-          title="Direct answers about control, access, and operations."
+          title={t("faq.title")}
           description={
-            <p>
-              Answers about setup, control, operations, and deployment.
-            </p>
+            <p>{t("faq.description")}</p>
           }
         />
       </section>
@@ -345,15 +165,15 @@ export default function FaqPage() {
       <div className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
         <nav
           className="min-w-0 lg:sticky lg:top-24 lg:self-start"
-          aria-label="FAQ categories"
+          aria-label={t("faq.categories")}
         >
           <div className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">
             <div className="border-b border-stroke px-5 py-4">
               <p className="font-sans text-base font-semibold">
-                Browse by topic
+                {t("faq.browse")}
               </p>
               <p className="mt-1 hidden text-sm text-ink-soft lg:block">
-                Control, operations, and deployment.
+                {t("faq.browseHelp")}
               </p>
             </div>
             <div className="grid gap-1.5 p-3">
@@ -363,7 +183,7 @@ export default function FaqPage() {
                   href={`#${group.id}`}
                   key={group.id}
                 >
-                  {group.label}
+                  {t(`faq.groups.${group.id}.label`)}
                 </a>
               ))}
             </div>
@@ -372,7 +192,7 @@ export default function FaqPage() {
 
         <div className="min-w-0 space-y-8">
           {faqGroups.map((group) => {
-            const items = faqItems.filter((item) => item.category === group.id);
+            const groupItems = items.filter((item) => item.category === group.id);
 
             return (
               <section
@@ -388,24 +208,24 @@ export default function FaqPage() {
                         className={`h-2.5 w-2.5 rounded-full ${group.accentClass}`}
                         aria-hidden="true"
                       />
-                      Questions
+                      {t("faq.questions")}
                     </p>
                     <h2
                       className="mt-1 font-sans text-2xl font-semibold"
                       id={`${group.id}-title`}
                     >
-                      {group.label}
+                      {t(`faq.groups.${group.id}.label`)}
                     </h2>
                     <p className="mt-1 text-sm text-ink-soft">
-                      {group.description}
+                      {t(`faq.groups.${group.id}.description`)}
                     </p>
                   </div>
                   <span className="rounded-full border border-stroke bg-white/70 px-3 py-1 text-xs font-semibold text-ink-soft">
-                    {items.length} answers
+                    {t("faq.answers", { count: groupItems.length })}
                   </span>
                 </header>
                 <div className="mt-4 overflow-hidden rounded-surface border border-stroke bg-white/70 shadow-soft">
-                  {items.map((item) => (
+                  {groupItems.map((item) => (
                     <FaqCard key={item.question} item={item} />
                   ))}
                 </div>
@@ -414,19 +234,18 @@ export default function FaqPage() {
           })}
 
           <aside className="overflow-hidden rounded-surface border border-ink bg-ink px-6 py-6 text-cream shadow-card sm:px-8">
-            <p className="text-sm font-semibold text-cream/60">More detail</p>
+            <p className="text-sm font-semibold text-cream/60">{t("faq.moreDetail")}</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold">
-              Still have questions?
+              {t("faq.stillQuestions")}
             </h2>
             <p className="mt-2 text-cream/70">
-              Start with{" "}
-              <Link
-                className="font-semibold text-cream underline decoration-clay underline-offset-4"
-                href="/docs"
-              >
-                Documentation
-              </Link>{" "}
-              for API details and integration guidance.
+              {rich(t("faq.startWithDocs"), {
+                docs: (text) => (
+                  <Link className="font-semibold text-cream underline decoration-clay underline-offset-4" href="/docs">
+                    {text}
+                  </Link>
+                ),
+              })}
             </p>
           </aside>
         </div>

@@ -1114,5 +1114,410 @@
       "abandoned": "Pago abandonado",
       "upstream": "El servidor de destino devolvió 500"
     }
+  },
+  "faq": {
+    "metaDescription": "Preguntas frecuentes sobre XMR Checkout: facturas de Monero sin custodia con detección de solo lectura.",
+    "metaTitle": "Preguntas frecuentes sobre pagos con Monero | XMR Checkout",
+    "groups": {
+      "custody": {
+        "label": "Custodia y acceso",
+        "description": "Permisos de la billetera, datos de acceso y control del comercio."
+      },
+      "operations": {
+        "label": "Funcionamiento y disponibilidad",
+        "description": "Coste del servicio, disponibilidad y comportamiento seguro ante fallos."
+      },
+      "comparisons": {
+        "label": "Comparativas y autoalojamiento",
+        "description": "Opciones de despliegue y diferencias con herramientas similares."
+      }
+    },
+    "items": {
+      "inPerson": {
+        "q": "¿Puedo aceptar Monero en persona en una tienda o un puesto de mercado?",
+        "p1": "Sí. Crea un terminal en el panel y abre su enlace en una tableta o un teléfono en tu caja. Escribe el importe, el cliente escanea el código QR con su billetera y la pantalla muestra «Pago visto» en cuanto el pago llega a la red, normalmente en segundos. Los fondos van directamente a tu billetera.",
+        "p2": "Con cero confirmaciones el pago todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse; exige confirmaciones para importes mayores. Cada venta usa una de tus direcciones de factura, y las ventas sin pagar o canceladas reservan la suya durante tres días.",
+        "cta": "Configura un terminal"
+      },
+      "donations": {
+        "q": "¿Puedo usar enlaces de pago para aceptar donaciones en Monero?",
+        "p1": "Sí. Crea un enlace de pago a tu propia billetera, ponle un título como «Apoya mi proyecto», elige que el cliente introduzca el importe y define como texto del botón «Dona con Monero». Comparte su URL reutilizable o copia el botón HTML en tu sitio web. Cada envío correcto crea una factura en XMR independiente; los fondos van directamente a tu billetera.",
+        "p2": "Los donantes introducen un importe en XMR o en una moneda fiduciaria de referencia admitida; puedes fijar un mínimo en XMR. Para ofrecer importes predefinidos, crea un enlace de importe fijo para cada uno. No se admiten cobros recurrentes automáticos. Los límites de facturas y de direcciones se aplican aunque una factura nunca se pague.",
+        "cta": "Configura un enlace de donación"
+      },
+      "badge": {
+        "q": "¿Tienen una insignia o un cartel de «Monero accepted here»?",
+        "p1": "Sí. En Panel → Enlaces de pago hay una insignia «Monero accepted here» para copiar en tu sitio web, y cada enlace de pago tiene un cartel imprimible con un código QR para un mostrador, un puesto o una caja de donaciones. La insignia es una imagen simple sin seguimiento.",
+        "cta": "Haz que te encuentren"
+      },
+      "noWoo": {
+        "q": "¿Puedo añadir un botón de pago sin WooCommerce?",
+        "p1": "Sí. Configura un importe fijo en XMR o un importe de referencia en moneda fiduciaria admitida en Panel → Enlaces de pago y copia un botón HTML en tu sitio web. Si tu editor elimina los formularios, usa la URL reutilizable. No hace falta programar ni integrar WooCommerce.",
+        "cta": "Lee la guía de botones de pago"
+      },
+      "vsQr": {
+        "q": "¿En qué se diferencia un enlace de pago reutilizable del código QR de una billetera?",
+        "p1": "Un código QR estático de billetera no crea una factura distinta para cada compra. Un botón de pago solicita una factura nueva al enviarse. Al abrir la URL reutilizable primero se muestra una página de revisión; al enviarla se solicita la factura. La factura tiene su propio ID y su propio estado de pago para la conciliación.",
+        "cta": "Lee la guía de botones de pago"
+      },
+      "repeat": {
+        "q": "¿Los clics repetidos reutilizan una factura o garantizan una dirección nueva?",
+        "p1": "Envíos distintos pueden crear facturas distintas; el HTML simple no recupera envíos duplicados. Una factura nueva no garantiza una dirección que nunca se haya usado: el conjunto de direcciones del comercio acaba reutilizando direcciones aptas tras su periodo de espera. Los pagos tardíos tras la reutilización pueden confundirse con facturas más recientes. Revisa en el panel el límite y la disponibilidad de direcciones, y contacta con el comercio antes de reintentar una solicitud de creación interrumpida.",
+        "cta": "Lee la guía de botones de pago"
+      },
+      "digital": {
+        "q": "¿Pueden los enlaces de pago entregar productos digitales como libros electrónicos?",
+        "p1": "Sí, con un mensaje de confirmación. Cada enlace de pago puede mostrar su propio mensaje de texto en la página de la factura tras las confirmaciones requeridas, como un enlace de descarga, una clave de licencia compartida o instrucciones de entrega. Para vender cinco libros electrónicos, crea cinco enlaces, cada uno con su enlace de descarga. El mensaje no se envía al navegador antes de la confirmación.",
+        "p2": "Todos los compradores de un enlace ven el mismo mensaje, y XMR Checkout no aloja archivos. Para descargas protegidas o individuales, usa enlaces que caduquen o webhooks con el ID de la factura. Los enlaces de pago no recogen datos del comprador.",
+        "cta": "Configura un mensaje de confirmación"
+      },
+      "custodial": {
+        "q": "¿XMR Checkout tiene custodia de los fondos?",
+        "p1": "No. Los pagos van directamente del cliente a tu billetera de Monero. XMR Checkout solo observa la cadena de bloques para detectar pagos y actualizar el estado de las facturas."
+      },
+      "access": {
+        "q": "¿Qué acceso a la billetera necesita XMR Checkout?",
+        "p1": "El permiso máximo que pedimos es el acceso de solo lectura: tu dirección principal y tu clave privada de visualización. Nunca pedimos claves de gasto ni acceso para firmar."
+      },
+      "setup": {
+        "q": "¿Qué hace falta para empezar?",
+        "p1": "Después de iniciar sesión, crea facturas desde el panel o la API."
+      },
+      "email": {
+        "q": "¿Piden correo electrónico o datos personales?",
+        "p1": "No. No pedimos correo electrónico ni datos personales. Tu dirección principal es el identificador de acceso, junto con tu clave privada de visualización."
+      },
+      "cost": {
+        "q": "¿Cuánto cuesta XMR Checkout?",
+        "p1": "Actualmente, xmrcheckout.com no cobra ninguna tarifa de servicio. Si lo prefieres, también puedes alojar tú mismo el software de código abierto.",
+        "p2": "Si XMR Checkout te resulta útil, puedes apoyar su desarrollo con <link>donaciones</link>."
+      },
+      "moveFunds": {
+        "q": "¿Puede XMR Checkout mover fondos, hacer reembolsos o revertir pagos?",
+        "p1": "No. XMR Checkout no firma transacciones y no puede mover fondos en tu nombre. Es software de cobro: crea facturas, detecta pagos y transmite su estado mediante la API y webhooks."
+      },
+      "receipt": {
+        "q": "¿Cómo obtienen un recibo los clientes?",
+        "p1": "Cuando un pago se confirma, la página de pago enlaza a un recibo que el cliente puede imprimir o guardar. XMR Checkout no recoge direcciones de correo de los clientes ni envía correos. Si escribes a tus clientes, incluye el receipt_url del webhook invoice.confirmed."
+      },
+      "down": {
+        "q": "¿Qué pasa si XMR Checkout no está disponible cuando un cliente paga?",
+        "p1": "Tu billetera puede seguir recibiendo un pago válido en la cadena de bloques, porque el pago va del cliente a la billetera del comercio. Si el servicio no está disponible, puedes perder temporalmente las actualizaciones de estado de las facturas hasta que vuelva a funcionar."
+      },
+      "hosted": {
+        "q": "¿En qué se diferencia XMR Checkout de los servicios alojados (p. ej., NOWPayments)?",
+        "p1": "Las principales diferencias son el alcance, el modelo de custodia y la recogida de datos: XMR Checkout es solo para Monero y no requiere cuenta ni correo electrónico.",
+        "li1": "<strong>Solo Monero:</strong> un producto centrado, sin una infraestructura para múltiples activos.",
+        "li2": "<strong>Sin cuenta ni correo:</strong> tu dirección principal es el identificador.",
+        "li3": "<strong>Sin custodia:</strong> los pagos van directamente a tu billetera.",
+        "li4": "<strong>Fallos claros:</strong> una caída puede retrasar las actualizaciones de estado, pero no afecta a la validez de los pagos en la cadena de bloques.",
+        "after": "Si usas un servicio de terceros, revisa qué claves y datos requiere, y si en algún momento custodia o intermedia los fondos."
+      },
+      "btcpay": {
+        "q": "¿En qué se diferencia XMR Checkout de BTCPay Server?",
+        "p1": "BTCPay Server es un servidor de pagos autoalojado de uso general, centrado sobre todo en Bitcoin y con integraciones opcionales para otros activos (incluido Monero mediante un plugin). XMR Checkout se centra a propósito en los pagos con Monero y en un núcleo mínimo y determinista.",
+        "p2": "Algunas instalaciones alojadas de BTCPay pueden no incluir el plugin de Monero por defecto. XMR Checkout ofrece una pequeña capa de compatibilidad para que los equipos puedan integrarse sin mantener una instalación completa de BTCPay.",
+        "li1": "<strong>Experiencia pensada para Monero:</strong> el lenguaje de facturas y confirmaciones está adaptado a Monero.",
+        "li2": "<strong>Menos piezas:</strong> un alcance acotado simplifica el funcionamiento y las auditorías.",
+        "li3": "<strong>Primero la API y los webhooks:</strong> diseñado para encajar en sistemas de pedidos existentes."
+      },
+      "selfHost": {
+        "q": "¿Puedo alojar yo mismo XMR Checkout?",
+        "p1": "Sí. XMR Checkout es de código abierto y puedes alojarlo tú mismo desde el <github>repositorio oficial de GitHub</github>.",
+        "p2": "Empieza por la <docs>documentación</docs> o la <guide>guía de autoalojamiento</guide> para conocer los detalles de instalación e integración."
+      }
+    },
+    "introLabel": "Introducción de las preguntas frecuentes",
+    "eyebrow": "Preguntas frecuentes",
+    "title": "Respuestas directas sobre control, acceso y funcionamiento.",
+    "description": "Respuestas sobre la configuración, el control, el funcionamiento y el despliegue.",
+    "categories": "Categorías de preguntas frecuentes",
+    "browse": "Explora por tema",
+    "browseHelp": "Control, funcionamiento y despliegue.",
+    "questions": "Preguntas",
+    "answers": {
+      "one": "{count} respuesta",
+      "other": "{count} respuestas"
+    },
+    "moreDetail": "Más información",
+    "stillQuestions": "¿Todavía tienes preguntas?",
+    "startWithDocs": "Empieza por la <docs>documentación</docs> para ver los detalles de la API y orientación sobre la integración."
+  },
+  "guides": {
+    "metaTitle": "Guías de pagos con Monero | XMR Checkout",
+    "metaDescription": "Guías prácticas para añadir enlaces de pago y de donación en Monero, alojar tú mismo XMR Checkout e integrar facturas y webhooks.",
+    "title": "Gestiona tus cobros con un camino claro desde la configuración hasta la integración.",
+    "intro": "Empieza por la guía que corresponda a tu papel. Todas siguen el mismo modelo sin custodia: tu billetera recibe los XMR y XMR Checkout observa los pagos entrantes e informa del estado de las facturas.",
+    "buttonsAudience": "Para sitios web, creadores y autónomos",
+    "buttonsTitle": "Acepta Monero con enlaces de pago y de donación",
+    "buttonsBody": "Acepta pagos o donaciones en tu propia billetera. Copia el HTML o comparte una URL reutilizable, y sigue una factura distinta para cada envío.",
+    "buttonsCta": "Lee la guía de botones de pago →",
+    "terminalAudience": "Para cafeterías, puestos de mercado y tiendas",
+    "terminalTitle": "Acepta Monero en persona con un terminal",
+    "terminalBody": "Convierte una tableta o un teléfono en una caja. Escribe el importe, muestra un código QR y ve llegar el pago en segundos.",
+    "terminalCta": "Lee la guía del terminal →",
+    "operatorsAudience": "Para operadores",
+    "selfHostTitle": "Cómo alojar tú mismo un sistema de pagos con Monero",
+    "selfHostBody": "Configura Docker Compose, una billetera de solo lectura, un daemon de Monero y las primeras comprobaciones de detección de facturas.",
+    "selfHostCta": "Lee la guía de autoalojamiento →",
+    "developersAudience": "Para desarrolladores",
+    "apiTitle": "Integración de la API de pagos con Monero y los webhooks",
+    "apiBody": "Conecta tu flujo de pedidos con la creación de facturas, las páginas de pago alojadas, las consultas públicas de estado y los eventos de webhook.",
+    "apiCta": "Lee la guía de integración de la API →",
+    "needReference": "¿Necesitas la referencia?",
+    "browseDocs": "Consulta la documentación completa.",
+    "referenceBody": "Usa la referencia de la API y las recetas de integración cuando quieras copiar detalles de los endpoints o ejemplos para cada lenguaje.",
+    "apiDocs": "Documentación de la API",
+    "recipes": "Recetas de integración",
+    "inPerson": {
+      "title": "Acepta Monero en persona con un terminal",
+      "metaDescription": "Convierte una tableta o un teléfono en una caja para Monero. Escribe el importe, muestra un código QR y ve llegar el pago en segundos, directamente a tu billetera.",
+      "eyebrow": "Guía · Terminales",
+      "intro": "Para cafeterías, puestos de mercado, encuentros y tiendas. Un terminal es una página en una tableta o un teléfono en tu caja. Cada venta es una factura normal en XMR pagada directamente a tu billetera. El terminal nunca recibe ni guarda fondos.",
+      "sectionsLabel": "Secciones de la guía del terminal",
+      "setup": {
+        "title": "Configura un terminal",
+        "step1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización. Nunca introduzcas una clave privada de gasto ni una semilla de recuperación.",
+        "step2": "Abre <strong>Panel → Terminales</strong> y elige <strong>Crear terminal</strong>. Ponle un nombre como «Mostrador principal» y elige una moneda predeterminada.",
+        "step3": "El panel muestra el enlace del terminal y un código QR una sola vez. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él.",
+        "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal hasta que elijas <strong>Olvidar este terminal</strong>.",
+        "p1": "Para que los clientes sepan que pueden pagar con Monero, imprime la insignia <strong>Monero accepted here</strong> desde Panel → Enlaces de pago y colócala junto a la caja. <link>Más formas de que te encuentren</link>"
+      },
+      "sale": {
+        "title": "Cobra un pago",
+        "step1": "Escribe el importe en el teclado numérico, añade una nota opcional como «2 cafés» y toca <strong>Cobrar</strong>.",
+        "step2": "Gira la pantalla hacia el cliente. Escanea el código QR con su billetera de Monero y envía el pago.",
+        "step3": "La pantalla muestra <strong>Pago visto</strong> en cuanto el pago llega a la red, normalmente en 5–20 segundos.",
+        "step4": "Toca <strong>Nueva venta</strong> para el siguiente cliente. Si el cliente cambia de opinión antes de pagar, toca <strong>Cancelar venta</strong>.",
+        "p1": "Los importes en moneda fiduciaria se convierten a XMR con una tasa de referencia al crear la factura. La tasa es informativa y no se garantiza ningún resultado en moneda fiduciaria. Cada venta aparece en tu lista de facturas y en la exportación CSV con el nombre del terminal y la nota."
+      },
+      "confirmations": {
+        "title": "Elige las confirmaciones",
+        "p1": "Con cero confirmaciones, el valor predeterminado de los terminales, la pantalla muestra «Pago visto» en cuanto la transacción llega a la red. Todavía no está en un bloque. En casos poco frecuentes, una transacción vista así nunca se confirma. Para importes pequeños y cotidianos, ese riesgo suele ser aceptable.",
+        "p2": "Para importes mayores, define una o más confirmaciones. Cada confirmación tarda unos dos minutos. La pantalla muestra el avance hasta alcanzar el objetivo."
+      },
+      "security": {
+        "title": "Mantén seguro el enlace",
+        "p1": "El enlace del terminal solo puede crear facturas a tu billetera, mostrar su estado y cancelar sus propias ventas sin pagar. No puede mover fondos, cambiar la configuración ni abrir tu panel.",
+        "p2": "Si pierdes un dispositivo, abre el terminal en el panel y elige <strong>Crear enlace nuevo</strong>. El enlace anterior deja de funcionar de inmediato. También puedes desactivar un terminal en cualquier momento."
+      },
+      "limits": {
+        "title": "Capacidad de direcciones",
+        "p1": "Cada factura usa una de tus 199 direcciones de factura. Cuando una factura se cierra, su dirección se reserva durante tres días para que un pago tardío nunca se atribuya a otro cliente. Las ventas canceladas y sin pagar también reservan una dirección.",
+        "p2": "Esto permite unas 66 ventas al día de media. El terminal muestra un aviso cuando quedan menos de 20 direcciones libres. El panel muestra cuándo vuelven a estar disponibles las direcciones reservadas."
+      }
+    },
+    "buttons": {
+      "title": "Acepta Monero con enlaces de pago y de donación",
+      "metaDescription": "Acepta pagos o donaciones directamente en tu billetera. Comparte un enlace de Monero reutilizable o inserta un botón HTML sin programar.",
+      "eyebrow": "Guía · Enlaces de pago",
+      "intro": "Acepta Monero en un sitio web independiente sin WooCommerce ni una integración con la API. Usa enlaces de pago para productos, servicios o donaciones a tu propia billetera. Configura en el panel un importe fijo o deja que el cliente lo introduzca, y después pega un botón en un bloque HTML o comparte un enlace reutilizable.",
+      "sectionsLabel": "Secciones de la guía de botones de pago",
+      "donateButton": "Dona con Monero",
+      "nav": {
+        "setup": "Configura tu producto",
+        "embed": "Copia tu botón o enlace",
+        "invoices": "Revisa las compras",
+        "confirmation-message": "Muestra un mensaje tras el pago",
+        "manage": "Cambia o desactiva un enlace",
+        "donations": "Acepta donaciones",
+        "let-people-find-you": "Haz que te encuentren",
+        "limits": "Capacidad y fallos"
+      },
+      "setup": {
+        "title": "Configura un enlace de pago",
+        "body": {
+          "1": {
+            "1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización. Nunca envíes una clave privada de gasto ni una semilla de recuperación. Los pagos de los clientes van directamente a tu billetera.",
+            "2": "Abre <dashboard>Panel → Enlaces de pago</dashboard> y elige <strong>Crear enlace de pago</strong>.",
+            "3": "Escribe un título y una descripción opcional. Por ejemplo, usa «Guía digital» con un importe fijo de 20 y la moneda EUR. También puedes elegir un importe exacto en XMR o seleccionar <strong>El cliente introduce el importe</strong> para que el cliente lo escriba (consulta <donations>donaciones</donations>).",
+            "4": "Elige las confirmaciones requeridas. El formulario parte de tu valor predeterminado; cero acepta la detección sin esperar la confirmación de un bloque. Si quieres, añade una URL de retorno HTTPS y un <message>mensaje de confirmación</message> que se muestre tras el pago.",
+            "5": "Deja marcada la opción <strong>Permitir compras nuevas</strong> y guarda. Usa Texto del botón para personalizar la etiqueta del gráfico (hasta 32 caracteres). El valor predeterminado es «Comprar con Monero». Los controles para copiar aparecen en la lista de enlaces de pago; copia el HTML actualizado después de cambiar la etiqueta. Si quieres, activa «Omitir la revisión y crear la factura automáticamente» para abrir las facturas directamente. Está desactivado por defecto; las visitas, incluidos los navegadores automatizados, pueden consumir el límite de facturas y la capacidad de direcciones."
+          },
+          "2": "Para la referencia de 20 €, cada solicitud de compra calcula un importe en XMR con la cotización informativa disponible. La factura se define en XMR y muestra la fuente y la hora de la cotización. No hay bloqueo de la tasa ni un resultado garantizado en EUR. Si la cotización no está disponible, la creación falla.",
+          "3": "¿Necesitas primero tu propia instalación? Sigue la <selfhost>guía de autoalojamiento</selfhost>. Necesitas una billetera de solo lectura que funcione y servicios de detección sincronizados."
+        }
+      },
+      "embed": {
+        "title": "Copia tu botón HTML o tu URL reutilizable",
+        "body": {
+          "1": "Previsualiza el botón con marca en el panel y copia su HTML en un bloque HTML personalizado de tu sitio web. El gráfico incluye el logotipo de xmrcheckout y enlaza con la página de revisión del pago. El fragmento no necesita formularios, JavaScript ni la clave de API del comercio.",
+          "2": "Este ejemplo usa un dominio de ejemplo reservado y un token de muestra. Copia tu fragmento real desde el panel; no pongas las credenciales de tu billetera ni tu clave de API en el HTML del sitio web.",
+          "3": "También puedes copiar la URL reutilizable y asociarla a un enlace normal o a un botón propio de tu sitio web. Ambas opciones muestran la página de revisión del producto; después, el cliente envía una solicitud de compra. Con la revisión activada, abrir una URL no crea una factura. Con la creación automática activada, un navegador activo solicita una factura y la abre. La misma pestaña retoma su factura sin pagar actual; usa «Iniciar otra compra» para un pedido aparte. Sin JavaScript ni almacenamiento del navegador, los clientes usan el botón de creación manual.",
+          "4": "Las compras usan la billetera receptora, el importe, el objetivo de confirmaciones y la URL de retorno guardados. Editar el HTML no puede cambiar estos ajustes."
+        }
+      },
+      "invoices": {
+        "title": "Revisa cada compra en tu lista de facturas",
+        "body": {
+          "1": "Un envío correcto abre una factura con su propio ID, su importe en XMR, las instrucciones de pago y el avance de las confirmaciones. Guarda la URL de la factura y usa su ID cuando hables de una compra con el cliente.",
+          "2": "Revisa las facturas de los enlaces de pago en Panel → Facturas. Busca el título del producto o el ID del enlace de pago en los metadatos de la factura. Cada factura conserva una copia de la configuración del producto; los webhooks opcionales que tengas también incluyen esos metadatos.",
+          "3": "La detección del pago y alcanzar tu objetivo de confirmaciones son estados distintos. Revisa el estado de la factura antes de entregar un pedido. Los enlaces de pago no recogen datos del comprador ni alojan archivos. Usa un <message>mensaje de confirmación</message> para mostrar un enlace de descarga o instrucciones tras la confirmación, u organiza tú la entrega con el ID de la factura. La URL de retorno del comercio es solo navegación tras la confirmación."
+        }
+      },
+      "confirmation-message": {
+        "title": "Muestra un mensaje de confirmación tras el pago",
+        "body": {
+          "1": "Cada enlace de pago puede tener su propio <strong>Mensaje de confirmación</strong>. Aparece en la página de la factura del comprador, bajo «Mensaje del comercio», cuando la factura alcanza las confirmaciones requeridas. Hasta entonces, el mensaje no se envía al navegador: la página se genera en el servidor y el estado público de la factura no devuelve ningún mensaje. Las direcciones web que empiezan por http:// o https:// se convierten en enlaces.",
+          "2": "Ejemplos de uso",
+          "3": {
+            "1": "<strong>Descargas digitales.</strong> ¿Vendes cinco libros electrónicos? Crea cinco enlaces de pago, uno por libro, y pon el enlace de descarga de cada uno en el mensaje de su enlace, por ejemplo «¡Gracias! Descarga tu copia: https://your-site.example/files/ebook-1.pdf».",
+            "2": "<strong>Datos de acceso compartidos.</strong> Una clave de licencia, un código de acceso a un curso o una invitación a un grupo privado que sea igual para todos los compradores.",
+            "3": "<strong>Instrucciones de entrega.</strong> Pasos siguientes como «Envía el ID de tu factura a orders@your-site.example con tu dirección postal» o «Reserva tu sesión en https://your-site.example/book».",
+            "4": "<strong>Notas de agradecimiento.</strong> Una nota breve con enlaces a páginas de ayuda, documentación o novedades."
+          },
+          "4": "Límites y buenas prácticas",
+          "5": {
+            "1": "Todos los compradores de un enlace ven el mismo texto, y un comprador puede compartirlo con otras personas. Para los archivos que necesites proteger, alójalos donde controles el acceso, como enlaces de descarga firmados o que caduquen, o una tienda que compruebe el ID de la factura. Usa <webhooks>webhooks</webhooks> para emitir claves o descargas únicas para cada comprador.",
+            "2": "El mensaje sigue tu objetivo de confirmaciones. Con cero confirmaciones aparece en cuanto se detecta un pago, antes de la confirmación de cualquier bloque; elige al menos una confirmación para contenido que no puedas recuperar.",
+            "3": "Cada factura conserva el mensaje que estaba guardado cuando se creó. Editar un enlace solo cambia el mensaje de las facturas nuevas.",
+            "4": "Los mensajes son texto simple de hasta 2.000 caracteres. El formato y el HTML se muestran tal como se escriben. XMR Checkout no sube ni aloja archivos.",
+            "5": "El mensaje es información del comercio. XMR Checkout lo muestra, pero no revisa su contenido ni garantiza a dónde enlaza."
+          }
+        }
+      },
+      "manage": {
+        "title": "Edita o desactiva las compras futuras",
+        "body": {
+          "1": "Abre <strong>Editar la configuración</strong> en el enlace para cambiar los datos del producto o el importe. Los cambios guardados se aplican a las facturas futuras, mientras que las existentes conservan su configuración original. La URL reutilizable y el botón siguen identificando el mismo enlace.",
+          "2": "Usa <strong>Desactivar enlace de pago</strong> para detener las compras nuevas. Las facturas existentes siguen siendo válidas y se siguen detectando. Vuelve a activar un enlace desde su configuración después de corregir cualquier moneda guardada no admitida u otro ajuste no válido."
+        }
+      },
+      "donations": {
+        "title": "Acepta donaciones en Monero",
+        "body": {
+          "1": "Creadores, mantenedores y otros destinatarios pueden usar enlaces de pago para recibir aportaciones voluntarias directamente en su propia billetera. Cada envío correcto crea una factura independiente con detección del pago y avance de las confirmaciones.",
+          "2": {
+            "1": "Crea un enlace de pago con un título como «Apoya mi proyecto» y elige <strong>El cliente introduce el importe</strong>. Define <strong>Texto del botón</strong> como <strong>Dona con Monero</strong>. Si quieres, fija un importe mínimo en XMR para evitar facturas muy pequeñas.",
+            "2": "Comparte la URL reutilizable en tu perfil o sitio web, o copia el botón HTML desde el panel. También puedes asociar la URL a tu propio botón «Apoya este proyecto».",
+            "3": "Los donantes introducen un importe y eligen XMR o una moneda fiduciaria de referencia admitida en la página de revisión, y después crean su factura. Para ofrecer importes predefinidos, crea un enlace de importe fijo para cada uno.",
+            "4": "Los enlaces con importe introducido por el cliente siempre muestran la página de revisión. En los enlaces de importe fijo, mantén activada la revisión si abrir una URL compartida no debe crear una factura. La creación automática es opcional y consume capacidad cuando un navegador activo solicita una factura."
+          },
+          "3": "Cada aportación es un pago independiente iniciado en la billetera del donante. Estos enlaces no ofrecen cobros recurrentes ni gestión de donantes. Un importe de referencia en moneda fiduciaria admitida se convierte a un importe informativo en XMR al crear la factura; no se garantiza ninguna tasa ni resultado en moneda fiduciaria.",
+          "4": "Solo es un ejemplo: usa el HTML o la URL reales de tu panel. Tus credenciales no deben ir en el fragmento. Los enlaces de donación comparten los mismos <limits>límites de facturas, capacidad de direcciones y envíos interrumpidos</limits> que los demás enlaces de pago. Las facturas sin pagar también consumen capacidad."
+        }
+      },
+      "let-people-find-you": {
+        "title": "Haz que te encuentren",
+        "body": {
+          "1": "Quienes tienen Monero buscan lugares que lo acepten. En el panel tienes una insignia «Monero accepted here» para copiar y un cartel imprimible.",
+          "2": {
+            "1": "<strong>Añade una insignia a tu sitio web.</strong> Abre <strong>Panel → Enlaces de pago</strong> y copia la insignia <strong>Monero accepted here</strong> en un bloque HTML. Hay una insignia oscura para fondos claros y una clara para fondos oscuros. La insignia es una imagen simple, sin seguimiento ni datos de la cuenta.",
+            "2": "<strong>Imprime un cartel.</strong> Cada enlace de pago tiene un <strong>Cartel imprimible con código QR</strong>. Los clientes lo escanean con su billetera para abrir el enlace. Úsalo en un mostrador, un puesto de mercado, la mesa de un evento o una caja de donaciones. Los carteles solo muestran un precio en los enlaces con importe fijo en XMR. Para cobrar en caja como con una tarjeta, usa un <terminal>terminal</terminal> y coloca la insignia a su lado."
+          }
+        }
+      },
+      "limits": {
+        "title": "Entiende la capacidad y las respuestas inciertas",
+        "body": {
+          "1": {
+            "1": "El límite público predeterminado es de 10 facturas creadas correctamente por comercio en cualquier periodo de 24 horas, compartido entre todos los enlaces de pago. El panel muestra el límite configurado en esta instalación, el uso, lo que queda disponible y la disponibilidad de direcciones. Actualizar obtiene ambos datos; ninguno reserva capacidad.",
+            "2": "Se siguen aplicando los demás límites de facturas del comercio. El conjunto de direcciones admite hasta 199 subdirecciones de factura por comercio, todas dentro del rango predeterminado que vigila cualquier billetera de Monero. Las solicitudes sin pagar también consumen capacidad. Una dirección puede reutilizarse cuando sus facturas anteriores se cierran y pasa el periodo de espera predeterminado de tres días. Una factura nueva no garantiza una dirección nunca usada; un pago tardío destinado a una factura anterior puede confundirse con una más reciente tras la reutilización.",
+            "3": "La configuración predeterminada de Nginx también limita las solicitudes públicas de compra a 6 por minuto por IP de cliente, con ráfagas de 3. Los operadores pueden configurar estos límites y el periodo de espera para reutilizar direcciones. Los errores de frecuencia o de capacidad pueden incluir una indicación Retry-After.",
+            "4": "El HTML simple no recupera envíos duplicados. Envíos distintos pueden crear facturas distintas. Si una respuesta se interrumpe, puede que la creación ya se haya completado. No reintentes automáticamente: comprueba cualquier URL de factura recibida o contacta con el comercio antes de volver a enviar."
+          },
+          "2": "Una caída del servicio puede dejar sin disponibilidad el pago o la detección de estado; los pagos ya enviados siguen siendo válidos en la cadena de bloques y conservas el acceso a tu billetera. Un visitante malintencionado puede consumir tu límite público, así que vigila el uso y desactiva enlaces cuando haga falta.",
+          "3": "Los desarrolladores pueden consultar los endpoints de gestión y el comportamiento del formulario público en la <api>referencia de la API de enlaces de pago</api>."
+        }
+      }
+    },
+    "selfHost": {
+      "metaTitleShort": "Cómo alojar tú mismo un sistema de pagos con Monero",
+      "metaTitle": "Cómo alojar tú mismo un sistema de pagos con Monero | XMR Checkout",
+      "metaDescription": "Configura XMR Checkout con Docker Compose, una billetera de solo lectura, un daemon de Monero y una detección de facturas fiable.",
+      "navFlow": "Entiende el flujo",
+      "navHost": "Prepara el servidor",
+      "navDocker": "Despliega con Docker",
+      "navVerify": "Verifica la detección",
+      "navTroubleshoot": "Resuelve problemas",
+      "eyebrow": "Guía · Autoalojamiento",
+      "title": "Cómo alojar tú mismo un sistema de pagos con Monero.",
+      "intro": "Esta guía describe el despliegue para operadores que quieren ejecutar XMR Checkout junto a una infraestructura que controlan. Para detectar pagos solo usa una dirección de billetera y una clave privada de visualización.",
+      "sectionsLabel": "Secciones de la guía de autoalojamiento",
+      "flowEyebrow": "01 · Entiende el flujo",
+      "flowTitle": "Del cliente a la billetera del comercio, con el estado informado por el software.",
+      "flowBody": "Tu tienda o tu panel crea una factura. La página de la factura muestra el importe, la dirección, el código QR y el URI para la billetera. Un conciliador consulta la billetera configurada y el daemon de Monero en busca de un pago entrante y actualiza el estado de la factura para tu panel, la API y los webhooks.",
+      "create": "Crear",
+      "createBody": "Crea una factura en XMR desde el panel o la API.",
+      "observe": "Observar",
+      "observeBody": "Vigila la billetera del comercio a la espera del pago previsto.",
+      "report": "Informar",
+      "reportBody": "Consulta el estado en la interfaz, la API o los webhooks.",
+      "hostEyebrow": "02 · Prepara el servidor",
+      "hostTitle": "Reúne la configuración antes de arrancar los servicios.",
+      "host1": "Un servidor que pueda ejecutar Docker Compose y conservar los datos de Postgres y de la billetera.",
+      "host2": "Una URL pública HTTPS para las páginas de factura y los destinos de webhooks.",
+      "host3": "Una dirección principal de Monero y una clave privada de visualización. Nunca proporciones una clave privada de gasto.",
+      "host4": "Un daemon de Monero y un wallet-rpc accesibles, ya sean los incluidos o externos.",
+      "hostNote": "La referencia completa de variables de entorno y las notas de despliegue están en el README del repositorio. Revísalas antes de exponer una instalación a internet.",
+      "composeRef": "Lee la referencia de despliegue con Docker Compose →",
+      "dockerEyebrow": "03 · Despliega con Docker",
+      "dockerTitle": "Parte del entorno de ejemplo y elige cómo conectarte a un nodo.",
+      "dockerBody": "Copia la plantilla de entorno, define los valores de la base de datos y de la API, configura la URL del sitio y añade los ajustes de la billetera de solo lectura. Después elige si el conciliador usará un daemon de terceros o un daemon local iniciado por el perfil de Compose.",
+      "commandExample": "Ejemplo de comando",
+      "dockerNote": "Un daemon local debe terminar de sincronizarse antes de que la detección de pagos sea fiable. Si usas los fragmentos de wallet-rpc incluidos, mantén estable el orden de sus URL configuradas, porque determina qué fragmento gestiona cada billetera de solo lectura.",
+      "verifyEyebrow": "04 · Verifica la detección",
+      "verifyTitle": "Prueba una factura antes de conectar una tienda.",
+      "verify1": "Abre el panel y crea una pequeña factura de prueba en XMR.",
+      "verify2": "Abre la página de la factura y comprueba que se ven la dirección, el importe, el código QR y el vencimiento.",
+      "verify3": "Envía el pago de prueba desde una billetera que controles y espera hasta alcanzar el objetivo de confirmaciones configurado.",
+      "verify4": "Comprueba que el panel y la página pública de la factura muestran el estado observado antes de añadir webhooks o automatizar pedidos.",
+      "troubleEyebrow": "05 · Resuelve problemas con seguridad",
+      "troubleTitle": "Revisa en orden la cadena de observación.",
+      "troubleBody": "Si una factura se queda en cero confirmaciones, comprueba que el wallet-rpc sea accesible, la conexión con el daemon, la altura actual del daemon y la hora de la última conciliación correcta. Revisa los registros de la API, el conciliador, el wallet-rpc y el daemon antes de cambiar la configuración de la billetera.",
+      "troubleNote": "El servicio solo observa los pagos. Si la interfaz o el conciliador no están disponibles, un pago válido en la cadena de bloques sigue yendo del cliente a tu billetera; las actualizaciones de estado pueden retrasarse hasta que el servicio vuelva a estar disponible.",
+      "opsFaq": "Preguntas frecuentes de funcionamiento",
+      "exploreDemo": "Explora la demostración interactiva",
+      "backToGuides": "Volver a todas las guías",
+      "continueApi": "Continúa con la integración de la API y los webhooks →"
+    },
+    "api": {
+      "metaTitleShort": "Integración de la API de pagos con Monero y los webhooks",
+      "metaTitle": "Integración de la API de pagos con Monero y los webhooks | XMR Checkout",
+      "metaDescription": "Conecta una tienda a XMR Checkout con creación de facturas, páginas de pago alojadas, consultas públicas de estado y eventos de webhook.",
+      "webhooksBody": "Registra un endpoint HTTPS público desde el panel o la API y selecciona los eventos que quieres recibir. Los eventos nativos incluyen <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> e <code>invoice.expired</code>.",
+      "verifyBody": "Compara el encabezado <code>X-Webhook-Secret</code> con el secreto guardado en tu servidor antes de procesar el contenido JSON.",
+      "navFlow": "Sigue el flujo de solicitudes",
+      "navCreate": "Crea una factura",
+      "navStatus": "Consulta el estado",
+      "navWebhooks": "Recibe webhooks",
+      "navSecurity": "Mantén segura la integración",
+      "eyebrow": "Guía · API y webhooks",
+      "title": "Integración de la API de pagos con Monero y los webhooks.",
+      "intro": "Conecta un flujo de pedidos existente con la creación de facturas, la página de pago alojada, las consultas públicas de estado y los eventos de webhook sin exponer credenciales en el código del navegador.",
+      "sectionsLabel": "Secciones de la guía de integración de la API",
+      "flowEyebrow": "01 · Sigue el flujo de solicitudes",
+      "flowTitle": "Crea, redirige, observa y actualiza tu pedido.",
+      "createBody": "Llama al endpoint autenticado de facturas con un importe en XMR y los metadatos de tu pedido.",
+      "sendCustomer": "Envía al cliente a la página de pago",
+      "sendCustomerBody": "Usa la URL de factura devuelta para la página de pago alojada.",
+      "observe": "Observa el estado",
+      "observeBody": "Consulta periódicamente el endpoint público de la factura o recibe el evento de webhook correspondiente.",
+      "update": "Actualiza tu pedido",
+      "updateBody": "Usa invoice.confirmed como señal de confirmación en tu propio flujo de pedidos.",
+      "createEyebrow": "02 · Crea una factura",
+      "createTitle": "Haz la llamada a la API desde tu servidor.",
+      "createText": "Los endpoints autenticados usan una clave de API. Envía el importe en XMR, elige un objetivo de confirmaciones cuando haga falta e incluye una referencia interna del pedido en los metadatos para que tu gestor de webhooks pueda asociar cada evento a tu pedido.",
+      "commandExample": "Ejemplo de comando",
+      "createNote": "La respuesta contiene el ID de la factura, los datos de pago y la URL de la factura alojada. Guarda el ID de la factura con tu pedido y redirige al cliente a esa URL.",
+      "statusEyebrow": "03 · Consulta el estado",
+      "statusTitle": "Usa el endpoint público de la factura como alternativa sencilla.",
+      "statusBody": "El endpoint público no necesita clave de API y devuelve el estado de la factura y los datos de pago. Úsalo para actualizar las páginas que ve el cliente o como consulta periódica de respaldo mientras tu servidor espera un webhook.",
+      "statusNote": "Trata el objetivo de confirmaciones como parte de tu política de pedidos. Un pago detectado y una factura confirmada son estados distintos; tu flujo de pedidos debe usar el estado que se ajuste a lo que necesitas.",
+      "webhooksEyebrow": "04 · Recibe webhooks",
+      "webhooksTitle": "Suscríbete a los eventos que necesita tu servidor.",
+      "verifyTitle": "Verifica el encabezado",
+      "ackTitle": "Confirma la recepción con claridad",
+      "ackBody": "Devuelve una respuesta HTTP correcta solo después de que tu gestor haya registrado el evento de forma segura para procesarlo.",
+      "redeliver": "Las entregas fallidas se registran en el historial de webhooks y pueden volver a enviarse desde la API. Haz que tu gestor pueda ejecutarse más de una vez sin problemas, basando las actualizaciones del pedido en el ID de la factura y el estado del evento.",
+      "securityEyebrow": "05 · Mantén segura la integración",
+      "securityTitle": "Separa las páginas que ve el cliente de las credenciales del servidor.",
+      "security1": "Guarda las claves de API y los secretos de webhook en variables de entorno del servidor. No los incluyas en el JavaScript del navegador.",
+      "security2": "Usa HTTPS para los destinos de webhooks y valida el secreto antes de actuar sobre un evento.",
+      "security3": "Tu integración observa el estado de las facturas; no pide permiso para gastar ni mueve fondos.",
+      "openApi": "Abrir la referencia de la API",
+      "recipes": "Ver recetas por lenguaje",
+      "readSelfHost": "Lee la guía de autoalojamiento →"
+    }
   }
 }

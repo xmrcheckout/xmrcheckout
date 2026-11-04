@@ -2,65 +2,56 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import PageIntroBand from "../../../../components/page-intro-band";
+import { getI18n } from "../../../../lib/i18n/server";
+import type { Translate } from "../../../../lib/i18n/translate";
 
-export const metadata: Metadata = {
-  title: "How to Run a Self-Hosted Monero Checkout",
-  description:
-    "Set up XMR Checkout with Docker Compose, a view-only wallet, a Monero daemon, and reliable invoice detection.",
-  alternates: {
-    canonical: "/guides/self-hosted-monero-checkout",
-  },
-  openGraph: {
-    type: "article",
-    url: "/guides/self-hosted-monero-checkout",
-    siteName: "XMR Checkout",
-    title: "How to Run a Self-Hosted Monero Checkout | XMR Checkout",
-    description:
-      "Set up XMR Checkout with Docker Compose, a view-only wallet, a Monero daemon, and reliable invoice detection.",
-  },
-  twitter: {
-    card: "summary",
-    title: "How to Run a Self-Hosted Monero Checkout | XMR Checkout",
-    description:
-      "Set up XMR Checkout with Docker Compose, a view-only wallet, a Monero daemon, and reliable invoice detection.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  const title = t("guides.selfHost.metaTitle");
+  const description = t("guides.selfHost.metaDescription");
+  return {
+    title: t("guides.selfHost.metaTitleShort"),
+    description,
+    alternates: { canonical: "/guides/self-hosted-monero-checkout" },
+    openGraph: { type: "article", url: "/guides/self-hosted-monero-checkout", siteName: "XMR Checkout", title, description },
+    twitter: { card: "summary", title, description },
+  };
+}
 
 const sectionClass =
   "min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
 const codeClass =
   "mt-4 overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft";
 
-const sections = [
-  ["#architecture", "Understand the flow"],
-  ["#requirements", "Prepare the host"],
-  ["#docker", "Deploy with Docker"],
-  ["#verify", "Verify detection"],
-  ["#troubleshooting", "Troubleshoot"],
+const sectionsFor = (t: Translate) => [
+  ["#architecture", t("guides.selfHost.navFlow")],
+  ["#requirements", t("guides.selfHost.navHost")],
+  ["#docker", t("guides.selfHost.navDocker")],
+  ["#verify", t("guides.selfHost.navVerify")],
+  ["#troubleshooting", t("guides.selfHost.navTroubleshoot")],
 ] as const;
 
-export default function SelfHostedGuidePage() {
+export default async function SelfHostedGuidePage() {
+  const { t } = await getI18n();
   return (
     <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-5xl">
         <PageIntroBand
-          eyebrow="Guide · Self-hosting"
+          eyebrow={t("guides.selfHost.eyebrow")}
           id="self-hosted-guide-title"
-          title="How to run a self-hosted Monero checkout."
+          title={t("guides.selfHost.title")}
           description={
             <p>
-              This guide covers the deployment path for operators who want XMR
-              Checkout running alongside infrastructure they control. It uses
-              only a wallet address and private view key for payment detection.
+              {t("guides.selfHost.intro")}
             </p>
           }
         />
 
         <nav
           className="mt-6 grid gap-1.5 rounded-surface border border-stroke bg-card p-2 shadow-soft sm:grid-cols-2"
-          aria-label="Self-hosting guide sections"
+          aria-label={t("guides.selfHost.sectionsLabel")}
         >
-          {sections.map(([href, label], index) => (
+          {sectionsFor(t).map(([href, label], index) => (
             <a
               className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
               href={href}
@@ -74,22 +65,18 @@ export default function SelfHostedGuidePage() {
 
         <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
           <section className={sectionClass} id="architecture" aria-labelledby="architecture-title">
-            <p className="text-sm font-semibold text-ink-soft">01 · Understand the flow</p>
+            <p className="text-sm font-semibold text-ink-soft">{t("guides.selfHost.flowEyebrow")}</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="architecture-title">
-              Customer to merchant wallet, with status reported by software.
+              {t("guides.selfHost.flowTitle")}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
-              Your store or dashboard creates an invoice. The hosted invoice
-              page shows the amount, address, QR code, and wallet URI. A
-              reconciler checks the configured wallet and Monero daemon for an
-              incoming payment, then updates invoice status for your dashboard,
-              API, and webhooks.
+              {t("guides.selfHost.flowBody")}
             </p>
             <ol className="mt-5 grid gap-3 sm:grid-cols-3">
               {[
-                ["01", "Create", "Make an XMR invoice from the dashboard or API."],
-                ["02", "Observe", "Watch the merchant wallet for the expected payment."],
-                ["03", "Report", "Read status through the UI, API, or webhooks."],
+                ["01", t("guides.selfHost.create"), t("guides.selfHost.createBody")],
+                ["02", t("guides.selfHost.observe"), t("guides.selfHost.observeBody")],
+                ["03", t("guides.selfHost.report"), t("guides.selfHost.reportBody")],
               ].map(([number, title, description]) => (
                 <li className="rounded-2xl border border-stroke bg-white/60 p-4" key={number}>
                   <span className="font-mono text-xs text-ink-soft">{number}</span>
@@ -101,32 +88,26 @@ export default function SelfHostedGuidePage() {
           </section>
 
           <section className={sectionClass} id="requirements" aria-labelledby="requirements-title">
-            <p className="text-sm font-semibold text-ink-soft">02 · Prepare the host</p>
+            <p className="text-sm font-semibold text-ink-soft">{t("guides.selfHost.hostEyebrow")}</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="requirements-title">
-              Gather the configuration before starting the stack.
+              {t("guides.selfHost.hostTitle")}
             </h2>
             <ul className="mt-4 grid gap-3 text-sm leading-relaxed text-ink-soft sm:grid-cols-2">
               <li className="rounded-2xl border border-stroke bg-white/60 p-4">
-                A host that can run Docker Compose and persist Postgres and
-                wallet data.
+                {t("guides.selfHost.host1")}
               </li>
               <li className="rounded-2xl border border-stroke bg-white/60 p-4">
-                A public HTTPS site URL for hosted invoice pages and webhook
-                destinations.
+                {t("guides.selfHost.host2")}
               </li>
               <li className="rounded-2xl border border-stroke bg-white/60 p-4">
-                A Monero primary address and private view key. Never provide a
-                private spend key.
+                {t("guides.selfHost.host3")}
               </li>
               <li className="rounded-2xl border border-stroke bg-white/60 p-4">
-                A reachable Monero daemon and wallet-rpc target, either bundled
-                or external.
+                {t("guides.selfHost.host4")}
               </li>
             </ul>
             <p className="mt-5 text-sm leading-relaxed text-ink-soft">
-              The full environment variable reference and deployment notes are
-              maintained in the repository README. Review them before exposing
-              an installation to the public internet.
+              {t("guides.selfHost.hostNote")}
             </p>
             <Link
               className="mt-4 inline-flex text-sm font-semibold text-ink underline decoration-clay underline-offset-4"
@@ -134,22 +115,19 @@ export default function SelfHostedGuidePage() {
               target="_blank"
               rel="noreferrer"
             >
-              Read the Docker Compose deployment reference →
+              {t("guides.selfHost.composeRef")}
             </Link>
           </section>
 
           <section className={sectionClass} id="docker" aria-labelledby="docker-title">
-            <p className="text-sm font-semibold text-ink-soft">03 · Deploy with Docker</p>
+            <p className="text-sm font-semibold text-ink-soft">{t("guides.selfHost.dockerEyebrow")}</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="docker-title">
-              Start from the example environment and choose your node path.
+              {t("guides.selfHost.dockerTitle")}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
-              Copy the environment template, set the database and API values,
-              configure the site URL, and add the view-only wallet settings.
-              Then choose whether the reconciler should use a third-party daemon
-              or a local daemon started by the Compose profile.
+              {t("guides.selfHost.dockerBody")}
             </p>
-            <pre className={codeClass} tabIndex={0} role="region" aria-label="Command example">
+            <pre className={codeClass} tabIndex={0} role="region" aria-label={t("guides.selfHost.commandExample")}>
               <code>{`cp .env.example .env
 docker compose up --build -d
 
@@ -157,71 +135,58 @@ docker compose up --build -d
 docker compose --profile local-daemon up --build -d`}</code>
             </pre>
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-              A local daemon must finish syncing before payment detection is
-              reliable. If you use the bundled wallet-rpc shards, keep their
-              configured URL ordering stable because it determines shard
-              ownership for view-only wallets.
+              {t("guides.selfHost.dockerNote")}
             </p>
           </section>
 
           <section className={sectionClass} id="verify" aria-labelledby="verify-title">
-            <p className="text-sm font-semibold text-ink-soft">04 · Verify detection</p>
+            <p className="text-sm font-semibold text-ink-soft">{t("guides.selfHost.verifyEyebrow")}</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="verify-title">
-              Test one invoice before connecting a store.
+              {t("guides.selfHost.verifyTitle")}
             </h2>
             <ol className="mt-4 grid gap-3 text-sm leading-relaxed text-ink-soft">
               <li className="flex gap-3 rounded-2xl border border-stroke bg-white/60 p-4">
                 <span className="font-mono text-xs text-ink-soft">01</span>
-                Open the dashboard and create a small test invoice in XMR.
+                {t("guides.selfHost.verify1")}
               </li>
               <li className="flex gap-3 rounded-2xl border border-stroke bg-white/60 p-4">
                 <span className="font-mono text-xs text-ink-soft">02</span>
-                Open the hosted invoice page and confirm that its address, amount,
-                QR code, and expiry are visible.
+                {t("guides.selfHost.verify2")}
               </li>
               <li className="flex gap-3 rounded-2xl border border-stroke bg-white/60 p-4">
                 <span className="font-mono text-xs text-ink-soft">03</span>
-                Send the test payment from a wallet you control and wait for the
-                configured confirmation target.
+                {t("guides.selfHost.verify3")}
               </li>
               <li className="flex gap-3 rounded-2xl border border-stroke bg-white/60 p-4">
                 <span className="font-mono text-xs text-ink-soft">04</span>
-                Confirm that the dashboard and public invoice page show the
-                observed status before adding webhooks or order automation.
+                {t("guides.selfHost.verify4")}
               </li>
             </ol>
           </section>
 
           <section className={sectionClass} id="troubleshooting" aria-labelledby="troubleshooting-title">
-            <p className="text-sm font-semibold text-ink-soft">05 · Troubleshoot safely</p>
+            <p className="text-sm font-semibold text-ink-soft">{t("guides.selfHost.troubleEyebrow")}</p>
             <h2 className="mt-1 font-sans text-2xl font-semibold" id="troubleshooting-title">
-              Check the observation path in order.
+              {t("guides.selfHost.troubleTitle")}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">
-              If an invoice remains at zero confirmations, check wallet-rpc
-              reachability, daemon connectivity, current daemon height, and the
-              time of the last successful reconcile. Inspect the API,
-              reconciler, wallet-rpc, and daemon logs before changing wallet
-              configuration.
+              {t("guides.selfHost.troubleBody")}
             </p>
             <p className="mt-4 text-sm leading-relaxed text-ink-soft">
-              The service only observes payments. If the UI or reconciler is
-              unavailable, a valid on-chain payment still goes from the
-              customer to your wallet; status updates may be delayed until the
-              service is available again.
+              {t("guides.selfHost.troubleNote")}
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link
                 className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                 href="/faq#operations"
               >
-                Operations FAQ
+                {t("guides.selfHost.opsFaq")}
               </Link>
               <Link
                 className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                 href="/tour"
               >
-                Explore the interactive demo
+                {t("guides.selfHost.exploreDemo")}
               </Link>
             </div>
           </section>
@@ -229,10 +194,10 @@ docker compose --profile local-daemon up --build -d`}</code>
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-stroke pt-6 text-sm text-ink-soft">
           <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides">
-            Back to all guides
+            {t("guides.selfHost.backToGuides")}
           </Link>
           <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">
-            Continue to API and webhook integration →
+            {t("guides.selfHost.continueApi")}
           </Link>
         </footer>
       </div>

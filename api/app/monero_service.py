@@ -397,6 +397,9 @@ class MoneroWalletService:
                 if txid in seen_txids:
                     continue
                 seen_txids.add(txid)
+            if self._is_time_locked(item):
+                self._log_time_locked(item, address)
+                continue
             total_atomic += int(item.get("amount", 0) or 0)
             confirmations = int(item.get("confirmations", 0) or 0)
             if confirmations > max_confirmations:
@@ -446,6 +449,9 @@ class MoneroWalletService:
             if txid in seen_txids:
                 continue
             seen_txids.add(txid)
+            if self._is_time_locked(item):
+                self._log_time_locked(item, address)
+                continue
             amount_atomic = int(item.get("amount", 0) or 0)
             confirmations = int(item.get("confirmations", 0) or 0)
             timestamp = item.get("timestamp")
@@ -461,6 +467,27 @@ class MoneroWalletService:
                 )
             )
         return details
+
+    @staticmethod
+    def _is_time_locked(item: dict) -> bool:
+        """Return True for a transfer with a non-standard unlock time.
+
+        Such funds cannot be spent until the unlock time passes (possibly
+        never in practice), so they must never count toward an invoice.
+        The wallet's `locked` flag is not used: it is also true for normal
+        payments during the standard 10-block lock.
+        """
+        unlock_time = item.get("unlock_time", 0)
+        return type(unlock_time) is not int or unlock_time != 0
+
+    @staticmethod
+    def _log_time_locked(item: dict, address: str) -> None:
+        logger.warning(
+            "Ignoring time-locked incoming transfer txid=%s address=%s unlock_time=%r",
+            item.get("txid"),
+            address,
+            item.get("unlock_time"),
+        )
 
     @staticmethod
     def _validated_transfer_lists(

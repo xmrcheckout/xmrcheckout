@@ -20,11 +20,20 @@ def utc(value: datetime) -> datetime:
     return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value
 
 
+def closure_time(invoice: Invoice) -> datetime | None:
+    # An invalid invoice stops showing its address no later than its expiry,
+    # so its expiry is a conservative closure time.
+    if invoice.status == "confirmed":
+        return invoice.confirmed_at
+    if invoice.status in ("expired", "invalid"):
+        return invoice.expires_at
+    return None
+
+
 def reuse_ready_at(invoices: list[Invoice]) -> datetime | None:
     closed = []
     for invoice in invoices:
-        timestamp = (invoice.confirmed_at if invoice.status == "confirmed" else
-                     invoice.expires_at if invoice.status == "expired" else None)
+        timestamp = closure_time(invoice)
         if timestamp is None:
             return None
         closed.append(utc(timestamp))
@@ -70,16 +79,14 @@ def availability(user: User, history: list[Invoice], allocations: list[Subaddres
         inconsistent |= any(item.invoice_id not in prior_ids or item.subaddress_index != index
                             for item in issued)
         inconsistent |= bool(generations and generations != list(range(1, len(generations) + 1)))
-        closed = [utc(item.confirmed_at if item.status == "confirmed" else item.expires_at)
-                  for item in previous if (item.status == "confirmed" and item.confirmed_at is not None)
-                  or (item.status == "expired" and item.expires_at is not None)]
+        closed = [utc(closure_time(item)) for item in previous if closure_time(item) is not None]
         row.latest_closure_at = max(closed) if closed else None
         if inconsistent or (issued and not previous):
             row.category, row.code = "needs_review", "inconsistent_history"
-        elif any(item.status not in ("pending", "partially_paid", "payment_detected", "confirmed", "expired") for item in previous):
+        elif any(item.status not in ("pending", "partially_paid", "payment_detected", "confirmed", "expired", "invalid") for item in previous):
             row.category, row.code = "needs_review", "invalid_prior_invoice"
-        elif any((item.status == "confirmed" and item.confirmed_at is None) or
-                 (item.status == "expired" and item.expires_at is None) for item in previous):
+        elif any(item.status in ("confirmed", "expired", "invalid") and closure_time(item) is None
+                 for item in previous):
             row.category, row.code = "needs_review", "missing_closure_time"
         elif any(item.status in ("pending", "partially_paid", "payment_detected") for item in previous):
             row.category = "reserved"

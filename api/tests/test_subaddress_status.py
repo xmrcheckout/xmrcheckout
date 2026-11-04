@@ -48,17 +48,20 @@ class AvailabilityRulesTests(unittest.TestCase):
                     self.invoice(6, "invalid"), self.invoice(7, expires_at=None),
                     self.invoice(8, "confirmed", confirmed_at=None),
                     self.invoice(9, archived_at=self.now),
-                    self.invoice(10, subaddress_index=11)]
+                    self.invoice(10, subaddress_index=11),
+                    self.invoice(13, "invalid", expires_at=self.now - timedelta(hours=1)),
+                    self.invoice(14, "invalid", expires_at=None)]
         orphan = SimpleNamespace(invoice_id=uuid4(), address="address-12", subaddress_index=12, generation=1)
         rows = status.availability(self.user, invoices, [orphan], self.now)
         self.assertEqual(len(rows), status.MAX_SUBADDRESS_INDEX)
         expected = {1: ("never_issued", "never_issued"), 2: ("eligible_for_reuse", "cooldown_complete"),
                     3: ("cooling_down", "reuse_cooldown"), 4: ("reserved", "awaiting_invoice_status_update"),
-                    5: ("reserved", "active_invoice"), 6: ("needs_review", "invalid_prior_invoice"),
+                    5: ("reserved", "active_invoice"), 6: ("eligible_for_reuse", "cooldown_complete"),
                     7: ("needs_review", "missing_closure_time"), 8: ("needs_review", "missing_closure_time"),
                     9: ("eligible_for_reuse", "cooldown_complete"),
                     10: ("needs_review", "inconsistent_history"), 11: ("needs_review", "inconsistent_history"),
-                    12: ("needs_review", "inconsistent_history")}
+                    12: ("needs_review", "inconsistent_history"), 13: ("cooling_down", "reuse_cooldown"),
+                    14: ("needs_review", "missing_closure_time")}
         for index, values in expected.items():
             self.assertEqual((rows[index - 1].category, rows[index - 1].code), values)
         self.assertEqual(sum(sum(row.category == category for row in rows) for category in status.CATEGORIES), status.MAX_SUBADDRESS_INDEX)
@@ -127,7 +130,8 @@ class StatusDatabaseTests(unittest.TestCase):
         self.populate()
         with self.Session.begin() as db:
             rows = db.query(Invoice).order_by(Invoice.subaddress_index).all()
-            rows[0].status = "invalid"
+            rows[0].status = "invalid"  # Closed at expiry, so reusable after the cooldown.
+            rows[0].expires_at += timedelta(hours=1)
             rows[1].expires_at = None
             rows[2].subaddress_index = 4
             rows[4].status = "pending"  # Past expiry still reserves its address.
@@ -137,7 +141,7 @@ class StatusDatabaseTests(unittest.TestCase):
             for row in rows[7:]:
                 row.expires_at += timedelta(hours=1)
         report = self.report()
-        self.assertEqual(report["counts"]["needs_review"], 4)
+        self.assertEqual(report["counts"]["needs_review"], 3)
         self.assertEqual(report["counts"]["reserved"], 1)
         self.assertEqual(report["counts"]["cooling_down"], 1)
         self.assertEqual(self.issue()[1], 7)

@@ -81,8 +81,11 @@ class TransferIsolationTests(unittest.TestCase):
         cooldown = timedelta(seconds=pool_status.SUBADDRESS_REUSE_COOLDOWN_SECONDS)
         closed = SimpleNamespace(status="confirmed", confirmed_at=now, expires_at=None)
         self.assertEqual(allocator.reuse_ready_at([closed]), now + cooldown)
-        for status in ["pending", "payment_detected", "invalid"]:
+        for status in ["pending", "payment_detected", "unknown"]:
             self.assertIsNone(allocator.reuse_ready_at([closed, SimpleNamespace(status=status)]))
+        invalid = SimpleNamespace(status="invalid", expires_at=now + timedelta(hours=1))
+        self.assertEqual(allocator.reuse_ready_at([closed, invalid]), now + timedelta(hours=1) + cooldown)
+        self.assertIsNone(allocator.reuse_ready_at([SimpleNamespace(status="invalid", expires_at=None)]))
         expired = SimpleNamespace(status="expired", expires_at=now + timedelta(days=1))
         self.assertEqual(allocator.reuse_ready_at([closed, expired]), now + timedelta(days=1) + cooldown)
         self.assertIsNone(allocator.reuse_ready_at([SimpleNamespace(status="confirmed", confirmed_at=None)]))

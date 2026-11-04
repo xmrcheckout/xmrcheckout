@@ -14,6 +14,11 @@ from PIL import Image
 from .formatting import format_xmr_amount
 from .models import Invoice
 
+MAX_QR_LOGO_DATA_URL_LENGTH = 120_000
+# Logos are shrunk to about 100 px; this bounds decoded memory to ~16 MB.
+MAX_QR_LOGO_SIDE = 2048
+QR_LOGO_FORMATS = ["PNG", "JPEG", "GIF", "WEBP"]
+
 
 @dataclass(frozen=True)
 class QrSettings:
@@ -70,8 +75,13 @@ def build_invoice_qr_png_bytes(*, invoice: Invoice, settings: QrSettings) -> byt
     image = qr.make_image(fill_color="black", back_color="white").convert("RGBA")
 
     if settings.logo == "custom" and settings.logo_data_url:
-        logo = _load_logo_from_data_url(settings.logo_data_url)
-        image = _overlay_logo(image, logo)
+        try:
+            logo = _load_logo_from_data_url(settings.logo_data_url)
+        except HTTPException:
+            # Render a plain QR so it is cached and not re-decoded on every poll.
+            logo = None
+        if logo is not None:
+            image = _overlay_logo(image, logo)
 
     out = tempfile.SpooledTemporaryFile(max_size=1024 * 1024)
     image.save(out, format="PNG", optimize=True)
@@ -130,6 +140,11 @@ def _atomic_write(path: str, data: bytes) -> None:
 
 def _load_logo_from_data_url(data_url: str) -> Image.Image:
     # Expected: data:image/png;base64,<...>
+    if len(data_url) > MAX_QR_LOGO_DATA_URL_LENGTH:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="QR logo image is too large",
+        )
     try:
         header, encoded = data_url.split(",", 1)
     except ValueError as exc:
@@ -152,7 +167,21 @@ def _load_logo_from_data_url(data_url: str) -> Image.Image:
     try:
         from io import BytesIO
 
-        logo = Image.open(BytesIO(raw)).convert("RGBA")
+        logo = Image.open(BytesIO(raw), formats=QR_LOGO_FORMATS)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="QR logo image format is not supported",
+        ) from exc
+    # Image.open reads only the header; check the size before decoding pixels.
+    width, height = logo.size
+    if width > MAX_QR_LOGO_SIDE or height > MAX_QR_LOGO_SIDE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="QR logo image dimensions are too large",
+        )
+    try:
+        logo = logo.convert("RGBA")
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -80,7 +80,12 @@ from .webhook_http import (
     post_webhook_with_redirects,
     validate_webhook_url,
 )
-from .qr_codes import ensure_invoice_qr_png, invoice_qr_url, resolve_qr_settings
+from .qr_codes import (
+    MAX_QR_LOGO_DATA_URL_LENGTH,
+    ensure_invoice_qr_png,
+    invoice_qr_url,
+    resolve_qr_settings,
+)
 router = APIRouter()
 
 WEBHOOK_EVENTS = (
@@ -99,7 +104,6 @@ def _require_donations_enabled() -> None:
             detail="Donations are disabled",
 )
 
-MAX_QR_LOGO_DATA_URL_LENGTH = 120_000
 MONERO_CONNECTIVITY_STATUS_NAME = "monero_connectivity"
 
 

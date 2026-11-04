@@ -1355,6 +1355,41 @@ def create_invoice_for_merchant(
     return _invoice_response(invoice, request, warnings=warnings)
 
 
+def _filter_merchant_invoices(
+    query, *, include_archived, status_filter, active_only, q, created_from, created_to
+):
+    """Filters shared by the invoice list, its total and the CSV export."""
+    if not include_archived:
+        query = query.filter(Invoice.archived_at.is_(None))
+    if status_filter:
+        query = query.filter(Invoice.status == status_filter)
+    if active_only:
+        query = query.filter(
+            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
+        )
+    needle = q.strip() if q else ""
+    if needle:
+        matchers = []
+        try:
+            matchers.append(Invoice.id == uuid.UUID(needle))
+        except ValueError:
+            pass
+        try:
+            amount_xmr = Decimal(needle)
+        except (InvalidOperation, ValueError):
+            amount_xmr = None
+        if amount_xmr is not None and amount_xmr.is_finite():
+            matchers.append(Invoice.amount_xmr == amount_xmr)
+        matchers.append(Invoice.address.ilike(f"%{needle}%"))
+        matchers.append(cast(Invoice.metadata_json, SqlString).ilike(f"%{needle}%"))
+        query = query.filter(or_(*matchers))
+    if created_from:
+        query = query.filter(Invoice.created_at >= created_from)
+    if created_to:
+        query = query.filter(Invoice.created_at <= created_to)
+    return query
+
+
 @router.get("/api/core/invoices", response_model=InvoiceListResponse)
 def list_invoices_for_user(
     request: Request,
@@ -1377,41 +1412,13 @@ def list_invoices_for_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User API key required",
         )
-    query = db.query(Invoice).filter(
-        Invoice.user_id == user.id,
-        _merchant_invoice_filter(),
+    filters = dict(
+        include_archived=include_archived, status_filter=status_filter, active_only=active_only,
+        q=q, created_from=created_from, created_to=created_to,
     )
-    if not include_archived:
-        query = query.filter(Invoice.archived_at.is_(None))
-    if status_filter:
-        query = query.filter(Invoice.status == status_filter)
-    if active_only:
-        query = query.filter(
-            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
-        )
-    if q:
-        needle = q.strip()
-        if needle:
-            try:
-                invoice_uuid = uuid.UUID(needle)
-            except ValueError:
-                invoice_uuid = None
-            try:
-                amount_xmr = Decimal(needle)
-            except (InvalidOperation, ValueError):
-                amount_xmr = None
-            matchers = []
-            if invoice_uuid is not None:
-                matchers.append(Invoice.id == invoice_uuid)
-            if amount_xmr is not None:
-                matchers.append(Invoice.amount_xmr == amount_xmr)
-            matchers.append(Invoice.address.ilike(f"%{needle}%"))
-            matchers.append(cast(Invoice.metadata_json, SqlString).ilike(f"%{needle}%"))
-            query = query.filter(or_(*matchers))
-    if created_from:
-        query = query.filter(Invoice.created_at >= created_from)
-    if created_to:
-        query = query.filter(Invoice.created_at <= created_to)
+    query = _filter_merchant_invoices(
+        db.query(Invoice).filter(Invoice.user_id == user.id, _merchant_invoice_filter()), **filters
+    )
 
     sort_keys = {
         "created_at": Invoice.created_at,
@@ -1432,41 +1439,13 @@ def list_invoices_for_user(
         .all()
     )
     invoice_items = [_invoice_response(invoice, request) for invoice in items]
-    total_query = db.query(func.count(Invoice.id)).filter(
-        Invoice.user_id == user.id,
-        _merchant_invoice_filter(),
+    total_query = _filter_merchant_invoices(
+        db.query(func.count(Invoice.id)).filter(
+            Invoice.user_id == user.id,
+            _merchant_invoice_filter(),
+        ),
+        **filters,
     )
-    if not include_archived:
-        total_query = total_query.filter(Invoice.archived_at.is_(None))
-    if status_filter:
-        total_query = total_query.filter(Invoice.status == status_filter)
-    if active_only:
-        total_query = total_query.filter(
-            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
-        )
-    if q:
-        needle = q.strip()
-        if needle:
-            try:
-                invoice_uuid = uuid.UUID(needle)
-            except ValueError:
-                invoice_uuid = None
-            try:
-                amount_xmr = Decimal(needle)
-            except (InvalidOperation, ValueError):
-                amount_xmr = None
-            matchers = []
-            if invoice_uuid is not None:
-                matchers.append(Invoice.id == invoice_uuid)
-            if amount_xmr is not None:
-                matchers.append(Invoice.amount_xmr == amount_xmr)
-            matchers.append(Invoice.address.ilike(f"%{needle}%"))
-            matchers.append(cast(Invoice.metadata_json, SqlString).ilike(f"%{needle}%"))
-            total_query = total_query.filter(or_(*matchers))
-    if created_from:
-        total_query = total_query.filter(Invoice.created_at >= created_from)
-    if created_to:
-        total_query = total_query.filter(Invoice.created_at <= created_to)
     total = total_query.scalar() or 0
     return {"items": invoice_items, "total": total}
 
@@ -1494,35 +1473,11 @@ def export_invoices_csv(
             detail="User API key required",
         )
 
-    query = db.query(Invoice).filter(
-        Invoice.user_id == user.id,
-        _merchant_invoice_filter(),
+    query = _filter_merchant_invoices(
+        db.query(Invoice).filter(Invoice.user_id == user.id, _merchant_invoice_filter()),
+        include_archived=include_archived, status_filter=status_filter, active_only=active_only,
+        q=q, created_from=created_from, created_to=created_to,
     )
-    if not include_archived:
-        query = query.filter(Invoice.archived_at.is_(None))
-    if status_filter:
-        query = query.filter(Invoice.status == status_filter)
-    if active_only:
-        query = query.filter(
-            Invoice.status.in_(["pending", "partially_paid", "payment_detected", "confirmed"])
-        )
-    if q:
-        needle = q.strip()
-        if needle:
-            try:
-                invoice_uuid = uuid.UUID(needle)
-            except ValueError:
-                invoice_uuid = None
-            matchers = []
-            if invoice_uuid is not None:
-                matchers.append(Invoice.id == invoice_uuid)
-            matchers.append(Invoice.address.ilike(f"%{needle}%"))
-            matchers.append(cast(Invoice.metadata_json, SqlString).ilike(f"%{needle}%"))
-            query = query.filter(or_(*matchers))
-    if created_from:
-        query = query.filter(Invoice.created_at >= created_from)
-    if created_to:
-        query = query.filter(Invoice.created_at <= created_to)
 
     sort_keys = {
         "created_at": Invoice.created_at,

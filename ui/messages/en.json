@@ -523,6 +523,7 @@
       "continueInvalid": "Continue URL must be a valid URL.",
       "expiryDate": "Expiry date must include a date.",
       "expiryInvalid": "Expiry date must be a valid date and time.",
+      "expiryPast": "Expiry must be in the future.",
       "noApiKey": "API key not found. Please connect again.",
       "invoiceNotConfirmed": "Could not confirm invoice creation. Check the invoice list before trying again.",
       "apiKeyResetUnconfirmed": "Could not confirm the API key reset. Connect again to retrieve the current credentials before retrying or updating integrations.",

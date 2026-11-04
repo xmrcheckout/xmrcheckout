@@ -523,6 +523,7 @@
       "continueInvalid": "Die Weiter-URL muss eine gültige URL sein.",
       "expiryDate": "Das Ablaufdatum muss ein Datum enthalten.",
       "expiryInvalid": "Das Ablaufdatum muss ein gültiges Datum mit Uhrzeit sein.",
+      "expiryPast": "Das Ablaufdatum muss in der Zukunft liegen.",
       "noApiKey": "API-Schlüssel nicht gefunden. Bitte verbinden Sie sich erneut.",
       "invoiceNotConfirmed": "Die Rechnungserstellung konnte nicht bestätigt werden. Prüfen Sie die Rechnungsliste, bevor Sie es erneut versuchen.",
       "apiKeyResetUnconfirmed": "Das Zurücksetzen des API-Schlüssels konnte nicht bestätigt werden. Verbinden Sie sich erneut, um die aktuellen Zugangsdaten abzurufen, bevor Sie es erneut versuchen oder Integrationen aktualisieren.",

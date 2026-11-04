@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -72,3 +72,27 @@ class ConvertedAmountTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InvoiceExpiryTests(unittest.TestCase):
+    def test_past_expiry_rejected(self):
+        with self.assertRaises(HTTPException) as ctx:
+            routes._resolve_invoice_expiry(datetime.now(timezone.utc) - timedelta(minutes=1))
+        self.assertEqual(ctx.exception.status_code, 422)
+
+    def test_naive_expiry_is_read_as_utc(self):
+        naive = datetime.utcnow().replace(microsecond=0) + timedelta(hours=2)
+        self.assertEqual(routes._resolve_invoice_expiry(naive), naive.replace(tzinfo=timezone.utc))
+
+    def test_aware_expiry_is_kept(self):
+        aware = datetime.now(timezone(timedelta(hours=-8))) + timedelta(hours=2)
+        self.assertEqual(routes._resolve_invoice_expiry(aware), aware)
+
+    def test_past_expiry_rejected_before_any_address_is_reserved(self):
+        payload = InvoiceCreateUser(amount_xmr=Decimal("1"), expires_at=datetime(2020, 1, 1, tzinfo=timezone.utc))
+        user = SimpleNamespace(default_confirmation_target=1)
+        with patch.object(routes, "reserve_invoice_creation", side_effect=AssertionError("reserved")), \
+                patch.object(routes, "create_subaddress_for_user", side_effect=AssertionError("allocated")):
+            with self.assertRaises(HTTPException) as ctx:
+                routes.create_invoice_for_merchant(payload, None, None, user)
+        self.assertEqual(ctx.exception.status_code, 422)

@@ -523,6 +523,7 @@
       "continueInvalid": "L'URL Continua deve essere un URL valido.",
       "expiryDate": "La scadenza deve includere una data.",
       "expiryInvalid": "La scadenza deve essere una data e un'ora valide.",
+      "expiryPast": "La scadenza deve essere nel futuro.",
       "noApiKey": "Chiave API non trovata. Collegati di nuovo.",
       "invoiceNotConfirmed": "Impossibile confermare la creazione della richiesta di pagamento. Controlla l'elenco delle richieste di pagamento prima di riprovare.",
       "apiKeyResetUnconfirmed": "Impossibile confermare la reimpostazione della chiave API. Collegati di nuovo per ottenere le credenziali attuali prima di riprovare o aggiornare le integrazioni.",

@@ -523,6 +523,7 @@
       "continueInvalid": "La URL de continuación debe ser una URL válida.",
       "expiryDate": "El vencimiento debe incluir una fecha.",
       "expiryInvalid": "El vencimiento debe ser una fecha y hora válidas.",
+      "expiryPast": "El vencimiento debe ser en el futuro.",
       "noApiKey": "No se encontró la clave de API. Vuelve a conectarte.",
       "invoiceNotConfirmed": "No se pudo confirmar la creación de la factura. Revisa la lista de facturas antes de volver a intentarlo.",
       "apiKeyResetUnconfirmed": "No se pudo confirmar el restablecimiento de la clave de API. Vuelve a conectarte para obtener las credenciales actuales antes de reintentar o actualizar las integraciones.",

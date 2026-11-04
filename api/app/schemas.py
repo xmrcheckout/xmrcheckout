@@ -42,7 +42,7 @@ class InvoiceCreate(BaseModel):
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
-        description="Defaults to 60 minutes from creation if omitted.",
+        description="Must be in the future and should include a timezone offset (times without one are read as UTC). Defaults to 60 minutes from creation if omitted.",
     )
 
     @field_validator("currency")
@@ -123,7 +123,7 @@ class InvoiceCreateUser(BaseModel):
     metadata: dict[str, Any] | None = None
     expires_at: datetime | None = Field(
         default=None,
-        description="Defaults to 60 minutes from creation if omitted.",
+        description="Must be in the future and should include a timezone offset (times without one are read as UTC). Defaults to 60 minutes from creation if omitted.",
     )
 
     @field_validator("currency")

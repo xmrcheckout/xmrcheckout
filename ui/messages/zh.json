@@ -520,6 +520,7 @@
       "continueInvalid": "继续 URL 必须是有效的 URL。",
       "expiryDate": "过期时间必须包含日期。",
       "expiryInvalid": "过期时间必须是有效的日期和时间。",
+      "expiryPast": "过期时间必须是将来的时间。",
       "noApiKey": "未找到 API 密钥。请重新连接。",
       "invoiceNotConfirmed": "无法确认账单是否已创建。请先查看账单列表，再重试。",
       "apiKeyResetUnconfirmed": "无法确认 API 密钥是否已重置。请重新连接以获取当前凭据，然后再重试或更新集成。",

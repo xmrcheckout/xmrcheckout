@@ -529,6 +529,7 @@
       "continueInvalid": "Adres Kontynuuj musi być prawidłowym URL.",
       "expiryDate": "Termin ważności musi zawierać datę.",
       "expiryInvalid": "Termin ważności musi być prawidłową datą i godziną.",
+      "expiryPast": "Termin ważności musi przypadać w przyszłości.",
       "noApiKey": "Nie znaleziono klucza API. Połącz się ponownie.",
       "invoiceNotConfirmed": "Nie udało się potwierdzić utworzenia prośby o płatność. Sprawdź listę próśb, zanim spróbujesz ponownie.",
       "apiKeyResetUnconfirmed": "Nie udało się potwierdzić resetu klucza API. Połącz się ponownie, aby pobrać bieżące dane dostępowe, zanim ponowisz próbę lub zaktualizujesz integracje.",

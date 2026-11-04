@@ -523,6 +523,7 @@
       "continueInvalid": "A URL de continuação deve ser uma URL válida.",
       "expiryDate": "A data de expiração deve incluir uma data.",
       "expiryInvalid": "A data de expiração deve ser uma data e hora válidas.",
+      "expiryPast": "A data de expiração deve estar no futuro.",
       "noApiKey": "Chave de API não encontrada. Conecte-se novamente.",
       "invoiceNotConfirmed": "Não foi possível confirmar a criação da fatura. Confira a lista de faturas antes de tentar novamente.",
       "apiKeyResetUnconfirmed": "Não foi possível confirmar a redefinição da chave de API. Conecte-se novamente para obter as credenciais atuais antes de tentar outra vez ou atualizar as integrações.",

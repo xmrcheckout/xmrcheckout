@@ -308,6 +308,20 @@ def _default_invoice_expiry() -> datetime:
     return datetime.now(timezone.utc) + timedelta(hours=INVOICE_DEFAULT_EXPIRY_HOURS)
 
 
+def _resolve_invoice_expiry(requested: datetime | None) -> datetime:
+    """Default when omitted; times without an offset are UTC; past times are rejected."""
+    if requested is None:
+        return _default_invoice_expiry()
+    if requested.tzinfo is None:
+        requested = requested.replace(tzinfo=timezone.utc)
+    if requested <= datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="expires_at must be in the future",
+        )
+    return requested
+
+
 def _donation_invoice_expiry() -> datetime:
     return datetime.now(timezone.utc) + timedelta(minutes=DONATION_EXPIRY_MINUTES)
 
@@ -1252,7 +1266,7 @@ def create_invoice_for_merchant(
     confirmation_target = payload.confirmation_target
     if "confirmation_target" not in payload.model_fields_set:
         confirmation_target = user.default_confirmation_target
-    expires_at = payload.expires_at or _default_invoice_expiry()
+    expires_at = _resolve_invoice_expiry(payload.expires_at)
     resolved_amount, warnings, quote = _resolve_invoice_amount(
         db,
         user=user,

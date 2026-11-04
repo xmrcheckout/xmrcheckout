@@ -268,6 +268,18 @@ export async function createInvoiceAction(
     }
     expiresAt = parsed.toISOString();
   }
+  if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) {
+    return {
+      error: t("dashboard.actions.expiryPast"),
+      invoiceId: null,
+      address: null,
+      amount: null,
+      recipientName: null,
+      description: null,
+      subaddressIndex: null,
+      warnings: null,
+    };
+  }
 
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {

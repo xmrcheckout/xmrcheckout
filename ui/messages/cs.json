@@ -529,6 +529,7 @@
       "continueInvalid": "URL pro pokračování musí být platná URL.",
       "expiryDate": "Datum vypršení musí obsahovat datum.",
       "expiryInvalid": "Datum vypršení musí být platné datum a čas.",
+      "expiryPast": "Datum vypršení musí být v budoucnosti.",
       "noApiKey": "API klíč nenalezen. Připojte se prosím znovu.",
       "invoiceNotConfirmed": "Vytvoření platební výzvy se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních výzev.",
       "apiKeyResetUnconfirmed": "Obnovení API klíče se nepodařilo potvrdit. Než to zkusíte znovu nebo aktualizujete integrace, připojte se znovu a načtěte aktuální přístupové údaje.",

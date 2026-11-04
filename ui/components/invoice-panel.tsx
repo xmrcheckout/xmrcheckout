@@ -274,6 +274,12 @@ function CreateInvoiceModal({
 
   const expiryTimeValue = expiresTime || "00:00";
   const expiryValue = expiresDate ? `${expiresDate}T${expiryTimeValue}` : "";
+  // The browser reads expiryValue as the merchant's local time; send an absolute instant.
+  const expiryDateObject = expiryValue ? new Date(expiryValue) : null;
+  const expiryIso =
+    expiryDateObject && !Number.isNaN(expiryDateObject.getTime())
+      ? expiryDateObject.toISOString()
+      : "";
   const expiryIsValid =
     expiryMode !== "custom" || (!expiresTime && !expiresDate) || !!expiresDate;
   const isFiatCurrencyValid =
@@ -720,7 +726,7 @@ function CreateInvoiceModal({
                             <input
                               type="hidden"
                               name="expires_at"
-                              value={expiryValue}
+                              value={expiryIso}
                             />
                           </div>
                         ) : null}

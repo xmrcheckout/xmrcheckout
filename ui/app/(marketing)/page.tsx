@@ -5,25 +5,23 @@ import { redirect } from "next/navigation";
 import { InvoiceJourney } from "../../components/invoice-journey";
 
 import { LoginTrigger } from "../../components/login-modal";
+import { getI18n } from "../../lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "Accept Monero Directly into Your Wallet | XMR Checkout",
-  },
-  description:
-    "Create invoices, share customer checkout pages, and track Monero payments directly to your wallet. Open-source, self-hostable software with APIs and webhooks.",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    url: "/",
-    siteName: "XMR Checkout",
-    title: "Accept Monero Directly into Your Wallet | XMR Checkout",
-    description:
-      "Create invoices, share customer checkout pages, and track Monero payments directly to your wallet. Open-source, self-hostable software with APIs and webhooks.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return {
+    title: { absolute: t("home.metaTitle") },
+    description: t("home.metaDescription"),
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      url: "/",
+      siteName: "XMR Checkout",
+      title: t("home.metaTitle"),
+      description: t("home.metaDescription"),
+    },
+  };
+}
 
 export default async function MarketingHomePage({
   searchParams,
@@ -31,6 +29,7 @@ export default async function MarketingHomePage({
   searchParams: Promise<{ donate?: string | string[] }>;
 }) {
   const query = await searchParams;
+  const { t } = await getI18n();
   if (query.donate === "1") {
     redirect("/donate");
   }
@@ -39,71 +38,68 @@ export default async function MarketingHomePage({
     <main id="main-content" tabIndex={-1} className="home-page text-ink">
       <section className="home-hero" aria-labelledby="home-hero-title">
         <div className="home-hero-copy">
-          <p className="home-kicker">Monero checkout for merchants</p>
-          <h1 id="home-hero-title">Accept Monero directly into your wallet.</h1>
+          <p className="home-kicker">{t("home.kicker")}</p>
+          <h1 id="home-hero-title">{t("home.title")}</h1>
           <p className="home-lead">
-            Create invoices, share a customer checkout page, and track incoming
-            payments and confirmations. Optionally connect your store through APIs and webhooks.
+            {t("home.lead")}
           </p>
-          <div className="home-actions" role="group" aria-label="Primary actions">
+          <div className="home-actions" role="group" aria-label={t("home.primaryActions")}>
             <Link className="home-button home-button-primary" href="/tour">
-              Explore the demo
+              {t("home.exploreDemo")}
             </Link>
             <LoginTrigger className="home-button home-button-secondary">
-              Connect view-only wallet
+              {t("nav.connect")}
             </LoginTrigger>
           </div>
           <p className="home-entry-note">
-            <strong>Exploring the demo?</strong> All payments are simulated. No wallet connection is needed.
+            <strong>{t("home.demoQ")}</strong> {t("home.demoA")}
           </p>
           <p className="home-entry-note">
-            <strong>Ready to accept payments?</strong> Connect your wallet using
-            your primary address and private view key. Customer payments go
-            directly to your wallet.
+            <strong>{t("home.readyQ")}</strong> {t("home.readyA")}
           </p>
         </div>
 
-        <InvoiceJourney />
+        <InvoiceJourney t={t} />
       </section>
 
       <section className="home-process" aria-labelledby="home-process-title">
         <div>
-          <p className="home-kicker">Customer checkout</p>
-          <h2 id="home-process-title">Give customers a clear way to pay.</h2>
+          <p className="home-kicker">{t("home.processKicker")}</p>
+          <h2 id="home-process-title">{t("home.processTitle")}</h2>
         </div>
         <ol>
-          <li><span>01</span><div><h3>Create and share an invoice</h3><p>Set the amount in XMR and share the customer checkout page.</p></div></li>
-          <li><span>02</span><div><h3>Give customers the payment details</h3><p>The page shows the exact amount, wallet address, QR code, and a link to open a wallet. Network fees are separate.</p></div></li>
-          <li><span>03</span><div><h3>Show confirmation progress</h3><p>Customers can follow payment detection and progress toward your confirmation target.</p></div></li>
+          <li><span>01</span><div><h3>{t("home.step1")}</h3><p>{t("home.step1Body")}</p></div></li>
+          <li><span>02</span><div><h3>{t("home.step2")}</h3><p>{t("home.step2Body")}</p></div></li>
+          <li><span>03</span><div><h3>{t("home.step3")}</h3><p>{t("home.step3Body")}</p></div></li>
         </ol>
       </section>
 
       <section className="home-wallet" aria-labelledby="home-wallet-title">
         <div className="home-wallet-copy">
-          <p className="home-kicker">Wallet access</p>
-          <h2 id="home-wallet-title">Track payments. Keep control of your wallet.</h2>
-          <p>Payments go directly from the customer to your Monero wallet. XMR Checkout observes incoming payments; the software cannot spend your funds.</p>
+          <p className="home-kicker">{t("home.walletKicker")}</p>
+          <h2 id="home-wallet-title">{t("home.walletTitle")}</h2>
+          <p>{t("home.walletBody")}</p>
         </div>
         <div className="home-wallet-table">
-          <div><h3>Your wallet receives the XMR</h3><p>Use the wallet you already control.</p></div>
-          <div><h3>View-only access</h3><p>Your primary address and private view key enable incoming payment detection. Never submit a spend key or recovery seed.</p></div>
-          <div><h3>Your confirmation target</h3><p>Choose how many confirmations an invoice requires. Payment detection and reaching that target are separate states.</p></div>
+          <div><h3>{t("home.walletReceives")}</h3><p>{t("home.walletReceivesBody")}</p></div>
+          <div><h3>{t("home.viewOnly")}</h3><p>{t("home.viewOnlyBody")}</p></div>
+          <div><h3>{t("home.target")}</h3><p>{t("home.targetBody")}</p></div>
         </div>
       </section>
 
       <section className="home-integration" aria-labelledby="home-integration-title">
         <div>
-          <p className="home-kicker">Getting started</p>
-          <h2 id="home-integration-title">Start here. Integrate when you’re ready.</h2>
-          <p>Connect your wallet to this instance to create invoices and share customer checkout pages. A store connection is optional; add API calls or configure webhooks only if you want your store to receive invoice updates.</p>
-          <div className="home-actions" role="group" aria-label="Getting started links">
-            <LoginTrigger className="home-button home-button-primary">Connect view-only wallet</LoginTrigger>
-            <Link className="home-doc-link" href="/guides/monero-payment-api-webhooks">Read the API guide</Link>
+          <p className="home-kicker">{t("home.startKicker")}</p>
+          <h2 id="home-integration-title">{t("home.startTitle")}</h2>
+          <p>{t("home.startBody")}</p>
+          <div className="home-actions" role="group" aria-label={t("home.startLinks")}>
+            <LoginTrigger className="home-button home-button-primary">{t("nav.connect")}</LoginTrigger>
+            <Link className="home-doc-link" href="/guides/monero-payment-api-webhooks">{t("home.readApiGuide")}</Link>
           </div>
         </div>
         <div className="home-wallet-table">
-          <div><h3>Payment and donation links without programming</h3><p>Sell a product, offer a service, or accept donations of any amount directly to your own wallet. Share a reusable link or paste an HTML button into your website. Each successful submission creates a separate XMR invoice.</p><Link className="home-doc-link" href="/guides/monero-payment-buttons">Set up a payment or donation link</Link></div>
-          <div><h3>Prefer your own infrastructure?</h3><p>XMR Checkout is open source and self-hostable. Deploy your own instance before connecting your wallet there.</p><Link className="home-doc-link" href="/guides/self-hosted-monero-checkout">Self-host XMR Checkout</Link></div>
+          <div><h3>{t("home.linksTitle")}</h3><p>{t("home.linksBody")}</p><Link className="home-doc-link" href="/guides/monero-payment-buttons">{t("home.linksCta")}</Link></div>
+          <div><h3>{t("home.selfHostTitle")}</h3><p>{t("home.selfHostBody")}</p><Link className="home-doc-link" href="/guides/self-hosted-monero-checkout">{t("home.selfHostCta")}</Link></div>
         </div>
       </section>
     </main>

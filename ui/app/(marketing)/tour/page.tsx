@@ -9,23 +9,26 @@ import TourInvoicePreview from "../../../components/tour-invoice-preview";
 import WebhookHistoryPanel from "../../../components/webhook-history-panel";
 import WebhookSection from "../../../components/webhook-section";
 import WorkspaceNav from "../../../components/workspace-nav";
+import { invoiceStatusName } from "../../../lib/invoice-status";
+import { rich } from "../../../lib/i18n/rich";
+import { getI18n } from "../../../lib/i18n/server";
+import type { Translate } from "../../../lib/i18n/translate";
 
-export const metadata: Metadata = {
-  title: "Demo",
-  description:
-    "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
-  alternates: {
-    canonical: "/tour",
-  },
-  openGraph: {
-    type: "website",
-    url: "/tour",
-    siteName: "XMR Checkout",
-    title: "Monero Checkout Demo | XMR Checkout",
-    description:
-      "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return {
+    title: t("nav.demo"),
+    description: t("tour.metaDescription"),
+    alternates: { canonical: "/tour" },
+    openGraph: {
+      type: "website",
+      url: "/tour",
+      siteName: "XMR Checkout",
+      title: t("tour.metaTitle"),
+      description: t("tour.metaDescription"),
+    },
+  };
+}
 
 const tabs = ["overview", "invoices", "invoice", "webhooks"] as const;
 const webhookTabs = ["settings", "history"] as const;
@@ -40,36 +43,36 @@ type TourTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
 type InvoiceStatus = (typeof invoiceStatuses)[number];
 
-const tabDetails: Record<
+const tabDetails = (t: Translate): Record<
   TourTab,
   { index: string; label: string; detail: string }
-> = {
+> => ({
   overview: {
     index: "01",
-    label: "Overview",
-    detail: "Activity and status",
+    label: t("dashboard.page.navOverview"),
+    detail: t("tour.navOverviewDetail"),
   },
   invoices: {
     index: "02",
-    label: "Invoices",
-    detail: "Create and inspect",
+    label: t("dashboard.page.navInvoices"),
+    detail: t("tour.navInvoicesDetail"),
   },
   invoice: {
     index: "03",
-    label: "View invoice",
-    detail: "Customer payment page",
+    label: t("demo.invoice.view"),
+    detail: t("tour.navInvoiceDetail"),
   },
   webhooks: {
     index: "04",
-    label: "Webhooks",
-    detail: "Relay and history",
+    label: t("dashboard.page.navWebhooks"),
+    detail: t("tour.navWebhooksDetail"),
   },
-};
+});
 
-const tourNavItems = tabs.map((tab) => ({
+const tourNavItems = (t: Translate) => tabs.map((tab) => ({
   value: tab,
   href: `/tour?tab=${tab}`,
-  ...tabDetails[tab],
+  ...tabDetails(t)[tab],
 }));
 
 type TourSearchParams = Record<string, string | string[] | undefined>;
@@ -117,7 +120,7 @@ type WebhookDeliverySummary = {
   created_at: string;
 };
 
-const buildNowFixture = () => {
+const buildNowFixture = (t: Translate) => {
   const now = Date.now();
   const iso = (offsetMs: number) => new Date(now + offsetMs).toISOString();
   const exampleAddress =
@@ -138,8 +141,8 @@ const buildNowFixture = () => {
       confirmed_at: null,
       expires_at: iso(25 * 60 * 1000),
       metadata: {
-        recipient_name: "Example customer",
-        description: "Order #1027",
+        recipient_name: t("tour.fixture.customer"),
+        description: t("tour.fixture.order"),
       },
     },
     {
@@ -155,7 +158,7 @@ const buildNowFixture = () => {
       detected_at: iso(-18 * 60 * 1000),
       confirmed_at: null,
       expires_at: iso(55 * 60 * 1000),
-      metadata: { description: "Subscription renewal" },
+      metadata: { description: t("tour.fixture.renewal") },
     },
     {
       id: "demo_inv_confirmed",
@@ -170,7 +173,7 @@ const buildNowFixture = () => {
       detected_at: iso(-25.5 * 60 * 60 * 1000),
       confirmed_at: iso(-25.3 * 60 * 60 * 1000),
       expires_at: iso(-25 * 60 * 60 * 1000),
-      metadata: { recipient_name: "ACME Inc.", description: "Invoice #8841" },
+      metadata: { recipient_name: "ACME Inc.", description: t("tour.fixture.invoice") },
     },
     {
       id: "demo_inv_expired",
@@ -185,7 +188,7 @@ const buildNowFixture = () => {
       detected_at: null,
       confirmed_at: null,
       expires_at: iso(-4.8 * 24 * 60 * 60 * 1000),
-      metadata: { description: "Abandoned checkout" },
+      metadata: { description: t("tour.fixture.abandoned") },
     },
   ];
 
@@ -232,7 +235,7 @@ const buildNowFixture = () => {
       invoice_amount_xmr: "1.000",
       invoice_status: "confirmed",
       http_status: 500,
-      error_message: "Upstream returned 500",
+      error_message: t("tour.fixture.upstream"),
       created_at: iso(-25.2 * 60 * 60 * 1000),
     },
   ];
@@ -251,6 +254,7 @@ export default async function TourPage({
   searchParams: Promise<TourSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
+  const { locale, t } = await getI18n();
   const tabParam = resolvedSearchParams?.tab;
   const activeTabValue = Array.isArray(tabParam) ? tabParam[0] : tabParam;
   const activeTab: TourTab = tabs.includes(activeTabValue as TourTab)
@@ -297,7 +301,7 @@ export default async function TourPage({
       ? orderValue
       : "desc";
 
-  const fixture = buildNowFixture();
+  const fixture = buildNowFixture(t);
   const exampleInvoice =
     fixture.invoices.find((invoice) => invoice.status === "payment_detected") ??
     fixture.invoices[0]!;
@@ -330,17 +334,8 @@ export default async function TourPage({
   const recentInvoiceItems = invoices.slice(0, 5).map((invoice) => ({
     title: invoiceContext(invoice.metadata).title ?? invoice.id,
     invoiceId: invoice.id,
-    detail: `Created ${new Date(invoice.created_at).toLocaleString()}`,
-    status:
-      invoice.status === "payment_detected"
-        ? "Payment detected"
-        : invoice.status === "pending"
-          ? "Awaiting funds"
-          : invoice.status === "confirmed"
-            ? "Confirmed"
-            : invoice.status === "invalid"
-              ? "Invalid"
-              : "Expired",
+    detail: t("dashboard.page.createdAt", { date: new Date(invoice.created_at).toLocaleString(locale) }),
+    status: invoiceStatusName(invoice.status, t),
     tone:
       invoice.status === "confirmed"
         ? ("success" as StatusTone)
@@ -362,12 +357,12 @@ export default async function TourPage({
       title: delivery.event,
       detail:
         delivery.http_status === null || delivery.http_status >= 400
-          ? `Delivery failed for ${delivery.invoice_id ?? "an invoice"}.`
-          : `Delivery recorded for ${delivery.invoice_id ?? "an invoice"}.`,
+          ? delivery.invoice_id ? t("dashboard.page.deliveryFailedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryFailed")
+          : delivery.invoice_id ? t("dashboard.page.deliveryRecordedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryRecorded"),
       status:
         delivery.http_status === null || delivery.http_status >= 400
-          ? "Needs review"
-          : "Accepted",
+          ? t("dashboard.page.needsReview")
+          : t("dashboard.page.accepted"),
       tone:
         delivery.http_status === null || delivery.http_status >= 400
           ? ("error" as StatusTone)
@@ -380,33 +375,33 @@ export default async function TourPage({
 
   const overviewMetrics = [
     {
-      title: "Invoices today",
+      title: t("dashboard.page.invoicesToday"),
       value: invoicesTodayCount.toString(),
-      detail: "Created in this simulated workspace.",
+      detail: t("tour.todayDetail"),
       href: "/tour?tab=invoices",
       accentClass: "border-t-clay",
       valueClass: "text-clay",
     },
     {
-      title: "Awaiting confirmation",
+      title: t("dashboard.page.awaiting"),
       value: awaitingConfirmationCount.toString(),
-      detail: "Detected below the configured target.",
+      detail: t("dashboard.page.awaitingDetail"),
       href: "/tour?tab=invoices&status=payment_detected",
       accentClass: "border-t-monero",
       valueClass: "text-monero",
     },
     {
-      title: "Confirmed",
+      title: t("dashboard.page.confirmed"),
       value: confirmedCount.toString(),
-      detail: "Invoices that reached their target.",
+      detail: t("dashboard.page.confirmedDetail"),
       href: "/tour?tab=invoices&status=confirmed",
       accentClass: "border-t-sage",
       valueClass: "text-sage",
     },
     {
-      title: "Webhook issues",
+      title: t("dashboard.page.webhookIssues"),
       value: failedWebhookCount.toString(),
-      detail: "Recent deliveries ready to review.",
+      detail: t("dashboard.page.webhookIssuesDetail"),
       href: "/tour?tab=webhooks&webhook_tab=history",
       accentClass: "border-t-red-500",
       valueClass: "text-red-700",
@@ -422,26 +417,25 @@ export default async function TourPage({
     <main id="main-content" tabIndex={-1} className="px-[6vw] pb-16 pt-8 text-ink">
       <section
         className="mx-auto w-full max-w-7xl"
-        aria-label="Demo environment"
+        aria-label={t("tour.environment")}
       >
         {activeTab === "overview" ? <PageIntroBand
           as="p"
-          eyebrow="Demo workspace"
-          title="See how Monero checkout works."
+          eyebrow={t("tour.eyebrow")}
+          title={t("tour.title")}
           description={
             <p>
-              Explore sample invoices, customer checkout pages, and store notifications.
-              All activity is simulated; no wallet connection or payment is required.
+              {t("tour.intro")}
             </p>
           }
-        /> : <p className="border-b border-stroke pb-3 text-sm"><strong>Demo workspace.</strong> All activity is simulated; no payment is requested.</p>}
+        /> : <p className="border-b border-stroke pb-3 text-sm">{rich(t("tour.banner"), { strong: (text) => <strong>{text}</strong> })}</p>}
       </section>
 
       <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
         <WorkspaceNav
           activeValue={activeTab}
-          ariaLabel="Demo sections"
-          items={tourNavItems}
+          ariaLabel={t("tour.sections")}
+          items={tourNavItems(t)}
           mobileColumns={2}
         />
 
@@ -458,26 +452,26 @@ export default async function TourPage({
                       className="h-2 w-2 rounded-full bg-clay"
                       aria-hidden="true"
                     />
-                    Overview
+                    {t("dashboard.page.navOverview")}
                   </p>
                   <h1
                     className="mt-1 font-sans text-3xl font-semibold leading-tight"
                     id="tour-overview-title"
                   >
-                    Merchant activity at a glance
+                    {t("dashboard.page.overviewTitle")}
                   </h1>
                 </div>
                 <Link
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-ink bg-ink px-4 py-2 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
                   href="/tour?tab=invoices"
                 >
-                  Open invoices
+                  {t("dashboard.page.openInvoices")}
                 </Link>
               </header>
 
               <div
                 className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
-                aria-label="Merchant metrics"
+                aria-label={t("dashboard.page.metrics")}
               >
                 {overviewMetrics.map((item) => (
                   <Link
@@ -509,17 +503,17 @@ export default async function TourPage({
                         className="font-sans text-xl font-semibold"
                         id="recent-invoices-title"
                       >
-                        Recent invoices
+                        {t("dashboard.page.recentInvoices")}
                       </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Latest merchant invoices and their current status.
+                        {t("dashboard.page.recentInvoicesHelp")}
                       </p>
                     </div>
                     <Link
                       className="text-sm font-semibold text-ink underline underline-offset-4"
                       href="/tour?tab=invoices"
                     >
-                      View all
+                      {t("dashboard.page.viewAll")}
                     </Link>
                   </div>
                   <div className="mt-4">
@@ -549,7 +543,7 @@ export default async function TourPage({
                       ))
                     ) : (
                       <p className="text-sm text-ink-soft">
-                        No invoices created yet.
+                        {t("dashboard.page.noInvoices")}
                       </p>
                     )}
                   </div>
@@ -565,17 +559,17 @@ export default async function TourPage({
                         className="font-sans text-xl font-semibold"
                         id="recent-activity-title"
                       >
-                        Recent webhook deliveries
+                        {t("dashboard.page.recentDeliveries")}
                       </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Latest attempts to send invoice events to your configured endpoints.
+                        {t("dashboard.page.recentDeliveriesHelp")}
                       </p>
                     </div>
                     <Link
                       className="text-sm font-semibold text-ink underline underline-offset-4"
                       href="/tour?tab=webhooks&webhook_tab=history"
                     >
-                      History
+                      {t("dashboard.page.history")}
                     </Link>
                   </div>
                   <div className="mt-4">
@@ -604,7 +598,7 @@ export default async function TourPage({
                       ))
                     ) : (
                       <p className="text-sm text-ink-soft">
-                        No webhook delivery attempts recorded yet.
+                        {t("dashboard.page.noDeliveries")}
                       </p>
                     )}
                   </div>
@@ -614,14 +608,14 @@ export default async function TourPage({
               <div className="grid gap-4 sm:grid-cols-2">
                 <section className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft">
                   <p className="text-sm font-semibold text-ink-soft">
-                    System health
+                    {t("dashboard.page.navHealth")}
                   </p>
                   <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-                    <p className="font-sans text-xl font-semibold">Healthy</p>
-                    <StatusBadge label="Simulated" tone="success" />
+                    <p className="font-sans text-xl font-semibold">{t("dashboard.page.healthy")}</p>
+                    <StatusBadge label={t("tour.simulated")} tone="success" />
                   </div>
                   <p className="mt-2 text-sm text-ink-soft">
-                    Simulated payment observation services are available for this demo.
+                    {t("tour.healthHelp")}
                   </p>
                 </section>
                 <Link
@@ -629,15 +623,15 @@ export default async function TourPage({
                   href="/tour?tab=webhooks"
                 >
                   <p className="text-sm font-semibold text-ink-soft">
-                    Webhook endpoints
+                    {t("dashboard.page.endpoints")}
                   </p>
                   <p className="mt-2 font-sans text-xl font-semibold">
                     {fixture.webhooks.length === 0
-                      ? "No endpoints configured"
-                      : `${fixture.webhooks.length} endpoint${fixture.webhooks.length === 1 ? "" : "s"}`}
+                      ? t("dashboard.page.noEndpoints")
+                      : t("dashboard.page.endpointCount", { count: fixture.webhooks.length })}
                   </p>
                   <p className="mt-2 text-sm text-ink-soft">
-                    Review simulated destinations and delivery history.
+                    {t("tour.endpointsHelp")}
                   </p>
                 </Link>
               </div>
@@ -673,20 +667,19 @@ export default async function TourPage({
                     className="h-2 w-2 rounded-full bg-clay"
                     aria-hidden="true"
                   />
-                  Webhooks
+                  {t("dashboard.page.navWebhooks")}
                 </p>
                 <h1
                   className="mt-1 font-sans text-3xl font-semibold leading-tight"
                   id="tour-webhooks-title"
                 >
-                  Webhook endpoints
+                  {t("dashboard.page.endpoints")}
                 </h1>
                 <p className="mt-2 max-w-2xl text-ink-soft">
-                  Relay invoice state updates to your systems. Optional
-                  overrides let you target different URLs per event.
+                  {t("dashboard.page.webhooksHelp")}
                 </p>
               </header>
-              <nav className="flex flex-wrap gap-2" aria-label="Webhook views">
+              <nav className="flex flex-wrap gap-2" aria-label={t("dashboard.page.webhookViews")}>
                 {webhookTabs.map((tab) => (
                   <Link
                     key={tab}
@@ -696,7 +689,7 @@ export default async function TourPage({
                     }`}
                     href={`/tour?tab=webhooks&webhook_tab=${tab}`}
                   >
-                    {tab === "settings" ? "Endpoints" : "Delivery history"}
+                    {tab === "settings" ? t("tour.endpointsTab") : t("tour.historyTab")}
                   </Link>
                 ))}
               </nav>

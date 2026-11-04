@@ -9,9 +9,9 @@ test('simulation replaces scenarios consistently for zero, one and two confirmat
       const effective=target===0 && status==='payment_detected'?'confirmed':status;
       assert.equal(result.status,effective);
       assert.equal(result.confirmations,effective==='confirmed'?target:effective==='payment_detected'?Math.max(0,target-1):0);
-      assert.equal(result.timeline.some(e=>e.label==='Payment detected'),['payment_detected','confirmed'].includes(effective));
-      assert.equal(result.timeline.some(e=>e.label==='Payment confirmed'),effective==='confirmed');
-      assert.equal(result.timeline.some(e=>e.label==='Invoice expired'),effective==='expired');
+      assert.equal(result.timeline.some(e=>e.event==='detected'),['payment_detected','confirmed'].includes(effective));
+      assert.equal(result.timeline.some(e=>e.event==='confirmed'),effective==='confirmed');
+      assert.equal(result.timeline.some(e=>e.event==='expired'),effective==='expired');
       assert.deepEqual(result,simulatedInvoice(status,target,created));
     }
     assert.equal(simulatedInvoice('pending',target,created).timeline.length,1);

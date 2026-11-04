@@ -8,7 +8,7 @@ import { createTranslator, mergeMessages, splitRich } from '../lib/i18n/translat
 const root = new URL('..', import.meta.url).pathname;
 const load = (locale) => JSON.parse(readFileSync(join(root, 'messages', `${locale}.json`), 'utf8'));
 const en = load('en');
-const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr'), pt: load('pt'), it: load('it'), pl: load('pl') };
+const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr'), pt: load('pt'), it: load('it'), pl: load('pl'), zh: load('zh') };
 
 // Forbidden terms per DESIGN_PRINCIPLES.md §9 and messages/GLOSSARY.md.
 // Each entry is [pattern, allowed negation pattern or null].
@@ -20,6 +20,7 @@ const forbidden = {
   pt: [[/processador|intermediador\S* de pagamento/i, /não é um processador/i], [/liquida/i, null], [/repasse/i, null], [/\bsaque|\bsacar|retirada de fundos|retirar fundos/i, null], [/\bsaldo/i, null], [/empresa de pagamentos?/i, null]],
   it: [[/processore|elaboratore di pagament|prestatore di servizi di pagamento|istituto di pagamento/i, /non è un (?:processore|elaboratore)/i], [/liquidazion|\bregolament/i, null], [/\berogazion|accredit/i, null], [/prelie|prelev/i, null], [/\bsaldo/i, null], [/società di pagament/i, null], [/fattur/i, null]],
   pl: [[/procesor\S* płatno|operator\S* płatno|agent\S* rozliczeniow/i, /nie jest procesorem płatności/i], [/rozlicz/i, null], [/wypła[tc]/i, null], [/\bsald/i, null], [/(?:instytucj|firm)\S* płatnicz/i, null], [/faktur|rachun/i, null]],
+  zh: [[/处理商|处理器|支付处理|收单/, /不是支付处理商/], [/结算|清算/, null], [/提现|出款|打款|代付/, null], [/余额/, null], [/支付公司/, null], [/发票/, null]],
   fr: [[/processeur|prestataire de (?:services de )?paiement/i, /n['’]est pas un (?:processeur|prestataire)/i], [/règlement/i, null], [/versement/i, null], [/\bretrait|retirer/i, null], [/\bsolde/i, null], [/(?:société|entreprise) de paiement/i, null]],
 };
 
@@ -49,6 +50,7 @@ test('locale matching follows Accept-Language preference and falls back to Engli
   assert.equal(matchLocale('pt-BR,pt;q=0.9,en;q=0.8'), 'pt');
   assert.equal(matchLocale('it-IT,it;q=0.9,en;q=0.8'), 'it');
   assert.equal(matchLocale('pl-PL,pl;q=0.9,en;q=0.8'), 'pl');
+  assert.equal(matchLocale('zh-CN,zh;q=0.9,en;q=0.8'), 'zh');
 });
 
 test('translator interpolates, pluralizes, and falls back to English', () => {

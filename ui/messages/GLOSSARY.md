@@ -266,3 +266,46 @@ as is, and menu labels of wallets without a Polish interface (e.g.
 | saldo | "balance" implies held funds |
 | instytucja / firma płatnicza | "payments company" |
 | faktura, rachunek | formal tax documents in Poland (mandatory KSeF e-invoicing); *rachunek* also means a bank account |
+
+## Simplified Chinese (`zh`)
+
+Mainland Simplified Chinese, informal *你* throughout. "Merchant" is *商家*,
+"customer" is *顾客*. Use full-width punctuation (，。：；？！（）) in Chinese
+text, with a space between Chinese and Latin words or numbers (*12 位小数*,
+*XMR 账单*). *Webhook*, *API*, *URL*, *HTTPS* and code stay as is, and menu
+labels of wallets (e.g. *Settings → Wallet*) stay in English. Plural messages
+need only the `other` form.
+
+| English | Chinese |
+| --- | --- |
+| checkout | 结账 / 付款页面 (product name "XMR Checkout" stays as is) |
+| invoice | 账单 |
+| payment request | 付款请求 |
+| payment detected | 已检测到付款 |
+| confirmation / confirmation target | 确认 / 确认目标 |
+| view-only / view key | 只读 / 私有查看密钥 |
+| spend key / seed | 花费密钥 / 恢复助记词 |
+| wallet | 钱包 |
+| primary address / subaddress | 主地址 / 子地址 |
+| expired | 已过期 |
+| on-chain | 链上 |
+| fiat (reference) | 法币（参考） |
+| rate / quote | 汇率 / 报价 |
+| custody / non-custodial | 托管 / 非托管 |
+| reconciler | 对账服务 |
+| allowance | 限额 |
+| relay (events) | 转发 |
+| delivery (webhook) | 投递 |
+| endpoint | 端点 |
+| dashboard | 控制台 |
+| terminal | 收款终端 |
+| self-host | 自托管 |
+
+| Avoid (Chinese) | Why |
+| --- | --- |
+| 支付处理商, 处理器, 收单 | implies a payment processor or acquirer; allowed only as "不是支付处理商" |
+| 结算, 清算 | "settlement" (use 换算 for conversion, 结账 for checkout) |
+| 提现, 出款, 打款, 代付 | "payout" / withdrawal implies the service moves funds |
+| 余额 | "balance" implies held funds |
+| 支付公司 | "payments company" |
+| 发票 | a formal tax document (fapiao) in China; XMR Checkout does not issue one |

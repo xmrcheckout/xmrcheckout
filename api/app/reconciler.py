@@ -299,6 +299,26 @@ def _reconcile_invoice(
                 "received_atomic": total_atomic,
             },
         )
+        if invoice.status == "payment_detected":
+            # The detected payment is no longer observed (for example a
+            # double-spend or a transaction dropped from the pool). Fall back
+            # to the state the observed total implies; expiry below notifies.
+            logger.info(
+                "Invoice detected payment no longer observed",
+                extra={
+                    "invoice_id": str(invoice.id),
+                    "user_id": str(user.id),
+                    "received_atomic": total_atomic,
+                },
+            )
+            invoice.status = "partially_paid" if total_atomic > 0 else "pending"
+            invoice.detected_at = None
+            invoice.paid_after_expiry = False
+            invoice.paid_after_expiry_at = None
+            db.add(invoice)
+            db.commit()
+            if not is_after_expiry:
+                return True
         if invoice.status in ("pending", "partially_paid") and is_after_expiry:
             logger.info(
                 "Invoice expired",

@@ -239,5 +239,46 @@ class PartialPaymentAddressReuseTests(unittest.TestCase):
         )
 
 
+class VanishedPaymentTests(unittest.TestCase):
+    def setUp(self):
+        self.invoice = _pending_invoice("vanish", USER.id)
+        native, _ = _reconcile(self.invoice, [_transfer("tx", XMR)])
+        self.assertEqual(self.invoice.status, "payment_detected")
+        self.assertIsNotNone(self.invoice.detected_at)
+
+    def test_vanished_payment_after_expiry_expires_and_notifies(self):
+        self.invoice.expires_at = datetime.now(timezone.utc) - timedelta(days=5)
+        native, btcpay = _reconcile(self.invoice, [])
+        self.assertEqual(self.invoice.status, "expired")
+        self.assertEqual(self.invoice.total_paid_atomic, 0)
+        self.assertIsNone(self.invoice.detected_at)
+        self.assertEqual(native, ["invoice.expired"])
+        self.assertEqual(btcpay, ["InvoiceExpired"])
+
+    def test_vanished_payment_before_expiry_returns_to_pending_silently(self):
+        native, btcpay = _reconcile(self.invoice, [])
+        self.assertEqual(self.invoice.status, "pending")
+        self.assertIsNone(self.invoice.detected_at)
+        self.assertEqual((native, btcpay), ([], []))
+
+    def test_vanished_payment_leaving_smaller_transfer_is_partially_paid(self):
+        native, btcpay = _reconcile(self.invoice, [_transfer("small", XMR // 4)])
+        self.assertEqual(self.invoice.status, "partially_paid")
+        self.assertEqual(self.invoice.total_paid_atomic, XMR // 4)
+        self.assertEqual((native, btcpay), ([], []))
+
+    def test_reappearing_payment_is_detected_again(self):
+        _reconcile(self.invoice, [])
+        native, _ = _reconcile(self.invoice, [_transfer("tx", XMR)])
+        self.assertEqual(self.invoice.status, "payment_detected")
+        self.assertIsNotNone(self.invoice.detected_at)
+        self.assertEqual(native, ["invoice.payment_detected"])
+
+    def test_still_present_payment_stays_detected(self):
+        native, btcpay = _reconcile(self.invoice, [_transfer("tx", XMR)])
+        self.assertEqual(self.invoice.status, "payment_detected")
+        self.assertEqual((native, btcpay), ([], []))
+
+
 if __name__ == "__main__":
     unittest.main()

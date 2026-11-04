@@ -3,16 +3,18 @@ from __future__ import annotations
 import json
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from requests import RequestException
 from sqlalchemy.orm import Session
 
 from .formatting import format_xmr_amount, invoice_amounts
-from .models import Invoice, User, Webhook, WebhookDelivery
+from .btcpay_webhooks import event_allowed as btcpay_event_allowed, send_btcpay_webhook
+from .models import BtcpayWebhook, Invoice, User, Webhook, WebhookDelivery
 from .public_origin import public_origin
 from .security import decrypt_secret, encrypt_secret, generate_webhook_secret
 from .webhook_http import UnsafeWebhookUrl, post_webhook_with_redirects
+from .webhook_retry import next_attempt_time
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +47,37 @@ def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
     }
 
 
+def send_native_webhook(
+    url: str,
+    payload: dict[str, object],
+    webhook_secret: str | None,
+    *,
+    webhook_id: object = None,
+) -> tuple[int | None, str | None]:
+    """Make one delivery attempt and return (http_status, error_message)."""
+    body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if webhook_secret:
+        headers["X-Webhook-Secret"] = webhook_secret
+    try:
+        response = post_webhook_with_redirects(
+            url,
+            data=body,
+            headers=headers,
+            timeout=5,
+        )
+        if response is None:
+            raise RequestException("Webhook redirect limit exceeded")
+        return response.status_code, None
+    except (RequestException, UnsafeWebhookUrl) as exc:
+        logger.warning(
+            "Webhook delivery failed",
+            extra={"webhook_id": str(webhook_id), "event": payload.get("event")},
+        )
+        logger.debug("Webhook delivery error: %s", exc)
+        return None, str(exc)
+
+
 def dispatch_webhooks(
     db: Session,
     user_id: str,
@@ -64,7 +97,6 @@ def dispatch_webhooks(
     if user is not None:
         webhook_secret = _ensure_webhook_secret(db, user)
     payload = build_webhook_payload(event, invoice)
-    body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     deliveries: list[WebhookDelivery] = []
     user_uuid = uuid.UUID(user_id)
     for hook in hooks:
@@ -78,32 +110,14 @@ def dispatch_webhooks(
                 extra={"webhook_id": str(hook.id), "event": event},
             )
             continue
-        status_code = None
-        error_message = None
-        try:
-            headers = {"Content-Type": "application/json"}
-            if webhook_secret:
-                headers["X-Webhook-Secret"] = webhook_secret
-            response = post_webhook_with_redirects(
-                target_url,
-                data=body,
-                headers=headers,
-                timeout=5,
-            )
-            if response is None:
-                raise RequestException("Webhook redirect limit exceeded")
-            status_code = response.status_code
-        except (RequestException, UnsafeWebhookUrl) as exc:
-            error_message = str(exc)
-            logger.warning(
-                "Webhook delivery failed",
-                extra={"webhook_id": str(hook.id), "event": event},
-            )
-            logger.debug("Webhook delivery error: %s", exc)
+        status_code, error_message = send_native_webhook(
+            target_url, payload, webhook_secret, webhook_id=hook.id
+        )
         deliveries.append(
             WebhookDelivery(
                 user_id=user_uuid,
                 webhook_id=hook.id,
+                kind="native",
                 event=event,
                 url=target_url,
                 invoice_id=invoice.id,
@@ -114,6 +128,10 @@ def dispatch_webhooks(
                 payload_json=payload,
                 http_status=status_code,
                 error_message=error_message,
+                attempt=1,
+                next_attempt_at=next_attempt_time(
+                    1, status_code, datetime.now(timezone.utc)
+                ),
             )
         )
     if deliveries:
@@ -123,6 +141,130 @@ def dispatch_webhooks(
         except Exception as exc:
             db.rollback()
             logger.warning("Failed to save webhook delivery history", extra={"error": str(exc)})
+
+
+def retry_due_deliveries(
+    db: Session,
+    *,
+    now: datetime | None = None,
+    limit: int = 20,
+) -> int:
+    """Retry failed deliveries whose scheduled retry time has passed.
+
+    Each retry is recorded as a new delivery row, so the history shows every
+    attempt. Returns the number of retries sent.
+    """
+    now = now or datetime.now(timezone.utc)
+    due_ids = [
+        row.id
+        for row in (
+            db.query(WebhookDelivery.id)
+            .filter(
+                WebhookDelivery.next_attempt_at.isnot(None),
+                WebhookDelivery.next_attempt_at <= now,
+            )
+            .order_by(WebhookDelivery.next_attempt_at.asc())
+            .limit(limit)
+            .all()
+        )
+    ]
+    db.rollback()
+    sent = 0
+    for delivery_id in due_ids:
+        try:
+            if _retry_delivery(db, delivery_id, now):
+                sent += 1
+        except Exception as exc:
+            db.rollback()
+            logger.warning(
+                "Webhook retry failed",
+                extra={"delivery_id": str(delivery_id), "error": str(exc)},
+            )
+    return sent
+
+
+def _retry_delivery(db: Session, delivery_id: object, now: datetime) -> bool:
+    # Lock the row so a concurrent sweep or manual redelivery cannot send the
+    # same retry twice; the lock is held only for this one attempt.
+    delivery = (
+        db.query(WebhookDelivery)
+        .filter(
+            WebhookDelivery.id == delivery_id,
+            WebhookDelivery.next_attempt_at.isnot(None),
+            WebhookDelivery.next_attempt_at <= now,
+        )
+        .with_for_update(skip_locked=True)
+        .first()
+    )
+    if delivery is None:
+        db.rollback()
+        return False
+    delivery.next_attempt_at = None
+    payload = delivery.payload_json if isinstance(delivery.payload_json, dict) else None
+    if payload is None or delivery.webhook_id is None:
+        db.commit()
+        return False
+    if delivery.kind == "btcpay":
+        hook = (
+            db.query(BtcpayWebhook)
+            .filter(
+                BtcpayWebhook.id == delivery.webhook_id,
+                BtcpayWebhook.user_id == delivery.user_id,
+            )
+            .first()
+        )
+        if (
+            hook is None
+            or not hook.enabled
+            or not hook.automatic_redelivery
+            or not btcpay_event_allowed(hook.authorized_events, delivery.event)
+        ):
+            db.commit()
+            return False
+        status_code, error_message = send_btcpay_webhook(hook, delivery.url, payload)
+    else:
+        hook = (
+            db.query(Webhook)
+            .filter(
+                Webhook.id == delivery.webhook_id,
+                Webhook.user_id == delivery.user_id,
+            )
+            .first()
+        )
+        user = db.query(User).filter(User.id == delivery.user_id).first()
+        if hook is None or not hook.active or delivery.event not in (hook.events or []) or user is None:
+            db.commit()
+            return False
+        status_code, error_message = send_native_webhook(
+            delivery.url,
+            payload,
+            _ensure_webhook_secret(db, user),
+            webhook_id=hook.id,
+        )
+    attempt = (delivery.attempt or 1) + 1
+    db.add(
+        WebhookDelivery(
+            user_id=delivery.user_id,
+            webhook_id=delivery.webhook_id,
+            kind=delivery.kind,
+            event=delivery.event,
+            url=delivery.url,
+            invoice_id=delivery.invoice_id,
+            invoice_address=delivery.invoice_address,
+            invoice_subaddress_index=delivery.invoice_subaddress_index,
+            invoice_amount_xmr=delivery.invoice_amount_xmr,
+            invoice_status=delivery.invoice_status,
+            payload_json=payload,
+            http_status=status_code,
+            error_message=error_message,
+            attempt=attempt,
+            next_attempt_at=next_attempt_time(
+                attempt, status_code, datetime.now(timezone.utc)
+            ),
+        )
+    )
+    db.commit()
+    return True
 
 
 def _isoformat(value: datetime | None) -> str | None:

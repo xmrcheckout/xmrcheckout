@@ -1,6 +1,8 @@
 import unittest
+from datetime import datetime, timezone
 from types import SimpleNamespace
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock, patch
+from uuid import uuid4
 
 from requests import RequestException
 
@@ -8,25 +10,25 @@ from app import btcpay_webhooks
 from app.webhook_http import UnsafeWebhookUrl
 
 
-class BtcpayWebhookRetryTests(unittest.TestCase):
+class BtcpayWebhookDeliveryTests(unittest.TestCase):
     def setUp(self):
         self.hook = SimpleNamespace(
-            id="fixture-hook",
+            id=uuid4(),
             url="https://hooks.example.test/events",
             secret_encrypted="fixture-encrypted-secret",
             authorized_events={"everything": True},
+            automatic_redelivery=True,
         )
         self.db = Mock()
         self.db.query.return_value.filter.return_value.all.return_value = [self.hook]
-        self.invoice = SimpleNamespace(id="fixture-invoice")
+        self.invoice = SimpleNamespace(id=uuid4())
         self.post = self.patch("post_webhook_with_redirects")
         self.post.return_value = Mock(status_code=204)
-        self.sleep = self.patch("time.sleep")
         self.logger = self.patch("logger")
         self.patch("decrypt_secret").return_value = "fixture-secret"
         self.patch("_build_payload").return_value = {
             "type": "InvoiceProcessing",
-            "invoiceId": self.invoice.id,
+            "invoiceId": str(self.invoice.id),
             "timestamp": 123,
         }
 
@@ -37,100 +39,77 @@ class BtcpayWebhookRetryTests(unittest.TestCase):
 
     def dispatch(self):
         btcpay_webhooks.dispatch_btcpay_webhooks(
-            self.db, "fixture-user", "InvoiceProcessing", self.invoice
+            self.db, str(uuid4()), "InvoiceProcessing", self.invoice
         )
 
-    def test_success_is_not_retried(self):
+    def recorded(self):
+        return self.db.add_all.call_args.args[0]
+
+    def test_success_is_recorded_without_retry(self):
         self.dispatch()
 
         self.post.assert_called_once()
         self.assertEqual(self.post.call_args.kwargs["timeout"], 10)
-        self.sleep.assert_not_called()
+        [delivery] = self.recorded()
+        self.assertEqual(delivery.kind, "btcpay")
+        self.assertEqual(delivery.http_status, 204)
+        self.assertEqual(delivery.attempt, 1)
+        self.assertIsNone(delivery.next_attempt_at)
+        self.db.commit.assert_called_once()
 
-    def test_server_error_is_retried_with_same_payload_and_signature(self):
-        self.post.side_effect = [Mock(status_code=503), Mock(status_code=204)]
-
-        self.dispatch()
-
-        self.assertEqual(self.post.call_count, 2)
-        self.assertEqual(self.post.call_args_list[0], self.post.call_args_list[1])
-        self.sleep.assert_called_once_with(1.0)
-
-    def test_mixed_transient_failures_use_one_and_two_second_backoff(self):
-        self.post.side_effect = [
+    def test_failures_are_attempted_once_and_scheduled_for_retry(self):
+        before = datetime.now(timezone.utc)
+        for outcome in (
+            Mock(status_code=503),
+            Mock(status_code=400),
+            None,
             RequestException("fixture connection failure"),
-            Mock(status_code=502),
-            Mock(status_code=204),
-        ]
-
-        self.dispatch()
-
-        self.assertEqual(self.post.call_count, 3)
-        self.assertEqual(self.sleep.call_args_list, [call(1.0), call(2.0)])
-        self.logger.error.assert_not_called()
-
-    def test_persistent_server_error_stops_after_three_attempts(self):
-        self.post.return_value = Mock(status_code=503)
-
-        self.dispatch()
-
-        self.assertEqual(self.post.call_count, 3)
-        self.assertEqual(self.sleep.call_args_list, [call(1.0), call(2.0)])
-        self.logger.warning.assert_called_once()
-        self.assertEqual(self.logger.warning.call_args.kwargs["extra"]["http_status"], 503)
-
-    def test_network_failure_stops_after_three_attempts_and_logs_error(self):
-        self.post.side_effect = RequestException("fixture connection failure")
-
-        self.dispatch()
-
-        self.assertEqual(self.post.call_count, 3)
-        self.assertEqual(self.sleep.call_args_list, [call(1.0), call(2.0)])
-        self.logger.error.assert_called_once()
-
-    def test_client_errors_are_not_retried(self):
-        for status_code in (400, 401, 429):
-            with self.subTest(status_code=status_code):
-                self.post.reset_mock()
-                self.post.return_value = Mock(status_code=status_code)
+            UnsafeWebhookUrl("fixture blocked destination"),
+        ):
+            with self.subTest(outcome=outcome):
+                self.post.reset_mock(side_effect=True, return_value=True)
+                if isinstance(outcome, Exception):
+                    self.post.side_effect = outcome
+                else:
+                    self.post.return_value = outcome
 
                 self.dispatch()
 
                 self.post.assert_called_once()
-                self.sleep.assert_not_called()
+                [delivery] = self.recorded()
+                self.assertTrue(delivery.http_status is None or delivery.http_status >= 400)
+                self.assertGreater(delivery.next_attempt_at, before)
 
-    def test_redirect_failure_stops_after_three_attempts(self):
-        self.post.return_value = None
-
-        self.dispatch()
-
-        self.assertEqual(self.post.call_count, 3)
-        self.assertEqual(self.sleep.call_args_list, [call(1.0), call(2.0)])
-        self.logger.warning.assert_called_once()
-
-    def test_unsafe_destination_is_not_retried(self):
-        self.post.side_effect = UnsafeWebhookUrl("fixture blocked destination")
+    def test_automatic_redelivery_disabled_records_without_retry(self):
+        self.hook.automatic_redelivery = False
+        self.post.return_value = Mock(status_code=503)
 
         self.dispatch()
 
-        self.post.assert_called_once()
-        self.sleep.assert_not_called()
-        self.logger.warning.assert_called_once()
+        [delivery] = self.recorded()
+        self.assertEqual(delivery.http_status, 503)
+        self.assertIsNone(delivery.next_attempt_at)
 
-    def test_exhausted_hook_does_not_prevent_next_hook_delivery(self):
-        other = SimpleNamespace(**{**vars(self.hook), "id": "second-hook"})
+    def test_failed_hook_does_not_prevent_next_hook_delivery(self):
+        other = SimpleNamespace(**{**vars(self.hook), "id": uuid4()})
         self.db.query.return_value.filter.return_value.all.return_value = [self.hook, other]
         self.post.side_effect = [
-            RequestException("fixture connection failure"),
-            RequestException("fixture connection failure"),
             RequestException("fixture connection failure"),
             Mock(status_code=204),
         ]
 
         self.dispatch()
 
-        self.assertEqual(self.post.call_count, 4)
-        self.logger.error.assert_called_once()
+        self.assertEqual(self.post.call_count, 2)
+        self.assertEqual([d.http_status for d in self.recorded()], [None, 204])
+
+    def test_unauthorized_event_is_not_sent_or_recorded(self):
+        self.hook.authorized_events = {"specificEvents": ["InvoiceSettled"]}
+
+        self.dispatch()
+
+        self.post.assert_not_called()
+        self.db.add_all.assert_not_called()
 
 
 if __name__ == "__main__":

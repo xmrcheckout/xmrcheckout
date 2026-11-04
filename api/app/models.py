@@ -116,6 +116,11 @@ class WebhookDelivery(Base):
     payload_json = Column("payload", JSON, nullable=True)
     http_status = Column(Integer, nullable=True)
     error_message = Column(String, nullable=True)
+    # "native" deliveries reference webhooks.id; "btcpay" ones btcpay_webhooks.id.
+    kind = Column(String, nullable=False, default="native", server_default="native")
+    attempt = Column(Integer, nullable=False, default=1, server_default="1")
+    # Set only while an automatic retry of this failed attempt is pending.
+    next_attempt_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

@@ -25,7 +25,7 @@ from .db import SessionLocal, engine
 from .models import Invoice, InvoiceTransfer, SubaddressAllocation, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail, wallet_error_summary
 from .payment_timing import classify_payment_timing, effective_confirmations
-from .webhooks import dispatch_webhooks
+from .webhooks import dispatch_webhooks, retry_due_deliveries
 
 logger = logging.getLogger(__name__)
 MONERO_CONNECTIVITY_STATUS_NAME = "monero_connectivity"
@@ -99,7 +99,23 @@ def main() -> None:
         finally:
             if status_db is not None:
                 status_db.close()
+        _retry_webhook_deliveries()
         _wait_with_terminal_checks(service, INVOICE_RECONCILE_INTERVAL_SECONDS)
+
+
+def _retry_webhook_deliveries() -> None:
+    """Send due webhook retries; failures here never affect invoice detection."""
+    db: Session | None = None
+    try:
+        db = SessionLocal()
+        sent = retry_due_deliveries(db)
+        if sent:
+            logger.info("Retried webhook deliveries", extra={"retried": sent})
+    except Exception as exc:
+        logger.warning("Webhook retry sweep failed: %s", exc)
+    finally:
+        if db is not None:
+            db.close()
 
 
 def _wait_with_terminal_checks(service: MoneroWalletService, seconds: float) -> None:

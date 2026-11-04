@@ -777,7 +777,7 @@ def list_webhook_history(
         )
     return (
         db.query(WebhookDelivery)
-        .filter(WebhookDelivery.user_id == user.id)
+        .filter(WebhookDelivery.user_id == user.id, WebhookDelivery.kind == "native")
         .order_by(WebhookDelivery.created_at.desc())
         .limit(limit)
         .offset(offset)
@@ -802,7 +802,11 @@ def redeliver_webhook_delivery(
         )
     delivery = (
         db.query(WebhookDelivery)
-        .filter(WebhookDelivery.id == delivery_id, WebhookDelivery.user_id == user.id)
+        .filter(
+            WebhookDelivery.id == delivery_id,
+            WebhookDelivery.user_id == user.id,
+            WebhookDelivery.kind == "native",
+        )
         .first()
     )
     if delivery is None:
@@ -866,6 +870,8 @@ def redeliver_webhook_delivery(
         http_status=status_code,
         error_message=error_message,
     )
+    # An explicit redelivery replaces any pending automatic retry.
+    delivery.next_attempt_at = None
     db.add(redelivery)
     db.commit()
     db.refresh(redelivery)

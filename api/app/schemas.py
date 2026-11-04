@@ -299,6 +299,8 @@ class WebhookDeliveryResponse(BaseModel):
     invoice_status: InvoiceStatus | None = None
     http_status: int | None = None
     error_message: str | None = None
+    attempt: int = 1
+    next_attempt_at: datetime | None = None
     created_at: datetime
 
     @field_serializer("invoice_amount_xmr")

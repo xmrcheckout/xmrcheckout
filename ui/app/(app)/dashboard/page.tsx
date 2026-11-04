@@ -83,6 +83,8 @@ type WebhookDeliverySummary = {
   invoice_status: InvoiceStatus | null;
   http_status: number | null;
   error_message: string | null;
+  attempt?: number;
+  next_attempt_at?: string | null;
   created_at: string;
 };
 type ProfileSummary = {

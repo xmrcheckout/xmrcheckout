@@ -25,6 +25,8 @@ type WebhookDeliverySummary = {
   invoice_status: InvoiceStatus | null;
   http_status: number | null;
   error_message: string | null;
+  attempt?: number;
+  next_attempt_at?: string | null;
   created_at: string;
 };
 
@@ -125,7 +127,17 @@ export default function WebhookHistoryPanel({
                     </p>
                     <p className="mt-2 text-xs text-ink-soft">
                       {formatTimestamp(delivery.created_at)}
+                      {delivery.attempt && delivery.attempt > 1
+                        ? ` · ${t("webhooks.history.attempt", { attempt: delivery.attempt })}`
+                        : null}
                     </p>
+                    {delivery.next_attempt_at ? (
+                      <p className="mt-1 text-xs text-ink-soft">
+                        {t("webhooks.history.retryScheduled", {
+                          time: formatTimestamp(delivery.next_attempt_at),
+                        })}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge

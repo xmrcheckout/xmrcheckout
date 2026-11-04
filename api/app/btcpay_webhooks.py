@@ -5,17 +5,21 @@ import hmac
 import json
 import logging
 import time
+import uuid
+from datetime import datetime, timezone
+
 from requests import RequestException
 from sqlalchemy.orm import Session
 
 from .formatting import is_overpaid, is_partially_paid
-from .models import BtcpayWebhook, Invoice, InvoiceTransfer
+from .models import BtcpayWebhook, Invoice, InvoiceTransfer, WebhookDelivery
 from .payment_timing import is_payment_after_expiry
 from .security import decrypt_secret
 from .webhook_http import (
     UnsafeWebhookUrl,
     post_webhook_with_redirects,
 )
+from .webhook_retry import next_attempt_time
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +64,55 @@ def payment_observation_evidence(
     }
 
 
+def send_btcpay_webhook(
+    hook: BtcpayWebhook,
+    url: str,
+    payload: dict[str, object],
+) -> tuple[int | None, str | None]:
+    """Make one signed delivery attempt and return (http_status, error_message)."""
+    body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    try:
+        secret = decrypt_secret(hook.secret_encrypted)
+        headers = {
+            "BTCPay-Sig": f"sha256={_sign_payload(body, secret)}",
+            "Content-Type": "application/json",
+            "User-Agent": "xmrcheckout-btcpay-webhook/1.0",
+        }
+        response = post_webhook_with_redirects(
+            url,
+            data=body,
+            headers=headers,
+            timeout=10,
+        )
+        if response is None:
+            raise RequestException("Webhook redirect limit exceeded")
+        status_code = response.status_code
+    except (RequestException, UnsafeWebhookUrl) as exc:
+        logger.warning(
+            "BTCPay webhook delivery failed",
+            extra={"webhook_id": str(hook.id), "event": payload.get("type")},
+        )
+        logger.debug("BTCPay webhook delivery error: %s", exc)
+        return None, str(exc)
+    except Exception as exc:
+        logger.error(
+            "BTCPay webhook dispatch failed: %s",
+            exc,
+            extra={"webhook_id": str(hook.id), "event": payload.get("type")},
+        )
+        return None, "Webhook dispatch failed"
+    if status_code >= 400:
+        logger.warning(
+            "BTCPay webhook delivered non-success status",
+            extra={
+                "webhook_id": str(hook.id),
+                "event": payload.get("type"),
+                "http_status": status_code,
+            },
+        )
+    return status_code, None
+
+
 def dispatch_btcpay_webhooks(
     db: Session,
     user_id: str,
@@ -85,70 +138,46 @@ def dispatch_btcpay_webhooks(
         invoice=invoice,
         manually_marked=manually_marked,
     )
-    body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    deliveries: list[WebhookDelivery] = []
     for hook in hooks:
-        if not _event_allowed(hook.authorized_events, event_type):
+        if not event_allowed(hook.authorized_events, event_type):
             continue
+        status_code, error_message = send_btcpay_webhook(hook, hook.url, payload)
+        next_attempt_at = None
+        if getattr(hook, "automatic_redelivery", True):
+            next_attempt_at = next_attempt_time(1, status_code, datetime.now(timezone.utc))
+        deliveries.append(
+            WebhookDelivery(
+                user_id=uuid.UUID(str(user_id)),
+                webhook_id=hook.id,
+                kind="btcpay",
+                event=event_type,
+                url=hook.url,
+                invoice_id=invoice.id,
+                invoice_address=getattr(invoice, "address", None),
+                invoice_subaddress_index=getattr(invoice, "subaddress_index", None),
+                invoice_amount_xmr=getattr(invoice, "amount_xmr", None),
+                invoice_status=getattr(invoice, "status", None),
+                payload_json=payload,
+                http_status=status_code,
+                error_message=error_message,
+                attempt=1,
+                next_attempt_at=next_attempt_at,
+            )
+        )
+    if deliveries:
         try:
-            secret = decrypt_secret(hook.secret_encrypted)
-            signature = _sign_payload(body, secret)
-            headers = {
-                "BTCPay-Sig": f"sha256={signature}",
-                "Content-Type": "application/json",
-                "User-Agent": "xmrcheckout-btcpay-webhook/1.0",
-            }
-            # Retry up to 3 times with backoff on transient failures.
-            last_response = None
-            for attempt in range(3):
-                try:
-                    last_response = post_webhook_with_redirects(
-                        hook.url,
-                        data=body,
-                        headers=headers,
-                        timeout=10,
-                    )
-                    if last_response is not None and last_response.status_code < 500:
-                        break
-                except RequestException:
-                    if attempt == 2:
-                        raise
-                if attempt < 2:
-                    time.sleep(1.0 * (attempt + 1))
-            if last_response is None:
-                logger.warning(
-                    "BTCPay webhook delivery failed after retries (redirect loop)",
-                    extra={"webhook_id": str(hook.id), "event": event_type, "url": hook.url},
-                )
-                continue
-            if last_response.status_code >= 400:
-                logger.warning(
-                    "BTCPay webhook delivered non-success status",
-                    extra={
-                        "webhook_id": str(hook.id),
-                        "event": event_type,
-                        "http_status": last_response.status_code,
-                    },
-                )
-        except RequestException as exc:
-            logger.error(
-                "BTCPay webhook delivery failed after 3 attempts: %s",
-                exc,
-                extra={"webhook_id": str(hook.id), "event": event_type, "url": hook.url},
-            )
-        except UnsafeWebhookUrl:
-            logger.warning(
-                "BTCPay webhook delivery failed",
-                extra={"webhook_id": str(hook.id), "event": event_type},
-            )
+            db.add_all(deliveries)
+            db.commit()
         except Exception as exc:
-            logger.error(
-                "BTCPay webhook dispatch failed: %s",
-                exc,
-                extra={"webhook_id": str(hook.id), "event": event_type},
+            db.rollback()
+            logger.warning(
+                "Failed to save BTCPay webhook delivery history",
+                extra={"error": str(exc)},
             )
 
 
-def _event_allowed(authorized_events: object, event_type: str) -> bool:
+def event_allowed(authorized_events: object, event_type: str) -> bool:
     if not isinstance(authorized_events, dict):
         return False
     if authorized_events.get("everything") is True:

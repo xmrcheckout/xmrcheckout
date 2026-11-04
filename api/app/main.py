@@ -184,6 +184,10 @@ def startup():
                     "ADD COLUMN IF NOT EXISTS payload JSON"
                 )
             )
+            connection.execute(text("ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS kind VARCHAR NOT NULL DEFAULT 'native'"))
+            connection.execute(text("ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS attempt INTEGER NOT NULL DEFAULT 1"))
+            connection.execute(text("ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS next_attempt_at TIMESTAMP WITH TIME ZONE"))
+            connection.execute(text("CREATE INDEX IF NOT EXISTS ix_webhook_deliveries_next_attempt_at ON webhook_deliveries (next_attempt_at) WHERE next_attempt_at IS NOT NULL"))
             connection.execute(
                 text("ALTER TABLE users ADD COLUMN IF NOT EXISTS payment_address VARCHAR")
             )

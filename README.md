@@ -235,6 +235,14 @@ addresses. Loopback, private, link-local, and other special-use destinations
 are rejected, including at redirect hops. This restriction applies to both the
 native API and the BTCPay-compatible API.
 
+Failed webhook deliveries (no response or HTTP 400 and above) are recorded and
+retried automatically by the reconciler up to six times, after 1 minute,
+5 minutes, 30 minutes, 2 hours, 6 hours, and 24 hours. Each attempt appears as
+its own entry in webhook history, and a manual redelivery cancels the pending
+automatic retry. Retries stop if the webhook is deleted, disabled, or no longer
+subscribed to the event; BTCPay-compatible webhooks are retried only when
+`automaticRedelivery` is enabled.
+
 3. Choose a Monero daemon (`MONERO_DAEMON_URL` is required; the stack will not
    start without it):
 - The view-only wallet trusts the blocks the daemon reports. A hostile daemon, or

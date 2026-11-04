@@ -936,7 +936,7 @@
     "intro": "Ein gezielter Blick auf die Dienste, die Zahlungen beobachten und Rechnungsereignisse weiterleiten.",
     "refresh": "Zustand aktualisieren",
     "detectionStatus": "Erkennungsstatus",
-    "cycleOk": "Der letzte Erkennungszyklus wurde erfolgreich abgeschlossen.",
+    "cycleOk": "Ihre Rechnungen werden normal geprüft.",
     "cycleDegraded": "Einige Rechnungsprüfungen oder Dienstverbindungen erfordern Aufmerksamkeit.",
     "cycleNone": "Der Dienst hat noch keinen verwertbaren Erkennungszyklus gemeldet.",
     "walletRpc": "Wallet-RPC",
@@ -951,10 +951,10 @@
     "latestChecks": "Letzte Rechnungsprüfungen",
     "checksSuccessful": "{succeeded}/{attempted} erfolgreich",
     "failedChecks": {
-      "one": "{count} Rechnungsprüfung ist im letzten Zyklus fehlgeschlagen.",
-      "other": "{count} Rechnungsprüfungen sind im letzten Zyklus fehlgeschlagen."
+      "one": "{count} Ihrer Rechnungen wurde in den letzten Minuten nicht erfolgreich geprüft.",
+      "other": "{count} Ihrer Rechnungen wurden in den letzten Minuten nicht erfolgreich geprüft."
     },
-    "noFailures": "Im letzten Zyklus ist keine Rechnungsprüfung fehlgeschlagen.",
+    "noFailures": "Alle Ihre Rechnungen wurden in den letzten Minuten erfolgreich geprüft.",
     "zeroConfHint": "Bleibt eine Zahlung bei null Bestätigungen, vergleichen Sie diese Seite mit der Daemon-Höhe und dem öffentlichen Rechnungsstatus.",
     "lastError": "Letzter Erkennungsfehler: {error}"
   },

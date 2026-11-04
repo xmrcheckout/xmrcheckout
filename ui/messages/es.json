@@ -936,7 +936,7 @@
     "intro": "Una vista centrada en los servicios que observan los pagos y retransmiten los eventos de factura.",
     "refresh": "Actualizar estado",
     "detectionStatus": "Estado de la detección",
-    "cycleOk": "El último ciclo de detección se completó correctamente.",
+    "cycleOk": "Tus facturas se están comprobando con normalidad.",
     "cycleDegraded": "Algunas comprobaciones de facturas o conexiones de servicio requieren atención.",
     "cycleNone": "El servicio todavía no ha informado de un ciclo de detección utilizable.",
     "walletRpc": "RPC de la billetera",
@@ -951,10 +951,10 @@
     "latestChecks": "Últimas comprobaciones de facturas",
     "checksSuccessful": "{succeeded}/{attempted} correctas",
     "failedChecks": {
-      "one": "{count} comprobación de factura falló en el último ciclo.",
-      "other": "{count} comprobaciones de facturas fallaron en el último ciclo."
+      "one": "{count} de tus facturas no se ha comprobado correctamente en los últimos minutos.",
+      "other": "{count} de tus facturas no se han comprobado correctamente en los últimos minutos."
     },
-    "noFailures": "Ninguna comprobación de factura falló en el último ciclo.",
+    "noFailures": "Todas tus facturas se comprobaron correctamente en los últimos minutos.",
     "zeroConfHint": "Si un pago sigue con cero confirmaciones, compara esta página con la altura del daemon y el estado público de la factura.",
     "lastError": "Último error de detección: {error}"
   },

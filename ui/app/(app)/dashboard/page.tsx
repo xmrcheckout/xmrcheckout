@@ -331,12 +331,13 @@ export default async function DashboardPage({
     }
   }
   if (activeTab === "overview" || activeTab === "health") {
-    const response = await fetch(
-      `${apiBaseUrl}/api/core/public/system/status`,
-      {
-        cache: "no-store",
+    // Scoped to this merchant: other merchants' failed checks never show here.
+    const response = await fetch(`${apiBaseUrl}/api/core/system/status`, {
+      headers: {
+        Authorization: `ApiKey ${apiKey}`,
       },
-    );
+      cache: "no-store",
+    });
     if (response.ok) {
       systemStatus = (await response.json()) as SystemStatusSummary;
     }

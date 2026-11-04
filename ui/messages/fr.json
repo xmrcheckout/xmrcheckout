@@ -936,7 +936,7 @@
     "intro": "Une vue ciblée des services qui observent les paiements et relaient les événements de facture.",
     "refresh": "Actualiser l’état",
     "detectionStatus": "Statut de la détection",
-    "cycleOk": "Le dernier cycle de détection s’est terminé avec succès.",
+    "cycleOk": "Vos factures sont vérifiées normalement.",
     "cycleDegraded": "Certaines vérifications de facture ou connexions aux services nécessitent votre attention.",
     "cycleNone": "Le service n’a pas encore signalé de cycle de détection exploitable.",
     "walletRpc": "RPC du portefeuille",
@@ -951,10 +951,10 @@
     "latestChecks": "Dernières vérifications de facture",
     "checksSuccessful": "{succeeded}/{attempted} réussies",
     "failedChecks": {
-      "one": "{count} vérification de facture a échoué lors du dernier cycle.",
-      "other": "{count} vérifications de facture ont échoué lors du dernier cycle."
+      "one": "{count} de vos factures n’a pas été vérifiée avec succès au cours des dernières minutes.",
+      "other": "{count} de vos factures n’ont pas été vérifiées avec succès au cours des dernières minutes."
     },
-    "noFailures": "Aucune vérification de facture n’a échoué lors du dernier cycle.",
+    "noFailures": "Toutes vos factures ont été vérifiées avec succès au cours des dernières minutes.",
     "zeroConfHint": "Si un paiement reste à zéro confirmation, comparez cette page avec la hauteur du démon et le statut public de la facture.",
     "lastError": "Dernière erreur de détection : {error}"
   },

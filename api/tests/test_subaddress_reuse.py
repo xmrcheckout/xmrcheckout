@@ -13,11 +13,11 @@ from fastapi import HTTPException
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from app import reconciler, subaddress_allocator as allocator, subaddress_status as pool_status
+from app import invoice_checks, reconciler, routes, subaddress_allocator as allocator, subaddress_status as pool_status
 from app.config import DATABASE_URL
 from app.db import Base
 from app.invoice_limits import reserve_invoice_creation
-from app.models import Invoice, InvoiceTransfer, SubaddressAllocation, User
+from app.models import Invoice, InvoiceTransfer, SubaddressAllocation, SystemStatus, User
 from app.monero_service import MoneroWalletService, TransferDetail
 
 
@@ -244,13 +244,48 @@ class AllocationDatabaseTests(unittest.TestCase):
                 expired("checks-failing", timedelta(days=10), now - timedelta(days=10)),
                 expired("done", timedelta(days=10), now - timedelta(days=1)),
             ])
-        with self.Session() as db, patch.object(reconciler, "LATE_PAYMENT_LOOKBACK_HOURS", 48):
-            rows = db.query(Invoice).filter(reconciler._expired_invoice_needs_check(now=now)).all()
+        with self.Session() as db, patch.object(invoice_checks, "LATE_PAYMENT_LOOKBACK_HOURS", 48):
+            rows = db.query(Invoice).filter(invoice_checks.expired_invoice_needs_check(now=now)).all()
             self.assertEqual({row.address for row in rows}, {"in-window", "never-checked", "checks-failing"})
             failing = next(row for row in rows if row.address == "checks-failing")
             reconciler._record_successful_checks(db, [failing.id], now)
-            rows = db.query(Invoice).filter(reconciler._expired_invoice_needs_check(now=now)).all()
+            rows = db.query(Invoice).filter(invoice_checks.expired_invoice_needs_check(now=now)).all()
             self.assertEqual({row.address for row in rows}, {"in-window", "never-checked"})
+
+    def test_merchant_status_counts_only_own_invoices(self):
+        now = datetime.now(timezone.utc)
+        other_id = uuid4()
+
+        def invoice(user_id, name, last_checked_at, status="pending"):
+            return Invoice(id=uuid4(), user_id=user_id, address=name, amount_xmr=Decimal("1"),
+                           status=status, confirmation_target=1, created_at=now - timedelta(days=1),
+                           expires_at=now + timedelta(hours=1), last_checked_at=last_checked_at)
+
+        with self.Session.begin() as db:
+            db.add(User(id=other_id, payment_address="other", view_key_encrypted="view",
+                        api_key_hash="other-hash", api_key_encrypted="key"))
+            db.add(SystemStatus(name="reconciler", last_reconcile_started_at=now,
+                                last_reconcile_completed_at=now,
+                                last_reconcile_error="1 of 3 invoice checks failed",
+                                last_reconcile_attempted_invoices=3,
+                                last_reconcile_succeeded_invoices=2,
+                                last_reconcile_failed_invoices=1))
+            db.add_all([
+                invoice(self.user_id, "mine-fresh", now - timedelta(seconds=20)),
+                invoice(self.user_id, "mine-confirmed", now - timedelta(days=1), status="confirmed"),
+                # Another merchant whose wallet checks keep failing.
+                invoice(other_id, "other-stale", now - timedelta(hours=1)),
+                invoice(other_id, "other-fresh", now - timedelta(seconds=20)),
+            ])
+        with self.Session() as db:
+            mine = routes._merchant_system_status(db, db.get(User, self.user_id), now=now)
+            other = routes._merchant_system_status(db, db.get(User, other_id), now=now)
+        self.assertEqual(mine.reconciler, "ok")
+        self.assertEqual((mine.last_reconcile_attempted_invoices, mine.last_reconcile_failed_invoices), (1, 0))
+        self.assertIsNone(mine.last_reconcile_error)
+        self.assertEqual(other.reconciler, "degraded")
+        self.assertEqual((other.last_reconcile_attempted_invoices, other.last_reconcile_succeeded_invoices,
+                          other.last_reconcile_failed_invoices), (2, 1, 1))
 
 class AdditionalIsolationTests(unittest.TestCase):
     def test_newly_discovered_history_stays_excluded_after_reorg(self):

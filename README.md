@@ -353,10 +353,12 @@ down or degraded, invoices will not reliably advance even when wallet-rpc and
 the daemon are reachable. The public system-status endpoint reports attempted,
 successful, and failed invoice checks from the latest cycle.
 
-A failed check for one merchant marks the reconciler degraded on the dashboard,
-but buyers only see "Payment checking is delayed" when the reconciler is down or
-their own invoice has not been checked successfully for 5 minutes (each invoice
-records its last successful check). Expired invoices stay in the late-payment
+Each invoice records its last successful check. Buyers only see "Payment
+checking is delayed" when the reconciler is down or their own invoice has not
+been checked successfully for 5 minutes. The merchant dashboard uses the
+authenticated `GET /api/core/system/status`, which reports degraded and check
+counts for that merchant's invoices only; the public endpoint above still
+describes all merchants and is meant for operators. Expired invoices stay in the late-payment
 check set until one check succeeds after their late-payment window ends.
 
 ### Optional: Postgres backups (disabled by default)

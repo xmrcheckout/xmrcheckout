@@ -28,6 +28,7 @@ from .config import (
 )
 from .db import get_db
 from .formatting import atomic_to_xmr, format_xmr_amount, invoice_amounts
+from .invoice_checks import AWAITING_PAYMENT_STATUSES, check_is_delayed, watched_invoice_criteria
 from .invoice_limits import reserve_invoice_creation
 from .models import (
     Invoice,
@@ -195,7 +196,7 @@ def _invoice_checking_delayed(
     Only the reconciler being down or this invoice going unchecked counts, so
     one merchant's failing checks never show a delay to other merchants' buyers.
     """
-    if invoice.status not in ("pending", "partially_paid", "payment_detected"):
+    if invoice.status not in AWAITING_PAYMENT_STATUSES:
         return False
     current_time = now or datetime.now(timezone.utc)
     reconciler_status = (
@@ -203,14 +204,53 @@ def _invoice_checking_delayed(
     )
     if _reconciler_state(reconciler_status, now=current_time) == "unavailable":
         return True
-    reference = invoice.last_checked_at or invoice.created_at
-    if reference is None:
-        return True
-    if reference.tzinfo is None:
-        reference = reference.replace(tzinfo=timezone.utc)
-    # Generous margin: one full cycle across all merchants can take a while.
-    delayed_after_seconds = max(INVOICE_RECONCILE_INTERVAL_SECONDS * 10, 300)
-    return current_time - reference > timedelta(seconds=delayed_after_seconds)
+    return check_is_delayed(invoice.last_checked_at, invoice.created_at, now=current_time)
+
+
+def _merchant_system_status(
+    db: Session,
+    user: User,
+    *,
+    now: datetime | None = None,
+) -> SystemStatusResponse:
+    """System status as one merchant should see it.
+
+    Wallet-rpc, daemon and an unavailable reconciler are shared and shown as
+    they are. Degraded and the check counts cover only this merchant's watched
+    invoices, so other merchants' failures never show up here.
+    """
+    current_time = now or datetime.now(timezone.utc)
+    shared = _load_public_system_status(db)
+    watched = (
+        db.query(Invoice.last_checked_at, Invoice.created_at)
+        .filter(Invoice.user_id == user.id, watched_invoice_criteria(now=current_time))
+        .all()
+    )
+    delayed = sum(
+        1
+        for last_checked_at, created_at in watched
+        if check_is_delayed(last_checked_at, created_at, now=current_time)
+    )
+    checked_times = [row[0] for row in watched if row[0] is not None]
+    if shared.reconciler == "unavailable":
+        state = "unavailable"
+    elif delayed:
+        state = "degraded"
+    else:
+        state = "ok"
+    return shared.model_copy(
+        update={
+            "reconciler": state,
+            "last_reconcile_completed_at": (
+                max(checked_times) if checked_times else shared.last_reconcile_completed_at
+            ),
+            # The shared error text and counts describe all merchants.
+            "last_reconcile_error": None,
+            "last_reconcile_attempted_invoices": len(watched),
+            "last_reconcile_succeeded_invoices": len(watched) - delayed,
+            "last_reconcile_failed_invoices": delayed,
+        }
+    )
 
 
 def _load_public_system_status(db: Session) -> SystemStatusResponse:
@@ -703,6 +743,17 @@ def get_donation_status(
 @router.get("/api/core/public/system/status", response_model=SystemStatusResponse)
 def get_public_system_status(db: Session = Depends(get_db)):
     return _load_public_system_status(db)
+
+
+@router.get("/api/core/system/status", response_model=SystemStatusResponse)
+def get_merchant_system_status(
+    db: Session = Depends(get_db),
+    api_key: str = Depends(require_api_key),
+):
+    user = _get_user_for_api_key(db, api_key)
+    if user is None:
+        raise HTTPException(401, "User API key required")
+    return _merchant_system_status(db, user)
 
 
 @router.get(

@@ -952,7 +952,7 @@
     "intro": "Přehled služeb, které sledují platby a předávají události platebních výzev.",
     "refresh": "Obnovit stav",
     "detectionStatus": "Stav detekce",
-    "cycleOk": "Poslední cyklus detekce proběhl úspěšně.",
+    "cycleOk": "Vaše platební výzvy se kontrolují běžně.",
     "cycleDegraded": "Některé kontroly platebních výzev nebo připojení služeb vyžadují pozornost.",
     "cycleNone": "Služba zatím nehlásila použitelný cyklus detekce.",
     "walletRpc": "RPC peněženky",
@@ -967,12 +967,12 @@
     "latestChecks": "Poslední kontroly platebních výzev",
     "checksSuccessful": "Úspěšných {succeeded}/{attempted}",
     "failedChecks": {
-      "one": "V posledním cyklu selhala {count} kontrola platební výzvy.",
-      "few": "V posledním cyklu selhaly {count} kontroly platebních výzev.",
-      "many": "V posledním cyklu selhalo {count} kontroly platebních výzev.",
-      "other": "V posledním cyklu selhalo {count} kontrol platebních výzev."
+      "one": "Za posledních několik minut se nepodařilo zkontrolovat {count} z vašich platebních výzev.",
+      "few": "Za posledních několik minut se nepodařilo zkontrolovat {count} z vašich platebních výzev.",
+      "many": "Za posledních několik minut se nepodařilo zkontrolovat {count} z vašich platebních výzev.",
+      "other": "Za posledních několik minut se nepodařilo zkontrolovat {count} z vašich platebních výzev."
     },
-    "noFailures": "V posledním cyklu neselhala žádná kontrola platebních výzev.",
+    "noFailures": "Všechny vaše platební výzvy byly za posledních několik minut úspěšně zkontrolovány.",
     "zeroConfHint": "Pokud platba zůstává na nule potvrzení, porovnejte tuto stránku s výškou daemonu a veřejným stavem platební výzvy.",
     "lastError": "Poslední chyba detekce: {error}"
   },

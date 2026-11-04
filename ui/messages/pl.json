@@ -952,7 +952,7 @@
     "intro": "Skupiony widok usług, które obserwują płatności i przekazują zdarzenia próśb o płatność.",
     "refresh": "Odśwież stan",
     "detectionStatus": "Status wykrywania",
-    "cycleOk": "Ostatni cykl wykrywania zakończył się pomyślnie.",
+    "cycleOk": "Twoje prośby o płatność są sprawdzane normalnie.",
     "cycleDegraded": "Niektóre sprawdzenia próśb o płatność lub połączenia usług wymagają uwagi.",
     "cycleNone": "Usługa nie zgłosiła jeszcze żadnego użytecznego cyklu wykrywania.",
     "walletRpc": "RPC portfela",
@@ -967,12 +967,12 @@
     "latestChecks": "Ostatnie sprawdzenia próśb o płatność",
     "checksSuccessful": "Udane: {succeeded}/{attempted}",
     "failedChecks": {
-      "one": "W ostatnim cyklu nie powiodło się {count} sprawdzenie prośby o płatność.",
-      "few": "W ostatnim cyklu nie powiodły się {count} sprawdzenia próśb o płatność.",
-      "many": "W ostatnim cyklu nie powiodło się {count} sprawdzeń próśb o płatność.",
-      "other": "W ostatnim cyklu nie powiodło się {count} sprawdzenia próśb o płatność."
+      "one": "W ciągu ostatnich kilku minut nie udało się sprawdzić {count} z twoich próśb o płatność.",
+      "few": "W ciągu ostatnich kilku minut nie udało się sprawdzić {count} z twoich próśb o płatność.",
+      "many": "W ciągu ostatnich kilku minut nie udało się sprawdzić {count} z twoich próśb o płatność.",
+      "other": "W ciągu ostatnich kilku minut nie udało się sprawdzić {count} z twoich próśb o płatność."
     },
-    "noFailures": "W ostatnim cyklu wszystkie sprawdzenia próśb o płatność się powiodły.",
+    "noFailures": "Wszystkie twoje prośby o płatność zostały pomyślnie sprawdzone w ciągu ostatnich kilku minut.",
     "zeroConfHint": "Jeśli płatność pozostaje z zerem potwierdzeń, porównaj tę stronę z wysokością demona i publicznym statusem prośby o płatność.",
     "lastError": "Ostatni błąd wykrywania: {error}"
   },

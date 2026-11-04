@@ -936,7 +936,7 @@
     "intro": "A focused view of services that observe payments and relay invoice events.",
     "refresh": "Refresh health",
     "detectionStatus": "Detection status",
-    "cycleOk": "The latest detection cycle completed successfully.",
+    "cycleOk": "Your invoices are being checked normally.",
     "cycleDegraded": "Some invoice checks or service connections need attention.",
     "cycleNone": "The service has not reported a usable detection cycle yet.",
     "walletRpc": "Wallet RPC",
@@ -951,10 +951,10 @@
     "latestChecks": "Latest invoice checks",
     "checksSuccessful": "{succeeded}/{attempted} successful",
     "failedChecks": {
-      "one": "{count} invoice check failed in the latest cycle.",
-      "other": "{count} invoice checks failed in the latest cycle."
+      "one": "{count} of your invoices has not been checked successfully in the last few minutes.",
+      "other": "{count} of your invoices have not been checked successfully in the last few minutes."
     },
-    "noFailures": "No invoice checks failed in the latest cycle.",
+    "noFailures": "All of your invoices were checked successfully in the last few minutes.",
     "zeroConfHint": "If a payment remains at zero confirmations, compare this page with the daemon height and the public invoice status.",
     "lastError": "Last detection error: {error}"
   },

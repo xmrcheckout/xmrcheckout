@@ -936,7 +936,7 @@
     "intro": "Una vista mirata dei servizi che osservano i pagamenti e inoltrano gli eventi delle richieste di pagamento.",
     "refresh": "Aggiorna lo stato",
     "detectionStatus": "Stato del rilevamento",
-    "cycleOk": "L'ultimo ciclo di rilevamento è stato completato correttamente.",
+    "cycleOk": "Le tue richieste di pagamento vengono controllate normalmente.",
     "cycleDegraded": "Alcuni controlli delle richieste di pagamento o connessioni ai servizi richiedono attenzione.",
     "cycleNone": "Il servizio non ha ancora segnalato un ciclo di rilevamento utilizzabile.",
     "walletRpc": "RPC del portafoglio",
@@ -951,10 +951,10 @@
     "latestChecks": "Ultimi controlli delle richieste di pagamento",
     "checksSuccessful": "{succeeded}/{attempted} riusciti",
     "failedChecks": {
-      "one": "{count} controllo delle richieste di pagamento non è riuscito nell'ultimo ciclo.",
-      "other": "{count} controlli delle richieste di pagamento non sono riusciti nell'ultimo ciclo."
+      "one": "{count} delle tue richieste di pagamento non è stata controllata correttamente negli ultimi minuti.",
+      "other": "{count} delle tue richieste di pagamento non sono state controllate correttamente negli ultimi minuti."
     },
-    "noFailures": "Nessun controllo delle richieste di pagamento è fallito nell'ultimo ciclo.",
+    "noFailures": "Tutte le tue richieste di pagamento sono state controllate correttamente negli ultimi minuti.",
     "zeroConfHint": "Se un pagamento resta a zero conferme, confronta questa pagina con l'altezza del daemon e lo stato pubblico della richiesta di pagamento.",
     "lastError": "Ultimo errore di rilevamento: {error}"
   },

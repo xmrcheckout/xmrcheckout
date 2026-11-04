@@ -12,17 +12,17 @@ from decimal import Decimal, ROUND_DOWN
 from fastapi import HTTPException
 from monero.backends.jsonrpc.exceptions import RPCError
 from requests import RequestException
-from sqlalchemy import and_, or_, text
+from sqlalchemy import and_, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from .btcpay_webhooks import dispatch_btcpay_webhooks
 from .config import (
     INVOICE_RECONCILE_INTERVAL_SECONDS,
-    LATE_PAYMENT_LOOKBACK_HOURS,
     TERMINAL_RECONCILE_INTERVAL_SECONDS,
 )
 from .db import SessionLocal, engine
+from .invoice_checks import watched_invoice_criteria
 from .models import Invoice, InvoiceTransfer, SubaddressAllocation, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail, wallet_error_summary
 from .payment_timing import classify_payment_timing, effective_confirmations
@@ -163,10 +163,7 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
                 Invoice.created_at >= now - timedelta(hours=2),
             )
         else:
-            criteria = or_(
-                Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
-                _expired_invoice_needs_check(now=now),
-            )
+            criteria = watched_invoice_criteria(now=now)
         invoices = (
             db.query(Invoice)
             .filter(criteria)
@@ -749,26 +746,6 @@ def _xmr_to_atomic(amount: Decimal) -> int:
         rounding=ROUND_DOWN
     )
     return int(quantized)
-
-
-def _expired_invoice_needs_check(*, now: datetime):
-    """Expired invoices still watched for late payments.
-
-    An invoice stays in the set while it is inside its late-payment window, and
-    afterwards until one check has succeeded after the window ended. A merchant
-    whose checks keep failing, or a reconciler outage, therefore never causes a
-    late payment to be missed, and other merchants' sets stop growing.
-    """
-    lookback = timedelta(hours=max(0, LATE_PAYMENT_LOOKBACK_HOURS))
-    return and_(
-        Invoice.status == "expired",
-        Invoice.expires_at.is_not(None),
-        or_(
-            Invoice.expires_at >= now - lookback,
-            Invoice.last_checked_at.is_(None),
-            Invoice.last_checked_at < Invoice.expires_at + lookback,
-        ),
-    )
 
 
 if __name__ == "__main__":

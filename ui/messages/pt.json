@@ -936,7 +936,7 @@
     "intro": "Uma visão focada dos serviços que observam pagamentos e encaminham eventos de fatura.",
     "refresh": "Atualizar saúde",
     "detectionStatus": "Status da detecção",
-    "cycleOk": "O último ciclo de detecção foi concluído com sucesso.",
+    "cycleOk": "Suas faturas estão sendo verificadas normalmente.",
     "cycleDegraded": "Algumas verificações de fatura ou conexões de serviço precisam de atenção.",
     "cycleNone": "O serviço ainda não informou um ciclo de detecção utilizável.",
     "walletRpc": "RPC da carteira",
@@ -951,10 +951,10 @@
     "latestChecks": "Últimas verificações de fatura",
     "checksSuccessful": "{succeeded}/{attempted} bem-sucedidas",
     "failedChecks": {
-      "one": "{count} verificação de fatura falhou no último ciclo.",
-      "other": "{count} verificações de fatura falharam no último ciclo."
+      "one": "{count} das suas faturas não foi verificada com sucesso nos últimos minutos.",
+      "other": "{count} das suas faturas não foram verificadas com sucesso nos últimos minutos."
     },
-    "noFailures": "Nenhuma verificação de fatura falhou no último ciclo.",
+    "noFailures": "Todas as suas faturas foram verificadas com sucesso nos últimos minutos.",
     "zeroConfHint": "Se um pagamento continuar com zero confirmações, compare esta página com a altura do daemon e o status público da fatura.",
     "lastError": "Último erro de detecção: {error}"
   },

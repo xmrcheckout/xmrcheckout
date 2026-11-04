@@ -928,7 +928,7 @@
     "intro": "集中显示负责观测付款和转发账单事件的服务。",
     "refresh": "刷新状态",
     "detectionStatus": "检测状态",
-    "cycleOk": "最近一次检测周期已成功完成。",
+    "cycleOk": "你的账单检查正常。",
     "cycleDegraded": "部分账单检查或服务连接需要关注。",
     "cycleNone": "服务尚未报告可用的检测周期。",
     "walletRpc": "钱包 RPC",
@@ -943,9 +943,9 @@
     "latestChecks": "最近的账单检查",
     "checksSuccessful": "{succeeded}/{attempted} 成功",
     "failedChecks": {
-      "other": "最近一个周期中有 {count} 次账单检查失败。"
+      "other": "最近几分钟内，你有 {count} 个账单未能成功检查。"
     },
-    "noFailures": "最近一个周期中没有账单检查失败。",
+    "noFailures": "最近几分钟内，你的所有账单均已成功检查。",
     "zeroConfHint": "如果某笔付款一直停留在零确认，请将此页面与守护进程高度和公开账单状态进行比较。",
     "lastError": "上次检测错误：{error}"
   },

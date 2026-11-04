@@ -21,7 +21,7 @@ from sqlalchemy.orm import Session
 from .db import SessionLocal, get_db
 from .models import Invoice, PaymentLink, User
 from .routes import _get_user_for_api_key, create_invoice_for_merchant
-from .schemas import InvoiceCreateUser
+from .schemas import InvoiceCreateUser, check_amount_precision
 from .security import require_api_key
 from .public_origin import public_origin
 
@@ -114,11 +114,6 @@ class PaymentLinkInput(InvoiceCreateUser):
         return check_amount_precision(amount, "XMR" if info.field_name != "amount_fiat" else "fiat")
 
 
-def check_amount_precision(amount, currency):
-    precision = 12 if currency == "XMR" else 2
-    if not amount.is_finite() or amount >= Decimal("1000000") or amount != amount.quantize(Decimal(10) ** -precision):
-        raise ValueError("Amount is too large or has too many decimal places")
-    return amount
 
 
 

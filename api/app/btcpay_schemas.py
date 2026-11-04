@@ -12,6 +12,8 @@ from pydantic import (
     model_validator,
 )
 
+from .schemas import check_amount_precision
+
 
 class BtcpayCheckout(BaseModel):
     redirectURL: AnyUrl | None = None
@@ -34,6 +36,11 @@ class BtcpayInvoiceCreate(BaseModel):
     @classmethod
     def _normalize_currency(cls, value: str) -> str:
         return value.strip().upper()
+
+    @model_validator(mode="after")
+    def _amount_precision(self) -> "BtcpayInvoiceCreate":
+        check_amount_precision(self.amount, "XMR" if self.currency == "XMR" else "fiat")
+        return self
 
 
 class BtcpayWebhookEvents(BaseModel):

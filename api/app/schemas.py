@@ -23,6 +23,13 @@ BtcpayCheckoutStyle = Literal["standard", "btcpay_classic"]
 QrLogoMode = Literal["monero", "none", "custom"]
 
 
+def check_amount_precision(amount, currency):
+    precision = 12 if currency == "XMR" else 2
+    if not amount.is_finite() or amount >= Decimal("1000000") or amount != amount.quantize(Decimal(10) ** -precision):
+        raise ValueError("Amount is too large or has too many decimal places")
+    return amount
+
+
 class InvoiceCreate(BaseModel):
     amount_xmr: Decimal | None = Field(default=None, gt=0)
     amount_fiat: Decimal | None = Field(default=None, gt=0)
@@ -125,6 +132,13 @@ class InvoiceCreateUser(BaseModel):
         if value is None:
             return None
         return value.strip().upper()
+
+    @field_validator("amount_xmr", "amount_fiat")
+    @classmethod
+    def _amount_precision(cls, amount: Decimal | None, info) -> Decimal | None:
+        if amount is None:
+            return None
+        return check_amount_precision(amount, "XMR" if info.field_name == "amount_xmr" else "fiat")
 
     @model_validator(mode="after")
     def _validate_amounts(self) -> "InvoiceCreateUser":

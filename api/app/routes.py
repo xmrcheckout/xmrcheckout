@@ -481,6 +481,11 @@ def _resolve_invoice_amount(
     amount_xmr = (Decimal(requested_amount_fiat) / quote.rate).quantize(
         Decimal("0.000000000001"), rounding=ROUND_DOWN
     )
+    if amount_xmr <= 0:
+        raise HTTPException(
+            status_code=422,
+            detail="Amount is too small to convert to XMR",
+        )
     warnings = ["Fiat conversion is an estimate and does not lock a rate."]
     quote_payload = {
         "fiat_amount": str(requested_amount_fiat),

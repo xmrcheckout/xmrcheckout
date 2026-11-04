@@ -21,7 +21,7 @@ export default async function PaymentLinks() {
     fetch(`${base}/api/core/payment-links/status`, { headers, cache: "no-store" }).catch(() => null),
     fetch(`${base}/api/core/subaddresses/status`, { headers, cache: "no-store" }).catch(() => null),
   ]);
-  if (!response?.ok) return <section><h1 className="font-sans text-2xl font-semibold">Payment links</h1><p role="alert">Payment links are unavailable. Refresh to try again.</p></section>;
+  if (!response?.ok) return <section><h1 className="font-sans text-2xl font-semibold">{t("paymentLinks.title")}</h1><p role="alert">{t("paymentLinks.unavailable")}</p></section>;
   const usage = usageResponse?.ok ? await usageResponse.json() : null;
   const addressStatus = addressResponse?.ok ? await addressResponse.json() : null;
   const currencies: string[] | null = usage?.supported_currencies ?? null;
@@ -30,49 +30,49 @@ export default async function PaymentLinks() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost";
   const codeClass = "overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream";
   return <section className="grid min-w-0 gap-6">
-    <div><h1 className="font-sans text-2xl font-semibold sm:text-3xl">Payment links</h1>
-      <p className="mt-2 text-ink-soft">Create a reusable button for a product, service, or donation. Each submission creates a separate XMR invoice paid directly to your wallet.</p>
-      <p className="mt-2 text-sm text-ink-soft">Public invoice creation has a daily allowance and shares your address capacity. Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.</p>
-      <p className="mt-2 text-sm text-ink-soft">For contributions, use a title such as “Support my project”, set Button text to “Donate with Monero”, and choose “Customer enters the amount” so donors type their own amount. Recurring collection is not supported.</p>
-      <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Payment link setup guide</Link></p>
+    <div><h1 className="font-sans text-2xl font-semibold sm:text-3xl">{t("paymentLinks.title")}</h1>
+      <p className="mt-2 text-ink-soft">{t("paymentLinks.intro")}</p>
+      <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.allowanceNote")}</p>
+      <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.donationTip")}</p>
+      <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">{t("paymentLinks.guide")}</Link></p>
     </div>
     <section aria-labelledby="accept-monero-title" className="grid min-w-0 gap-4 rounded-2xl border border-stroke p-5">
-      <h2 id="accept-monero-title" className="text-xl font-semibold">Show that you accept Monero</h2>
-      <p className="text-sm text-ink-soft">Add a badge to your website so visitors know they can pay with Monero. The badge is a plain image hosted on this site; it carries no tracking or account details. Each payment link below also has a printable sign with a QR code for a counter, stall, or donation box.</p>
+      <h2 id="accept-monero-title" className="text-xl font-semibold">{t("paymentLinks.acceptTitle")}</h2>
+      <p className="text-sm text-ink-soft">{t("paymentLinks.badgeIntro")}</p>
       {(["dark", "light"] as const).map(variant => <div key={variant} className="grid min-w-0 gap-3">
-        <p>{variant === "dark" ? "Dark badge (for light backgrounds)" : "Light badge (for dark backgrounds)"}</p>
+        <p>{variant === "dark" ? t("paymentLinks.darkBadge") : t("paymentLinks.lightBadge")}</p>
         <div className={`grid min-w-0 justify-items-start rounded-xl border border-stroke p-4 ${variant === "dark" ? "bg-white/50" : "bg-ink"}`}>
-          <Image src={new URL(badgeImageUrl(siteUrl, variant)).pathname} alt="Monero accepted here" width={320} height={80} unoptimized className="h-auto max-w-full" />
+          <Image src={new URL(badgeImageUrl(siteUrl, variant)).pathname} alt={t("paymentLinks.badgeAlt")} width={320} height={80} unoptimized className="h-auto max-w-full" />
         </div>
-        <CopyCodeBlock className={codeClass} label={`${variant === "dark" ? "Dark" : "Light"} badge HTML`}>{badgeHtml(siteUrl, variant)}</CopyCodeBlock>
+        <CopyCodeBlock className={codeClass} label={variant === "dark" ? t("paymentLinks.darkBadgeHtml") : t("paymentLinks.lightBadgeHtml")}>{badgeHtml(siteUrl, variant)}</CopyCodeBlock>
       </div>)}
     </section>
-    <section aria-label="Public invoice allowance" className="rounded-2xl border border-stroke p-5">
-      <h3 className="text-xl font-semibold">Public invoice allowance</h3>
-      {usage ? <><p className="mt-3">{usage.remaining} remaining · {usage.used} used · Limit {usage.daily_limit} per rolling {usage.window_hours} hours</p><p className="mt-2 break-words text-sm">Status retrieved: <time dateTime={usage.retrieved_at}>{utcTimestamp(usage.retrieved_at, t)}</time></p></> : <p role="status">Allowance unavailable. Refresh to try again.</p>}
-      <p className="my-3 text-sm">Allowance and address capacity are shared across your payment links. These snapshots do not reserve capacity.</p>
-      <StatusRefreshButton label="Refresh allowance and addresses" />
+    <section aria-label={t("paymentLinks.allowance")} className="rounded-2xl border border-stroke p-5">
+      <h3 className="text-xl font-semibold">{t("paymentLinks.allowance")}</h3>
+      {usage ? <><p className="mt-3">{t("paymentLinks.allowanceSummary", { remaining: usage.remaining, used: usage.used, limit: usage.daily_limit, hours: usage.window_hours })}</p><p className="mt-2 break-words text-sm">{t("refresh.retrieved")} <time dateTime={usage.retrieved_at}>{utcTimestamp(usage.retrieved_at, t)}</time></p></> : <p role="status">{t("paymentLinks.allowanceUnavailable")}</p>}
+      <p className="my-3 text-sm">{t("paymentLinks.sharedNote")}</p>
+      <StatusRefreshButton label={t("paymentLinks.refreshAllowance")} />
     </section>
     <InvoiceAddressAvailability status={addressStatus} showRefresh={false} compact={Boolean(addressStatus && addressStatus.counts.never_issued + addressStatus.counts.eligible_for_reuse > 0 && addressStatus.counts.needs_review === 0 && addressStatus.snapshot?.outcome !== "failed")} />
-    <details className="rounded-2xl border border-stroke p-5"><summary className="min-h-11 cursor-pointer font-semibold">Create payment link</summary><PaymentLinkEditor currencies={currencies} defaultTarget={target} /></details>
-    {links.length === 0 ? <p>No payment links yet.</p> : links.map(link => <article key={link.id} className="grid min-w-0 gap-4 rounded-2xl border border-stroke p-5">
-      <h3 className="break-words text-xl font-semibold">{link.title} · {link.enabled ? "Enabled" : "Disabled"}</h3>
-      <p>{link.customer_amount ? `Customer-entered amount${link.minimum_amount_xmr ? ` · minimum ${formatXmrAmount(link.minimum_amount_xmr)} XMR` : ""}` : link.amount_xmr ? `${link.amount_xmr} XMR` : `${link.amount_fiat} ${link.currency} reference`}</p>
-      <p>Reusable link</p><CopyCodeBlock className={codeClass}>{link.url}</CopyCodeBlock>
+    <details className="rounded-2xl border border-stroke p-5"><summary className="min-h-11 cursor-pointer font-semibold">{t("paymentLinks.create")}</summary><PaymentLinkEditor currencies={currencies} defaultTarget={target} /></details>
+    {links.length === 0 ? <p>{t("paymentLinks.none")}</p> : links.map(link => <article key={link.id} className="grid min-w-0 gap-4 rounded-2xl border border-stroke p-5">
+      <h3 className="break-words text-xl font-semibold">{link.title} · {link.enabled ? t("terminals.enabled") : t("terminals.disabled")}</h3>
+      <p>{link.customer_amount ? `${t("paymentLinks.customerAmount")}${link.minimum_amount_xmr ? ` · ${t("paymentLinks.minimum", { amount: formatXmrAmount(link.minimum_amount_xmr) })}` : ""}` : link.amount_xmr ? `${link.amount_xmr} XMR` : t("paymentLink.fiatReference", { amount: link.amount_fiat ?? "", currency: link.currency ?? "" })}</p>
+      <p>{t("paymentLinks.reusable")}</p><CopyCodeBlock className={codeClass}>{link.url}</CopyCodeBlock>
       <div className="grid min-w-0 gap-3">
-        <p>HTML button</p>
+        <p>{t("paymentLinks.htmlButton")}</p>
         <div className="grid min-w-0 justify-items-start gap-3 rounded-xl border border-stroke bg-white/50 p-4">
-          <p className="text-sm text-ink-soft">Button preview</p>
+          <p className="text-sm text-ink-soft">{t("paymentLinks.buttonPreview")}</p>
           <a href={link.url} className="inline-block max-w-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay">
-            <Image src={paymentButtonImageUrl(link.url, link.button_text)} alt={`${link.button_text} via xmrcheckout`} width={280} height={80} unoptimized className="h-auto max-w-full" />
+            <Image src={paymentButtonImageUrl(link.url, link.button_text)} alt={t("paymentLinks.buttonAlt", { text: link.button_text })} width={280} height={80} unoptimized className="h-auto max-w-full" />
           </a>
-          <p className="text-sm text-ink-soft">{link.auto_create_invoice ? "Creates an invoice automatically when opened." : "Opens the payment review page."}</p>
+          <p className="text-sm text-ink-soft">{link.auto_create_invoice ? t("paymentLinks.autoCreates") : t("paymentLinks.opensReview")}</p>
         </div>
         <CopyCodeBlock className={codeClass}>{paymentButtonHtml(link.url, link.button_text)}</CopyCodeBlock>
       </div>
-      <p className="text-sm text-ink-soft">Paste into an HTML block on your website. {link.auto_create_invoice ? "Opening the graphic automatically requests an invoice." : "The graphic links to the payment review page; the customer creates an invoice from there."} No form or JavaScript is needed. You can also attach the reusable link to your own button.</p>
-      <p><Link className="font-semibold underline decoration-clay underline-offset-4" href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>Printable sign with QR code</Link></p>
-      <details><summary className="min-h-11 cursor-pointer font-semibold">Edit settings</summary><PaymentLinkEditor currencies={currencies} link={link} /></details>
+      <p className="text-sm text-ink-soft">{t("paymentLinks.pasteHtml", { behavior: link.auto_create_invoice ? t("paymentLinks.graphicAuto") : t("paymentLinks.graphicReview") })}</p>
+      <p><Link className="font-semibold underline decoration-clay underline-offset-4" href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>{t("paymentLinks.printable")}</Link></p>
+      <details><summary className="min-h-11 cursor-pointer font-semibold">{t("paymentLinks.editSettings")}</summary><PaymentLinkEditor currencies={currencies} link={link} /></details>
     </article>)}
   </section>;
 }

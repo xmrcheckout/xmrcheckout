@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { dashboardDestination } from "../../../lib/wallet-connection";
+import { getI18n } from "../../../lib/i18n/server";
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
@@ -14,11 +15,12 @@ export async function loginAction(
   _prevState: LoginState,
   formData: FormData
 ): Promise<LoginState> {
+  const { t } = await getI18n();
   const paymentAddress = String(formData.get("payment_address") ?? "").trim();
   const viewKey = String(formData.get("view_key") ?? "").trim();
 
   if (!paymentAddress || !viewKey) {
-    return { error: "Primary address and private view key are required." };
+    return { error: t("login.required") };
   }
 
   const response = await fetch(`${apiBaseUrl}/api/core/auth/login`, {
@@ -30,7 +32,7 @@ export async function loginAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to connect.";
+    const message = detail?.detail ?? t("login.unableToConnect");
     return { error: message };
   }
 

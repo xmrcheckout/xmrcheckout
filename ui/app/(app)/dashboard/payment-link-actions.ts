@@ -2,13 +2,15 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { getI18n } from "../../../lib/i18n/server";
 
-export type PaymentLinkState = { error: string; success: string; fieldErrors: Record<string, string> };
+export type PaymentLinkState = { error: string; success: string; fieldErrors: Record<string, string>; disabled?: boolean };
 const fields: Record<string, string> = { title: "title", description: "description", button_text: "button_text", amount_xmr: "amount", amount_fiat: "amount", currency: "currency", confirmation_target: "confirmation_target", checkout_continue_url: "checkout_continue_url", confirmation_message: "confirmation_message", minimum_amount_xmr: "minimum_amount_xmr" };
 export async function savePaymentLink(_state: PaymentLinkState, form: FormData): Promise<PaymentLinkState> {
+  const { t } = await getI18n();
   const fieldErrors: Record<string, string> = {};
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
-  if (!apiKey) return { error: "Connect before saving a payment link.", success: "", fieldErrors };
+  if (!apiKey) return { error: t("dashboard.paymentLinkActions.connectFirst"), success: "", fieldErrors };
   const id = String(form.get("id") ?? "");
   const currency = String(form.get("currency") ?? "XMR");
   const disabling = form.get("mode") === "disable" && !!id;
@@ -33,14 +35,14 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
       const data = await response.json().catch(() => null);
       if (Array.isArray(data?.detail)) for (const issue of data.detail) {
         const field = Array.isArray(issue.loc) ? issue.loc.findLast((part: string) => Object.hasOwn(fields, part)) : null;
-        if (field && !fieldErrors[fields[field]]) fieldErrors[fields[field]] = typeof issue.msg === "string" ? issue.msg.replace(/^Value error, /, "") : "Check this field.";
+        if (field && !fieldErrors[fields[field]]) fieldErrors[fields[field]] = typeof issue.msg === "string" ? issue.msg.replace(/^Value error, /, "") : t("dashboard.paymentLinkActions.checkField");
       }
       const general = Array.isArray(data?.detail) && Object.keys(fieldErrors).length === 0 && typeof data.detail[0]?.msg === "string" ? data.detail[0].msg.replace(/^Value error, /, "") : null;
-      return { error: typeof data?.detail === "string" ? data.detail : general ?? "Check the highlighted fields and payment-link settings.", success: "", fieldErrors };
+      return { error: typeof data?.detail === "string" ? data.detail : general ?? t("dashboard.paymentLinkActions.checkFields"), success: "", fieldErrors };
     }
     revalidatePath("/dashboard");
-    return { error: "", success: disabling ? "Payment link disabled." : "Payment link saved. Your copyable link and button are listed below.", fieldErrors };
+    return { error: "", success: disabling ? t("dashboard.paymentLinkActions.disabled") : t("dashboard.paymentLinkActions.saved"), fieldErrors, disabled: disabling };
   } catch {
-    return { error: "Could not confirm saving. Check the payment-link list before trying again.", success: "", fieldErrors };
+    return { error: t("dashboard.paymentLinkActions.notConfirmed"), success: "", fieldErrors };
   }
 }

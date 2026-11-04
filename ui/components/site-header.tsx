@@ -5,6 +5,7 @@ import { logoutAction } from "../app/(app)/dashboard/actions";
 import { LoginTrigger } from "./login-modal";
 import MobileNav from "./mobile-nav";
 import NavLink from "./nav-link";
+import { getI18n } from "../lib/i18n/server";
 
 type SiteHeaderProps = {
   isAuthenticated: boolean;
@@ -12,19 +13,20 @@ type SiteHeaderProps = {
   donationsEnabled?: boolean;
 };
 
-export default function SiteHeader({
+export default async function SiteHeader({
   isAuthenticated,
   includeTour = false,
   donationsEnabled = false,
 }: SiteHeaderProps) {
+  const { t } = await getI18n();
   const links = [
-    { href: "/invoice", label: "Check Invoice" },
-    ...(includeTour ? [{ href: "/tour", label: "Demo" }] : []),
-    { href: "/docs", label: "Documentation" },
-    { href: "/guides", label: "Guides" },
-    { href: "/faq", label: "FAQ" },
-    ...(donationsEnabled ? [{ href: "/donate", label: "Donate" }] : []),
-    ...(isAuthenticated ? [{ href: "/dashboard", label: "Dashboard" }] : []),
+    { href: "/invoice", label: t("nav.checkInvoice") },
+    ...(includeTour ? [{ href: "/tour", label: t("nav.demo") }] : []),
+    { href: "/docs", label: t("nav.docs") },
+    { href: "/guides", label: t("nav.guides") },
+    { href: "/faq", label: t("nav.faq") },
+    ...(donationsEnabled ? [{ href: "/donate", label: t("footer.donate") }] : []),
+    ...(isAuthenticated ? [{ href: "/dashboard", label: t("nav.dashboard") }] : []),
   ];
 
   const renderNavigation = () => (
@@ -36,10 +38,10 @@ export default function SiteHeader({
       ))}
       {isAuthenticated ? (
         <form action={logoutAction}>
-          <button type="submit">Log out</button>
+          <button type="submit">{t("nav.logout")}</button>
         </form>
       ) : (
-        <LoginTrigger className="nav-primary">Connect view-only wallet</LoginTrigger>
+        <LoginTrigger className="nav-primary">{t("nav.connect")}</LoginTrigger>
       )}
     </>
   );
@@ -47,11 +49,11 @@ export default function SiteHeader({
   return (
     <header className="site-header">
       <div className="brand">
-        <Link href="/" aria-label="XMR Checkout home">
+        <Link href="/" aria-label={t("nav.homeLabel")}>
           <Image
             className="brand-logo"
             src="/logo.png"
-            alt="XMR Checkout logo"
+            alt={t("nav.logoAlt")}
             width={128}
             height={128}
             priority
@@ -61,7 +63,7 @@ export default function SiteHeader({
           XMR Checkout
         </Link>
       </div>
-      <nav className="nav desktop-nav" aria-label="Primary navigation">
+      <nav className="nav desktop-nav" aria-label={t("nav.primary")}>
         {renderNavigation()}
       </nav>
       <MobileNav>{renderNavigation()}</MobileNav>

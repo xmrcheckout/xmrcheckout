@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getI18n } from "../../../lib/i18n/server";
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
@@ -76,14 +77,13 @@ export type WebhookRedeliverState = {
   success: string | null;
 };
 
-const tourNoopMessage = "Demo mode only: no changes are saved.";
-
 export async function createInvoiceTourAction(
   _prevState: InvoiceState,
   _formData: FormData
 ): Promise<InvoiceState> {
+  const { t } = await getI18n();
   return {
-    error: tourNoopMessage,
+    error: t("dashboard.actions.tourNoop"),
     invoiceId: null,
     address: null,
     amount: null,
@@ -98,10 +98,11 @@ export async function archiveInvoiceTourAction(
   _prevState: ArchiveInvoiceState,
   formData: FormData
 ): Promise<ArchiveInvoiceState> {
+  const { t } = await getI18n();
   const archivedId = String(formData.get("invoice_id") ?? "").trim() || null;
   return {
     error: null,
-    success: tourNoopMessage,
+    success: t("dashboard.actions.tourNoop"),
     archivedId,
   };
 }
@@ -110,21 +111,24 @@ export async function createWebhookTourAction(
   _prevState: WebhookFormState,
   _formData: FormData
 ): Promise<WebhookFormState> {
-  return { error: null, success: tourNoopMessage };
+  const { t } = await getI18n();
+  return { error: null, success: t("dashboard.actions.tourNoop") };
 }
 
 export async function deleteWebhookTourAction(
   _prevState: WebhookFormState,
   _formData: FormData
 ): Promise<WebhookFormState> {
-  return { error: null, success: tourNoopMessage };
+  const { t } = await getI18n();
+  return { error: null, success: t("dashboard.actions.tourNoop") };
 }
 
 export async function redeliverWebhookDeliveryTourAction(
   _prevState: WebhookRedeliverState,
   _formData: FormData
 ): Promise<WebhookRedeliverState> {
-  return { error: null, success: tourNoopMessage };
+  const { t } = await getI18n();
+  return { error: null, success: t("dashboard.actions.tourNoop") };
 }
 
 const webhookEventKeys = [
@@ -139,6 +143,7 @@ export async function createInvoiceAction(
   _prevState: InvoiceState,
   formData: FormData
 ): Promise<InvoiceState> {
+  const { t } = await getI18n();
   const amountMode = String(formData.get("amount_mode") ?? "xmr").trim();
   const isFiat = amountMode === "fiat";
   const instantConfirmation = formData.get("instant_confirmation") === "1";
@@ -150,7 +155,7 @@ export async function createInvoiceAction(
     const parsed = Number(confirmationRaw);
     if (Number.isNaN(parsed) || parsed < 0 || parsed > 10) {
       return {
-        error: "Confirmation target must be between 0 and 10.",
+        error: t("dashboard.actions.targetRange"),
         invoiceId: null,
         address: null,
         amount: null,
@@ -168,7 +173,7 @@ export async function createInvoiceAction(
   const amount = Number(amountRaw);
   if (Number.isNaN(amount) || amount <= 0) {
     return {
-      error: isFiat ? "Enter a valid fiat amount." : "Enter a valid XMR amount.",
+      error: isFiat ? t("dashboard.actions.invalidFiat") : t("donate.invalidAmount"),
       invoiceId: null,
       address: null,
       amount: null,
@@ -181,7 +186,7 @@ export async function createInvoiceAction(
   const currency = String(formData.get("currency") ?? "").trim().toUpperCase();
   if (isFiat && !currency) {
     return {
-      error: "Currency is required when using a fiat amount.",
+      error: t("dashboard.actions.currencyRequired"),
       invoiceId: null,
       address: null,
       amount: null,
@@ -201,7 +206,7 @@ export async function createInvoiceAction(
         parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
       if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && isLocalhost)) {
         return {
-          error: "Continue URL must use https (http is allowed for localhost).",
+          error: t("dashboard.actions.continueHttps"),
           invoiceId: null,
           address: null,
           amount: null,
@@ -213,7 +218,7 @@ export async function createInvoiceAction(
       }
     } catch {
       return {
-        error: "Continue URL must be a valid URL.",
+        error: t("dashboard.actions.continueInvalid"),
         invoiceId: null,
         address: null,
         amount: null,
@@ -230,7 +235,7 @@ export async function createInvoiceAction(
   let expiresAt: string | null = null;
   if (!expiresAtRaw && expiresTime && !expiresDate) {
     return {
-      error: "Expiry date must include a date.",
+      error: t("dashboard.actions.expiryDate"),
       invoiceId: null,
       address: null,
       amount: null,
@@ -251,7 +256,7 @@ export async function createInvoiceAction(
     const parsed = new Date(normalized);
     if (Number.isNaN(parsed.getTime())) {
       return {
-        error: "Expiry date must be a valid date and time.",
+        error: t("dashboard.actions.expiryInvalid"),
         invoiceId: null,
         address: null,
         amount: null,
@@ -267,7 +272,7 @@ export async function createInvoiceAction(
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
     return {
-      error: "API key not found. Please connect again.",
+      error: t("dashboard.actions.noApiKey"),
       invoiceId: null,
       address: null,
       amount: null,
@@ -329,7 +334,7 @@ export async function createInvoiceAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = typeof detail?.detail === "string" ? detail.detail : "Could not confirm invoice creation. Check the invoice list before trying again.";
+    const message = typeof detail?.detail === "string" ? detail.detail : t("dashboard.actions.invoiceNotConfirmed");
     revalidatePath("/dashboard");
     return {
       code: typeof detail?.code === "string" ? detail.code : null,
@@ -370,9 +375,10 @@ export async function createInvoiceAction(
 export async function resetApiKeyAction(
   _prevState: ApiKeyState
 ): Promise<ApiKeyState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { apiKey: _prevState.apiKey, error: "API key not found. Please connect again." };
+    return { apiKey: _prevState.apiKey, error: t("dashboard.actions.noApiKey") };
   }
 
   const response = await fetch(`${apiBaseUrl}/api/core/api-credentials/reset`, {
@@ -386,18 +392,18 @@ export async function resetApiKeyAction(
   }).catch(() => null);
 
   if (!response || response.status >= 500) {
-    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Connect again to retrieve the current credentials before retrying or updating integrations." };
+    return { apiKey: _prevState.apiKey, error: t("dashboard.actions.apiKeyResetUnconfirmed") };
   }
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to reset API key.";
+    const message = detail?.detail ?? t("dashboard.actions.apiKeyResetFailed");
     return { apiKey: _prevState.apiKey, error: message };
   }
 
   const data = (await response.json().catch(() => null)) as { api_key?: string | null } | null;
   if (!data?.api_key) {
-    return { apiKey: _prevState.apiKey, error: "Could not confirm the API key reset. Connect again to retrieve the current credentials before retrying or updating integrations." };
+    return { apiKey: _prevState.apiKey, error: t("dashboard.actions.apiKeyResetUnconfirmed") };
   }
   
   // Update the cookie with the new API key
@@ -415,11 +421,12 @@ export async function resetApiKeyAction(
 export async function resetWebhookSecretAction(
   _prevState: WebhookSecretState
 ): Promise<WebhookSecretState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
     return {
       webhookSecret: _prevState.webhookSecret,
-      error: "API key not found. Please connect again.",
+      error: t("dashboard.actions.noApiKey"),
     };
   }
 
@@ -434,12 +441,12 @@ export async function resetWebhookSecretAction(
   }).catch(() => null);
 
   if (!response || response.status >= 500) {
-    return { webhookSecret: _prevState.webhookSecret, error: "Could not confirm the webhook secret reset. Connect again to retrieve the current credentials before retrying or updating integrations." };
+    return { webhookSecret: _prevState.webhookSecret, error: t("dashboard.actions.secretResetUnconfirmed") };
   }
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to reset webhook secret.";
+    const message = detail?.detail ?? t("dashboard.actions.secretResetFailed");
     return { webhookSecret: _prevState.webhookSecret, error: message };
   }
 
@@ -447,7 +454,7 @@ export async function resetWebhookSecretAction(
   if (!data?.webhook_secret) {
     return {
       webhookSecret: _prevState.webhookSecret,
-      error: "Could not confirm the webhook secret reset. Connect again to retrieve the current credentials before retrying or updating integrations.",
+      error: t("dashboard.actions.secretResetUnconfirmed"),
     };
   }
 
@@ -466,11 +473,12 @@ export async function updateBtcpayCheckoutStyleAction(
   _prevState: BtcpayCheckoutPreferenceState,
   formData: FormData
 ): Promise<BtcpayCheckoutPreferenceState> {
+  const { t } = await getI18n();
   const nextStyle = String(formData.get("btcpay_checkout_style") ?? "").trim();
   if (nextStyle !== "standard" && nextStyle !== "btcpay_classic") {
     return {
       style: _prevState.style,
-      error: "Select a valid BTCPay checkout layout.",
+      error: t("dashboard.actions.invalidLayout"),
       success: null,
     };
   }
@@ -479,7 +487,7 @@ export async function updateBtcpayCheckoutStyleAction(
   if (!apiKey) {
     return {
       style: _prevState.style,
-      error: "API key not found. Please connect again.",
+      error: t("dashboard.actions.noApiKey"),
       success: null,
     };
   }
@@ -496,7 +504,7 @@ export async function updateBtcpayCheckoutStyleAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to update BTCPay preference.";
+    const message = detail?.detail ?? t("dashboard.actions.layoutFailed");
     return { style: _prevState.style, error: message, success: null };
   }
 
@@ -510,7 +518,7 @@ export async function updateBtcpayCheckoutStyleAction(
   return {
     style: resolvedStyle as "standard" | "btcpay_classic",
     error: null,
-    success: "Preference saved.",
+    success: t("dashboard.actions.preferenceSaved"),
   };
 }
 
@@ -518,12 +526,13 @@ export async function updateDefaultConfirmationTargetAction(
   _prevState: DefaultConfirmationTargetState,
   formData: FormData
 ): Promise<DefaultConfirmationTargetState> {
+  const { t } = await getI18n();
   const valueRaw = String(formData.get("default_confirmation_target") ?? "").trim();
   const parsed = Number(valueRaw);
   if (!Number.isInteger(parsed) || parsed < 0 || parsed > 10) {
     return {
       value: _prevState.value,
-      error: "Default confirmation target must be an integer between 0 and 10.",
+      error: t("dashboard.actions.defaultTargetRange"),
       success: null,
     };
   }
@@ -532,7 +541,7 @@ export async function updateDefaultConfirmationTargetAction(
   if (!apiKey) {
     return {
       value: _prevState.value,
-      error: "API key not found. Please connect again.",
+      error: t("dashboard.actions.noApiKey"),
       success: null,
     };
   }
@@ -549,7 +558,7 @@ export async function updateDefaultConfirmationTargetAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to update the default confirmation target.";
+    const message = detail?.detail ?? t("dashboard.actions.defaultTargetFailed");
     return { value: _prevState.value, error: message, success: null };
   }
 
@@ -559,13 +568,14 @@ export async function updateDefaultConfirmationTargetAction(
       ? data.default_confirmation_target
       : parsed;
   revalidatePath("/dashboard");
-  return { value: resolvedValue, error: null, success: "Default updated." };
+  return { value: resolvedValue, error: null, success: t("dashboard.actions.defaultUpdated") };
 }
 
 export async function updateDefaultQrLogoAction(
   _prevState: DefaultQrLogoState,
   formData: FormData
 ): Promise<DefaultQrLogoState> {
+  const { t } = await getI18n();
   const logo = String(formData.get("default_qr_logo") ?? "").trim();
   const logoDataUrlRaw = String(formData.get("default_qr_logo_data_url") ?? "").trim();
   const normalizedLogo =
@@ -574,7 +584,7 @@ export async function updateDefaultQrLogoAction(
     return {
       logo: _prevState.logo,
       logoDataUrl: _prevState.logoDataUrl,
-      error: "Select a valid QR logo mode.",
+      error: t("dashboard.actions.invalidQrMode"),
       success: null,
     };
   }
@@ -585,7 +595,7 @@ export async function updateDefaultQrLogoAction(
     return {
       logo: _prevState.logo,
       logoDataUrl: _prevState.logoDataUrl,
-      error: "Upload a logo image for custom mode.",
+      error: t("dashboard.actions.uploadLogo"),
       success: null,
     };
   }
@@ -595,7 +605,7 @@ export async function updateDefaultQrLogoAction(
     return {
       logo: _prevState.logo,
       logoDataUrl: _prevState.logoDataUrl,
-      error: "API key not found. Please connect again.",
+      error: t("dashboard.actions.noApiKey"),
       success: null,
     };
   }
@@ -615,7 +625,7 @@ export async function updateDefaultQrLogoAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to update QR settings.";
+    const message = detail?.detail ?? t("dashboard.actions.qrFailed");
     return {
       logo: _prevState.logo,
       logoDataUrl: _prevState.logoDataUrl,
@@ -641,7 +651,7 @@ export async function updateDefaultQrLogoAction(
     logo: resolvedLogo as "monero" | "none" | "custom",
     logoDataUrl: resolvedDataUrl ?? null,
     error: null,
-    success: "QR default saved.",
+    success: t("dashboard.actions.qrSaved"),
   };
 }
 
@@ -649,9 +659,10 @@ export async function createWebhookAction(
   _prevState: WebhookFormState,
   formData: FormData
 ): Promise<WebhookFormState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { error: "API key not found. Please connect again.", success: null };
+    return { error: t("dashboard.actions.noApiKey"), success: null };
   }
 
   const defaultUrl = String(formData.get("default_url") ?? "").trim();
@@ -670,14 +681,14 @@ export async function createWebhookAction(
   });
 
   if (events.length === 0) {
-    return { error: "Select at least one invoice event.", success: null };
+    return { error: t("dashboard.actions.selectEvent"), success: null };
   }
 
   if (!defaultUrl) {
     const missing = events.filter((event) => !eventUrls[event]);
     if (missing.length > 0) {
       return {
-        error: "Provide a default URL or an override URL for each selected event.",
+        error: t("dashboard.actions.needUrl"),
         success: null,
       };
     }
@@ -711,26 +722,27 @@ export async function createWebhookAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to create webhook.";
+    const message = detail?.detail ?? t("dashboard.actions.webhookCreateFailed");
     return { error: message, success: null };
   }
 
   revalidatePath("/dashboard");
-  return { error: null, success: "Webhook saved." };
+  return { error: null, success: t("dashboard.actions.webhookSaved") };
 }
 
 export async function deleteWebhookAction(
   _prevState: WebhookFormState,
   formData: FormData
 ): Promise<WebhookFormState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { error: "API key not found. Please connect again.", success: null };
+    return { error: t("dashboard.actions.noApiKey"), success: null };
   }
 
   const webhookId = String(formData.get("webhook_id") ?? "").trim();
   if (!webhookId) {
-    return { error: "Webhook id missing.", success: null };
+    return { error: t("dashboard.actions.webhookIdMissing"), success: null };
   }
 
   const response = await fetch(`${apiBaseUrl}/api/core/webhooks/${webhookId}`, {
@@ -743,22 +755,23 @@ export async function deleteWebhookAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to remove webhook.";
+    const message = detail?.detail ?? t("dashboard.actions.webhookRemoveFailed");
     return { error: message, success: null };
   }
 
   revalidatePath("/dashboard");
-  return { error: null, success: "Webhook removed." };
+  return { error: null, success: t("dashboard.actions.webhookRemoved") };
 }
 
 export async function archiveInvoiceAction(
   _prevState: ArchiveInvoiceState,
   formData: FormData
 ): Promise<ArchiveInvoiceState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
     return {
-      error: "API key not found. Please connect again.",
+      error: t("dashboard.actions.noApiKey"),
       success: null,
       archivedId: null,
     };
@@ -766,7 +779,7 @@ export async function archiveInvoiceAction(
 
   const invoiceId = String(formData.get("invoice_id") ?? "").trim();
   if (!invoiceId) {
-    return { error: "Invoice id missing.", success: null, archivedId: null };
+    return { error: t("dashboard.actions.invoiceIdMissing"), success: null, archivedId: null };
   }
 
   const response = await fetch(`${apiBaseUrl}/api/core/invoices/${invoiceId}`, {
@@ -779,20 +792,21 @@ export async function archiveInvoiceAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to archive invoice.";
+    const message = detail?.detail ?? t("dashboard.actions.archiveFailed");
     return { error: message, success: null, archivedId: null };
   }
 
   revalidatePath("/dashboard");
-  return { error: null, success: "Invoice archived until expiry.", archivedId: invoiceId };
+  return { error: null, success: t("dashboard.actions.archived"), archivedId: invoiceId };
 }
 
 export async function loadInvoiceTransfersAction(
   invoiceId: string,
 ): Promise<InvoiceTransfersState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { transfers: [], error: "API key not found. Please connect again." };
+    return { transfers: [], error: t("dashboard.actions.noApiKey") };
   }
   const response = await fetch(
     `${apiBaseUrl}/api/core/invoices/${encodeURIComponent(invoiceId)}/transfers`,
@@ -802,7 +816,7 @@ export async function loadInvoiceTransfersAction(
     },
   );
   if (!response.ok) {
-    return { transfers: [], error: "Could not load recorded transactions." };
+    return { transfers: [], error: t("transactions.loadFailed") };
   }
   return {
     transfers: (await response.json()) as InvoiceTransfersState["transfers"],
@@ -834,14 +848,15 @@ export async function redeliverWebhookDeliveryAction(
   _prevState: WebhookRedeliverState,
   formData: FormData
 ): Promise<WebhookRedeliverState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!apiKey) {
-    return { error: "API key not found. Please connect again.", success: null };
+    return { error: t("dashboard.actions.noApiKey"), success: null };
   }
 
   const deliveryId = String(formData.get("delivery_id") ?? "").trim();
   if (!deliveryId) {
-    return { error: "Delivery id missing.", success: null };
+    return { error: t("dashboard.actions.deliveryIdMissing"), success: null };
   }
 
   const response = await fetch(
@@ -855,10 +870,10 @@ export async function redeliverWebhookDeliveryAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? "Unable to redeliver the webhook.";
+    const message = detail?.detail ?? t("dashboard.actions.redeliverFailed");
     return { error: message, success: null };
   }
 
   revalidatePath("/dashboard");
-  return { error: null, success: "Redelivery queued." };
+  return { error: null, success: t("dashboard.actions.redeliveryQueued") };
 }

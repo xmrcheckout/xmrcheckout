@@ -100,11 +100,11 @@ const formatStatus = (invoice: InvoiceItem, t: Translate) =>
     t,
   );
 
-const formatTimestamp = (value: string | null) => {
+const formatTimestampFor = (value: string | null, locale: string) => {
   if (!value) {
     return "-";
   }
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
     timeZone: "UTC",
@@ -115,8 +115,8 @@ const invoiceStatusOptions = (t: Translate): {
   value: InvoiceItem["status"] | "active" | "all";
   label: string;
 }[] => [
-  { value: "active", label: "Active" },
-  { value: "all", label: "All" },
+  { value: "active", label: t("dashboard.invoices.filterActive") },
+  { value: "all", label: t("dashboard.invoices.filterAll") },
   { value: "pending", label: invoiceStatusName("pending", t) },
   { value: "partially_paid", label: invoiceStatusName("partially_paid", t) },
   { value: "payment_detected", label: invoiceStatusName("payment_detected", t) },
@@ -141,6 +141,7 @@ function CreateInvoiceModal({
   defaultConfirmationTarget,
   onClose,
 }: CreateInvoiceModalProps) {
+  const { locale, t } = useI18n();
   const router = useRouter();
   const action: CreateInvoiceAction =
     mode === "tour" ? createInvoiceTourAction : createInvoiceAction;
@@ -195,10 +196,10 @@ function CreateInvoiceModal({
 
   const creationError = state.error ? (
     <div role="alert" className="grid min-w-0 gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-      <p className="font-semibold">{state.code === "pool_exhausted" ? "No invoice addresses are currently eligible." : state.code === "allocation_contention" ? "Invoice detection is busy. Try again shortly." : state.code === "snapshot_failed" ? "The view-only snapshot failed. An address could not be safely reused." : state.error}</p>
-      {state.retryAfterSeconds ? <p>Try again in {state.retryAfterSeconds.toLocaleString()} seconds.</p> : null}
+      <p className="font-semibold">{state.code === "pool_exhausted" ? t("dashboard.invoices.poolExhausted") : state.code === "allocation_contention" ? t("dashboard.invoices.contention") : state.code === "snapshot_failed" ? t("dashboard.invoices.snapshotFailed") : state.error}</p>
+      {state.retryAfterSeconds ? <p>{t("dashboard.invoices.retryIn", { count: state.retryAfterSeconds })}</p> : null}
       {state.diagnosticId ? <DiagnosticReference value={state.diagnosticId} /> : null}
-      {mode === "live" ? <Link className="font-semibold underline underline-offset-4" href="/dashboard?tab=health">View System health</Link> : null}
+      {mode === "live" ? <Link className="font-semibold underline underline-offset-4" href="/dashboard?tab=health">{t("dashboard.invoices.viewHealth")}</Link> : null}
     </div>
   ) : null;
 
@@ -223,8 +224,8 @@ function CreateInvoiceModal({
     if (!usdRate || draftAmountValue === null || draftAmountValue <= 0) {
       return null;
     }
-    return formatUsdAmount(usdRate * draftAmountValue);
-  }, [usdRate, draftAmountValue]);
+    return formatUsdAmount(usdRate * draftAmountValue, locale);
+  }, [usdRate, draftAmountValue, locale]);
 
   const fiatAmountValue = useMemo(() => {
     if (amountMode !== "fiat") {
@@ -250,21 +251,21 @@ function CreateInvoiceModal({
   const draftXmrEstimateLabel = draftXmrEstimate
     ? `~${draftXmrEstimateDisplay} XMR`
     : fiatRateStatus === "loading"
-      ? "Fetching estimate..."
-      : "Estimate unavailable";
+      ? t("dashboard.invoices.fetchingEstimate")
+      : t("dashboard.invoices.estimateUnavailable");
   const usdEstimateMeta =
     usdRateSource === "coingecko"
-      ? "CoinGecko spot rate"
-      : "external spot rate";
+      ? t("dashboard.invoices.coingeckoRate")
+      : t("dashboard.invoices.externalRate");
   const usdEstimateTime = usdRateUpdatedAt
-    ? new Date(usdRateUpdatedAt).toLocaleString()
+    ? new Date(usdRateUpdatedAt).toLocaleString(locale)
     : null;
-  const fiatEstimateMeta = mode === "tour" ? "Simulated demo rate (not a market rate)" :
+  const fiatEstimateMeta = mode === "tour" ? t("dashboard.invoices.demoRate") :
     fiatRateSource === "coingecko"
-      ? "CoinGecko spot rate"
-      : "external spot rate";
+      ? t("dashboard.invoices.coingeckoRate")
+      : t("dashboard.invoices.externalRate");
   const fiatEstimateTime = fiatRateUpdatedAt
-    ? new Date(fiatRateUpdatedAt).toLocaleString()
+    ? new Date(fiatRateUpdatedAt).toLocaleString(locale)
     : null;
   const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
   const fiatCurrencyLabel = fiatCurrencyFlag
@@ -336,27 +337,27 @@ function CreateInvoiceModal({
       panelClassName="max-h-[calc(100dvh-0.75rem)] max-w-3xl rounded-t-[1.2rem] bg-cream sm:max-h-[85vh] sm:rounded-surface"
     >
         <span className="sr-only" role="status" aria-live="polite">
-          {copiedPublicInvoiceUrl ? "Invoice link copied to clipboard" : state.invoiceId ? "Invoice created" : ""}
+          {copiedPublicInvoiceUrl ? t("dashboard.invoices.linkCopied") : state.invoiceId ? t("dashboard.invoices.created") : ""}
         </span>
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stroke px-5 py-5 sm:px-7 sm:py-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-              Create invoice
+              {t("dashboard.invoices.createInvoice")}
             </p>
             <h2
               className="mt-1 font-sans text-xl font-semibold sm:text-2xl"
               id="create-invoice-title"
             >
-              Create a new invoice
+              {t("dashboard.invoices.createTitle")}
             </h2>
             {mode === "tour" ? (
               <p className="mt-2 text-sm font-semibold text-ink-soft">
-                Demo mode: preview a simulated invoice. Nothing is saved.
+                {t("dashboard.invoices.demoNotice")}
               </p>
             ) : null}
           </div>
           <button className={secondaryButton} type="button" onClick={onClose}>
-            Close
+            {t("common.close")}
           </button>
         </div>
 
@@ -367,29 +368,28 @@ function CreateInvoiceModal({
         >
           {demoPreview ? (
             <div className="grid min-h-0 gap-4 overflow-y-auto">
-              <p id="demo-ready" tabIndex={-1} role="status" className="font-semibold text-emerald-800">Simulated invoice ready. Nothing was saved.</p>
-              <SimulatedCheckoutPreview amount={amountMode === "fiat" ? (Number(amount) / (fiatRate || 1)).toFixed(12) : amount} target={Number(confirmationMode === "custom" ? confirmationTarget : defaultConfirmationTarget)} description={description} expiry={expiryMode === "custom" ? expiryValue || "Custom date not set" : "60 minutes"} />
-              <button type="button" className={secondaryButton} onClick={onClose}>Done</button>
+              <p id="demo-ready" tabIndex={-1} role="status" className="font-semibold text-emerald-800">{t("dashboard.invoices.demoReady")}</p>
+              <SimulatedCheckoutPreview amount={amountMode === "fiat" ? (Number(amount) / (fiatRate || 1)).toFixed(12) : amount} target={Number(confirmationMode === "custom" ? confirmationTarget : defaultConfirmationTarget)} description={description} expiry={expiryMode === "custom" ? expiryValue || t("dashboard.invoices.customDateNotSet") : t("dashboard.invoices.sixtyMinutes")} />
+              <button type="button" className={secondaryButton} onClick={onClose}>{t("dashboard.invoices.done")}</button>
             </div>
           ) : state.invoiceId ? (
             <div className="grid gap-4">
               {publicInvoiceUrl ? (
                 <div className="rounded-2xl border border-stroke bg-cream/70 p-5 shadow-soft">
                   <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                    Invoice created
+                    {t("dashboard.invoices.created")}
                   </p>
                   <p className="mt-3 text-sm text-ink">
-                    Share this invoice link with your customer:
+                    {t("dashboard.invoices.shareLink")}
                   </p>
                   {state.amount ? (
                     <div className="mt-4 rounded-xl border border-stroke bg-ink/5 px-4 py-3">
-                      <p className={labelClass}>Invoice amount</p>
+                      <p className={labelClass}>{t("dashboard.invoices.invoiceAmount")}</p>
                       <p className="mt-1 font-mono text-lg font-semibold text-ink">
                         {formatXmrAmount(state.amount)} XMR
                       </p>
                       <p className="mt-1 text-sm text-ink-soft">
-                        The invoice is defined in XMR. Any fiat input was used
-                        only to estimate this amount at creation time.
+                        {t("dashboard.invoices.definedInXmr")}
                       </p>
                     </div>
                   ) : null}
@@ -403,14 +403,14 @@ function CreateInvoiceModal({
                       {publicInvoiceUrl}
                     </Link>
                   </p>
-                  {copyFailed ? <p role="alert" className="break-all text-sm text-red-700">Could not copy. Select and copy the text manually.</p> : null}
+                  {copyFailed ? <p role="alert" className="break-all text-sm text-red-700">{t("common.copyFailed")}</p> : null}
                   <div className="mt-4 flex flex-wrap gap-3">
                     <button
                       className={secondaryButton}
                       type="button"
                       onClick={handleCopyPublicInvoiceUrl}
                     >
-                      {copiedPublicInvoiceUrl ? "Copied link" : "Copy link"}
+                      {copiedPublicInvoiceUrl ? t("dashboard.invoices.copiedLink") : t("dashboard.invoices.copyLink")}
                     </button>
                     <Link
                       className={primaryButton}
@@ -418,7 +418,7 @@ function CreateInvoiceModal({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      Open invoice
+                      {t("dashboard.invoices.openInvoice")}
                     </Link>
                   </div>
                   {state.warnings && state.warnings.length > 0 ? (
@@ -439,7 +439,7 @@ function CreateInvoiceModal({
                   type="button"
                   onClick={onClose}
                 >
-                  Done
+                  {t("dashboard.invoices.done")}
                 </button>
               </div>
             </div>
@@ -449,10 +449,9 @@ function CreateInvoiceModal({
                 <div className="grid gap-6">
                   <div className="grid gap-4">
                     <div>
-                      <p className={labelClass}>Amount</p>
+                      <p className={labelClass}>{t("dashboard.invoices.amount")}</p>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Define the invoice amount in XMR, or use an
-                        informational fiat reference.
+                        {t("dashboard.invoices.amountHelp")}
                       </p>
                     </div>
                     <div className="grid gap-2">
@@ -460,7 +459,7 @@ function CreateInvoiceModal({
                         className={labelClass}
                         htmlFor="wizard_amount_mode"
                       >
-                        Amount type
+                        {t("dashboard.invoices.amountType")}
                       </label>
                       <select
                         className={inputClass}
@@ -476,7 +475,7 @@ function CreateInvoiceModal({
                         }}
                       >
                         <option value="xmr">XMR</option>
-                        <option value="fiat">Fiat reference</option>
+                        <option value="fiat">{t("dashboard.invoices.fiatReference")}</option>
                       </select>
                     </div>
 
@@ -486,7 +485,7 @@ function CreateInvoiceModal({
                           className={labelClass}
                           htmlFor="wizard_amount_xmr"
                         >
-                          Amount (XMR)
+                          {t("dashboard.invoices.amountXmr")}
                         </label>
                         <input
                           className={inputClass}
@@ -503,14 +502,10 @@ function CreateInvoiceModal({
                         {draftUsdEstimate ? (
                           <details className="w-fit text-xs text-ink-soft">
                             <summary className="cursor-pointer select-none underline underline-offset-4">
-                              Approx. USD reference: ~{draftUsdEstimate}
+                              {t("dashboard.invoices.usdReference", { amount: draftUsdEstimate })}
                             </summary>
                             <p className="mt-2 max-w-[46ch] leading-relaxed">
-                              Reference only, uses {usdEstimateMeta}
-                              {usdEstimateTime
-                                ? ` from ${usdEstimateTime}`
-                                : ""}
-                              . Not a quote or guarantee.
+                              {usdEstimateTime ? t("dashboard.invoices.referenceFrom", { source: usdEstimateMeta, time: usdEstimateTime }) : t("dashboard.invoices.reference", { source: usdEstimateMeta })}
                             </p>
                           </details>
                         ) : null}
@@ -522,7 +517,7 @@ function CreateInvoiceModal({
                             className={labelClass}
                             htmlFor="wizard_amount_fiat"
                           >
-                            Amount (fiat)
+                            {t("dashboard.invoices.amountFiat")}
                           </label>
                           <input
                             className={inputClass}
@@ -542,7 +537,7 @@ function CreateInvoiceModal({
                             className={labelClass}
                             htmlFor="wizard_currency"
                           >
-                            Currency
+                            {t("dashboard.invoices.currency")}
                           </label>
                           <input
                             className={inputClass}
@@ -568,22 +563,16 @@ function CreateInvoiceModal({
                           ))}
                         </datalist>
                         <p className="text-sm text-ink-soft sm:col-span-2">
-                          {mode === "tour" ? "Demo only: USD 200, EUR 180, or GBP 160 per XMR. These fixed simulated rates are not market quotes. Other currencies are unavailable in this demo." : "Fiat inputs create an XMR invoice using an informational rate at request time. The invoice is stored and checked in XMR."}
+                          {mode === "tour" ? t("dashboard.invoices.demoRates") : t("dashboard.invoices.fiatHelp")}
                         </p>
                         {showFiatEstimate ? (
                           <details className="w-fit text-xs text-ink-soft sm:col-span-2">
                             <summary className="cursor-pointer select-none underline underline-offset-4">
-                              Approx. XMR value: {draftXmrEstimateLabel}
-                              {fiatCurrencyFlag
-                                ? ` · ${fiatCurrencyLabel}`
-                                : ""}
+                              {t("dashboard.invoices.xmrValue", { value: draftXmrEstimateLabel })}
+                              {fiatCurrencyFlag ? ` · ${fiatCurrencyLabel}` : ""}
                             </summary>
                             <p className="mt-2 max-w-[46ch] leading-relaxed">
-                              Reference only, uses {fiatEstimateMeta}
-                              {fiatEstimateTime
-                                ? ` from ${fiatEstimateTime}`
-                                : ""}
-                              . Not a quote or guarantee.
+                              {fiatEstimateTime ? t("dashboard.invoices.referenceFrom", { source: fiatEstimateMeta, time: fiatEstimateTime }) : t("dashboard.invoices.reference", { source: fiatEstimateMeta })}
                             </p>
                           </details>
                         ) : null}
@@ -593,18 +582,18 @@ function CreateInvoiceModal({
 
                   <details className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                     <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-                      Confirmation and expiry
+                      {t("dashboard.invoices.confirmationAndExpiry")}
                     </summary>
                     <div className="mt-4 grid gap-5">
                       <div className="grid gap-3">
-                        <p className={labelClass}>Confirmations</p>
+                        <p className={labelClass}>{t("dashboard.invoices.confirmations")}</p>
                         <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_200px]">
                           <div className="grid gap-2">
                             <label
                               className={labelClass}
                               htmlFor="wizard_confirmation_mode"
                             >
-                              Mode
+                              {t("dashboard.invoices.mode")}
                             </label>
                             <select
                               className={inputClass}
@@ -621,9 +610,9 @@ function CreateInvoiceModal({
                               }}
                             >
                               <option value="account_default">
-                                Account default ({defaultConfirmationTarget})
+                                {t("dashboard.invoices.accountDefaultTarget", { target: defaultConfirmationTarget })}
                               </option>
-                              <option value="custom">Custom</option>
+                              <option value="custom">{t("dashboard.invoices.custom")}</option>
                             </select>
                           </div>
                           {confirmationMode === "custom" ? (
@@ -632,7 +621,7 @@ function CreateInvoiceModal({
                                 className={labelClass}
                                 htmlFor="wizard_confirmation_target"
                               >
-                                Target
+                                {t("dashboard.invoices.target")}
                               </label>
                               <input
                                 className={inputClass}
@@ -658,24 +647,23 @@ function CreateInvoiceModal({
                               type="button"
                               onClick={() => setConfirmationTarget("0")}
                             >
-                              0 confirmations
+                              {t("dashboard.invoices.zeroConfirmations")}
                             </button>
                             <p className="text-sm text-ink-soft">
-                              Create the invoice with a custom confirmation
-                              target.
+                              {t("dashboard.invoices.customTargetHelp")}
                             </p>
                           </div>
                         ) : null}
                       </div>
 
                       <div className="grid gap-3">
-                        <p className={labelClass}>Expiry</p>
+                        <p className={labelClass}>{t("dashboard.invoices.expiry")}</p>
                         <div className="grid gap-2">
                           <label
                             className={labelClass}
                             htmlFor="wizard_expiry_mode"
                           >
-                            Mode
+                            {t("dashboard.invoices.mode")}
                           </label>
                           <select
                             className={inputClass}
@@ -693,9 +681,9 @@ function CreateInvoiceModal({
                             }}
                           >
                             <option value="default">
-                              Default (60 minutes)
+                              {t("dashboard.invoices.defaultExpiry")}
                             </option>
-                            <option value="custom">Custom</option>
+                            <option value="custom">{t("dashboard.invoices.custom")}</option>
                           </select>
                         </div>
 
@@ -705,7 +693,7 @@ function CreateInvoiceModal({
                               className={labelClass}
                               htmlFor="wizard_expires_date"
                             >
-                              Expiry date
+                              {t("dashboard.invoices.expiryDate")}
                             </label>
                             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_160px]">
                               <input
@@ -742,7 +730,7 @@ function CreateInvoiceModal({
 
                   <details className="rounded-2xl border border-stroke bg-white/70 p-5 shadow-soft">
                     <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-                      Customer display
+                      {t("dashboard.invoices.customerDisplay")}
                     </summary>
                     <div className="mt-4 grid gap-5">
                       <div className="grid gap-3 sm:grid-cols-2">
@@ -751,14 +739,14 @@ function CreateInvoiceModal({
                             className={labelClass}
                             htmlFor="wizard_recipient"
                           >
-                            Recipient name
+                            {t("dashboard.invoices.recipientName")}
                           </label>
                           <input
                             className={inputClass}
                             id="wizard_recipient"
                             name="recipient_name"
                             type="text"
-                            placeholder="Your store"
+                            placeholder={t("dashboard.invoices.yourStore")}
                             value={recipientName}
                             onChange={(event) =>
                               setRecipientName(event.target.value)
@@ -770,14 +758,14 @@ function CreateInvoiceModal({
                             className={labelClass}
                             htmlFor="wizard_description"
                           >
-                            Description
+                            {t("dashboard.invoices.description")}
                           </label>
                           <input
                             className={inputClass}
                             id="wizard_description"
                             name="description"
                             type="text"
-                            placeholder="Order 1042"
+                            placeholder={t("dashboard.invoices.orderExample")}
                             value={description}
                             onChange={(event) =>
                               setDescription(event.target.value)
@@ -791,7 +779,7 @@ function CreateInvoiceModal({
                           className={labelClass}
                           htmlFor="wizard_checkout_continue_url"
                         >
-                          Continue URL
+                          {t("dashboard.invoices.continueUrl")}
                         </label>
                         <input
                           className={inputClass}
@@ -805,8 +793,7 @@ function CreateInvoiceModal({
                           }
                         />
                         <p className="text-sm text-ink-soft">
-                          After confirmation, the hosted invoice page can show a
-                          Continue button.
+                          {t("dashboard.invoices.continueHelp")}
                         </p>
                       </div>
 
@@ -815,7 +802,7 @@ function CreateInvoiceModal({
                           className={labelClass}
                           htmlFor="wizard_qr_logo_mode"
                         >
-                          QR logo
+                          {t("dashboard.invoices.qrLogo")}
                         </label>
                         <select
                           className={inputClass}
@@ -838,11 +825,11 @@ function CreateInvoiceModal({
                           }}
                         >
                           <option value="account_default">
-                            Account default
+                            {t("dashboard.invoices.accountDefault")}
                           </option>
-                          <option value="monero">Monero logo</option>
-                          <option value="none">No logo</option>
-                          <option value="custom">Custom image</option>
+                          <option value="monero">{t("dashboard.invoices.moneroLogo")}</option>
+                          <option value="none">{t("dashboard.invoices.noLogo")}</option>
+                          <option value="custom">{t("dashboard.invoices.customImage")}</option>
                         </select>
                         <input
                           type="hidden"
@@ -866,7 +853,7 @@ function CreateInvoiceModal({
                             type="button"
                             onClick={() => setQrLogoDataUrl(null)}
                           >
-                            Remove custom image
+                            {t("dashboard.invoices.removeCustomImage")}
                           </button>
                         ) : null}
                       </div>
@@ -874,13 +861,13 @@ function CreateInvoiceModal({
                   </details>
 
                   <div className="rounded-2xl border border-stroke bg-white/70 p-5 text-sm text-ink shadow-soft">
-                    <p className={labelClass}>Summary</p>
+                    <p className={labelClass}>{t("dashboard.invoices.summary")}</p>
                     <p className="mt-2">
-                      Amount: <strong>{formattedDraftAmount || "-"}</strong>{" "}
+                      {t("dashboard.invoices.summaryAmount")} <strong>{formattedDraftAmount || "-"}</strong>{" "}
                       {amountMode === "xmr" ? "XMR" : fiatCurrencyLabel}
                     </p>
                     <p className="mt-2">
-                      Confirmation target:{" "}
+                      {t("dashboard.invoices.summaryTarget")}{" "}
                       <strong>
                         {confirmationMode === "custom"
                           ? confirmationTarget || "-"
@@ -888,16 +875,16 @@ function CreateInvoiceModal({
                       </strong>
                     </p>
                     <p className="mt-2">
-                      Expiry:{" "}
+                      {t("dashboard.invoices.summaryExpiry")}{" "}
                       <strong>
                         {expiryMode === "custom"
-                          ? expiryValue || "Custom date not set"
-                          : "Default (60 minutes)"}
+                          ? expiryValue || t("dashboard.invoices.customDateNotSet")
+                          : t("dashboard.invoices.defaultExpiry")}
                       </strong>
                     </p>
                     {amountMode === "fiat" ? (
                       <p className="mt-2 text-sm text-ink-soft">
-                        XMR invoice estimate:{" "}
+                        {t("dashboard.invoices.summaryEstimate")}{" "}
                         <strong>{draftXmrEstimateLabel}</strong>
                       </p>
                     ) : null}
@@ -913,14 +900,14 @@ function CreateInvoiceModal({
                   type="button"
                   onClick={onClose}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <PendingSubmitButton
                   className={primaryButton}
-                  pendingLabel="Creating invoice…"
+                  pendingLabel={t("dashboard.invoices.creating")}
                   disabled={createDisabled}
                 >
-                  Create invoice
+                  {t("dashboard.invoices.createInvoice")}
                 </PendingSubmitButton>
               </div>
             </>
@@ -944,7 +931,8 @@ export default function InvoicePanel({
   pageSize = 25,
   total = activeInvoices.length,
 }: InvoicePanelProps) {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
+  const formatTimestamp = (value: string | null) => formatTimestampFor(value, locale);
   const router = useRouter();
   const normalizedBasePath = basePath.replace(/\/+$/, "") || "/";
   const [archiveState, archiveAction] = useFormState(
@@ -1195,7 +1183,7 @@ export default function InvoicePanel({
     if (sort !== key) {
       return "";
     }
-    return order === "asc" ? " (asc)" : " (desc)";
+    return order === "asc" ? ` (${t("dashboard.invoices.ascShort")})` : ` (${t("dashboard.invoices.descShort")})`;
   };
   const statusTone = (status: InvoiceItem["status"]): StatusTone =>
     invoiceStatusTones[status];
@@ -1213,39 +1201,38 @@ export default function InvoicePanel({
         <div className="min-w-0 max-w-2xl">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <span className="h-2 w-2 rounded-full bg-clay" aria-hidden="true" />
-            Invoices
+            {t("dashboard.invoices.invoices")}
           </p>
           <h1
             className="mt-1 font-sans text-3xl font-semibold leading-tight"
             id="invoice-panel-title"
           >
-            Invoice activity
+            {t("dashboard.invoices.activity")}
           </h1>
           <p className="mt-2 hidden text-ink-soft lg:block">
-            Create invoices, follow confirmations, and open a row when you need
-            the raw details.
+            {t("dashboard.invoices.intro")}
           </p>
         </div>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <Link className={secondaryButton} href={archivedToggleHref}>
-            {includeArchived ? "Hide archived" : "Show archived"}
+            {includeArchived ? t("dashboard.invoices.hideArchived") : t("dashboard.invoices.showArchived")}
           </Link>
           {csvExportHref ? (
             <a className={secondaryButton} href={csvExportHref}>
-              Export CSV
+              {t("dashboard.invoices.exportCsv")}
             </a>
           ) : (
             <button
               className={secondaryButton}
               type="button"
               disabled
-              title="Demo mode only"
+              title={t("dashboard.invoices.demoOnly")}
             >
-              Export CSV
+              {t("dashboard.invoices.exportCsv")}
             </button>
           )}
           <button className={`${primaryButton} order-first lg:order-none`} type="button" onClick={openCreate}>
-            Create invoice
+            {t("dashboard.invoices.createInvoice")}
           </button>
         </div>
       </header>
@@ -1260,14 +1247,14 @@ export default function InvoicePanel({
           >
             <div className="grid min-w-0 flex-1 gap-2 sm:max-w-lg">
               <label className={labelClass} htmlFor="invoice_search">
-                Search
+                {t("dashboard.invoices.search")}
               </label>
               <input
                 className={inputClass}
                 id="invoice_search"
                 type="search"
                 value={searchInput}
-                placeholder="Invoice id, amount (XMR), subaddress, or metadata"
+                placeholder={t("dashboard.invoices.searchPlaceholder")}
                 onChange={(event) =>
                   setSearchDraft({
                     source: normalizedSearchQuery,
@@ -1278,40 +1265,40 @@ export default function InvoicePanel({
             </div>
             <div className="flex gap-2">
               <button className={smallSecondaryButton} type="submit">
-                Apply
+                {t("dashboard.invoices.apply")}
               </button>
               {searchQuery ? (
                 <Link
                   className={smallSecondaryButton}
                   href={buildInvoicesHref({ q: "" })}
                 >
-                  Clear
+                  {t("dashboard.invoices.clear")}
                 </Link>
               ) : null}
             </div>
           </form>
         </div>
         <div className="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr))] gap-3">
-          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold invoice-status-select">Status
-            <select aria-label="Status" className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold invoice-status-select">{t("dashboard.invoices.status")}
+            <select aria-label={t("dashboard.invoices.status")} className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
               {invoiceStatusOptions(t).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </label>
-          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">Sort by
-            <select aria-label="Sort by" className={inputClass} value={sort} onChange={event => router.push(buildInvoicesHref({ sort: event.target.value }))}>
-              <option value="created_at">Created</option><option value="amount_xmr">Amount</option><option value="status">Status</option><option value="confirmations">Confirmations</option>
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">{t("dashboard.invoices.sortBy")}
+            <select aria-label={t("dashboard.invoices.sortBy")} className={inputClass} value={sort} onChange={event => router.push(buildInvoicesHref({ sort: event.target.value }))}>
+              <option value="created_at">{t("dashboard.invoices.createdCol")}</option><option value="amount_xmr">{t("dashboard.invoices.amount")}</option><option value="status">{t("dashboard.invoices.status")}</option><option value="confirmations">{t("dashboard.invoices.confirmations")}</option>
             </select>
           </label>
-          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">Direction
-            <select aria-label="Direction" className={inputClass} value={order} onChange={event => router.push(buildInvoicesHref({ order: event.target.value }))}>
-              <option value="desc" aria-label="Descending">Desc.</option><option value="asc" aria-label="Ascending">Asc.</option>
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">{t("dashboard.invoices.direction")}
+            <select aria-label={t("dashboard.invoices.direction")} className={inputClass} value={order} onChange={event => router.push(buildInvoicesHref({ order: event.target.value }))}>
+              <option value="desc" aria-label={t("dashboard.invoices.descending")}>{t("dashboard.invoices.descAbbr")}</option><option value="asc" aria-label={t("dashboard.invoices.ascending")}>{t("dashboard.invoices.ascAbbr")}</option>
             </select>
           </label>
         </div>
         <div
           className="invoice-status-filters flex-wrap gap-2"
           role="group"
-          aria-label="Invoice status filters"
+          aria-label={t("dashboard.invoices.statusFilters")}
         >
           {invoiceStatusOptions(t).map((option) => (
             <Link
@@ -1331,11 +1318,10 @@ export default function InvoicePanel({
         {activeList.length === 0 ? (
           <div className="rounded-surface border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
             <p className="font-semibold text-ink">
-              No invoices match these filters.
+              {t("dashboard.invoices.noMatch")}
             </p>
             <p className="mt-1">
-              Adjust the search or status filter, or create a new invoice when
-              you are ready to test the flow.
+              {t("dashboard.invoices.noMatchHelp")}
             </p>
           </div>
         ) : (
@@ -1381,7 +1367,7 @@ export default function InvoicePanel({
                         </span>
                       </div>
                       <div className="min-w-0 max-w-full text-right">
-                        <p className={labelClass}>Amount</p>
+                        <p className={labelClass}>{t("dashboard.invoices.amount")}</p>
                         <p className="mt-1 break-all font-mono text-lg font-semibold text-ink">
                           {formatXmrAmount(invoice.amount_xmr)} XMR
                         </p>
@@ -1390,19 +1376,18 @@ export default function InvoicePanel({
                           invoice.amount_remaining_xmr,
                         ) ? (
                           <p className="mt-1 text-xs font-semibold text-amber-900">
-                            Received{" "}
-                            {formatXmrAmount(invoice.amount_paid_xmr ?? "0")} XMR
+                            {t("dashboard.invoices.received", { amount: formatXmrAmount(invoice.amount_paid_xmr ?? "0") })}
                           </p>
                         ) : null}
                       </div>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       {invoice.archived_at ? (
-                        <StatusBadge label="Archived" />
+                        <StatusBadge label={t("dashboard.invoices.archived")} />
                       ) : null}
                       {showPaidAfterExpiry ? (
                         <StatusBadge
-                          label="Paid after expiry"
+                          label={t("dashboard.invoices.paidAfterExpiry")}
                           tone="detected"
                         />
                       ) : null}
@@ -1411,8 +1396,7 @@ export default function InvoicePanel({
                         tone={statusTone(invoice.status)}
                       />
                       <span className="ml-auto text-xs font-semibold text-ink-soft">
-                        {invoice.confirmations ?? 0}/
-                        {invoice.confirmation_target} confirmations
+                        {t("dashboard.invoices.confirmationsOf", { done: invoice.confirmations ?? 0, target: invoice.confirmation_target })}
                       </span>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-stroke pt-3 text-xs font-semibold text-ink-soft">
@@ -1420,13 +1404,13 @@ export default function InvoicePanel({
                         suppressHydrationWarning
                         title={formatTimestamp(invoice.created_at)}
                       >
-                        Created {formatTimestamp(invoice.created_at)}
+                        {t("dashboard.page.createdAt", { date: formatTimestamp(invoice.created_at) })}
                       </p>
                       <p
                         suppressHydrationWarning
                         title={formatTimestamp(invoice.expires_at)}
                       >
-                        Expires {formatTimestamp(invoice.expires_at)}
+                        {t("dashboard.invoices.expiresOn", { date: formatTimestamp(invoice.expires_at) })}
                       </p>
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -1438,7 +1422,7 @@ export default function InvoicePanel({
                           target="_blank"
                           rel="noreferrer"
                         >
-                          Open
+                          {t("dashboard.invoices.open")}
                         </Link>
                       ) : null}
                       <button
@@ -1447,7 +1431,7 @@ export default function InvoicePanel({
                         aria-expanded={isExpanded}
                         onClick={() => toggleInvoice(invoice.id)}
                       >
-                        {isExpanded ? "Hide" : "Details"}
+                        {isExpanded ? t("dashboard.invoices.hide") : t("dashboard.invoices.details")}
                       </button>
                       {isArchivable ? (
                         <button
@@ -1455,7 +1439,7 @@ export default function InvoicePanel({
                           type="button"
                           onClick={() => openArchiveModal(invoice.id)}
                         >
-                          Archive
+                          {t("dashboard.invoices.archive")}
                         </button>
                       ) : null}
                     </div>
@@ -1463,10 +1447,10 @@ export default function InvoicePanel({
                       <div className="mt-4 grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                         <div className="grid gap-3 sm:grid-cols-2">
                           <div className="grid gap-2">
-                            <p className={labelClass}>Invoice context</p>
+                            <p className={labelClass}>{t("dashboard.invoices.context")}</p>
                             <p className="break-all text-sm">{invoice.id}</p>
                             {context.details.map(detail => <p className="break-words text-sm" key={detail}>{detail}</p>)}
-                            <p className={labelClass}>Created at</p>
+                            <p className={labelClass}>{t("dashboard.invoices.createdAt")}</p>
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
@@ -1477,7 +1461,7 @@ export default function InvoicePanel({
                             </p>
                           </div>
                           <div className="grid gap-2">
-                            <p className={labelClass}>Detected at</p>
+                            <p className={labelClass}>{t("dashboard.invoices.detectedAt")}</p>
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
@@ -1488,7 +1472,7 @@ export default function InvoicePanel({
                             </p>
                           </div>
                           <div className="grid gap-2">
-                            <p className={labelClass}>Confirmed at</p>
+                            <p className={labelClass}>{t("dashboard.invoices.confirmedAt")}</p>
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
@@ -1499,7 +1483,7 @@ export default function InvoicePanel({
                             </p>
                           </div>
                           <div className="grid gap-2">
-                            <p className={labelClass}>Expires at</p>
+                            <p className={labelClass}>{t("dashboard.invoices.expiresAt")}</p>
                             <p
                               className="text-sm font-semibold text-ink"
                               title={
@@ -1510,20 +1494,20 @@ export default function InvoicePanel({
                             </p>
                           </div>
                           <div className="grid gap-2">
-                            <p className={labelClass}>Confirmation target</p>
+                            <p className={labelClass}>{t("dashboard.invoices.confirmationTarget")}</p>
                             <p className="text-sm font-semibold text-ink">
                               {invoice.confirmation_target}
                             </p>
                           </div>
                           <div className="grid gap-2">
-                            <p className={labelClass}>Subaddress index</p>
+                            <p className={labelClass}>{t("dashboard.invoices.subaddressIndex")}</p>
                             <p className="text-sm font-semibold text-ink">
                               {invoice.subaddress_index ?? "-"}
                             </p>
                           </div>
                           {invoice.archived_at ? (
                             <div className="grid gap-2">
-                              <p className={labelClass}>Archived at</p>
+                              <p className={labelClass}>{t("dashboard.invoices.archivedAt")}</p>
                               <p
                                 className="text-sm font-semibold text-ink"
                                 title={
@@ -1536,7 +1520,7 @@ export default function InvoicePanel({
                           ) : null}
                           {invoice.paid_after_expiry_at ? (
                             <div className="grid gap-2">
-                              <p className={labelClass}>Paid after expiry at</p>
+                              <p className={labelClass}>{t("dashboard.invoices.paidAfterExpiryAt")}</p>
                               <p
                                 className="text-sm font-semibold text-ink"
                                 title={
@@ -1555,7 +1539,7 @@ export default function InvoicePanel({
                               type="button"
                               onClick={() => setTransactionsInvoiceId(invoice.id)}
                             >
-                              View transactions
+                              {t("dashboard.invoices.viewTransactions")}
                             </button>
                           ) : null}
                           {isArchivable ? (
@@ -1564,12 +1548,11 @@ export default function InvoicePanel({
                               type="button"
                               onClick={() => openArchiveModal(invoice.id)}
                             >
-                              Archive invoice
+                              {t("dashboard.invoices.archiveInvoice")}
                             </button>
                           ) : !invoice.archived_at ? (
                             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                              {invoiceStatusName(invoice.status, t)} invoices cannot be
-                              archived.
+                              {t("dashboard.invoices.cannotArchive", { status: invoiceStatusName(invoice.status, t) })}
                             </p>
                           ) : null}
                           {archiveState.error &&
@@ -1580,7 +1563,7 @@ export default function InvoicePanel({
                           ) : null}
                           {archiveState.archivedId === invoice.id ? (
                             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink">
-                              Invoice archived.
+                              {t("dashboard.invoices.archivedDone")}
                             </p>
                           ) : null}
                         </div>
@@ -1602,14 +1585,14 @@ export default function InvoicePanel({
                 <thead className="bg-sand/40">
                   <tr className="border-b border-stroke">
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                      Invoice
+                      {t("dashboard.invoices.invoice")}
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
                       <Link
                         className="underline underline-offset-4"
                         href={sortHref("amount_xmr")}
                       >
-                        Amount{sortIndicator("amount_xmr")}
+                        {t("dashboard.invoices.amount")}{sortIndicator("amount_xmr")}
                       </Link>
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
@@ -1617,7 +1600,7 @@ export default function InvoicePanel({
                         className="underline underline-offset-4"
                         href={sortHref("status")}
                       >
-                        Status{sortIndicator("status")}
+                        {t("dashboard.invoices.status")}{sortIndicator("status")}
                       </Link>
                     </th>
                     <th className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
@@ -1625,12 +1608,12 @@ export default function InvoicePanel({
                         className="block underline underline-offset-4"
                         href={sortHref("confirmations")}
                       >
-                        <span className="whitespace-nowrap">Confirmations</span>{" "}
+                        <span className="whitespace-nowrap">{t("dashboard.invoices.confirmations")}</span>{" "}
                         <span className="inline-block">{sortIndicator("confirmations")}</span>
                       </Link>
                     </th>
                     <th className="border-l border-stroke px-4 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                      Actions
+                      {t("dashboard.invoices.actions")}
                     </th>
                   </tr>
                 </thead>
@@ -1680,11 +1663,11 @@ export default function InvoicePanel({
                             </div>
                             <div className="mt-2 flex flex-wrap gap-2">
                               {invoice.archived_at ? (
-                                <StatusBadge label="Archived" />
+                                <StatusBadge label={t("dashboard.invoices.archived")} />
                               ) : null}
                               {showPaidAfterExpiry ? (
                                 <StatusBadge
-                                  label="Paid after expiry"
+                                  label={t("dashboard.invoices.paidAfterExpiry")}
                                   tone="detected"
                                 />
                               ) : null}
@@ -1697,8 +1680,7 @@ export default function InvoicePanel({
                               invoice.amount_remaining_xmr,
                             ) ? (
                               <span className="mt-1 block font-sans text-xs text-amber-900">
-                                Received{" "}
-                                {formatXmrAmount(invoice.amount_paid_xmr ?? "0")} XMR
+                                {t("dashboard.invoices.received", { amount: formatXmrAmount(invoice.amount_paid_xmr ?? "0") })}
                               </span>
                             ) : null}
                           </td>
@@ -1723,7 +1705,7 @@ export default function InvoicePanel({
                                   target="_blank"
                                   rel="noreferrer"
                                 >
-                                  Open
+                                  {t("dashboard.invoices.open")}
                                 </Link>
                               ) : null}
                               <button
@@ -1732,7 +1714,7 @@ export default function InvoicePanel({
                                 aria-expanded={isExpanded}
                                 onClick={() => toggleInvoice(invoice.id)}
                               >
-                                {isExpanded ? "Hide" : "Details"}
+                                {isExpanded ? t("dashboard.invoices.hide") : t("dashboard.invoices.details")}
                               </button>
                               {isArchivable ? (
                                 <button
@@ -1740,7 +1722,7 @@ export default function InvoicePanel({
                                   type="button"
                                   onClick={() => openArchiveModal(invoice.id)}
                                 >
-                                  Archive
+                                  {t("dashboard.invoices.archive")}
                                 </button>
                               ) : null}
                             </div>
@@ -1752,10 +1734,10 @@ export default function InvoicePanel({
                               <div className="grid gap-4 rounded-xl border border-stroke bg-white/80 p-4 shadow-soft">
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   <div className="grid gap-2">
-                                    <p className={labelClass}>Invoice context</p>
+                                    <p className={labelClass}>{t("dashboard.invoices.context")}</p>
                             <p className="break-all text-sm">{invoice.id}</p>
                             {context.details.map(detail => <p className="break-words text-sm" key={detail}>{detail}</p>)}
-                            <p className={labelClass}>Created at</p>
+                            <p className={labelClass}>{t("dashboard.invoices.createdAt")}</p>
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
@@ -1766,7 +1748,7 @@ export default function InvoicePanel({
                                     </p>
                                   </div>
                                   <div className="grid gap-2">
-                                    <p className={labelClass}>Detected at</p>
+                                    <p className={labelClass}>{t("dashboard.invoices.detectedAt")}</p>
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
@@ -1777,7 +1759,7 @@ export default function InvoicePanel({
                                     </p>
                                   </div>
                                   <div className="grid gap-2">
-                                    <p className={labelClass}>Confirmed at</p>
+                                    <p className={labelClass}>{t("dashboard.invoices.confirmedAt")}</p>
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
@@ -1788,7 +1770,7 @@ export default function InvoicePanel({
                                     </p>
                                   </div>
                                   <div className="grid gap-2">
-                                    <p className={labelClass}>Expires at</p>
+                                    <p className={labelClass}>{t("dashboard.invoices.expiresAt")}</p>
                                     <p
                                       className="text-sm font-semibold text-ink"
                                       title={
@@ -1802,7 +1784,7 @@ export default function InvoicePanel({
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   <div className="grid gap-2">
                                     <p className={labelClass}>
-                                      Confirmation target
+                                      {t("dashboard.invoices.confirmationTarget")}
                                     </p>
                                     <p className="text-sm font-semibold text-ink">
                                       {invoice.confirmation_target}
@@ -1810,7 +1792,7 @@ export default function InvoicePanel({
                                   </div>
                                   <div className="grid gap-2">
                                     <p className={labelClass}>
-                                      Subaddress index
+                                      {t("dashboard.invoices.subaddressIndex")}
                                     </p>
                                     <p className="text-sm font-semibold text-ink">
                                       {invoice.subaddress_index ?? "-"}
@@ -1818,7 +1800,7 @@ export default function InvoicePanel({
                                   </div>
                                   {invoice.archived_at ? (
                                     <div className="grid gap-2">
-                                      <p className={labelClass}>Archived at</p>
+                                      <p className={labelClass}>{t("dashboard.invoices.archivedAt")}</p>
                                       <p
                                         className="text-sm font-semibold text-ink"
                                         title={
@@ -1832,7 +1814,7 @@ export default function InvoicePanel({
                                   {invoice.paid_after_expiry_at ? (
                                     <div className="grid gap-2">
                                       <p className={labelClass}>
-                                        Paid after expiry at
+                                        {t("dashboard.invoices.paidAfterExpiryAt")}
                                       </p>
                                       <p
                                         className="text-sm font-semibold text-ink"
@@ -1858,7 +1840,7 @@ export default function InvoicePanel({
                                         setTransactionsInvoiceId(invoice.id)
                                       }
                                     >
-                                      View transactions
+                                      {t("dashboard.invoices.viewTransactions")}
                                     </button>
                                   ) : null}
                                   {isArchivable ? (
@@ -1869,12 +1851,11 @@ export default function InvoicePanel({
                                         openArchiveModal(invoice.id)
                                       }
                                     >
-                                      Archive invoice
+                                      {t("dashboard.invoices.archiveInvoice")}
                                     </button>
                                   ) : !invoice.archived_at ? (
                                     <p className="text-sm text-ink-soft">
-                                      {invoiceStatusName(invoice.status, t)} invoices
-                                      cannot be archived.
+                                      {t("dashboard.invoices.cannotArchive", { status: invoiceStatusName(invoice.status, t) })}
                                     </p>
                                   ) : null}
                                   {archiveState.error &&
@@ -1903,11 +1884,10 @@ export default function InvoicePanel({
             {mode !== "tour" ? (
               <nav
                 className="flex flex-wrap items-center justify-between gap-3 border-t border-stroke pt-4"
-                aria-label="Invoice pages"
+                aria-label={t("dashboard.invoices.pages")}
               >
                 <p className="text-sm text-ink-soft">
-                  Showing {resultStart}-{resultEnd} of {total} invoice
-                  {total === 1 ? "" : "s"}
+                  {t("dashboard.invoices.showing", { start: resultStart, end: resultEnd, count: total })}
                 </p>
                 {totalPages > 1 ? (
                   <div className="flex items-center gap-2">
@@ -1916,18 +1896,18 @@ export default function InvoicePanel({
                         className={smallSecondaryButton}
                         href={buildInvoicesHref({ page: page - 1 })}
                       >
-                        Previous
+                        {t("dashboard.invoices.previous")}
                       </Link>
                     ) : null}
                     <span className="px-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink-soft">
-                      Page {page} of {totalPages}
+                      {t("dashboard.invoices.pageOf", { page, total: totalPages })}
                     </span>
                     {page < totalPages ? (
                       <Link
                         className={smallSecondaryButton}
                         href={buildInvoicesHref({ page: page + 1 })}
                       >
-                        Next
+                        {t("dashboard.invoices.next")}
                       </Link>
                     ) : null}
                   </div>
@@ -1957,20 +1937,20 @@ export default function InvoicePanel({
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                Archive invoice
+                {t("dashboard.invoices.archiveInvoice")}
               </p>
               <h2
                 className="mt-1 font-sans text-xl font-semibold sm:text-2xl"
                 id="archive-invoice-title"
               >
-                Archive this invoice?
+                {t("dashboard.invoices.archiveTitle")}
               </h2>
               <p className="mt-2 text-sm text-ink-soft">
-                Archived invoices stay available in the archive list.
+                {t("dashboard.invoices.archiveHelp")}
               </p>
               {mode === "tour" ? (
                 <p className="mt-2 text-sm font-semibold text-ink-soft">
-                  Demo mode: no changes are saved.
+                  {t("dashboard.invoices.demoNoChanges")}
                 </p>
               ) : null}
             </div>
@@ -1979,7 +1959,7 @@ export default function InvoicePanel({
               type="button"
               onClick={closeArchiveModal}
             >
-              Close
+              {t("common.close")}
             </button>
           </div>
           <div className="mt-6 flex flex-wrap justify-end gap-3">
@@ -1988,7 +1968,7 @@ export default function InvoicePanel({
               type="button"
               onClick={closeArchiveModal}
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <form action={archiveAction}>
               <input
@@ -1997,7 +1977,7 @@ export default function InvoicePanel({
                 value={archiveModalInvoiceId}
               />
               <button className={primaryButton} type="submit">
-                Archive invoice
+                {t("dashboard.invoices.archiveInvoice")}
               </button>
             </form>
           </div>

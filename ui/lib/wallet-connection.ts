@@ -1,16 +1,18 @@
+import type { Translate } from "./i18n/translate";
+
 const addressPattern = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/;
 
-export function walletFormatErrors(address: string, viewKey: string) {
+export function walletFormatErrors(address: string, viewKey: string, t: Translate) {
   const primary = address.trim();
   const key = viewKey.trim();
   return {
-    address: !primary ? "Enter your primary address."
-      : !primary.startsWith("4") ? "Use a primary address starting with 4. Subaddresses starting with 8 cannot connect."
-        : primary.length !== 95 ? "The primary address must contain 95 characters."
-          : !addressPattern.test(primary) ? "The primary address contains an unsupported character." : null,
-    viewKey: !key ? "Enter your private view key."
-      : key.length !== 64 ? "The private view key must contain 64 hexadecimal characters."
-        : !/^[0-9a-fA-F]{64}$/.test(key) ? "Use only hexadecimal characters (0–9 and a–f) for the private view key." : null,
+    address: !primary ? t("login.format.addressEmpty")
+      : !primary.startsWith("4") ? t("login.format.addressPrefix")
+        : primary.length !== 95 ? t("login.format.addressLength")
+          : !addressPattern.test(primary) ? t("login.format.addressChars") : null,
+    viewKey: !key ? t("login.format.keyEmpty")
+      : key.length !== 64 ? t("login.format.keyLength")
+        : !/^[0-9a-fA-F]{64}$/.test(key) ? t("login.format.keyChars") : null,
   };
 }
 

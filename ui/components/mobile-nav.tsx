@@ -3,12 +3,14 @@
 import type { ReactNode } from "react";
 import type { MouseEvent } from "react";
 import { useRef, useState } from "react";
+import { useI18n } from "./i18n-provider";
 
 type MobileNavProps = {
   children: ReactNode;
 };
 
 export default function MobileNav({ children }: MobileNavProps) {
+  const { t } = useI18n();
   const summaryRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -38,15 +40,15 @@ export default function MobileNav({ children }: MobileNavProps) {
         ref={summaryRef}
         aria-controls="mobile-navigation"
         aria-expanded={open}
-        aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+        aria-label={open ? t("nav.closeMenu") : t("nav.openMenu")}
         onClick={handleSummaryClick}
       >
-        Menu
+        {t("nav.menu")}
       </summary>
       <nav
         id="mobile-navigation"
         className="mobile-nav-panel"
-        aria-label="Mobile navigation"
+        aria-label={t("nav.mobile")}
         onClick={handleNavigationClick}
       >
         {children}

@@ -28,10 +28,13 @@ import WebhookSection from "../../../components/webhook-section";
 import PaymentLinks from "../../../components/payment-links";
 import Terminals from "../../../components/terminals";
 import WorkspaceNav from "../../../components/workspace-nav";
+import type { Translate } from "../../../lib/i18n/translate";
+import { rich } from "../../../lib/i18n/rich";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t("nav.dashboard") };
+}
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 const tabs = ["overview", "invoices", "payment-links", "terminals", "webhooks", "profile", "health"] as const;
@@ -92,49 +95,49 @@ type ProfileSummary = {
   created_at: string;
 };
 
-const dashboardNavItems = [
-  { value: "payment-links", href: "/dashboard?tab=payment-links", label: "Payment links", detail: "Reusable HTML buttons" },
-  { value: "terminals", href: "/dashboard?tab=terminals", label: "Terminals", detail: "In-person checkout" },
+const dashboardNavItems = (t: Translate) => [
+  { value: "payment-links", href: "/dashboard?tab=payment-links", label: t("dashboard.page.navPaymentLinks"), detail: t("dashboard.page.navPaymentLinksDetail") },
+  { value: "terminals", href: "/dashboard?tab=terminals", label: t("dashboard.page.navTerminals"), detail: t("dashboard.page.navTerminalsDetail") },
   {
     value: "overview",
     href: "/dashboard?tab=overview",
-    label: "Overview",
-    detail: "Activity and connectivity",
+    label: t("dashboard.page.navOverview"),
+    detail: t("dashboard.page.navOverviewDetail"),
   },
   {
     value: "invoices",
     href: "/dashboard?tab=invoices",
-    label: "Invoices",
-    detail: "Create and review invoices",
+    label: t("dashboard.page.navInvoices"),
+    detail: t("dashboard.page.navInvoicesDetail"),
   },
   {
     value: "webhooks",
     href: "/dashboard?tab=webhooks",
-    label: "Webhooks",
-    detail: "Endpoints and delivery history",
+    label: t("dashboard.page.navWebhooks"),
+    detail: t("dashboard.page.navWebhooksDetail"),
   },
   {
     value: "profile",
     href: "/dashboard?tab=profile",
-    label: "Profile",
-    detail: "Credentials and defaults",
+    label: t("dashboard.page.navProfile"),
+    detail: t("dashboard.page.navProfileDetail"),
   },
   {
     value: "health",
     href: "/dashboard?tab=health",
-    label: "System health",
-    detail: "Detection and connectivity",
+    label: t("dashboard.page.navHealth"),
+    detail: t("dashboard.page.navHealthDetail"),
   },
 ];
 
-const reconcilerBadge = (systemStatus: SystemStatusSummary | null) => {
+const reconcilerBadge = (systemStatus: SystemStatusSummary | null, t: Translate) => {
   if (!systemStatus || systemStatus.reconciler === "unavailable") {
-    return { tone: "pending" as StatusTone, label: "Unavailable" };
+    return { tone: "pending" as StatusTone, label: t("dashboard.page.reconcilerUnavailable") };
   }
   if (systemStatus.reconciler === "ok") {
-    return { tone: "success" as StatusTone, label: "Healthy" };
+    return { tone: "success" as StatusTone, label: t("dashboard.page.healthy") };
   }
-  return { tone: "error" as StatusTone, label: "Degraded" };
+  return { tone: "error" as StatusTone, label: t("dashboard.page.degraded") };
 };
 
 export default async function DashboardPage({
@@ -143,7 +146,7 @@ export default async function DashboardPage({
   searchParams: Promise<DashboardSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const { t } = await getI18n();
+  const { locale, t } = await getI18n();
   const destinationParams = new URLSearchParams();
   for (const [key, value] of Object.entries(resolvedSearchParams)) {
     if (typeof value === "string") destinationParams.set(key, value);
@@ -366,7 +369,7 @@ export default async function DashboardPage({
   const recentInvoiceItems = allInvoices.slice(0, 5).map((invoice) => ({
     title: invoiceContext(invoice.metadata).title ?? invoice.id,
     invoiceId: invoice.id,
-    detail: `Created ${new Date(invoice.created_at).toLocaleString()}`,
+    detail: t("dashboard.page.createdAt", { date: new Date(invoice.created_at).toLocaleString(locale) }),
     href: `/invoice/${invoice.id}`,
     status: invoiceStatusLabel(
       invoice.status,
@@ -388,12 +391,12 @@ export default async function DashboardPage({
     title: delivery.event,
     detail:
       delivery.http_status === null || delivery.http_status >= 400
-        ? `Delivery failed for ${delivery.invoice_id ?? "an invoice"}.`
-        : `Delivery recorded for ${delivery.invoice_id ?? "an invoice"}.`,
+        ? delivery.invoice_id ? t("dashboard.page.deliveryFailedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryFailed")
+        : delivery.invoice_id ? t("dashboard.page.deliveryRecordedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryRecorded"),
     status:
       delivery.http_status === null || delivery.http_status >= 400
-        ? "Needs review"
-        : "Accepted",
+        ? t("dashboard.page.needsReview")
+        : t("dashboard.page.accepted"),
     tone:
       delivery.http_status === null || delivery.http_status >= 400
         ? ("error" as StatusTone)
@@ -403,48 +406,48 @@ export default async function DashboardPage({
         ? "bg-red-500"
         : "bg-sage",
   }));
-  const reconcilerStatusBadge = reconcilerBadge(systemStatus);
+  const reconcilerStatusBadge = reconcilerBadge(systemStatus, t);
   const subTabBaseClass =
     "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2";
   const subTabActiveClass =
     "border-ink bg-ink text-cream shadow-[0_6px_14px_rgba(16,18,23,0.12)]";
   const overviewMetrics = [
     {
-      title: "Invoices today",
+      title: t("dashboard.page.invoicesToday"),
       value: invoicesTodayCount.toString(),
-      detail: "Created since the start of today.",
+      detail: t("dashboard.page.invoicesTodayDetail"),
       href: "/dashboard?tab=invoices",
       accentClass: "border-t-clay",
       valueClass: "text-clay",
     },
     {
-      title: "Awaiting confirmation",
+      title: t("dashboard.page.awaiting"),
       value: awaitingConfirmationCount.toString(),
-      detail: "Detected below the configured target.",
+      detail: t("dashboard.page.awaitingDetail"),
       href: "/dashboard?tab=invoices&status=payment_detected",
       accentClass: "border-t-monero",
       valueClass: "text-monero",
     },
     {
-      title: "Partially paid",
+      title: t("dashboard.page.partial"),
       value: partiallyPaidCount.toString(),
-      detail: "Received less than requested so far.",
+      detail: t("dashboard.page.partialDetail"),
       href: "/dashboard?tab=invoices&status=partially_paid",
       accentClass: "border-t-amber-400",
       valueClass: "text-amber-900",
     },
     {
-      title: "Confirmed",
+      title: t("dashboard.page.confirmed"),
       value: confirmedCount.toString(),
-      detail: "Invoices that reached their target.",
+      detail: t("dashboard.page.confirmedDetail"),
       href: "/dashboard?tab=invoices&status=confirmed",
       accentClass: "border-t-sage",
       valueClass: "text-sage",
     },
     {
-      title: "Webhook issues",
+      title: t("dashboard.page.webhookIssues"),
       value: failedWebhookCount.toString(),
-      detail: "Recent deliveries ready to review.",
+      detail: t("dashboard.page.webhookIssuesDetail"),
       href: "/dashboard?tab=webhooks&webhook_tab=history",
       accentClass: "border-t-red-500",
       valueClass: "text-red-700",
@@ -455,19 +458,19 @@ export default async function DashboardPage({
     <main id="main-content" tabIndex={-1} className="px-[6vw] pb-16 pt-8 text-ink">
       <header
         className="mx-auto w-full max-w-7xl border-b border-stroke pb-5"
-        aria-label="Dashboard header"
+        aria-label={t("dashboard.page.headerLabel")}
       >
         <p className="text-sm font-semibold text-ink-soft">Dashboard</p>
         <p className="mt-1 font-sans text-2xl font-semibold leading-tight sm:text-3xl">
-          Merchant workspace
+          {t("dashboard.page.workspace")}
         </p>
       </header>
 
       <section className="mx-auto mt-6 grid w-full max-w-7xl gap-7 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10">
         <WorkspaceNav
           activeValue={activeTab}
-          ariaLabel="Dashboard sections"
-          items={dashboardNavItems}
+          ariaLabel={t("dashboard.page.sections")}
+          items={dashboardNavItems(t)}
           mobileColumns={2}
           showIndexes={false}
         />
@@ -485,20 +488,20 @@ export default async function DashboardPage({
                       className="h-2 w-2 rounded-full bg-clay"
                       aria-hidden="true"
                     />
-                    Overview
+                    {t("dashboard.page.navOverview")}
                   </p>
                   <h1
                     className="mt-1 font-sans text-3xl font-semibold leading-tight"
                     id="dashboard-overview-title"
                   >
-                    Merchant activity at a glance
+                    {t("dashboard.page.overviewTitle")}
                   </h1>
                 </div>
                 <Link
                   className="inline-flex min-h-11 items-center justify-center rounded-full border border-ink bg-ink px-4 py-2 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
                   href="/dashboard?tab=invoices"
                 >
-                  Open invoices
+                  {t("dashboard.page.openInvoices")}
                 </Link>
               </header>
 
@@ -506,7 +509,7 @@ export default async function DashboardPage({
 
               <div
                 className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
-                aria-label="Merchant metrics"
+                aria-label={t("dashboard.page.metrics")}
               >
                 {overviewMetrics.map((item) => (
                   <Link
@@ -538,17 +541,17 @@ export default async function DashboardPage({
                         className="font-sans text-xl font-semibold"
                         id="recent-invoices-title"
                       >
-                        Recent invoices
+                        {t("dashboard.page.recentInvoices")}
                       </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Latest merchant invoices and their current status.
+                        {t("dashboard.page.recentInvoicesHelp")}
                       </p>
                     </div>
                     <Link
                       className="text-sm font-semibold text-ink underline underline-offset-4"
                       href="/dashboard?tab=invoices"
                     >
-                      View all
+                      {t("dashboard.page.viewAll")}
                     </Link>
                   </div>
                   <div className="mt-4">
@@ -580,7 +583,7 @@ export default async function DashboardPage({
                       ))
                     ) : (
                       <p className="text-sm text-ink-soft">
-                        No invoices created yet.
+                        {t("dashboard.page.noInvoices")}
                       </p>
                     )}
                   </div>
@@ -596,17 +599,17 @@ export default async function DashboardPage({
                         className="font-sans text-xl font-semibold"
                         id="recent-activity-title"
                       >
-                        Recent webhook deliveries
+                        {t("dashboard.page.recentDeliveries")}
                       </h2>
                       <p className="mt-1 text-sm text-ink-soft">
-                        Latest attempts to send invoice events to your configured endpoints.
+                        {t("dashboard.page.recentDeliveriesHelp")}
                       </p>
                     </div>
                     <Link
                       className="text-sm font-semibold text-ink underline underline-offset-4"
                       href="/dashboard?tab=webhooks&webhook_tab=history"
                     >
-                      History
+                      {t("dashboard.page.history")}
                     </Link>
                   </div>
                   <div className="mt-4">
@@ -638,7 +641,7 @@ export default async function DashboardPage({
                       ))
                     ) : (
                       <p className="text-sm text-ink-soft">
-                        No webhook delivery attempts recorded yet.
+                        {t("dashboard.page.noDeliveries")}
                       </p>
                     )}
                   </div>
@@ -650,33 +653,32 @@ export default async function DashboardPage({
                   className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft transition hover:border-ink/40 hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href="/dashboard?tab=health"
                 >
-                  <p className="text-sm font-semibold text-ink-soft">System health</p>
+                  <p className="text-sm font-semibold text-ink-soft">{t("dashboard.page.navHealth")}</p>
                   <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
                     <p className="font-sans text-xl font-semibold">
                       {reconcilerStatusBadge.label}
                     </p>
                     <StatusBadge
-                      label="Open details"
+                      label={t("dashboard.page.openDetails")}
                       tone={reconcilerStatusBadge.tone}
                     />
                   </div>
                   <p className="mt-2 text-sm text-ink-soft">
-                    Check the services that observe payments when confirmation
-                    appears delayed.
+                    {t("dashboard.page.healthHelp")}
                   </p>
                 </Link>
                 <Link
                   className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft transition hover:border-ink/40 hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href="/dashboard?tab=webhooks"
                 >
-                  <p className="text-sm font-semibold text-ink-soft">Webhook endpoints</p>
+                  <p className="text-sm font-semibold text-ink-soft">{t("dashboard.page.endpoints")}</p>
                   <p className="mt-2 font-sans text-xl font-semibold">
                     {webhooksData.length === 0
-                      ? "No endpoints configured"
-                      : `${webhooksData.length} endpoint${webhooksData.length === 1 ? "" : "s"}`}
+                      ? t("dashboard.page.noEndpoints")
+                      : t("dashboard.page.endpointCount", { count: webhooksData.length })}
                   </p>
                   <p className="mt-2 text-sm text-ink-soft">
-                    Review configured destinations and delivery history.
+                    {t("dashboard.page.endpointsHelp")}
                   </p>
                 </Link>
               </div>
@@ -724,37 +726,35 @@ export default async function DashboardPage({
                     className="h-2 w-2 rounded-full bg-clay"
                     aria-hidden="true"
                   />
-                  Profile
+                  {t("dashboard.page.navProfile")}
                 </p>
                 <h1
                   className="mt-1 font-sans text-3xl font-semibold leading-tight"
                   id="profile-settings-title"
                 >
-                  Credentials and checkout defaults
+                  {t("dashboard.page.profileTitle")}
                 </h1>
                 <p className="mt-2 max-w-2xl text-ink-soft">
-                  Manage integration access, webhook verification, and defaults
-                  for new invoices.
+                  {t("dashboard.page.profileHelp")}
                 </p>
               </header>
               {apiKeyData ? (
                 <div className="grid gap-5 lg:grid-cols-2">
                   <section className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft sm:p-6">
                     <h2 className="font-sans text-xl font-semibold">
-                      Store id
+                      {t("dashboard.page.storeId")}
                     </h2>
                     <p className="mt-2 text-sm text-ink-soft">
-                      Single-store per primary address. Use this id in the
-                      BTCPay WooCommerce plugin store field.
+                      {t("dashboard.page.storeIdHelp")}
                     </p>
                     <code className="mt-4 block break-all border-l-2 border-clay bg-sand/50 px-3 py-3 font-mono text-xs text-ink sm:text-sm">
-                      {profileData?.id ?? "Unavailable"}
+                      {profileData?.id ?? t("health.unavailable")}
                     </code>
                   </section>
                   <section className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft sm:p-6">
-                    <h2 className="font-sans text-xl font-semibold">API key</h2>
+                    <h2 className="font-sans text-xl font-semibold">{t("dashboard.page.apiKey")}</h2>
                     <p className="mt-2 text-sm text-ink-soft">
-                      Use this key only with authenticated API endpoints.
+                      {t("dashboard.page.apiKeyHelp")}
                     </p>
                     <div className="mt-4">
                       <ApiKeySection apiKey={apiKeyData.api_key} />
@@ -762,11 +762,10 @@ export default async function DashboardPage({
                   </section>
                   <section className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft sm:p-6">
                     <h2 className="font-sans text-xl font-semibold">
-                      Webhook secret
+                      {t("dashboard.page.webhookSecret")}
                     </h2>
                     <p className="mt-2 text-sm text-ink-soft">
-                      Sent with each delivery as the{" "}
-                      <code>X-Webhook-Secret</code> header.
+                      {rich(t("dashboard.page.secretHelp"), { code: (text) => <code>{text}</code> })}
                     </p>
                     <div className="mt-4">
                       <WebhookSecretSection webhookSecret={webhookSecret} />
@@ -800,10 +799,10 @@ export default async function DashboardPage({
               ) : (
                 <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
                   <h2 className="font-sans text-xl font-semibold">
-                    API key unavailable
+                    {t("dashboard.page.apiKeyUnavailable")}
                   </h2>
                   <p className="mt-2 text-ink-soft">
-                    Connect again to reveal your API key.
+                    {t("dashboard.page.connectAgain")}
                   </p>
                 </div>
               )}
@@ -821,20 +820,19 @@ export default async function DashboardPage({
                     className="h-2 w-2 rounded-full bg-clay"
                     aria-hidden="true"
                   />
-                  Webhooks
+                  {t("dashboard.page.navWebhooks")}
                 </p>
                 <h1
                   className="mt-1 font-sans text-3xl font-semibold leading-tight"
                   id="webhook-endpoints-title"
                 >
-                  Webhook endpoints
+                  {t("dashboard.page.endpoints")}
                 </h1>
                 <p className="mt-2 max-w-2xl text-ink-soft">
-                  Relay invoice state updates to your systems. Optional
-                  overrides let you target different URLs per event.
+                  {t("dashboard.page.webhooksHelp")}
                 </p>
               </header>
-              <nav className="flex flex-wrap gap-2" aria-label="Webhook views">
+              <nav className="flex flex-wrap gap-2" aria-label={t("dashboard.page.webhookViews")}>
                 {webhookTabs.map((tab) => (
                   <Link
                     key={tab}
@@ -844,7 +842,7 @@ export default async function DashboardPage({
                     }`}
                     href={`/dashboard?tab=webhooks&webhook_tab=${tab}`}
                   >
-                    {tab === "settings" ? "Settings" : "History"}
+                    {tab === "settings" ? t("dashboard.page.settingsTab") : t("dashboard.page.history")}
                   </Link>
                 ))}
               </nav>

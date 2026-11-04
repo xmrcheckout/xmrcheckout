@@ -8,6 +8,7 @@ import {
 } from "../app/(app)/dashboard/actions";
 import ApiKeyCard from "./api-key-card";
 import ConfirmSubmitButton from "./confirm-submit-button";
+import { useI18n } from "./i18n-provider";
 
 const initialState = (apiKey: string): ApiKeyState => ({
   apiKey,
@@ -19,6 +20,7 @@ type ApiKeySectionProps = {
 };
 
 export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
+  const { t } = useI18n();
   const [state, formAction] = useFormState(
     resetApiKeyAction,
     initialState(apiKey),
@@ -34,9 +36,9 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
       ) : null}
       <form action={formAction} className="flex justify-end">
         <ConfirmSubmitButton
-          label="Reset API key"
-          confirmLabel="Reset and replace key"
-          description="This immediately invalidates the current API key and may stop existing integrations until they are updated."
+          label={t("credentials.resetApiKey")}
+          confirmLabel={t("credentials.resetApiKeyConfirm")}
+          description={t("credentials.resetApiKeyDescription")}
         />
       </form>
     </div>

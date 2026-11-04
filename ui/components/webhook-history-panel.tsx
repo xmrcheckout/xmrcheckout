@@ -11,6 +11,7 @@ import {
 } from "../app/(app)/dashboard/actions";
 import StatusBadge from "./status-badge";
 import type { InvoiceStatus } from "../lib/invoice-status";
+import { useI18n } from "./i18n-provider";
 
 type WebhookDeliverySummary = {
   id: string;
@@ -36,6 +37,7 @@ export default function WebhookHistoryPanel({
   mode?: "live" | "tour";
   deliveries: WebhookDeliverySummary[];
 }) {
+  const { locale, t } = useI18n();
   const router = useRouter();
   const [state, formAction] = useFormState(
     mode === "tour"
@@ -50,7 +52,7 @@ export default function WebhookHistoryPanel({
     }
   }, [mode, router, state.success]);
 
-  const formatTimestamp = (value: string) => new Date(value).toLocaleString();
+  const formatTimestamp = (value: string) => new Date(value).toLocaleString(locale);
   const failedCount = deliveries.filter(
     (delivery) =>
       delivery.http_status === null ||
@@ -62,16 +64,16 @@ export default function WebhookHistoryPanel({
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-stroke pb-4">
         <div>
           <h2 className="font-sans text-xl font-semibold">
-            Webhook delivery attempts
+            {t("webhooks.history.title")}
           </h2>
           <p className="mt-1 text-sm text-ink-soft">
-            Inspect responses and explicitly retry failed webhook deliveries.
+            {t("webhooks.history.intro")}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <StatusBadge label={`${deliveries.length} recorded`} />
+          <StatusBadge label={t("webhooks.history.recordedCount", { count: deliveries.length })} />
           <StatusBadge
-            label={`${failedCount} need review`}
+            label={t("webhooks.history.needReviewCount", { count: failedCount })}
             tone={failedCount > 0 ? "error" : "success"}
           />
         </div>
@@ -88,7 +90,7 @@ export default function WebhookHistoryPanel({
       ) : null}
       {deliveries.length === 0 ? (
         <p className="rounded-surface border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
-          No webhook calls recorded yet.
+          {t("webhooks.history.none")}
         </p>
       ) : (
         <div className="grid gap-3">
@@ -96,7 +98,7 @@ export default function WebhookHistoryPanel({
             const statusLabel =
               delivery.http_status !== null
                 ? delivery.http_status.toString()
-                : "No response";
+                : t("webhooks.history.noResponse");
             const isFailed =
               delivery.http_status === null ||
               (typeof delivery.http_status === "number" &&
@@ -141,7 +143,7 @@ export default function WebhookHistoryPanel({
                           className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
                           type="submit"
                         >
-                          Redeliver
+                          {t("webhooks.history.redeliver")}
                         </button>
                       </form>
                     ) : null}
@@ -150,13 +152,13 @@ export default function WebhookHistoryPanel({
                 {hasInvoiceDetails ? (
                   <details className="mt-3 rounded-lg border border-stroke bg-white/70 px-3 py-2">
                     <summary className="cursor-pointer text-xs font-semibold uppercase tracking-[0.06em] text-ink">
-                      View invoice details
+                      {t("webhooks.history.viewInvoiceDetails")}
                     </summary>
                     <div className="mt-3 grid gap-2 text-xs text-ink-soft">
                       {delivery.invoice_id ? (
                         <div>
                           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                            Invoice id
+                            {t("webhooks.history.invoiceId")}
                           </p>
                           <p className="mt-1 break-all text-xs text-ink">
                             {delivery.invoice_id}
@@ -166,7 +168,7 @@ export default function WebhookHistoryPanel({
                       {delivery.invoice_address ? (
                         <div>
                           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                            Subaddress
+                            {t("webhooks.history.subaddress")}
                           </p>
                           <p className="mt-1 break-all text-xs text-ink">
                             {delivery.invoice_address}
@@ -176,7 +178,7 @@ export default function WebhookHistoryPanel({
                       {delivery.invoice_subaddress_index !== null ? (
                         <div>
                           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                            Subaddress index
+                            {t("webhooks.history.subaddressIndex")}
                           </p>
                           <p className="mt-1 text-xs text-ink">
                             {delivery.invoice_subaddress_index}
@@ -186,7 +188,7 @@ export default function WebhookHistoryPanel({
                       {delivery.invoice_amount_xmr ? (
                         <div>
                           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                            Invoice amount (XMR)
+                            {t("webhooks.history.amount")}
                           </p>
                           <p className="mt-1 text-xs text-ink">
                             {delivery.invoice_amount_xmr}
@@ -196,7 +198,7 @@ export default function WebhookHistoryPanel({
                       {delivery.invoice_status ? (
                         <div>
                           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                            Invoice status
+                            {t("webhooks.history.status")}
                           </p>
                           <p className="mt-1 text-xs text-ink">
                             {delivery.invoice_status}
@@ -208,7 +210,7 @@ export default function WebhookHistoryPanel({
                 ) : null}
                 {delivery.error_message ? (
                   <p className="mt-2 text-xs text-ink-soft">
-                    Delivery error: {delivery.error_message}
+                    {t("webhooks.history.deliveryError", { error: delivery.error_message })}
                   </p>
                 ) : null}
               </div>

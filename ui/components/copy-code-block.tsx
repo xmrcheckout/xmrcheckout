@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
+import { useI18n } from "./i18n-provider";
 
 type CopyCodeBlockProps = {
   children: ReactNode;
@@ -12,8 +13,9 @@ type CopyCodeBlockProps = {
 export default function CopyCodeBlock({
   children,
   className,
-  label = "Code example",
+  label,
 }: CopyCodeBlockProps) {
+  const { t } = useI18n();
   const codeRef = useRef<HTMLPreElement>(null);
   const [copyFailed, setCopyFailed] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -35,9 +37,9 @@ export default function CopyCodeBlock({
   return (
     <div className="relative min-w-0 max-w-full overflow-hidden">
       <p role="status" aria-live="polite" className={copyFailed ? "p-3 text-sm text-red-700" : "sr-only"}>
-        {copyFailed ? "Could not copy. Select and copy the text manually." : copied ? "Code copied to clipboard" : ""}
+        {copyFailed ? t("common.copyFailed") : copied ? t("common.codeCopied") : ""}
       </p>
-      <pre ref={codeRef} className={className} tabIndex={0} role="region" aria-label={label}>
+      <pre ref={codeRef} className={className} tabIndex={0} role="region" aria-label={label ?? t("common.codeExample")}>
         {children}
       </pre>
       <button
@@ -45,10 +47,10 @@ export default function CopyCodeBlock({
         type="button"
         onClick={handleCopy}
       >
-        {copied ? "Copied" : "Copy code"}
+        {copied ? t("common.copied") : t("common.copyCode")}
       </button>
       <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-ink/80 px-2 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.06em] text-cream/70 sm:hidden">
-        Scroll for more
+        {t("common.scrollForMore")}
       </span>
     </div>
   );

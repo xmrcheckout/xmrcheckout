@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { getI18n } from "../../../lib/i18n/server";
 
 export type TerminalState = { error: string; success: string; url: string };
 const apiBase = () => process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -14,8 +15,9 @@ async function detail(response: Response, fallback: string) {
 }
 
 export async function saveTerminal(_state: TerminalState, form: FormData): Promise<TerminalState> {
+  const { t } = await getI18n();
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
-  if (!apiKey) return { error: "Connect before saving a terminal.", success: "", url: "" };
+  if (!apiKey) return { error: t("dashboard.terminalActions.connectFirst"), success: "", url: "" };
   const id = String(form.get("id") ?? "");
   const rotating = form.get("mode") === "rotate" && !!id;
   try {
@@ -28,12 +30,12 @@ export async function saveTerminal(_state: TerminalState, form: FormData): Promi
         expiry_minutes: Number(form.get("expiry_minutes")), enabled: form.get("enabled") === "on",
       }),
     });
-    if (!response.ok) return { error: await detail(response, "Check the terminal settings."), success: "", url: "" };
+    if (!response.ok) return { error: await detail(response, t("dashboard.terminalActions.checkSettings")), success: "", url: "" };
     const data = await response.json();
     revalidatePath("/dashboard");
-    if (data.url) return { error: "", success: rotating ? "New link created. The previous link no longer works." : "Terminal created.", url: data.url };
-    return { error: "", success: "Terminal saved.", url: "" };
+    if (data.url) return { error: "", success: rotating ? t("dashboard.terminalActions.rotated") : t("dashboard.terminalActions.created"), url: data.url };
+    return { error: "", success: t("dashboard.terminalActions.saved"), url: "" };
   } catch {
-    return { error: "Could not confirm saving. Check the terminal list before trying again.", success: "", url: "" };
+    return { error: t("dashboard.terminalActions.notConfirmed"), success: "", url: "" };
   }
 }

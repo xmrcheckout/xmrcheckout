@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { useI18n } from "./i18n-provider";
 
 type AccessibleDialogProps = {
   ariaDescribedBy?: string;
@@ -30,6 +31,7 @@ export default function AccessibleDialog({
   onClose,
   panelClassName = "",
 }: AccessibleDialogProps) {
+  const { t } = useI18n();
   // Match the server's empty render before mounting the portal in the browser.
   const isHydrated = useSyncExternalStore(
     emptySubscribe,
@@ -123,7 +125,7 @@ export default function AccessibleDialog({
       className={`fixed inset-0 z-[60] grid place-items-end overflow-y-auto px-3 py-3 sm:place-items-center sm:px-4 sm:py-4 ${className}`}
     >
       <button
-        aria-label="Close dialog"
+        aria-label={t("common.closeDialog")}
         aria-hidden="true"
         tabIndex={-1}
         className="absolute inset-0 cursor-default bg-ink/70"

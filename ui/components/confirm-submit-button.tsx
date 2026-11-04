@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useI18n } from "./i18n-provider";
 
 type ConfirmSubmitButtonProps = {
   label: string;
@@ -14,6 +15,7 @@ export default function ConfirmSubmitButton({
   confirmLabel,
   description,
 }: ConfirmSubmitButtonProps) {
+  const { t } = useI18n();
   const [confirming, setConfirming] = useState(false);
   const descriptionId = useId();
   const { pending } = useFormStatus();
@@ -36,7 +38,7 @@ export default function ConfirmSubmitButton({
       className="grid gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-left sm:max-w-md"
       role="alertdialog"
       aria-describedby={descriptionId}
-      aria-label={`${label} confirmation`}
+      aria-label={t("common.confirmationOf", { label })}
     >
       <p className="text-xs leading-relaxed text-red-900" id={descriptionId}>
         {description}
@@ -48,7 +50,7 @@ export default function ConfirmSubmitButton({
           disabled={pending}
           onClick={() => setConfirming(false)}
         >
-          Cancel
+          {t("common.cancel")}
         </button>
         <button
           className="inline-flex min-h-10 items-center justify-center rounded-full bg-red-800 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-red-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-2"
@@ -56,7 +58,7 @@ export default function ConfirmSubmitButton({
           disabled={pending}
           aria-busy={pending}
         >
-          <span role="status" aria-live="polite">{pending ? "Resetting…" : confirmLabel}</span>
+          <span role="status" aria-live="polite">{pending ? t("common.resetting") : confirmLabel}</span>
         </button>
       </div>
     </div>

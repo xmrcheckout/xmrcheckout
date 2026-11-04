@@ -8,6 +8,7 @@ import {
 } from "../app/(app)/dashboard/actions";
 import SecretCard from "./secret-card";
 import ConfirmSubmitButton from "./confirm-submit-button";
+import { useI18n } from "./i18n-provider";
 
 const initialState = (webhookSecret: string | null): WebhookSecretState => ({
   webhookSecret,
@@ -21,6 +22,7 @@ type WebhookSecretSectionProps = {
 export default function WebhookSecretSection({
   webhookSecret,
 }: WebhookSecretSectionProps) {
+  const { t } = useI18n();
   const [state, formAction] = useFormState(
     resetWebhookSecretAction,
     initialState(webhookSecret),
@@ -30,13 +32,13 @@ export default function WebhookSecretSection({
     <div className="grid gap-4">
       {state.webhookSecret ? (
         <SecretCard
-          label="Your webhook secret"
+          label={t("credentials.yourWebhookSecret")}
           value={state.webhookSecret}
-          buttonLabel="Copy webhook secret"
+          buttonLabel={t("credentials.copyWebhookSecret")}
         />
       ) : (
         <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
-          Webhook secret unavailable. Reset to generate a new secret.
+          {t("credentials.webhookSecretUnavailable")}
         </div>
       )}
       {state.error ? (
@@ -46,9 +48,9 @@ export default function WebhookSecretSection({
       ) : null}
       <form action={formAction} className="flex justify-end">
         <ConfirmSubmitButton
-          label="Reset webhook secret"
-          confirmLabel="Reset and replace secret"
-          description="This changes the signing secret for future webhook deliveries. Update every receiver before relying on new signatures."
+          label={t("credentials.resetWebhookSecret")}
+          confirmLabel={t("credentials.resetWebhookSecretConfirm")}
+          description={t("credentials.resetWebhookSecretDescription")}
         />
       </form>
     </div>

@@ -10,6 +10,8 @@ import {
   type WebhookFormState,
 } from "../app/(app)/dashboard/actions";
 import StatusBadge from "./status-badge";
+import { fill } from "../lib/i18n/rich";
+import { useI18n } from "./i18n-provider";
 
 type WebhookSummary = {
   id: string;
@@ -59,6 +61,7 @@ export default function WebhookSection({
   mode = "live",
   webhooks,
 }: WebhookSectionProps) {
+  const { t } = useI18n();
   const [createState, createAction] = useFormState(
     mode === "tour" ? createWebhookTourAction : createWebhookAction,
     initialState,
@@ -72,7 +75,7 @@ export default function WebhookSection({
     <div className="grid min-w-0 grid-cols-1 gap-8">
       {mode === "tour" ? (
         <div className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">
-          Demo mode: webhook changes are simulated. No endpoints are saved.
+          {t("webhooks.demoNote")}
         </div>
       ) : null}
       <form
@@ -80,14 +83,12 @@ export default function WebhookSection({
         action={createAction}
       >
         <div>
-          <h2 className="font-sans text-xl font-semibold">Add an endpoint</h2>
+          <h2 className="font-sans text-xl font-semibold">{t("webhooks.addEndpoint")}</h2>
           <p className="mt-1 text-sm text-ink-soft">
-            Select the invoice events to relay and optionally route events to
-            separate URLs.
+            {t("webhooks.addIntro")}
           </p>
           <p className="mt-2 border-l-2 border-sage bg-sage/5 px-3 py-2 text-sm text-ink-soft">
-            All invoice events are selected by default. Clear any event you do
-            not need to reduce delivery volume.
+            {t("webhooks.allSelected")}
           </p>
         </div>
         <div className="grid min-w-0 gap-2">
@@ -95,7 +96,7 @@ export default function WebhookSection({
             className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
             htmlFor="default_url"
           >
-            Default webhook URL
+            {t("webhooks.defaultUrl")}
           </label>
           <input
             className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
@@ -105,11 +106,11 @@ export default function WebhookSection({
             placeholder="https://xmrcheckout.com/webhooks"
           />
           <p className="text-sm text-ink-soft">
-            Used for any selected event without a specific override URL.
+            {t("webhooks.defaultUrlHelp")}
           </p>
         </div>
         <fieldset className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-          <legend className="sr-only">Invoice events to relay</legend>
+          <legend className="sr-only">{t("webhooks.eventsLegend")}</legend>
           {webhookEvents.map(({ event, key, label }) => (
             <div
               key={event}
@@ -129,7 +130,7 @@ export default function WebhookSection({
                 id={`event_url_${key}`}
                 name={`event_url_${key}`}
                 type="url"
-                placeholder="Optional override URL"
+                placeholder={t("webhooks.overridePlaceholder")}
               />
             </div>
           ))}
@@ -149,27 +150,25 @@ export default function WebhookSection({
             className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             type="submit"
           >
-            Save webhook
+            {t("webhooks.save")}
           </button>
         </div>
       </form>
       <div className="border-l-2 border-sage pl-4">
         <p className="text-sm font-semibold text-ink">
-          Polling remains available
+          {t("webhooks.pollingTitle")}
         </p>
         <p className="mt-2 text-sm text-ink-soft">
-          Webhooks are optional. You can poll{" "}
-          <code className="break-all">/api/core/public/invoice/&lt;invoice_id&gt;</code> without
-          authentication to read invoice status.
+          {fill(t("webhooks.pollingHelp"), { path: <code className="break-all">/api/core/public/invoice/&lt;invoice_id&gt;</code> })}
         </p>
       </div>
       <div className="grid gap-4">
         <div className="border-b border-stroke pb-3">
           <h2 className="font-sans text-xl font-semibold">
-            Configured endpoints
+            {t("webhooks.configured")}
           </h2>
           <p className="mt-1 text-sm text-ink-soft">
-            Review the exact destination used for each selected event.
+            {t("webhooks.configuredIntro")}
           </p>
         </div>
         {deleteState.error ? (
@@ -184,7 +183,7 @@ export default function WebhookSection({
         ) : null}
         {webhooks.length === 0 ? (
           <p className="text-sm font-semibold text-ink-soft">
-            No webhooks configured yet.
+            {t("webhooks.none")}
           </p>
         ) : (
           <form className="grid gap-4" action={deleteAction}>
@@ -196,15 +195,15 @@ export default function WebhookSection({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                      Webhook
+                      {t("webhooks.webhook")}
                     </p>
                     <StatusBadge
-                      label={hook.active ? "Active" : "Paused"}
+                      label={hook.active ? t("webhooks.active") : t("webhooks.paused")}
                       tone={hook.active ? "success" : "neutral"}
                     />
                   </div>
                   <code className="mt-2 block break-all rounded-lg bg-ink/10 px-3 py-2 text-sm text-ink">
-                    {hook.url || "Per-event URLs only"}
+                    {hook.url || t("webhooks.perEventOnly")}
                   </code>
                   <div className="mt-4 grid gap-3">
                     {hook.events.map((event) => (
@@ -226,7 +225,7 @@ export default function WebhookSection({
                     name="webhook_id"
                     value={hook.id}
                   >
-                    Remove
+                    {t("webhooks.remove")}
                   </button>
                 </div>
               </div>

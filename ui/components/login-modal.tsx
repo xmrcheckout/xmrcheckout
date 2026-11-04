@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import LoginForm from "../app/(app)/login/login-form";
 import AccessibleDialog from "./accessible-dialog";
+import { useI18n } from "./i18n-provider";
 
 const loginParam = "login";
 
@@ -40,6 +41,7 @@ export function LoginTrigger({ className, children }: LoginTriggerProps) {
 }
 
 export default function LoginModal() {
+  const { t } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -72,22 +74,22 @@ export default function LoginModal() {
               className="h-2 w-2 rounded-full bg-monero"
               aria-hidden="true"
             />
-            Wallet connection
+            {t("login.walletConnection")}
           </p>
           <h3
             id="login-title"
             className="mt-1 font-sans text-lg font-semibold leading-tight"
           >
-            Connect your wallet to create invoices.
+            {t("login.modalTitle")}
           </h3>
         </div>
         <button
           className="min-h-11 min-w-11 shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
           type="button"
           onClick={closeModal}
-          aria-label="Close login modal"
+          aria-label={t("login.closeModal")}
         >
-          Close
+          {t("common.close")}
         </button>
       </div>
       <div className="p-4 sm:p-5">
@@ -95,12 +97,9 @@ export default function LoginModal() {
           id="login-description"
           className="border-l-2 border-sage pl-3 text-xs leading-relaxed text-ink-soft sm:text-sm"
         >
-          <p className="font-semibold text-ink">Before you continue</p>
+          <p className="font-semibold text-ink">{t("login.beforeContinue")}</p>
           <p className="mt-1">
-            This instance receives your primary address and private view key to
-            observe incoming payments, including incoming activity beyond checkout invoices. Share it only with an instance you trust. The key is encrypted at rest. Payments go
-            directly to your wallet; this access cannot spend funds. Never submit
-            a spend key or recovery seed.
+            {t("login.disclosure")}
           </p>
         </div>
         <LoginForm nextDestination={searchParams.get("next") ?? undefined} />

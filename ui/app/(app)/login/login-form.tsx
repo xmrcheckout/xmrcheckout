@@ -8,6 +8,7 @@ import { dashboardDestination, walletFormatErrors } from "../../../lib/wallet-co
 import PendingSubmitButton from "../../../components/pending-submit-button";
 
 import { loginAction, type LoginState } from "./actions";
+import { useI18n } from "../../../components/i18n-provider";
 
 const initialState: LoginState = { error: null };
 
@@ -35,6 +36,7 @@ const isLikelyPrivateViewKey = (value: string) =>
   viewKeyPattern.test(value.trim());
 
 export default function LoginForm({ nextDestination }: { nextDestination?: string }) {
+  const { t } = useI18n();
   const [state, formAction] = useFormState(loginAction, initialState);
   const [paymentAddress, setPaymentAddress] = useState("");
   const [viewKey, setViewKey] = useState("");
@@ -46,7 +48,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
     null,
   );
 
-  const formatErrors = walletFormatErrors(paymentAddress, viewKey);
+  const formatErrors = walletFormatErrors(paymentAddress, viewKey, t);
 
   const canSubmit = useMemo(() => {
     if (
@@ -85,7 +87,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
         if (!response.ok) {
           const detail = await response.json().catch(() => null);
           const message =
-            detail?.detail ?? "Address and view key did not pass validation.";
+            detail?.detail ?? t("login.validationFailed");
           setValidationStatus("invalid");
           setValidationMessage(message);
           return;
@@ -98,7 +100,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
         }
         setValidationStatus("error");
         setValidationMessage(
-          "Unable to validate the address and view key yet. You can still connect to confirm.",
+          t("login.validationUnavailable"),
         );
       }
     }, validationDelayMs);
@@ -107,18 +109,18 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [paymentAddress, viewKey]);
+  }, [paymentAddress, viewKey, t]);
 
   return (
     <form className="mt-4 grid gap-3" action={formAction}>
       <input type="hidden" name="next" value={dashboardDestination(nextDestination)} />
       <details className="text-sm text-ink-soft">
-        <summary className="min-h-11 cursor-pointer py-3 underline underline-offset-4">Where do I find these?</summary>
+        <summary className="min-h-11 cursor-pointer py-3 underline underline-offset-4">{t("login.whereToFind")}</summary>
         <div className="mt-3 grid gap-3">
-          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Monero GUI</summary><p>Open Settings → Wallet → Show seed &amp; keys. Copy only the primary address and private view key. Other secrets shown on that screen must stay in your wallet.</p><a className="underline" href="https://github.com/monero-ecosystem/monero-GUI-guide/blob/master/monero-GUI-guide.md#seed-and-keys" target="_blank" rel="noreferrer">Official GUI guide</a></details>
-          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Feather</summary><p>Open Wallet → Keys. Copy the primary address and private view key only.</p><a className="underline" href="https://docs.featherwallet.org/guides/primary-address" target="_blank" rel="noreferrer">Official Feather guide</a></details>
-          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Cake Wallet</summary><p>Open your Monero wallet’s menu → Security and backup → Show seed/keys, and authenticate locally. Copy only the primary address and private view key. Menu labels can vary by version; never copy the seed or spend key into this site.</p><a className="underline" href="https://docs.cakewallet.com/cryptos/monero/" target="_blank" rel="noreferrer">Official Cake Wallet guide</a></details>
-          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Other wallets</summary><p>Use your wallet’s official instructions to locate the 95-character primary address starting with 4 and the 64-character private view key. A public view key or subaddress will not work here. If view-key export is unavailable, do not submit other secrets.</p></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Monero GUI</summary><p>{t("login.guiSteps")}</p><a className="underline" href="https://github.com/monero-ecosystem/monero-GUI-guide/blob/master/monero-GUI-guide.md#seed-and-keys" target="_blank" rel="noreferrer">{t("login.guiGuide")}</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Feather</summary><p>{t("login.featherSteps")}</p><a className="underline" href="https://docs.featherwallet.org/guides/primary-address" target="_blank" rel="noreferrer">{t("login.featherGuide")}</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">Cake Wallet</summary><p>{t("login.cakeSteps")}</p><a className="underline" href="https://docs.cakewallet.com/cryptos/monero/" target="_blank" rel="noreferrer">{t("login.cakeGuide")}</a></details>
+          <details><summary className="min-h-11 cursor-pointer py-3 font-semibold">{t("login.otherWallets")}</summary><p>{t("login.otherSteps")}</p></details>
         </div>
       </details>
       <div className="grid gap-1.5">
@@ -127,7 +129,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
             className="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft"
             htmlFor="payment_address"
           >
-            Primary address
+            {t("login.primaryAddress")}
           </label>
           {isLikelyPrimaryAddress(paymentAddress) ? (
             <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-800">
@@ -141,7 +143,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
                   fill="currentColor"
                 />
               </svg>
-              Format looks correct
+              {t("login.formatOk")}
             </span>
           ) : null}
         </div>
@@ -162,8 +164,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
           }}
         />
         <p id="address-help" className="text-xs leading-relaxed text-ink-soft">
-          Use the 95-character primary address that starts with 4. Subaddresses
-          and integrated addresses are not used for dashboard access.
+          {t("login.addressHelp")}
         </p>
         <p id="address-format" className="text-sm text-ink-soft">{formatErrors.address}</p>
       </div>
@@ -173,7 +174,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
             className="text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-ink-soft"
             htmlFor="view_key"
           >
-            Private view key
+            {t("login.viewKey")}
           </label>
           {isLikelyPrivateViewKey(viewKey) ? (
             <span className="inline-flex items-center gap-1 text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-emerald-800">
@@ -187,7 +188,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
                   fill="currentColor"
                 />
               </svg>
-              Format looks correct
+              {t("login.formatOk")}
             </span>
           ) : null}
         </div>
@@ -213,24 +214,24 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
             type="button"
             onClick={() => setIsViewKeyVisible((current) => !current)}
           >
-            {isViewKeyVisible ? "Hide" : "Show"}
+            {isViewKeyVisible ? t("credentials.hide") : t("login.show")}
           </button>
         </div>
         <p id="view-key-help" className="text-xs leading-relaxed text-ink-soft">
-          Paste the 64-character private view key (also called a secret view key).
+          {t("login.viewKeyHelp")}
         </p>
         <p id="view-key-format" className="text-sm text-ink-soft">{formatErrors.viewKey}</p>
-        <p className="text-xs text-ink-soft">Format checks only. The server checks whether the address and private view key match.</p>
+        <p className="text-xs text-ink-soft">{t("login.formatOnly")}</p>
       </div>
       <div id="login-feedback" role="status" aria-live="polite" aria-atomic="true">
         {validationStatus === "checking" ? (
           <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-amber-700">
-            Checking address and view key
+            {t("login.checking")}
           </p>
         ) : null}
         {validationStatus === "valid" ? (
           <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-emerald-700">
-            Address and view key match
+            {t("login.match")}
           </p>
         ) : null}
         {validationStatus === "invalid" || validationStatus === "error" ? (
@@ -247,10 +248,10 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
       <div className="flex items-center justify-end">
         <PendingSubmitButton
           className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_12px_24px_rgba(16,18,23,0.16)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-ink/60 disabled:text-cream/70 disabled:shadow-none"
-          pendingLabel="Connecting…"
+          pendingLabel={t("login.connecting")}
           disabled={!canSubmit}
         >
-          Connect view-only wallet
+          {t("nav.connect")}
         </PendingSubmitButton>
       </div>
     </form>

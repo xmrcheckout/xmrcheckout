@@ -9,6 +9,7 @@ import {
   updateDefaultQrLogoAction,
   type DefaultQrLogoState,
 } from "../app/(app)/dashboard/actions";
+import { useI18n } from "./i18n-provider";
 
 const buildInitialState = (
   logo: "monero" | "none" | "custom",
@@ -27,6 +28,7 @@ export default function DefaultQrLogoSection({
   initialLogo: "monero" | "none" | "custom";
   initialLogoDataUrl: string | null;
 }) {
+  const { t } = useI18n();
   const router = useRouter();
   const [logo, setLogo] = useState<"monero" | "none" | "custom">(initialLogo);
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(
@@ -72,9 +74,9 @@ export default function DefaultQrLogoSection({
   return (
     <div className="grid gap-4">
       <div>
-        <h2 className="font-sans text-xl font-semibold">Default QR logo</h2>
+        <h2 className="font-sans text-xl font-semibold">{t("settings.defaultQrLogo")}</h2>
         <p className="mt-2 text-sm text-ink-soft">
-          Applies to new invoices unless overridden at creation time.
+          {t("settings.defaultQrLogoHelp")}
         </p>
       </div>
       <form className="grid gap-4" action={formAction}>
@@ -83,7 +85,7 @@ export default function DefaultQrLogoSection({
             className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
             htmlFor="default_qr_logo"
           >
-            Logo mode
+            {t("settings.logoMode")}
           </label>
           <select
             className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
@@ -101,9 +103,9 @@ export default function DefaultQrLogoSection({
               }
             }}
           >
-            <option value="monero">Monero logo</option>
-            <option value="none">No logo</option>
-            <option value="custom">Custom image</option>
+            <option value="monero">{t("settings.moneroLogo")}</option>
+            <option value="none">{t("settings.noLogo")}</option>
+            <option value="custom">{t("settings.customImage")}</option>
           </select>
         </div>
 
@@ -113,7 +115,7 @@ export default function DefaultQrLogoSection({
               className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"
               htmlFor="default_qr_logo_file"
             >
-              Custom logo image
+              {t("settings.customLogoImage")}
             </label>
             <input
               className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink"
@@ -123,8 +125,7 @@ export default function DefaultQrLogoSection({
               onChange={handleLogoFileChange}
             />
             <p className="text-sm text-ink-soft">
-              Stored as a data URL for use on public invoice pages. Keep it
-              small.
+              {t("settings.dataUrlNote")}
             </p>
             {logoDataUrl ? (
               <button
@@ -132,7 +133,7 @@ export default function DefaultQrLogoSection({
                 type="button"
                 onClick={() => setLogoDataUrl(null)}
               >
-                Remove image
+                {t("settings.removeImage")}
               </button>
             ) : null}
           </div>
@@ -149,14 +150,14 @@ export default function DefaultQrLogoSection({
             <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(16,18,23,0.12)]">
               <Image
                 src={previewSrc}
-                alt="QR logo preview"
+                alt={t("settings.logoPreviewAlt")}
                 width={32}
                 height={32}
                 unoptimized={logo === "custom"}
               />
             </span>
             <p className="text-sm text-ink-soft">
-              Preview (used in the QR center).
+              {t("settings.previewNote")}
             </p>
           </div>
         ) : null}
@@ -176,7 +177,7 @@ export default function DefaultQrLogoSection({
             className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             type="submit"
           >
-            Save QR logo preference
+            {t("settings.saveQrLogo")}
           </button>
         </div>
       </form>

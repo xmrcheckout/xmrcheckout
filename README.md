@@ -131,6 +131,8 @@ cp .env.example .env
   late-payment detection (default: `48`). After an outage, reconciliation
   temporarily widens this window from the last fully successful cycle so an
   availability gap does not create a blind spot.
+- `INVOICE_DEFAULT_EXPIRY_HOURS` sets how long a new invoice stays open when
+  the request does not set its own expiry (default: `1`).
 - Invoice creation is protected by per-user limits: `INVOICE_ACTIVE_LIMIT`
   (default `100` active invoices), `INVOICE_CREATION_RATE_LIMIT` (default
   `60` creations), and `INVOICE_CREATION_RATE_WINDOW_SECONDS` (default

@@ -15,7 +15,7 @@ Invoices are defined in XMR. Any fiat-denominated inputs or reference rates prov
 
 ## Guides
 
-- [Monero payment and donation links](https://xmrcheckout.com/guides/monero-payment-buttons): Accept payments or donations directly to your own wallet, with a fixed amount or one the customer enters, embed an HTML button or share a reusable link, and review separate XMR invoices. Recurring collection is not supported. Includes capacity limits and manual fulfillment.
+- [Monero payment and donation links](https://xmrcheckout.com/guides/monero-payment-buttons): Accept payments or donations directly to your own wallet, with a fixed amount or one the customer enters, embed an HTML button or share a reusable link, and review separate XMR invoices. Recurring collection is not supported. Includes "Monero accepted here" badges, printable QR signs, directory listing tips, capacity limits, and manual fulfillment.
 - [In-person Monero checkout](https://xmrcheckout.com/guides/in-person-monero-checkout): Turn a tablet or phone into a till with a terminal link. Type the amount, show a QR code, and see the payment in seconds. Covers confirmations, link safety, and address capacity.
 
 - [Self-hosted Monero checkout](https://xmrcheckout.com/guides/self-hosted-monero-checkout): Deployment, view-only wallet setup, invoice pages, and payment detection.

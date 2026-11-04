@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
-import { paymentButtonHtml } from "../../../../lib/payment-button";
+import { badgeHtml, paymentButtonHtml } from "../../../../lib/payment-button";
 
 const title = "Accept Monero with payment and donation links";
 const description = "Accept payments or donations directly to your wallet. Share a reusable Monero link or embed an HTML button without programming.";
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const sectionClass = "min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
 const codeClass = "mt-4 max-w-full overflow-x-auto rounded-xl bg-ink px-5 pb-5 pt-16 font-mono text-sm text-cream";
 const linkClass = "font-semibold underline decoration-clay underline-offset-4";
-const sections = [["setup", "Configure your product"], ["embed", "Copy your button or link"], ["invoices", "Review purchases"], ["confirmation-message", "Show a message after payment"], ["manage", "Change or disable a link"], ["donations", "Accept donations"], ["limits", "Capacity and failures"]];
+const sections = [["setup", "Configure your product"], ["embed", "Copy your button or link"], ["invoices", "Review purchases"], ["confirmation-message", "Show a message after payment"], ["manage", "Change or disable a link"], ["donations", "Accept donations"], ["let-people-find-you", "Let people find you"], ["limits", "Capacity and failures"]];
 
 export default function PaymentButtonsGuide() {
   return <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
@@ -86,6 +86,18 @@ export default function PaymentButtonsGuide() {
         <p className="mt-4">Each contribution is a separate payment initiated in the donor’s wallet. These links do not provide recurring collection or donor management. A supported fiat-reference amount is converted to an informational XMR amount at invoice creation; no rate or fiat outcome is guaranteed.</p>
         <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_DONATION_LINK_TOKEN", "Donate with Monero")}</CopyCodeBlock>
         <p className="mt-3 text-sm text-ink-soft">Example only: use the actual HTML or URL from your dashboard. Your credentials do not belong in the snippet. Donation links share the same <a className={linkClass} href="#limits">invoice allowance, address capacity, and interrupted-submission limits</a> as other payment links. Unpaid invoices consume capacity too.</p>
+      </section>
+      <section id="let-people-find-you" aria-labelledby="let-people-find-you-title" className={sectionClass}>
+        <h2 id="let-people-find-you-title" className="font-sans text-2xl font-semibold">Let people find you</h2>
+        <p className="mt-4">People who hold Monero look for places that accept it. A few small steps make your business easier to find.</p>
+        <ol className="mt-4 list-decimal space-y-3 pl-5">
+          <li><strong>Add a badge to your website.</strong> Open <strong>Dashboard → Payment links</strong> and copy the <strong>Monero accepted here</strong> badge into an HTML block. There is a dark badge for light backgrounds and a light badge for dark ones. The badge is a plain image with no tracking or account details.</li>
+          <li><strong>Print a sign.</strong> Each payment link has a <strong>Printable sign with QR code</strong>. Customers scan it with their wallet to open the link. Use it at a counter, market stall, event table, or donation box. Signs show a price only for links fixed in XMR. For card-style checkout at a till, use a <Link className={linkClass} href="/guides/in-person-monero-checkout">terminal</Link> and display the badge beside it.</li>
+          <li><strong>List your business in a Monero directory (optional).</strong> Public directories such as <a className={linkClass} href="https://monerica.com" target="_blank" rel="noreferrer">Monerica</a> list businesses that accept Monero. You submit the listing yourself through the directory’s own <a className={linkClass} href="https://app.monerica.com/submit" target="_blank" rel="noreferrer">submission form</a>, and its reviewers decide whether to add it. Directories usually require that your site clearly states it accepts Monero, which the badge helps with. XMR Checkout does not submit listings or share your details with any directory.</li>
+        </ol>
+        <p className="mt-4">A listing is public: anyone can see that your business accepts Monero, along with any contact details you include. Leave out details you do not want published.</p>
+        <CopyCodeBlock className={codeClass} label="Badge HTML example">{badgeHtml("https://checkout.example")}</CopyCodeBlock>
+        <p className="mt-3 text-sm text-ink-soft">Example only: copy the badge from your dashboard so it points to your checkout site.</p>
       </section>
       <section id="limits" aria-labelledby="limits-title" className={sectionClass}>
         <h2 id="limits-title" className="font-sans text-2xl font-semibold">Understand capacity and uncertain responses</h2>

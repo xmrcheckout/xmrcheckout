@@ -18,7 +18,7 @@ export function badgeImageUrl(siteUrl: string, variant: BadgeVariant = "dark") {
 }
 
 export function badgeHtml(siteUrl: string, variant: BadgeVariant = "dark") {
-  return `<img src="${escapeHtml(badgeImageUrl(siteUrl, variant))}" alt="Monero accepted here" width="300" height="80" style="display:block;max-width:100%;height:auto;border:0;" />`;
+  return `<img src="${escapeHtml(badgeImageUrl(siteUrl, variant))}" alt="Monero accepted here" width="320" height="80" style="display:block;max-width:100%;height:auto;border:0;" />`;
 }
 
 type SignPriceFields = { customer_amount: boolean; amount_xmr: string | null; amount_fiat: string | null };

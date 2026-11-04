@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageIntroBand from "../../../../components/page-intro-band";
 
 const title = "Accept Monero in person with a terminal";
@@ -27,6 +28,7 @@ export default function InPersonGuide() {
           <li>The dashboard shows the terminal link and a QR code once. Scan it with the device you will use at the till, or copy the link to it.</li>
           <li>On the device, add the page to the home screen for a full-screen till. The device remembers the terminal until you choose <strong>Forget this terminal</strong>.</li>
         </ol>
+        <p className="mt-4">To let customers know they can pay with Monero, print the <strong>Monero accepted here</strong> badge from Dashboard → Payment links and place it by the till. <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#let-people-find-you">More ways to let people find you</Link></p>
       </section>
       <section id="sale" aria-labelledby="sale-title" className={sectionClass}>
         <h2 id="sale-title" className="font-sans text-2xl font-semibold">Take a payment</h2>

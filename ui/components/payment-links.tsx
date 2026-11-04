@@ -40,7 +40,7 @@ export default async function PaymentLinks() {
       {(["dark", "light"] as const).map(variant => <div key={variant} className="grid min-w-0 gap-3">
         <p>{variant === "dark" ? "Dark badge (for light backgrounds)" : "Light badge (for dark backgrounds)"}</p>
         <div className={`grid min-w-0 justify-items-start rounded-xl border border-stroke p-4 ${variant === "dark" ? "bg-white/50" : "bg-ink"}`}>
-          <Image src={new URL(badgeImageUrl(siteUrl, variant)).pathname} alt="Monero accepted here" width={300} height={80} unoptimized className="h-auto max-w-full" />
+          <Image src={new URL(badgeImageUrl(siteUrl, variant)).pathname} alt="Monero accepted here" width={320} height={80} unoptimized className="h-auto max-w-full" />
         </div>
         <CopyCodeBlock className={codeClass} label={`${variant === "dark" ? "Dark" : "Light"} badge HTML`}>{badgeHtml(siteUrl, variant)}</CopyCodeBlock>
       </div>)}

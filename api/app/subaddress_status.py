@@ -1,8 +1,9 @@
 """Read-only availability rules shared by allocation and merchant reporting."""
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 
 from .config import SUBADDRESS_REUSE_COOLDOWN_SECONDS
 from .models import Invoice, SnapshotStatus, SubaddressAllocation, User
@@ -63,15 +64,26 @@ def availability(user: User, history: list[Invoice], allocations: list[Subaddres
     if start < 0 or start >= MAX_SUBADDRESS_INDEX:
         start = 0
     view_key = decrypt_secret(user.view_key_encrypted)
+    # Group once so each index is a lookup rather than a scan of the whole history.
+    by_index: dict[int | None, list] = defaultdict(list)
+    for item in history + allocations:
+        by_index[item.subaddress_index].append(item)
+    history_by_address: dict[str, list[Invoice]] = defaultdict(list)
+    for item in history:
+        history_by_address[item.address].append(item)
+    allocations_by_address: dict[str, list[SubaddressAllocation]] = defaultdict(list)
+    for item in allocations:
+        allocations_by_address[item.address].append(item)
     result = []
     for index in range(start + 1, MAX_SUBADDRESS_INDEX + 1):
         address = derive_subaddress(payment_address=user.payment_address, view_key=view_key,
                                     account_index=0, address_index=index)
-        previous = [row for row in history if row.address == address]
-        issued = [row for row in allocations if row.address == address]
+        previous = list(history_by_address.get(address, ()))
+        issued = allocations_by_address.get(address, [])
         row = AddressAvailability(index, "never_issued", "never_issued", address, previous)
-        related = [item for item in history + allocations
-                   if item.address == address or item.subaddress_index == index]
+        # Items matching on address or index, each counted once.
+        related = list({id(item): item for item in
+                        previous + issued + by_index.get(index, [])}.values())
         prior_ids = {item.id for item in previous}
         generations = sorted(item.generation for item in issued)
         inconsistent = any(item.address != address or item.subaddress_index not in (None, index)
@@ -102,7 +114,11 @@ def availability(user: User, history: list[Invoice], allocations: list[Subaddres
 
 
 def load_availability(db: Session, user: User, now: datetime):
-    history = db.query(Invoice).filter(Invoice.user_id == user.id).all()
+    # Only the columns the availability rules read; skips large metadata on every creation.
+    history = db.query(Invoice).options(load_only(
+        Invoice.id, Invoice.address, Invoice.subaddress_index, Invoice.status,
+        Invoice.confirmed_at, Invoice.expires_at,
+    )).filter(Invoice.user_id == user.id).all()
     allocations = db.query(SubaddressAllocation).filter(SubaddressAllocation.user_id == user.id).all()
     return availability(user, history, allocations, now), allocations
 

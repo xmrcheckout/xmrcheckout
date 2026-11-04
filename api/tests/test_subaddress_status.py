@@ -1,6 +1,7 @@
 """Availability and HTTP creation tests use isolated schemas and mocked wallets."""
 import json
 import os
+import random
 import socket
 import threading
 import time
@@ -24,6 +25,51 @@ from app.models import Invoice, SnapshotStatus, SubaddressAllocation, User
 from app.security import hash_api_key
 from app.wallet_rpc import WalletRPC
 import test_subaddress_reuse as fixture
+
+
+def _reference_availability(user, history, allocations, now):
+    """The original quadratic loop, kept to check the faster version gives identical rows."""
+    from app.subaddress_status import AddressAvailability, MAX_SUBADDRESS_INDEX, closure_time, reuse_ready_at, utc
+    start = int(user.subaddress_start_index or 0)
+    if start < 0 or start >= MAX_SUBADDRESS_INDEX:
+        start = 0
+    view_key = status.decrypt_secret(user.view_key_encrypted)
+    result = []
+    for index in range(start + 1, MAX_SUBADDRESS_INDEX + 1):
+        address = status.derive_subaddress(payment_address=user.payment_address, view_key=view_key,
+                                           account_index=0, address_index=index)
+        previous = [row for row in history if row.address == address]
+        issued = [row for row in allocations if row.address == address]
+        row = AddressAvailability(index, "never_issued", "never_issued", address, previous)
+        related = [item for item in history + allocations
+                   if item.address == address or item.subaddress_index == index]
+        prior_ids = {item.id for item in previous}
+        generations = sorted(item.generation for item in issued)
+        inconsistent = any(item.address != address or item.subaddress_index not in (None, index)
+                           for item in related)
+        inconsistent |= any(item.invoice_id not in prior_ids or item.subaddress_index != index
+                            for item in issued)
+        inconsistent |= bool(generations and generations != list(range(1, len(generations) + 1)))
+        closed = [utc(closure_time(item)) for item in previous if closure_time(item) is not None]
+        row.latest_closure_at = max(closed) if closed else None
+        if inconsistent or (issued and not previous):
+            row.category, row.code = "needs_review", "inconsistent_history"
+        elif any(item.status not in ("pending", "partially_paid", "payment_detected", "confirmed", "expired", "invalid") for item in previous):
+            row.category, row.code = "needs_review", "invalid_prior_invoice"
+        elif any(item.status in ("confirmed", "expired", "invalid") and closure_time(item) is None
+                 for item in previous):
+            row.category, row.code = "needs_review", "missing_closure_time"
+        elif any(item.status in ("pending", "partially_paid", "payment_detected") for item in previous):
+            row.category = "reserved"
+            row.code = ("awaiting_invoice_status_update" if any(
+                item.status in ("pending", "partially_paid") and item.expires_at is not None and utc(item.expires_at) <= now
+                for item in previous) else "active_invoice")
+        elif previous:
+            row.cooldown_complete_at = reuse_ready_at(previous)
+            row.category = "eligible_for_reuse" if row.cooldown_complete_at <= now else "cooling_down"
+            row.code = "cooldown_complete" if row.category == "eligible_for_reuse" else "reuse_cooldown"
+        result.append(row)
+    return result
 
 
 class AvailabilityRulesTests(unittest.TestCase):
@@ -77,6 +123,51 @@ class AvailabilityRulesTests(unittest.TestCase):
         self.user.subaddress_start_index = status.MAX_SUBADDRESS_INDEX - 1
         self.assertEqual([row.index for row in status.availability(self.user, [], [], self.now)],
                          [status.MAX_SUBADDRESS_INDEX])
+
+    def _random_history(self, seed, invoices=400, allocations=150):
+        rng = random.Random(seed)
+        statuses = ["pending", "partially_paid", "payment_detected", "confirmed", "expired", "invalid", "mystery"]
+        history = []
+        for _ in range(invoices):
+            index = rng.randint(1, 205)
+            overrides = {}
+            if rng.random() < 0.1:
+                overrides["subaddress_index"] = rng.choice([None, rng.randint(1, 205)])
+            if rng.random() < 0.1:
+                overrides["expires_at"] = None
+            state = rng.choice(statuses)
+            if state == "confirmed":
+                overrides["confirmed_at"] = None if rng.random() < 0.1 else self.now - timedelta(hours=rng.randint(0, 200))
+            else:
+                overrides.setdefault("expires_at", self.now - timedelta(hours=rng.randint(-5, 200)))
+            history.append(self.invoice(index, state, **overrides))
+        allocs = []
+        for _ in range(allocations):
+            source = rng.choice(history) if rng.random() < 0.8 else None
+            index = rng.randint(1, 205)
+            allocs.append(SimpleNamespace(
+                invoice_id=source.id if source else uuid4(),
+                address=source.address if source and rng.random() < 0.9 else f"address-{index}",
+                subaddress_index=(source.subaddress_index or index) if source else index,
+                generation=rng.choice([1, 1, 1, 2, 3])))
+        return history, allocs
+
+    def test_matches_reference_on_random_histories(self):
+        for seed in range(25):
+            history, allocs = self._random_history(seed)
+            expected = _reference_availability(self.user, history, allocs, self.now)
+            actual = status.availability(self.user, history, allocs, self.now)
+            summary = lambda rows: [(row.index, row.category, row.code, row.address, row.latest_closure_at,
+                                     row.cooldown_complete_at, [item.id for item in row.previous]) for row in rows]
+            self.assertEqual(summary(actual), summary(expected), f"seed {seed}")
+
+    def test_large_history_is_fast(self):
+        history = [self.invoice(1 + n % status.MAX_SUBADDRESS_INDEX) for n in range(50_000)]
+        allocs = [SimpleNamespace(invoice_id=item.id, address=item.address, subaddress_index=item.subaddress_index,
+                                  generation=1) for item in history[:status.MAX_SUBADDRESS_INDEX]]
+        started = time.monotonic()
+        status.availability(self.user, history, allocs, self.now)
+        self.assertLess(time.monotonic() - started, 1.0)
 
     def test_failure_categories_never_include_rpc_messages(self):
         exc = RPCError({"code": -7, "message": "fixture-password fixture-view-key raw-payload"})

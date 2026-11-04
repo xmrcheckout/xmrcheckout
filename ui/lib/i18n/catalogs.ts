@@ -8,6 +8,7 @@ import it from "../../messages/it.json";
 import pl from "../../messages/pl.json";
 import zh from "../../messages/zh.json";
 import uk from "../../messages/uk.json";
+import cs from "../../messages/cs.json";
 import type { Locale } from "./config";
 import { createTranslator, mergeMessages, type Messages, type Translate } from "./translate";
 
@@ -22,6 +23,7 @@ const catalogs: Record<Locale, Messages> = {
   pl: mergeMessages(en, pl),
   zh: mergeMessages(en, zh),
   uk: mergeMessages(en, uk),
+  cs: mergeMessages(en, cs),
 };
 
 export const getCatalog = (locale: Locale): Messages => catalogs[locale];

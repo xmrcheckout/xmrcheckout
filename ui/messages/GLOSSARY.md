@@ -350,3 +350,47 @@ English. Plural messages need `one`, `few`, `many` and `other`.
 | баланс, залишок коштів | "balance" implies held funds |
 | платіжна компанія | "payments company" |
 | рахунок-фактура | a formal tax document; XMR Checkout does not issue one |
+
+## Czech (`cs`)
+
+Formal *vy* throughout, lowercase, and gender-neutral phrasing: avoid
+second-person past tense (*ztratil jste*) and adjectives such as *připraven*
+that assume the reader's gender. "Merchant" is *obchodník*, "customer" is
+*zákazník*, "buyer" is *kupující*. *Webhook* (plural *webhooky*), *endpoint*,
+*seed* and *daemon* stay as is, and menu labels of wallets without a Czech
+interface (e.g. *Settings → Wallet*) stay in English. Use „“ quotes for UI
+labels. Plural messages need `one`, `few`, `many` and `other`.
+
+| English | Czech |
+| --- | --- |
+| checkout | platba / platební stránka (product name "XMR Checkout" stays as is) |
+| invoice | platební výzva (plural *platební výzvy*, genitive plural *platebních výzev*) |
+| receipt | potvrzení o platbě |
+| payment detected | platba zjištěna |
+| confirmation / confirmation target | potvrzení / požadovaný počet potvrzení |
+| view-only / view key | pouze pro prohlížení / (soukromý) klíč pro prohlížení |
+| spend key / seed | klíč pro utrácení / obnovovací fráze (seed) |
+| wallet | peněženka |
+| subaddress | podadresa |
+| expired | vypršela (platnost vypršela) |
+| on-chain | na blockchainu |
+| fiat (reference) | fiat měna (orientační hodnota) |
+| rate / quote | kurz / notace |
+| custody / non-custodial | správa prostředků / bez správy cizích prostředků |
+| reconciler | služba sesouhlasení |
+| allowance | limit |
+| address capacity | zásoba adres |
+| snapshot | snímek |
+| relay (events) | předávat |
+| dashboard | panel |
+| self-host | hostovat samostatně |
+
+| Avoid (Czech) | Why |
+| --- | --- |
+| procesor, zpracovatel plateb, platební instituce | implies a payment processor; allowed only as "není platebním procesorem" |
+| vypořádání, zúčtování | "settlement" |
+| výplata, vyplatit | "payout" implies custody |
+| výběr prostředků, vybrat prostředky | withdrawal implies custody (plain *vybrat* = "select" is fine) |
+| zůstatek, saldo | "balance" implies held funds |
+| platební společnost | "payments company" |
+| faktura, daňový doklad, účtenka | formal tax documents in Czechia; XMR Checkout does not issue one |

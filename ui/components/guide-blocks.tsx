@@ -36,13 +36,16 @@ export function GuideBlocks({
   t: Translate;
   tags: RichTags;
 }) {
-  let n = 0;
+  // Text blocks are numbered in order; node blocks are skipped.
+  const numbers = blocks.reduce<number[]>(
+    (acc, block) => [...acc, (acc.at(-1) ?? 0) + (block.kind === "node" ? 0 : 1)],
+    [],
+  );
   return (
     <>
       {blocks.map((block, index) => {
         if (block.kind === "node") return <Fragment key={`node-${index}`}>{block.node}</Fragment>;
-        n += 1;
-        const key = `${prefix}.${n}`;
+        const key = `${prefix}.${numbers[index]}`;
         const className = block.className ?? defaults[block.kind];
         if (block.kind === "p" || block.kind === "h3") {
           const Text = block.kind;

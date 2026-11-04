@@ -837,6 +837,7 @@
   "login": {
     "required": "L'indirizzo principale e la chiave di visualizzazione privata sono obbligatori.",
     "unableToConnect": "Impossibile collegarsi.",
+    "signupClosed": "Questa istanza non accetta nuovi esercenti. Chiedi l’accesso a chi la gestisce.",
     "validationFailed": "L'indirizzo e la chiave di visualizzazione non hanno superato la verifica.",
     "validationUnavailable": "Non è ancora possibile verificare l'indirizzo e la chiave di visualizzazione. Puoi comunque collegarti per confermare.",
     "whereToFind": "Dove li trovo?",

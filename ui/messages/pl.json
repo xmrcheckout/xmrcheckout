@@ -853,6 +853,7 @@
   "login": {
     "required": "Adres główny i prywatny klucz widoku są wymagane.",
     "unableToConnect": "Nie można się połączyć.",
+    "signupClosed": "Ta instancja nie przyjmuje nowych sprzedawców. Poproś jej operatora o dostęp.",
     "validationFailed": "Adres i klucz widoku nie przeszły weryfikacji.",
     "validationUnavailable": "Nie można jeszcze zweryfikować adresu i klucza widoku. Nadal możesz się połączyć, aby to potwierdzić.",
     "whereToFind": "Gdzie je znaleźć?",

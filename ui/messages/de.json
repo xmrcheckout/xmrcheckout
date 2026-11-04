@@ -837,6 +837,7 @@
   "login": {
     "required": "Hauptadresse und privater View-Key sind erforderlich.",
     "unableToConnect": "Verbindung nicht möglich.",
+    "signupClosed": "Diese Instanz nimmt keine neuen Händler an. Bitten Sie den Betreiber um Zugang.",
     "validationFailed": "Adresse und View-Key haben die Prüfung nicht bestanden.",
     "validationUnavailable": "Adresse und View-Key können noch nicht geprüft werden. Sie können sich trotzdem verbinden, um sie zu bestätigen.",
     "whereToFind": "Wo finde ich diese?",

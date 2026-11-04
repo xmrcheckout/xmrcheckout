@@ -49,6 +49,8 @@ DONATION_EXPIRY_MINUTES = int(os.getenv("DONATION_EXPIRY_MINUTES", "30"))
 DONATION_ACTIVE_INVOICE_LIMIT = int(os.getenv("DONATION_ACTIVE_INVOICE_LIMIT", "25"))
 COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")
 DONATIONS_ENABLED = _get_bool_env("DONATIONS_ENABLED", False)
+# When false, only wallets that already have a merchant record can log in.
+SIGNUP_ENABLED = _get_bool_env("SIGNUP_ENABLED", True)
 
 MONERO_WALLET_RPC_URLS = [
     url.strip()

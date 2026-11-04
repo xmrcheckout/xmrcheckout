@@ -25,6 +25,7 @@ from .config import (
     INVOICE_DEFAULT_EXPIRY_HOURS,
     INVOICE_RECONCILE_INTERVAL_SECONDS,
     QR_STORAGE_DIR,
+    SIGNUP_ENABLED,
 )
 from .db import get_db
 from .formatting import atomic_to_xmr, format_xmr_amount, invoice_amounts
@@ -1024,6 +1025,11 @@ def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
     _validate_payment_address_and_view_key(payment_address, view_key)
     user = db.query(User).filter(User.payment_address == payment_address).first()
     if user is None:
+        if not SIGNUP_ENABLED:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="New accounts are not accepted on this instance.",
+            )
         api_key = generate_api_key()
         webhook_secret = generate_webhook_secret()
         user = User(

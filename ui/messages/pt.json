@@ -837,6 +837,7 @@
   "login": {
     "required": "O endereço principal e a chave de visualização privada são obrigatórios.",
     "unableToConnect": "Não foi possível conectar.",
+    "signupClosed": "Esta instância não aceita novos comerciantes. Peça acesso a quem a opera.",
     "validationFailed": "O endereço e a chave de visualização não passaram na validação.",
     "validationUnavailable": "Ainda não foi possível validar o endereço e a chave de visualização. Você ainda pode conectar para confirmar.",
     "whereToFind": "Onde encontro estes dados?",

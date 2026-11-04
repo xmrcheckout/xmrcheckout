@@ -138,6 +138,10 @@ cp .env.example .env
   `60` creations), and `INVOICE_CREATION_RATE_WINDOW_SECONDS` (default
   `60`). These checks are atomic across API workers; raise them deliberately
   for higher-volume integrations.
+- `SIGNUP_ENABLED` (default `true`) controls whether a wallet without an
+  existing merchant record can connect. If the instance is only for you,
+  connect your own wallet once, then set it to `false` and restart the API.
+  Existing merchants can always log in.
 
 ### Invoice address reuse
 

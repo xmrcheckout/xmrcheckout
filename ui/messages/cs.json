@@ -853,6 +853,7 @@
   "login": {
     "required": "Primární adresa a soukromý klíč pro prohlížení jsou povinné.",
     "unableToConnect": "Nelze se připojit.",
+    "signupClosed": "Tato instance nepřijímá nové obchodníky. Požádejte jejího provozovatele o přístup.",
     "validationFailed": "Adresa a klíč pro prohlížení neprošly ověřením.",
     "validationUnavailable": "Adresu a klíč pro prohlížení zatím nelze ověřit. Přesto se můžete připojit a ověřit je.",
     "whereToFind": "Kde je najdu?",

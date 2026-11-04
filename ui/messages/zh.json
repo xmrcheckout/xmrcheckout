@@ -829,6 +829,7 @@
   "login": {
     "required": "必须提供主地址和私有查看密钥。",
     "unableToConnect": "无法连接。",
+    "signupClosed": "此实例不接受新商家。请向其运营者申请访问权限。",
     "validationFailed": "地址和查看密钥未通过验证。",
     "validationUnavailable": "暂时无法验证地址和查看密钥。你仍然可以连接以进行确认。",
     "whereToFind": "在哪里找到这些信息？",

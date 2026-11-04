@@ -30,6 +30,10 @@ export async function loginAction(
     cache: "no-store",
   }).catch(() => new Response(null, { status: 503 }));
 
+  if (response.status === 403) {
+    return { error: t("login.signupClosed") };
+  }
+
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
     const message = detail?.detail ?? t("login.unableToConnect");

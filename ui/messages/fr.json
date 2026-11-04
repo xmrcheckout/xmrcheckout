@@ -837,6 +837,7 @@
   "login": {
     "required": "L’adresse principale et la clé de visualisation privée sont obligatoires.",
     "unableToConnect": "Connexion impossible.",
+    "signupClosed": "Cette instance n’accepte pas de nouveaux commerçants. Demandez l’accès à son opérateur.",
     "validationFailed": "L’adresse et la clé de visualisation n’ont pas passé la validation.",
     "validationUnavailable": "Impossible de valider l’adresse et la clé de visualisation pour le moment. Vous pouvez tout de même vous connecter pour confirmer.",
     "whereToFind": "Où les trouver ?",

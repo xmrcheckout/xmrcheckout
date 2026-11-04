@@ -837,6 +837,7 @@
   "login": {
     "required": "Primary address and private view key are required.",
     "unableToConnect": "Unable to connect.",
+    "signupClosed": "This instance does not accept new merchants. Ask its operator for access.",
     "validationFailed": "Address and view key did not pass validation.",
     "validationUnavailable": "Unable to validate the address and view key yet. You can still connect to confirm.",
     "whereToFind": "Where do I find these?",

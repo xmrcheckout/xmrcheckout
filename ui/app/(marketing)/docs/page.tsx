@@ -5,23 +5,25 @@ import { Fragment } from "react";
 import PageIntroBand from "../../../components/page-intro-band";
 import CopyCodeBlock from "../../../components/copy-code-block";
 import StatusBadge from "../../../components/status-badge";
+import { rich } from "../../../lib/i18n/rich";
+import { getI18n } from "../../../lib/i18n/server";
+import type { Translate } from "../../../lib/i18n/translate";
 
-export const metadata: Metadata = {
-  title: "Documentation",
-  description:
-    "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
-  alternates: {
-    canonical: "/docs",
-  },
-  openGraph: {
-    type: "website",
-    url: "/docs",
-    siteName: "XMR Checkout",
-    title: "Monero Payment API Documentation | XMR Checkout",
-    description:
-      "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return {
+    title: t("nav.docs"),
+    description: t("docs.metaDescription"),
+    alternates: { canonical: "/docs" },
+    openGraph: {
+      type: "website",
+      url: "/docs",
+      siteName: "XMR Checkout",
+      title: t("docs.metaTitle"),
+      description: t("docs.metaDescription"),
+    },
+  };
+}
 
 const apiBaseUrl =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
@@ -44,499 +46,499 @@ const methodStyles: Record<string, string> = {
 const codeBlockClass =
   "min-w-0 max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
 
-const endpointGroups = [
+const endpointGroupsFor = (t: Translate) => [
 {
-  "title": "Payment-link management",
-  "auth": "API key",
+  "title": t("docs.ref.r001"),
+  "auth": t("docs.ref.r002"),
   "items": [
     {
       "method": "GET",
       "path": "/api/core/payment-links",
-      "description": "List the signed-in merchant’s reusable payment templates."
+      "description": t("docs.ref.r003")
     },
     {
       "method": "POST",
       "path": "/api/core/payment-links",
-      "description": "Create a fixed-amount or customer-entered-amount payment link; returns 201 with reusable and form-action URLs."
+      "description": t("docs.ref.r004")
     },
     {
       "method": "PATCH",
       "path": "/api/core/payment-links/{link_id}",
-      "description": "Replace settings or change only the enabled state of an owned link."
+      "description": t("docs.ref.r005")
     },
     {
       "method": "GET",
       "path": "/api/core/payment-links/status",
-      "description": "Read supported currencies and the merchant’s rolling public invoice allowance."
+      "description": t("docs.ref.r006")
     }
   ]
 },
 {
-  "title": "Public payment links",
-  "auth": "None",
+  "title": t("docs.ref.r007"),
+  "auth": t("docs.ref.r008"),
   "items": [
     {
       "method": "GET",
       "path": "/api/core/public/payment-links/{token}",
-      "description": "Read an enabled product’s public details without allocating an invoice."
+      "description": t("docs.ref.r009")
     },
     {
       "method": "POST",
       "path": "/api/core/public/payment-links/{token}/invoices",
-      "description": "Submit an HTML form (empty, or amount and currency for customer-entered links) to create an invoice and receive a 303 redirect."
+      "description": t("docs.ref.r010")
     }
   ]
 },
 {
-  "title": "Terminals",
-  "auth": "API key (management) or terminal key (sales)",
+  "title": t("docs.ref.r011"),
+  "auth": t("docs.ref.r012"),
   "items": [
-    { "method": "GET", "path": "/api/core/terminals", "description": "List the merchant’s in-person checkout terminals." },
-    { "method": "POST", "path": "/api/core/terminals", "description": "Create a terminal; returns 201 with its link, shown only once." },
-    { "method": "PATCH", "path": "/api/core/terminals/{terminal_id}", "description": "Rename, enable or disable, or change a terminal’s defaults." },
-    { "method": "POST", "path": "/api/core/terminals/{terminal_id}/rotate", "description": "Replace the terminal link; the previous link stops working." },
-    { "method": "GET", "path": "/api/core/terminal/status", "description": "Terminal key: read the terminal’s settings and free invoice addresses." },
-    { "method": "POST", "path": "/api/core/terminal/invoices", "description": "Terminal key: create an invoice for an in-person sale." },
-    { "method": "GET", "path": "/api/core/terminal/invoices/{invoice_id}", "description": "Terminal key: read the status of an invoice this terminal created." },
-    { "method": "POST", "path": "/api/core/terminal/invoices/{invoice_id}/cancel", "description": "Terminal key: end an unpaid sale by expiring its invoice now." }
+    { "method": "GET", "path": "/api/core/terminals", "description": t("docs.ref.r013") },
+    { "method": "POST", "path": "/api/core/terminals", "description": t("docs.ref.r014") },
+    { "method": "PATCH", "path": "/api/core/terminals/{terminal_id}", "description": t("docs.ref.r015") },
+    { "method": "POST", "path": "/api/core/terminals/{terminal_id}/rotate", "description": t("docs.ref.r016") },
+    { "method": "GET", "path": "/api/core/terminal/status", "description": t("docs.ref.r017") },
+    { "method": "POST", "path": "/api/core/terminal/invoices", "description": t("docs.ref.r018") },
+    { "method": "GET", "path": "/api/core/terminal/invoices/{invoice_id}", "description": t("docs.ref.r019") },
+    { "method": "POST", "path": "/api/core/terminal/invoices/{invoice_id}/cancel", "description": t("docs.ref.r020") }
   ]
 },
   {
-    title: "Connect wallet",
-    auth: "None",
+    title: t("docs.ref.r021"),
+    auth: t("docs.ref.r008"),
     items: [
       {
         method: "POST",
         path: "/api/core/auth/login",
         description:
-          "Exchange the required wallet details for an API key and webhook secret.",
+          t("docs.ref.r022"),
       },
     ],
   },
   {
-    title: "Public invoice status",
-    auth: "None",
+    title: t("docs.ref.r023"),
+    auth: t("docs.ref.r008"),
     items: [
       {
         method: "GET",
         path: "/api/core/public/invoice/{invoice_id}",
-        description: "Read invoice status and payment details without auth.",
+        description: t("docs.ref.r024"),
       },
       {
         method: "GET",
         path: "/api/core/public/invoice/{invoice_id}/continue",
         description:
-          "After confirmation, redirect to the merchant-provided Continue URL (if configured).",
+          t("docs.ref.r025"),
       },
       {
         method: "GET",
         path: "/api/core/public/system/status",
         description:
-          "Read daemon, wallet-rpc, block height, and invoice-detection health without auth.",
+          t("docs.ref.r026"),
       },
       {
         method: "GET",
         path: "/api/core/public/rates/{currency}",
         description:
-          "Read a non-binding XMR-to-fiat reference rate without auth.",
+          t("docs.ref.r027"),
       },
     ],
   },
   {
-    title: "Invoice workflow",
-    auth: "API key",
+    title: t("docs.ref.r028"),
+    auth: t("docs.ref.r002"),
     items: [
       {
         method: "GET",
         path: "/api/core/invoices",
         description:
-          "List invoices for the signed-in user (supports search and sorting).",
+          t("docs.ref.r029"),
       },
       {
         method: "GET",
         path: "/api/core/invoices/export.csv",
-        description: "Export invoices as CSV (same filters as list endpoint).",
+        description: t("docs.ref.r030"),
       },
       {
         method: "GET",
         path: "/api/core/invoices/{invoice_id}",
-        description: "Retrieve a single invoice for the signed-in user.",
+        description: t("docs.ref.r031"),
       },
       {
         method: "POST",
         path: "/api/core/invoices",
-        description: "Create invoices for the signed-in user.",
+        description: t("docs.ref.r032"),
       },
       {
         method: "DELETE",
         path: "/api/core/invoices/{invoice_id}",
         description:
-          "Archive a pending invoice until it expires (payment-detected/confirmed invoices cannot be archived).",
+          t("docs.ref.r033"),
       },
       {
         method: "GET",
         path: "/api/core/invoices/{invoice_id}/transfers",
-        description: "List transactions recorded on an invoice.",
+        description: t("docs.ref.r034"),
       },
     ],
   },
   {
-    title: "API key webhooks",
-    auth: "API key",
+    title: t("docs.ref.r035"),
+    auth: t("docs.ref.r002"),
     items: [
       {
         method: "GET",
         path: "/api/core/webhooks",
-        description: "List active webhook registrations.",
+        description: t("docs.ref.r036"),
       },
       {
         method: "GET",
         path: "/api/core/webhooks/history",
-        description: "List recent webhook delivery attempts and HTTP status.",
+        description: t("docs.ref.r037"),
       },
       {
         method: "POST",
         path: "/api/core/webhooks/deliveries/{delivery_id}/redeliver",
-        description: "Manually redeliver a failed webhook delivery.",
+        description: t("docs.ref.r038"),
       },
       {
         method: "POST",
         path: "/api/core/webhooks",
         description:
-          "Register webhook URLs (single or per-event) and event filters.",
+          t("docs.ref.r039"),
       },
       {
         method: "DELETE",
         path: "/api/core/webhooks/{webhook_id}",
-        description: "Remove a webhook registration.",
+        description: t("docs.ref.r040"),
       },
     ],
   },
   {
-    title: "API key management",
-    auth: "API key",
+    title: t("docs.ref.r041"),
+    auth: t("docs.ref.r002"),
     items: [
       {
         method: "POST",
         path: "/api/core/api-credentials/reset",
-        description: "Reset the API key, webhook secret, or both.",
+        description: t("docs.ref.r042"),
       },
       {
         method: "PATCH",
         path: "/api/core/profile",
         description:
-          "Update profile preferences like the BTCPay checkout layout or default confirmations.",
+          t("docs.ref.r043"),
       },
     ],
   },
   {
-    title: "BTCPay Greenfield stores",
-    auth: "API key (token)",
+    title: t("docs.ref.r044"),
+    auth: t("docs.ref.r045"),
     items: [
       {
         method: "GET",
         path: "/api/v1/stores",
-        description: "List stores accessible to the API key.",
+        description: t("docs.ref.r046"),
       },
       {
         method: "GET",
         path: "/api/v1/stores/{store_id}",
-        description: "Retrieve a store by id.",
+        description: t("docs.ref.r047"),
       },
       {
         method: "GET",
         path: "/api/v1/stores/{store_id}/payment-methods",
-        description: "List enabled payment methods (XMR-CHAIN only).",
+        description: t("docs.ref.r048"),
       },
     ],
   },
   {
-    title: "BTCPay Greenfield invoices",
-    auth: "API key (token)",
+    title: t("docs.ref.r049"),
+    auth: t("docs.ref.r045"),
     items: [
       {
         method: "POST",
         path: "/api/v1/stores/{store_id}/invoices",
-        description: "Create a BTCPay-compatible invoice.",
+        description: t("docs.ref.r050"),
       },
       {
         method: "GET",
         path: "/api/v1/stores/{store_id}/invoices/{invoice_id}",
-        description: "Retrieve a BTCPay-compatible invoice.",
+        description: t("docs.ref.r051"),
       },
       {
         method: "GET",
         path: "/api/v1/stores/{store_id}/invoices/{invoice_id}/payment-methods",
-        description: "Return payment details for the invoice.",
+        description: t("docs.ref.r052"),
       },
       {
         method: "POST",
         path: "/api/v1/stores/{store_id}/invoices/{invoice_id}/status",
-        description: "Mark an invoice as Invalid (compatibility only).",
+        description: t("docs.ref.r053"),
       },
     ],
   },
   {
-    title: "BTCPay Greenfield webhooks",
-    auth: "API key (token)",
+    title: t("docs.ref.r054"),
+    auth: t("docs.ref.r045"),
     items: [
       {
         method: "POST",
         path: "/api/v1/stores/{store_id}/webhooks",
-        description: "Register a webhook with authorized events.",
+        description: t("docs.ref.r055"),
       },
       {
         method: "GET",
         path: "/api/v1/stores/{store_id}/webhooks",
-        description: "List registered webhooks for a store.",
+        description: t("docs.ref.r056"),
       },
       {
         method: "GET",
         path: "/api/v1/stores/{store_id}/webhooks/{webhook_id}",
-        description: "Retrieve a webhook by id.",
+        description: t("docs.ref.r057"),
       },
       {
         method: "PUT",
         path: "/api/v1/stores/{store_id}/webhooks/{webhook_id}",
-        description: "Update a webhook (enabled, url, or events).",
+        description: t("docs.ref.r058"),
       },
       {
         method: "DELETE",
         path: "/api/v1/stores/{store_id}/webhooks/{webhook_id}",
-        description: "Delete a webhook registration.",
+        description: t("docs.ref.r059"),
       },
     ],
   },
   {
-    title: "BTCPay server info",
-    auth: "API key (token)",
+    title: t("docs.ref.r060"),
+    auth: t("docs.ref.r045"),
     items: [
       {
         method: "GET",
         path: "/api/v1/server/info",
-        description: "Return server info for compatibility checks.",
+        description: t("docs.ref.r061"),
       },
       {
         method: "GET",
         path: "/api/v1/api-keys/current",
-        description: "Return the API key label and permissions.",
+        description: t("docs.ref.r062"),
       },
     ],
   },
 ];
 
-const endpointRequirements = [
+const endpointRequirementsFor = (t: Translate): EndpointRequirement[] => [
 {
   "method": "GET",
   "path": "/api/core/payment-links",
-  "auth": "API key",
+  "auth": t("docs.ref.r002"),
   "required": [],
   "optional": [],
   "notes": [
-    "Returns an array of owned templates, with IDs, settings, enabled state, reusable url, and action_url."
+    t("docs.ref.r063")
   ]
 },
 {
   "method": "POST",
   "path": "/api/core/payment-links",
-  "auth": "API key",
+  "auth": t("docs.ref.r002"),
   "required": [
     "title",
-    "amount_xmr OR amount_fiat OR customer_amount: true",
-    "currency (when using amount_fiat)"
+    t("docs.ref.r064"),
+    t("docs.ref.r065")
   ],
   "optional": [
     "description",
-    "minimum_amount_xmr (customer_amount links only)",
+    t("docs.ref.r066"),
     "confirmation_target",
     "checkout_continue_url",
     "confirmation_message",
     "enabled"
   ],
   "notes": [
-    "Title: 1–200 characters; description: up to 2000. Amounts must be positive and below 1000000; at most 12 decimal places for XMR or 2 for fiat-reference inputs.",
-    "Use supported_currencies from the status endpoint. Saves do not contact the quote provider.",
-    "customer_amount (default false): the customer enters the amount and chooses XMR or a supported fiat-reference currency at purchase. Such links store no amount, cannot use auto_create_invoice, and may set minimum_amount_xmr (12 decimal places); fiat-reference amounts are compared after conversion.",
-    "Confirmation target: 0–10, defaulting to the merchant profile at save time. Enabled defaults to true. Invoices use the configured default lifetime (one hour by default).",
-    "Return URLs require HTTPS, with HTTP allowed for localhost and 127.0.0.1. Metadata and expiry overrides are not supported on templates.",
-    "confirmation_message: optional plain text up to 2000 characters (no control characters other than newline and tab; blank becomes null). Each invoice keeps a snapshot, and the public invoice status returns it only after confirmation.",
-    "Returns 201 with saved settings, id, url, and action_url."
+    t("docs.ref.r067"),
+    t("docs.ref.r068"),
+    t("docs.ref.r069"),
+    t("docs.ref.r070"),
+    t("docs.ref.r071"),
+    t("docs.ref.r072"),
+    t("docs.ref.r073")
   ]
 },
 {
   "method": "PATCH",
   "path": "/api/core/payment-links/{link_id}",
-  "auth": "API key",
+  "auth": t("docs.ref.r002"),
   "required": [
-    "link_id (owned UUID path)",
-    "complete settings OR enabled alone"
+    t("docs.ref.r074"),
+    t("docs.ref.r075")
   ],
   "optional": [],
   "notes": [
-    "Full settings use the creation fields; omitted optional fields take their creation defaults, so send all settings you intend to retain.",
-    "An enabled-only body can disable a legacy link with invalid settings. Enabling validates all saved settings and returns 422 if correction is required.",
-    "Returns updated settings and the same URLs. Existing invoices retain their snapshots and continue detection after disabling."
+    t("docs.ref.r076"),
+    t("docs.ref.r077"),
+    t("docs.ref.r078")
   ]
 },
 {
   "method": "GET",
   "path": "/api/core/payment-links/status",
-  "auth": "API key",
+  "auth": t("docs.ref.r002"),
   "required": [],
   "optional": [],
   "notes": [
-    "Returns supported_currencies, daily_limit, used, remaining, window_hours, and retrieved_at. Counts are shared across the merchant’s links over the preceding 24 hours.",
-    "Status is a non-reserving snapshot, returned with Cache-Control: no-store. Address availability is separately reported by /api/core/subaddresses/status."
+    t("docs.ref.r079"),
+    t("docs.ref.r080")
   ]
 },
 {
   "method": "GET",
   "path": "/api/core/public/payment-links/{token}",
-  "auth": "None",
+  "auth": t("docs.ref.r008"),
   "required": [
-    "token (public path identifier)"
+    t("docs.ref.r081")
   ],
   "optional": [],
   "notes": [
-    "Returns title, description, amount_xmr, amount_fiat, currency, confirmation_target, customer_amount, minimum_amount_xmr, supported_currencies, and action_url. Disabled or unknown links return 404.",
-    "Reading or previewing a link never creates an invoice. The reusable /pay/{token} URL is the hosted product review page."
+    t("docs.ref.r082"),
+    t("docs.ref.r083")
   ]
 },
 {
   "method": "POST",
   "path": "/api/core/public/payment-links/{token}/invoices",
-  "auth": "None",
+  "auth": t("docs.ref.r008"),
   "required": [
-    "token (public path identifier)",
-    "empty form body (fixed links) OR amount and currency (customer_amount links)"
+    t("docs.ref.r081"),
+    t("docs.ref.r084")
   ],
   "optional": [],
   "notes": [
-    "No API key, cookies, or JavaScript are required. Rejects query parameters with 400. Fixed links reject non-empty bodies; customer_amount links accept only amount and currency as a form or JSON body of string values. All other purchase settings come from the saved template.",
-    "Customer amounts follow template precision rules (12 decimal places for XMR, 2 for fiat references, positive and below 1000000). Amounts below minimum_amount_xmr return 422 without creating an invoice.",
-    "Success returns 303 to the hosted invoice; it does not return invoice JSON. Application errors are HTML, including unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). Applicable responses include Retry-After.",
-    "The default allowance is 10 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
-    "There is no duplicate-submission recovery or automatic retry. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying."
+    t("docs.ref.r085"),
+    t("docs.ref.r086"),
+    t("docs.ref.r087"),
+    t("docs.ref.r088"),
+    t("docs.ref.r089")
   ]
 },
 {
   "method": "POST",
   "path": "/api/core/terminals",
-  "auth": "API key",
+  "auth": t("docs.ref.r002"),
   "required": ["name"],
-  "optional": ["default_currency (XMR or a supported fiat reference, default XMR)", "confirmation_target (0-10, default 0)", "expiry_minutes (2-60, default 15)", "enabled (default true)"],
+  "optional": [t("docs.ref.r090"), t("docs.ref.r091"), t("docs.ref.r092"), t("docs.ref.r093")],
   "notes": [
-    "Returns the terminal settings and url, which ends in #k= followed by the terminal key. The key is stored only as a hash and is never returned again; rotate to replace it.",
-    "A terminal key can create invoices, read the status of its own invoices, and cancel its own unpaid invoices. It cannot read other invoices, change settings, or use other endpoints."
+    t("docs.ref.r094"),
+    t("docs.ref.r095")
   ]
 },
 {
   "method": "POST",
   "path": "/api/core/terminal/invoices",
-  "auth": "Authorization: Terminal <key>",
-  "required": ["amount (string)", "currency (XMR or a supported fiat reference)"],
-  "optional": ["note (up to 200 characters)", "Idempotency-Key header (UUID)"],
+  "auth": t("docs.ref.r096"),
+  "required": [t("docs.ref.r097"), t("docs.ref.r098")],
+  "optional": [t("docs.ref.r099"), t("docs.ref.r100")],
   "notes": [
-    "Uses the terminal’s confirmation target and expiry. Fiat-reference amounts are converted to XMR at creation; the rate is informational only.",
-    "Returns 201 with invoice status fields, note, and invoice_url. Replaying the same Idempotency-Key returns 200 with the same invoice. Merchant invoice limits and address capacity apply; the public payment-link allowance does not.",
-    "Open terminal invoices are checked about every 5 seconds, including unconfirmed transactions, so a confirmation target of 0 reports detection within seconds."
+    t("docs.ref.r101"),
+    t("docs.ref.r102"),
+    t("docs.ref.r103")
   ]
 },
 {
   "method": "POST",
   "path": "/api/core/terminal/invoices/{invoice_id}/cancel",
-  "auth": "Authorization: Terminal <key>",
-  "required": ["invoice_id (created by this terminal)"],
+  "auth": t("docs.ref.r096"),
+  "required": [t("docs.ref.r104")],
   "optional": [],
   "notes": [
-    "Sets the invoice to expire now when it is pending with nothing received; otherwise returns 409. Late payments to a cancelled invoice are still detected and reported as paid after expiry.",
-    "The invoice address is held for the usual reuse period after expiry."
+    t("docs.ref.r105"),
+    t("docs.ref.r106")
   ]
 },
   {
     method: "POST",
     path: "/api/core/auth/login",
-    auth: "None",
+    auth: t("docs.ref.r008"),
     required: ["payment_address", "view_key"],
     optional: [],
     notes: [
-      "Primary address only; subaddresses and integrated addresses are rejected.",
-      "Use the private view key (never submit a spend key).",
+      t("docs.ref.r107"),
+      t("docs.ref.r108"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/public/invoice/{invoice_id}",
-    auth: "None",
-    required: ["invoice_id (path)"],
+    auth: t("docs.ref.r008"),
+    required: [t("docs.ref.r109")],
     optional: [],
     notes: [
-      "Returns invoice status and payment details.",
-      "confirmation_message is null until the invoice is confirmed; for confirmed payment-link invoices it contains the link's plain-text message.",
+      t("docs.ref.r110"),
+      t("docs.ref.r111"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/public/invoice/{invoice_id}/continue",
-    auth: "None",
-    required: ["invoice_id (path)"],
+    auth: t("docs.ref.r008"),
+    required: [t("docs.ref.r109")],
     optional: [],
     notes: [
-      "Only available after an invoice is confirmed.",
-      "Returns a 302 redirect to the merchant-provided checkout_continue_url (if configured).",
+      t("docs.ref.r112"),
+      t("docs.ref.r113"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/public/system/status",
-    auth: "None",
+    auth: t("docs.ref.r008"),
     required: [],
     optional: [],
     notes: [
-      "Returns wallet-rpc and daemon reachability, current daemon height, reconciler health, heartbeat timestamps, and latest invoice-check counts.",
-      "Use this endpoint to debug setup issues before sending a real payment.",
+      t("docs.ref.r114"),
+      t("docs.ref.r115"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/public/rates/{currency}",
-    auth: "None",
-    required: ["currency (three-letter path code)"],
+    auth: t("docs.ref.r008"),
+    required: [t("docs.ref.r116")],
     optional: [],
     notes: [
-      "Returns fiat units per XMR with a source and quote timestamp.",
-      "Informational only; no rate is locked and no fiat outcome is promised.",
+      t("docs.ref.r117"),
+      t("docs.ref.r118"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/invoices",
-    auth: "API key",
+    auth: t("docs.ref.r002"),
     required: [],
     optional: [
-      "limit (default 50, 1-100)",
-      "offset (default 0)",
+      t("docs.ref.r119"),
+      t("docs.ref.r120"),
       "status",
-      "include_archived (default false)",
-      "q (invoice id, subaddress, metadata)",
-      "sort (created_at, expires_at, amount_xmr, status, confirmations, confirmation_target)",
-      "order (asc or desc)",
-      "created_from (ISO timestamp)",
-      "created_to (ISO timestamp)",
+      t("docs.ref.r121"),
+      t("docs.ref.r122"),
+      t("docs.ref.r123"),
+      t("docs.ref.r124"),
+      t("docs.ref.r125"),
+      t("docs.ref.r126"),
     ],
     notes: [
-      "Returns invoices excluding archived entries.",
-      "Status is one of: pending, partially_paid, payment_detected, confirmed, expired, invalid.",
-      "Each invoice includes amount_paid_xmr and amount_remaining_xmr, derived from observed incoming transfers.",
+      t("docs.ref.r127"),
+      t("docs.ref.r128"),
+      t("docs.ref.r129"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/invoices/export.csv",
-    auth: "API key",
+    auth: t("docs.ref.r002"),
     required: [],
     optional: [
-      "include_archived (default false)",
+      t("docs.ref.r121"),
       "status",
       "q",
       "sort",
@@ -544,270 +546,282 @@ const endpointRequirements = [
       "created_from",
       "created_to",
     ],
-    notes: ["Returns CSV with invoice rows, including amount_paid_xmr and amount_remaining_xmr columns."],
+    notes: [t("docs.ref.r130")],
   },
   {
     method: "GET",
     path: "/api/core/invoices/{invoice_id}",
-    auth: "API key",
-    required: ["invoice_id (path)"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r109")],
     optional: [],
-    notes: ["Returns a single invoice (archived invoices are excluded)."],
+    notes: [t("docs.ref.r131")],
   },
   {
     method: "GET",
     path: "/api/core/webhooks",
-    auth: "API key",
+    auth: t("docs.ref.r002"),
     required: [],
     optional: [],
-    notes: ["Returns the most recent webhooks first."],
+    notes: [t("docs.ref.r132")],
   },
   {
     method: "GET",
     path: "/api/core/webhooks/history",
-    auth: "API key",
+    auth: t("docs.ref.r002"),
     required: [],
-    optional: ["limit (default 50, 1-200)", "offset (default 0)"],
-    notes: ["Returns the most recent webhook deliveries first."],
+    optional: [t("docs.ref.r133"), t("docs.ref.r120")],
+    notes: [t("docs.ref.r134")],
   },
   {
     method: "POST",
     path: "/api/core/webhooks/deliveries/{delivery_id}/redeliver",
-    auth: "API key",
-    required: ["delivery_id (path)"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r135")],
     optional: [],
-    notes: ["Only failed deliveries can be redelivered."],
+    notes: [t("docs.ref.r136")],
   },
   {
     method: "POST",
     path: "/api/core/webhooks",
-    auth: "API key",
-    required: ["events (at least one) or event_urls (at least one)"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r137")],
     optional: ["url", "event_urls", "events"],
     notes: [
-      "Provide url for all selected events unless every event is mapped in event_urls.",
-      "Events must be one of: invoice.created, invoice.partially_paid, invoice.payment_detected, invoice.confirmed, invoice.expired.",
-      "invoice.partially_paid is sent each time the received amount changes while it is still below the requested amount, before expiry.",
-      "Every destination must use HTTPS and resolve only to public IP addresses; redirects are checked again before delivery.",
+      t("docs.ref.r138"),
+      t("docs.ref.r139"),
+      t("docs.ref.r140"),
+      t("docs.ref.r141"),
     ],
   },
   {
     method: "DELETE",
     path: "/api/core/webhooks/{webhook_id}",
-    auth: "API key",
-    required: ["webhook_id (path)"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r142")],
     optional: [],
-    notes: ["Returns 204 on success."],
+    notes: [t("docs.ref.r143")],
   },
   {
     method: "POST",
     path: "/api/core/api-credentials/reset",
-    auth: "API key",
-    required: ["reset_api_key or reset_webhook_secret"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r144")],
     optional: [],
-    notes: ["At least one reset flag must be true."],
+    notes: [t("docs.ref.r145")],
   },
   {
     method: "PATCH",
     path: "/api/core/profile",
-    auth: "API key",
+    auth: t("docs.ref.r002"),
     required: [],
     optional: ["btcpay_checkout_style", "default_confirmation_target"],
     notes: [
-      "Set btcpay_checkout_style to standard or btcpay_classic.",
-      "Applies to hosted invoice pages served for BTCPay compatibility.",
+      t("docs.ref.r146"),
+      t("docs.ref.r147"),
     ],
   },
   {
     method: "POST",
     path: "/api/core/invoices",
-    auth: "API key",
-    required: ["amount_xmr or amount_fiat + currency"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r148")],
     optional: [
-      "confirmation_target (default 2, 0-10)",
-      "checkout_continue_url (https URL, optional post-confirmation Continue button)",
+      t("docs.ref.r149"),
+      t("docs.ref.r150"),
       "metadata",
-      "expires_at (ISO 8601)",
+      t("docs.ref.r151"),
     ],
     notes: [
-      "Fiat conversion is non-binding and does not lock a rate.",
-      "Creates a pending invoice and returns invoice details.",
+      t("docs.ref.r152"),
+      t("docs.ref.r153"),
     ],
   },
   {
     method: "DELETE",
     path: "/api/core/invoices/{invoice_id}",
-    auth: "API key",
+    auth: t("docs.ref.r002"),
     required: [],
     optional: [],
     notes: [
-      "Only pending, expired, or invalid invoices can be archived. Returns 204 on success.",
+      t("docs.ref.r154"),
     ],
   },
   {
     method: "GET",
     path: "/api/core/invoices/{invoice_id}/transfers",
-    auth: "API key",
-    required: ["invoice_id (path)"],
+    auth: t("docs.ref.r002"),
+    required: [t("docs.ref.r109")],
     optional: [],
     notes: [
-      "Returns transaction ID, XMR amount, confirmations, and timestamp for each recorded transaction.",
-      "Archived invoices are included. In the dashboard, open invoice details and choose View transactions. Compare the invoice address and transaction ID with your own wallet if a payment is missing.",
+      t("docs.ref.r155"),
+      t("docs.ref.r156"),
     ],
   },
   {
     method: "GET",
     path: "/api/v1/stores",
-    auth: "API key (token)",
+    auth: t("docs.ref.r045"),
     required: [],
     optional: [],
     notes: [
-      "Single-store per user: the list returns one store.",
-      "Store ids map to the authenticated user id.",
-      "Header format: Authorization: token <api_key>.",
+      t("docs.ref.r157"),
+      t("docs.ref.r158"),
+      t("docs.ref.r159"),
     ],
   },
   {
     method: "GET",
     path: "/api/v1/stores/{store_id}",
-    auth: "API key (token)",
-    required: ["store_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160")],
     optional: [],
     notes: [
-      "Only the authenticated store id is valid.",
-      "Returns the store metadata expected by Greenfield clients.",
+      t("docs.ref.r161"),
+      t("docs.ref.r162"),
     ],
   },
   {
     method: "GET",
     path: "/api/v1/stores/{store_id}/payment-methods",
-    auth: "API key (token)",
-    required: ["store_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160")],
     optional: [],
-    notes: ["Returns XMR-CHAIN as the only enabled payment method."],
+    notes: [t("docs.ref.r163")],
   },
   {
     method: "POST",
     path: "/api/v1/stores/{store_id}/invoices",
-    auth: "API key (token)",
-    required: ["store_id (path)", "amount", "currency"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), "amount", "currency"],
     optional: ["metadata", "checkout"],
     notes: [
-      "Fiat inputs are converted once at creation time and stored as metadata.",
-      "Invoices are defined and payable in XMR only.",
+      t("docs.ref.r164"),
+      t("docs.ref.r165"),
     ],
   },
   {
     method: "GET",
     path: "/api/v1/stores/{store_id}/invoices/{invoice_id}",
-    auth: "API key (token)",
-    required: ["store_id (path)", "invoice_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), t("docs.ref.r109")],
     optional: [],
-    notes: ["Returns BTCPay-compatible status fields."],
+    notes: [t("docs.ref.r166")],
   },
   {
     method: "GET",
     path: "/api/v1/stores/{store_id}/invoices/{invoice_id}/payment-methods",
-    auth: "API key (token)",
-    required: ["store_id (path)", "invoice_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), t("docs.ref.r109")],
     optional: [],
     notes: [
-      "Read-only payment details derived from observed on-chain data.",
-      "Returns a list even when only one payment method is enabled.",
+      t("docs.ref.r167"),
+      t("docs.ref.r168"),
     ],
   },
   {
     method: "POST",
     path: "/api/v1/stores/{store_id}/invoices/{invoice_id}/status",
-    auth: "API key (token)",
-    required: ["store_id (path)", "invoice_id (path)", "status"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), t("docs.ref.r109"), "status"],
     optional: [],
-    notes: ["Only supports status=Invalid for compatibility; no funds move."],
+    notes: [t("docs.ref.r169")],
   },
   {
     method: "POST",
     path: "/api/v1/stores/{store_id}/webhooks",
-    auth: "API key (token)",
-    required: ["store_id (path)", "url", "authorizedEvents"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), "url", "authorizedEvents"],
     optional: ["enabled", "automaticRedelivery"],
     notes: [
-      "Deliveries include BTCPay-Sig: sha256=<hmac>.",
-      "Events follow BTCPay naming conventions for compatibility.",
-      "The destination must use HTTPS and resolve only to public IP addresses; redirects are checked again before delivery.",
+      t("docs.ref.r170"),
+      t("docs.ref.r171"),
+      t("docs.ref.r172"),
     ],
   },
   {
     method: "GET",
     path: "/api/v1/stores/{store_id}/webhooks",
-    auth: "API key (token)",
-    required: ["store_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160")],
     optional: [],
-    notes: ["Returns the most recent webhooks first."],
+    notes: [t("docs.ref.r132")],
   },
   {
     method: "GET",
     path: "/api/v1/stores/{store_id}/webhooks/{webhook_id}",
-    auth: "API key (token)",
-    required: ["store_id (path)", "webhook_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), t("docs.ref.r142")],
     optional: [],
-    notes: ["Returns a single webhook registration."],
+    notes: [t("docs.ref.r173")],
   },
   {
     method: "PUT",
     path: "/api/v1/stores/{store_id}/webhooks/{webhook_id}",
-    auth: "API key (token)",
-    required: ["store_id (path)", "webhook_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), t("docs.ref.r142")],
     optional: ["enabled", "automaticRedelivery", "url", "authorizedEvents"],
-    notes: ["Updates a webhook registration."],
+    notes: [t("docs.ref.r174")],
   },
   {
     method: "DELETE",
     path: "/api/v1/stores/{store_id}/webhooks/{webhook_id}",
-    auth: "API key (token)",
-    required: ["store_id (path)", "webhook_id (path)"],
+    auth: t("docs.ref.r045"),
+    required: [t("docs.ref.r160"), t("docs.ref.r142")],
     optional: [],
-    notes: ["Returns 204 on success."],
+    notes: [t("docs.ref.r143")],
   },
   {
     method: "GET",
     path: "/api/v1/server/info",
-    auth: "API key (token)",
+    auth: t("docs.ref.r045"),
     required: [],
     optional: [],
-    notes: ["Version is set for compatibility with refund UI behavior."],
+    notes: [t("docs.ref.r175")],
   },
   {
     method: "GET",
     path: "/api/v1/api-keys/current",
-    auth: "API key (token)",
+    auth: t("docs.ref.r045"),
     required: [],
     optional: [],
     notes: [
-      "Permissions are store-scoped strings tied to one store id.",
-      "Refund permissions are intentionally omitted.",
+      t("docs.ref.r176"),
+      t("docs.ref.r177"),
     ],
   },
 ];
 
-const requirementsByEndpoint = Object.fromEntries(
-  endpointRequirements.map((entry) => [`${entry.method} ${entry.path}`, entry]),
-);
+const mono = (text: string) => <span className="font-mono text-ink">{text}</span>;
 
-export default function DocsPage() {
+type EndpointRequirement = {
+  method: string;
+  path: string;
+  auth: string;
+  required: string[];
+  optional: string[];
+  notes: string[];
+};
+
+export default async function DocsPage() {
+  const { t } = await getI18n();
+  const endpointGroups = endpointGroupsFor(t);
+  const endpointRequirements = endpointRequirementsFor(t);
+  const requirementsByEndpoint = Object.fromEntries(
+    endpointRequirements.map((entry) => [`${entry.method} ${entry.path}`, entry]),
+  );
+  // BTCPay compatibility routes live under /api/v1; group logic uses paths, not translated titles.
+  const isBtcpay = (group: (typeof endpointGroups)[number]) => group.items[0]?.path.startsWith("/api/v1") ?? false;
   return (
     <main id="main-content" tabIndex={-1} className="reference-page docs-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
-        <section aria-label="Documentation introduction">
+        <section aria-label={t("docs.introLabel")}>
           <PageIntroBand
-            eyebrow="Documentation"
+            eyebrow={t("nav.docs")}
             id="docs-title"
-            title="Quick start and API reference."
+            title={t("docs.title")}
             description={
               <p>
-                Create invoices, send customers to hosted invoice pages, and
-                receive invoice status through polling or webhooks. Setup uses
-                your primary address and private view key; spend keys are never
-                requested.
+                {t("docs.intro")}
               </p>
             }
           />
@@ -818,36 +832,31 @@ export default function DocsPage() {
             className="inline-flex min-h-11 items-center justify-center rounded-full border border-ink bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
             href="/docs/integrations"
           >
-            Integration recipes
+            {t("docs.recipes")}
           </Link>
           <span className="text-sm text-ink-soft">
-            Copy/paste examples for curl, Node, PHP, Python, and Go.
+            {t("docs.recipesHelp")}
           </span>
         </div>
 
         <aside className="mt-5 rounded-surface border border-stroke bg-sand/60 px-5 py-4 text-sm text-ink-soft sm:px-6">
-          <span className="font-semibold text-ink">New to the setup?</span>{" "}
-          Read the{" "}
-          <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/self-hosted-monero-checkout">
-            self-hosting guide
-          </Link>{" "}
-          or follow the{" "}
-          <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">
-            API and webhook guide
-          </Link>
-          .
+          {rich(t("docs.newToSetup"), {
+            strong: (text) => <span className="font-semibold text-ink">{text}</span>,
+            selfhost: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/self-hosted-monero-checkout">{text}</Link>,
+            api: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">{text}</Link>,
+          })}
         </aside>
 
         <nav
           className="sticky top-3 z-10 mt-6 grid grid-cols-2 gap-1.5 rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur sm:flex sm:flex-wrap"
-          aria-label="Documentation sections"
+          aria-label={t("docs.sectionsLabel")}
         >
           {[
-            { href: "#start", label: "Start" },
-            { href: "#payment-links", label: "Payment links" },
-            { href: "#fiat-inputs", label: "Fiat inputs" },
-            { href: "#concepts", label: "Concepts" },
-            { href: "#api-reference", label: "API reference" },
+            { href: "#start", label: t("docs.navStart") },
+            { href: "#payment-links", label: t("paymentLinks.title") },
+            { href: "#fiat-inputs", label: t("docs.navFiat") },
+            { href: "#concepts", label: t("docs.navConcepts") },
+            { href: "#api-reference", label: t("docs.apiReference") },
           ].map((item, index) => (
             <a
               className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
@@ -874,13 +883,13 @@ export default function DocsPage() {
                   className="h-2.5 w-2.5 rounded-full bg-clay"
                   aria-hidden="true"
                 />
-                Start here
+                {t("docs.startHere")}
               </p>
               <h2
                 className="mt-1 font-sans text-2xl font-semibold"
                 id="start-title"
               >
-                Create and check an invoice.
+                {t("docs.startTitle")}
               </h2>
             </div>
           </header>
@@ -888,45 +897,39 @@ export default function DocsPage() {
             <li className="min-w-0 px-5 py-5 sm:px-6">
               <span className="font-mono text-xs text-ink-soft">01</span>
               <p className="mt-2 font-semibold text-ink">
-                Connect
+                {t("docs.connect")}
               </p>
               <p className="mt-1 text-sm text-ink-soft">
-                Use the sign-in form to retrieve an API key.
+                {t("docs.connectBody")}
               </p>
             </li>
             <li className="min-w-0 px-5 py-5 sm:px-6">
               <span className="font-mono text-xs text-ink-soft">02</span>
-              <p className="mt-2 font-semibold text-ink">Create an invoice</p>
+              <p className="mt-2 font-semibold text-ink">{t("guides.api.navCreate")}</p>
               <p className="mt-1 text-sm text-ink-soft">
-                Call{" "}
-                <span className="font-mono text-ink">
-                  POST /api/core/invoices
-                </span>{" "}
-                and send the customer to the hosted invoice URL.
+                {rich(t("docs.start.createBody"), { code: mono })}
               </p>
             </li>
             <li className="min-w-0 px-5 py-5 sm:px-6">
               <span className="font-mono text-xs text-ink-soft">03</span>
-              <p className="mt-2 font-semibold text-ink">Listen for status</p>
+              <p className="mt-2 font-semibold text-ink">{t("docs.listen")}</p>
               <p className="mt-1 text-sm text-ink-soft">
-                Subscribe to webhooks or poll the public invoice endpoint until
-                <span className="font-mono text-ink"> invoice.confirmed</span>.
+                {rich(t("docs.start.listenBody"), { code: mono })}
               </p>
             </li>
           </ol>
           <div className="grid gap-5 px-5 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)] lg:items-start">
             <div>
-              <p className="text-sm font-semibold text-ink">Minimal request</p>
+              <p className="text-sm font-semibold text-ink">{t("docs.minimalRequest")}</p>
               <p className="mt-2 max-w-xl text-sm text-ink-soft">
-                The response includes the invoice id, payment address, amount,
-                and hosted invoice URL.
+                {t("docs.minimalHelp")}
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <Link
                   className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href="/docs/integrations"
                 >
-                  See recipes
+                  {t("docs.seeRecipes")}
                 </Link>
                 <a
                   className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
@@ -953,12 +956,15 @@ Content-Type: application/json
         </section>
 
         <section id="payment-links" aria-labelledby="payment-links-title" className="mt-10 grid min-w-0 scroll-mt-24 gap-5 break-words rounded-surface border border-stroke bg-card p-5 sm:p-8">
-          <h2 id="payment-links-title" className="font-sans text-2xl font-semibold">Reusable payment links and HTML buttons</h2>
-          <p>Merchants can configure a fixed amount, or let the customer enter the amount, in the dashboard and copy HTML into an independent website without programming. Each successful submission creates a separate XMR invoice; opening a reusable URL shows a review page first unless the merchant enables auto_create_invoice (default false). Automatic mode creates an invoice from the active browser and resumes the same attempt in the same tab.</p>
-          <p><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the merchant setup guide</Link> for wallet prerequisites, embedding, capacity, fulfillment, and <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">confirmation messages</Link> such as download links shown after payment. The API operations below support managing those same templates from an integration.</p>
+          <h2 id="payment-links-title" className="font-sans text-2xl font-semibold">{t("docs.linksTitle")}</h2>
+          <p>{t("docs.linksBody")}</p>
+          <p>{rich(t("docs.links.guideBody"), {
+            guide: (text) => <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">{text}</Link>,
+            message: (text) => <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">{text}</Link>,
+          })}</p>
           <details className="min-w-0 rounded-xl border border-stroke p-4">
-            <summary className="min-h-11 cursor-pointer font-semibold">API examples and response behavior</summary>
-            <p className="mt-3">Create a €20 reference template with a merchant API key held on your server. Fiat-reference inputs produce an XMR amount only when an invoice is requested; no rate or fiat outcome is guaranteed.</p>
+            <summary className="min-h-11 cursor-pointer font-semibold">{t("docs.examplesSummary")}</summary>
+            <p className="mt-3">{t("docs.createTemplate")}</p>
             <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/payment-links
 Authorization: ApiKey YOUR_MERCHANT_API_KEY
 Content-Type: application/json
@@ -970,13 +976,13 @@ Content-Type: application/json
   "confirmation_target": 2,
   "enabled": true
 }`}</code></CopyCodeBlock>
-            <p className="mt-3">The 201 response includes saved settings and these selected fields. Tokens and IDs here are placeholders; use the returned URLs.</p>
+            <p className="mt-3">{t("docs.response201")}</p>
             <CopyCodeBlock className={codeBlockClass}><code>{`{
   "id": "00000000-0000-4000-8000-000000000001",
   "url": "https://checkout.example/pay/YOUR_PUBLIC_TOKEN",
   "action_url": "https://checkout.example/api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices"
 }`}</code></CopyCodeBlock>
-            <p className="mt-3">To read the current allowance, send an authenticated GET to /api/core/payment-links/status. Example response:</p>
+            <p className="mt-3">{t("docs.allowanceRead")}</p>
             <CopyCodeBlock className={codeBlockClass}><code>{`{
   "supported_currencies": ["USD", "EUR", "GBP", "CAD", "AUD", "NZD", "CHF", "JPY", "CNY", "HKD", "SGD", "INR", "BRL", "MXN", "SEK", "NOK", "DKK", "ZAR", "PLN", "KRW"],
   "daily_limit": 10,
@@ -985,17 +991,17 @@ Content-Type: application/json
   "window_hours": 24,
   "retrieved_at": "2026-10-30T12:00:00Z"
 }`}</code></CopyCodeBlock>
-            <p className="mt-3">A fixed-amount form sends an empty public POST, without merchant credentials; a customer-entered-amount form sends only amount and currency (for example amount=0.05&amp;currency=XMR). Automatic clients may send a UUID Idempotency-Key header and Accept: application/json. A new attempt returns 201; replay returns 200 with the same invoice_url, status, and expires_at. Save the key before requesting creation and retain it after interrupted responses. GET and HEAD never create invoices. An illustrative successful exchange is:</p>
+            <p className="mt-3">{t("docs.links.publicPost")}</p>
             <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/public/payment-links/YOUR_PUBLIC_TOKEN/invoices
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 0
 
 HTTP/1.1 303 See Other
 Location: https://checkout.example/invoice/NEW_INVOICE_ID`}</code></CopyCodeBlock>
-            <p className="mt-3">On failure, the browser receives HTML explaining unavailability and any applicable Retry-After guidance. Do not automatically retry an uncertain request; it may already have created an invoice. Amount, wallet, confirmation, and URL overrides are rejected.</p>
-            <p className="mt-3">For editing, PATCH accepts full settings using the creation fields, or an enabled-only body such as {`{"enabled": false}`}. Re-enabling with {`{"enabled": true}`} validates saved settings. Full-settings updates replace omitted optional fields with defaults. The returned URLs remain stable; existing invoices retain their product snapshots.</p>
+            <p className="mt-3">{t("docs.onFailure")}</p>
+            <p className="mt-3">{t("docs.links.editing")}</p>
           </details>
-          <p>Find the six operations in the Payment-link management and Public payment links groups in the <a href="#api-reference" className="font-semibold underline underline-offset-4">endpoint directory</a>.</p>
+          <p>{rich(t("docs.links.findOperations"), { directory: (text) => <a href="#api-reference" className="font-semibold underline underline-offset-4">{text}</a> })}</p>
         </section>
 
         <section
@@ -1009,23 +1015,20 @@ Location: https://checkout.example/invoice/NEW_INVOICE_ID`}</code></CopyCodeBloc
                 className="h-2.5 w-2.5 rounded-full bg-sage"
                 aria-hidden="true"
               />
-              Optional input
+              {t("docs.optionalInput")}
             </p>
             <h2
               className="mt-1 font-sans text-2xl font-semibold"
               id="fiat-inputs-title"
             >
-              Fiat inputs (optional)
+              {t("docs.fiatTitle")}
             </h2>
             <p className="mt-3 text-ink-soft">
-              You can request an invoice using a fiat amount. The backend
-              converts the value to XMR using the current rate and returns a
-              non-binding quote in the response. The invoice is always stored in
-              XMR.
+              {t("docs.fiatBody")}
             </p>
             <StatusBadge
               className="mt-4"
-              label="Non-binding quote"
+              label={t("docs.nonBinding")}
               tone="neutral"
             />
           </div>
@@ -1056,55 +1059,53 @@ Content-Type: application/json
                 className="h-2.5 w-2.5 rounded-full bg-clay"
                 aria-hidden="true"
               />
-              System model
+              {t("docs.systemModel")}
             </p>
             <h2 className="mt-1 font-sans text-2xl font-semibold">
-              Concepts and boundaries
+              {t("docs.conceptsTitle")}
             </h2>
             <p className="mt-1 max-w-2xl text-ink-soft">
-              The operating rules, access model, and compatibility details
-              behind the API.
+              {t("docs.conceptsBody")}
             </p>
           </header>
           <div className="rounded-surface border border-stroke border-t-4 border-t-clay bg-white/70 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              Core principles
+              {t("docs.principles")}
             </h3>
             <p className="text-ink-soft">
-              All behavior is constrained by non-custodial rules.
+              {t("docs.principlesBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-              <li>Merchants retain wallet access (your keys, your funds)</li>
-              <li>View-only access maximum</li>
-              <li>No fiat rails or execution of financial actions</li>
+              <li>{t("docs.principle1")}</li>
+              <li>{t("docs.principle2")}</li>
+              <li>{t("docs.principle3")}</li>
             </ul>
           </div>
           <div className="rounded-surface border border-stroke border-t-4 border-t-sage bg-white/70 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              Subaddress-only invoices
+              {t("docs.subaddressTitle")}
             </h3>
             <p className="text-ink-soft">
-              Every invoice uses a subaddress derived from your primary address
-              for clearer reconciliation.
+              {t("docs.subaddressBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-              <li>Subaddress index shown on each invoice</li>
-              <li>Wallet lookahead controls discovery</li>
-              <li>Subaddresses cycle through indices 1 to 199</li>
-              <li>All invoice addresses are within the default range every Monero wallet watches</li>
+              <li>{t("docs.subaddress1")}</li>
+              <li>{t("docs.subaddress2")}</li>
+              <li>{t("docs.subaddress3")}</li>
+              <li>{t("docs.subaddress4")}</li>
             </ul>
           </div>
           <div className="rounded-surface border border-stroke border-t-4 border-t-monero bg-white/70 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              Invoice lifecycle
+              {t("docs.lifecycle")}
             </h3>
             <p className="text-ink-soft">
-              Clear state transitions without hidden automation.
+              {t("docs.lifecycleBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-              <li>Pending → Payment detected → Confirmed</li>
-              <li>Pending → Expired</li>
-              <li>Pending → Invalid (manual)</li>
+              <li>{t("docs.lifecycle1")}</li>
+              <li>{t("docs.lifecycle2")}</li>
+              <li>{t("docs.lifecycle3")}</li>
             </ul>
           </div>
         </section>
@@ -1112,63 +1113,58 @@ Content-Type: application/json
         <section className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              Authentication
+              {t("docs.authTitle")}
             </h3>
             <p className="text-ink-soft">
-              Two auth modes keep integrations explicit and observable.
+              {t("docs.authBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-              <li>API key for authenticated endpoints</li>
+              <li>{t("docs.auth1")}</li>
               <li>
-                Primary address + private view key to retrieve API credentials
+                {t("docs.auth2")}
               </li>
-              <li>Headers: Authorization: ApiKey &lt;api_key&gt;</li>
+              <li>{t("docs.auth3")}</li>
               <li>
-                BTCPay compatibility: Authorization: token &lt;api_key&gt;
+                {t("docs.auth4")}
               </li>
             </ul>
           </div>
           <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              Webhook events
+              {t("docs.eventsTitle")}
             </h3>
             <p className="text-ink-soft">
-              Observable events for merchant systems.
+              {t("docs.eventsBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>invoice.created</li>
               <li>
-                invoice.partially_paid (part of the requested amount was
-                received before expiry)
+                {t("docs.eventPartial")}
               </li>
               <li>invoice.payment_detected</li>
               <li>invoice.confirmed</li>
               <li>invoice.expired</li>
               <li>
-                Payloads include amount_paid_xmr and amount_remaining_xmr
+                {t("docs.events1")}
               </li>
               <li>
-                Payloads include invoice_url (customer payment page) and
-                receipt_url (receipt shown after confirmation)
+                {t("docs.events2")}
               </li>
               <li>
-                An invoice that expires while underpaid is reported as expired
-                with its received amount
+                {t("docs.events3")}
               </li>
-              <li>Deliveries include the X-Webhook-Secret header</li>
+              <li>{t("docs.events4")}</li>
               <li>
-                Destinations must use HTTPS and resolve only to public IP
-                addresses; redirect destinations are validated again
+                {t("docs.events5")}
               </li>
               <li>
-                Webhooks are optional; poll
-                /api/core/public/invoice/&lt;invoice_id&gt; without auth
+                {t("docs.events6")}
               </li>
             </ul>
           </div>
           <div className="rounded-surface border border-stroke bg-white/70 p-6 shadow-soft">
-            <h3 className="mb-2 font-sans font-semibold text-xl">Base URL</h3>
-            <p className="text-ink-soft">The API can be reached from:</p>
+            <h3 className="mb-2 font-sans font-semibold text-xl">{t("docs.baseUrl")}</h3>
+            <p className="text-ink-soft">{t("docs.reachedFrom")}</p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>{normalizedSiteUrl}/api/core</li>
             </ul>
@@ -1178,35 +1174,32 @@ Content-Type: application/json
         <section className="mt-5 grid gap-5 sm:grid-cols-2">
           <div className="rounded-surface border border-stroke bg-sand/60 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              BTCPay compatibility (WooCommerce)
+              {t("docs.btcpayTitle")}
             </h3>
             <p className="text-ink-soft">
-              A Greenfield-compatible subset keeps the official WooCommerce
-              plugin working without custodial behavior.
+              {t("docs.btcpayBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>
-                Base URL uses{" "}
-                <span className="font-mono text-ink">/api/v1</span>
+                {rich(t("docs.btcpay.baseUrl"), { code: mono })}
               </li>
               <li>
-                Supported endpoints: stores, invoices, payment methods, webhooks
+                {t("docs.btcpay1")}
               </li>
               <li>
-                Invoices are defined in XMR; fiat inputs are quote-only metadata
+                {t("docs.btcpay2")}
               </li>
               <li>
-                Modal checkout is supported; the hosted invoice page is
-                recommended for clarity
+                {t("docs.btcpay3")}
               </li>
             </ul>
           </div>
           <div className="rounded-surface border border-stroke bg-sand/60 p-6 shadow-soft">
             <h3 className="mb-2 font-sans font-semibold text-xl">
-              BTCPay webhooks
+              {t("docs.btcpayWebhooks")}
             </h3>
             <p className="text-ink-soft">
-              Deliveries are signed with the BTCPay header format.
+              {t("docs.btcpayWebhooksBody")}
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>
@@ -1214,10 +1207,9 @@ Content-Type: application/json
                   BTCPay-Sig: sha256=&lt;hmac&gt;
                 </span>
               </li>
-              <li>Event names follow BTCPay conventions for compatibility.</li>
+              <li>{t("docs.btcpayEvents")}</li>
               <li>
-                Destinations must use HTTPS and resolve only to public IP
-                addresses.
+                {t("docs.btcpayDestinations")}
               </li>
             </ul>
           </div>
@@ -1231,26 +1223,25 @@ Content-Type: application/json
                   className="h-2.5 w-2.5 rounded-full bg-sage"
                   aria-hidden="true"
                 />
-                Endpoint directory
+                {t("docs.directory")}
               </p>
               <h2 className="mt-1 font-sans font-semibold text-2xl">
-                API reference
+                {t("docs.apiReference")}
               </h2>
               <p className="text-ink-soft">
-                Every endpoint exposed by the API is listed below, grouped by
-                access mode.
+                {t("docs.directoryBody")}
               </p>
             </div>
             <StatusBadge
-              label={`${endpointRequirements.length} documented routes`}
+              label={t("docs.api.routes", { count: endpointRequirements.length })}
             />
           </div>
           <div className="grid gap-6 lg:grid-cols-2">
             {endpointGroups.map((group, index) => {
               const needsDivider =
-                group.title.startsWith("BTCPay") &&
+                isBtcpay(group) &&
                 endpointGroups[index - 1] &&
-                !endpointGroups[index - 1].title.startsWith("BTCPay");
+                !isBtcpay(endpointGroups[index - 1]);
 
               return (
                 <Fragment key={group.title}>
@@ -1271,15 +1262,15 @@ Content-Type: application/json
                           </h3>
                           <div className="mt-2">
                             <StatusBadge
-                              label={`Auth: ${group.auth}`}
+                              label={t("docs.api.auth", { auth: group.auth })}
                               tone={
-                                group.auth === "None" ? "success" : "pending"
+                                group.auth === t("docs.ref.r008") ? "success" : "pending"
                               }
                             />
                           </div>
                         </div>
                         <span className="text-xs font-semibold text-ink-soft">
-                          {group.items.length} endpoints
+                          {t("docs.api.endpoints", { count: group.items.length })}
                         </span>
                       </div>
                     </summary>
@@ -1315,21 +1306,21 @@ Content-Type: application/json
                               {requirements ? (
                                 <details className="rounded-lg border border-ink/10 bg-white/70 px-3 py-2 text-sm text-ink-soft">
                                   <summary className="cursor-pointer select-none text-xs font-semibold uppercase tracking-[0.08em] text-ink">
-                                    Requirements
+                                    {t("docs.requirements")}
                                   </summary>
                                   <div className="mt-2 grid gap-2">
                                     <div>
                                       <span className="font-semibold text-ink">
-                                        Required:
+                                        {t("docs.required")}
                                       </span>{" "}
                                       {requirements.required.length > 0
                                         ? requirements.required.join(", ")
-                                        : "None"}
+                                        : t("docs.ref.r008")}
                                     </div>
                                     {requirements.optional.length > 0 ? (
                                       <div>
                                         <span className="font-semibold text-ink">
-                                          Optional:
+                                          {t("docs.optional")}
                                         </span>{" "}
                                         {requirements.optional.join(", ")}
                                       </div>
@@ -1356,7 +1347,7 @@ Content-Type: application/json
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-surface border border-ink bg-ink px-5 py-4 text-sm text-cream shadow-soft">
             <span className="text-cream/70">
-              Need the machine-readable schema?
+              {t("docs.schema")}
             </span>
             <a
               className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream/25 bg-cream/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/60"

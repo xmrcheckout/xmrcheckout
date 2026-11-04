@@ -4,23 +4,28 @@ import type { ReactNode } from "react";
 
 import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
+import { rich } from "../../../../lib/i18n/rich";
+import { getI18n } from "../../../../lib/i18n/server";
+import type { Translate } from "../../../../lib/i18n/translate";
 
-export const metadata: Metadata = {
-  title: "Integration Recipes",
-  description:
-    "Practical integration recipes for connecting Monero invoices, public payment pages, and webhooks to your store.",
-  alternates: {
-    canonical: "/docs/integrations",
-  },
-  openGraph: {
-    type: "website",
-    url: "/docs/integrations",
-    siteName: "XMR Checkout",
-    title: "Monero Checkout Integration Recipes | XMR Checkout",
-    description:
-      "Practical integration recipes for connecting Monero invoices, public payment pages, and webhooks to your store.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return {
+    title: t("docs.integrations.metaTitleShort"),
+    description: t("docs.integrations.metaDescription"),
+    alternates: { canonical: "/docs/integrations" },
+    openGraph: {
+      type: "website",
+      url: "/docs/integrations",
+      siteName: "XMR Checkout",
+      title: t("docs.integrations.metaTitle"),
+      description: t("docs.integrations.metaDescription"),
+    },
+  };
+}
+
+const mono = (text: string) => <span className="font-mono text-ink">{text}</span>;
+const guideLink = "font-semibold underline decoration-clay underline-offset-4";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -40,17 +45,19 @@ function RecipeHeader({
   id,
   index,
   title,
+  t,
 }: {
   children: ReactNode;
   id: string;
   index: string;
   title: string;
+  t: Translate;
 }) {
   return (
     <header className="max-w-[54rem]">
       <p className="flex items-center gap-2 text-sm font-semibold text-ink">
         <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />
-        Recipe {index}
+        {t("docs.integrations.recipe", { index })}
       </p>
       <h2 className="mt-1 font-sans text-2xl font-semibold" id={`${id}-title`}>
         {title}
@@ -60,20 +67,19 @@ function RecipeHeader({
   );
 }
 
-export default function IntegrationsPage() {
+export default async function IntegrationsPage() {
+  const { t } = await getI18n();
   return (
     <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink">
       <div className="mx-auto w-full max-w-7xl">
-        <section aria-label="Integration recipe introduction">
+        <section aria-label={t("docs.integrations.introLabel")}>
           <PageIntroBand
-            eyebrow="Integration recipes"
+            eyebrow={t("docs.recipes")}
             id="integration-recipes-title"
-            title="Copy/paste examples for common backends."
+            title={t("docs.integrations.title")}
             description={
               <p>
-                Recipes follow the same pattern: create an invoice with an XMR
-                amount, send the customer to the hosted invoice page, then
-                fulfill your order when the invoice is confirmed.
+                {t("docs.integrations.intro")}
               </p>
             }
           />
@@ -84,24 +90,20 @@ export default function IntegrationsPage() {
             className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
             href="/docs"
           >
-            Back to API docs
+            {t("docs.integrations.backToDocs")}
           </Link>
         </div>
 
         <p className="mt-4 max-w-3xl text-sm text-ink-soft">
-          Need the whole integration path first? Read the{" "}
-          <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">
-            Monero API and webhook guide
-          </Link>{" "}
-          for authentication, invoice status, and delivery handling.
+          {rich(t("docs.integrations.needWhole"), { guide: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">{text}</Link> })}
         </p>
 
         <nav
           className="sticky top-3 z-10 mt-6 flex gap-1.5 overflow-x-auto rounded-surface border border-stroke bg-card/95 p-2 shadow-soft backdrop-blur"
-          aria-label="Integration recipes"
+          aria-label={t("docs.recipes")}
         >
           {[
-            { href: "#payment-buttons", label: "Payment buttons" },
+            { href: "#payment-buttons", label: t("docs.integrations.navButtons") },
             { href: "#btcpay", label: "BTCPay" },
             { href: "#curl", label: "curl" },
             { href: "#node", label: "Node.js" },
@@ -123,9 +125,12 @@ export default function IntegrationsPage() {
         </nav>
 
         <section id="payment-buttons" className="mt-8 min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft">
-          <h2 className="font-sans text-2xl font-semibold">Without programming: payment buttons</h2>
-          <p className="mt-3">For an independent website or freelance service, configure a fixed amount in Dashboard → Payment links, then copy an HTML form or reusable URL. Each successful submission creates a separate XMR invoice. No merchant API key belongs in the snippet.</p>
-          <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">Follow the payment button setup guide</Link> for embedding, capacity, and fulfillment, including <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">confirmation messages</Link> that show a download link or instructions after payment.</p>
+          <h2 className="font-sans text-2xl font-semibold">{t("docs.integrations.buttonsTitle")}</h2>
+          <p className="mt-3">{t("docs.integrations.buttonsBody")}</p>
+          <p className="mt-3">{rich(t("docs.integrations.buttonsGuide"), {
+            guide: (text) => <Link className={guideLink} href="/guides/monero-payment-buttons">{text}</Link>,
+            message: (text) => <Link className={guideLink} href="/guides/monero-payment-buttons#confirmation-message">{text}</Link>,
+          })}</p>
         </section>
         <section className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="overflow-hidden rounded-surface border border-stroke bg-card shadow-soft">
@@ -135,77 +140,60 @@ export default function IntegrationsPage() {
                   className="h-2.5 w-2.5 rounded-full bg-clay"
                   aria-hidden="true"
                 />
-                Request path
+                {t("docs.integrations.requestPath")}
               </p>
               <h2 className="mt-1 font-sans text-2xl font-semibold">
-                Conceptual flow
+                {t("docs.integrations.flowTitle")}
               </h2>
             </div>
             <ol className="grid divide-y divide-stroke border-y border-stroke bg-white/60 sm:grid-cols-2 sm:divide-x">
               <li className="min-w-0 px-5 py-4 sm:px-6">
                 <span className="font-mono text-xs text-ink-soft">01</span>
                 <p className="mt-2 text-sm text-ink-soft">
-                  Create an invoice via{" "}
-                  <span className="font-mono text-ink">
-                    POST /api/core/invoices
-                  </span>
-                  .
+                  {rich(t("docs.integrations.flow1"), { code: mono })}
                 </p>
               </li>
               <li className="min-w-0 px-5 py-4 sm:px-6">
                 <span className="font-mono text-xs text-ink-soft">02</span>
                 <p className="mt-2 text-sm text-ink-soft">
-                  Optional: include{" "}
-                  <span className="font-mono text-ink">
-                    checkout_continue_url
-                  </span>{" "}
-                  to show a customer-facing Continue button after confirmation.
+                  {rich(t("docs.integrations.flow2"), { code: mono })}
                 </p>
               </li>
               <li className="min-w-0 px-5 py-4 sm:px-6">
                 <span className="font-mono text-xs text-ink-soft">03</span>
                 <p className="mt-2 text-sm text-ink-soft">
-                  Redirect the customer to{" "}
-                  <span className="font-mono text-ink">invoice_url</span>.
+                  {rich(t("docs.integrations.flow3"), { code: mono })}
                 </p>
               </li>
               <li className="min-w-0 px-5 py-4 sm:px-6">
                 <span className="font-mono text-xs text-ink-soft">04</span>
                 <p className="mt-2 text-sm text-ink-soft">
-                  Wait for{" "}
-                  <span className="font-mono text-ink">invoice.confirmed</span>{" "}
-                  via webhook (recommended) or polling.
+                  {rich(t("docs.integrations.flow4"), { code: mono })}
                 </p>
               </li>
             </ol>
             <div className="bg-sand/50 px-5 py-4 text-sm text-ink-soft sm:px-6">
-              <p className="font-semibold text-ink">What to store</p>
+              <p className="font-semibold text-ink">{t("docs.integrations.whatToStore")}</p>
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>
-                  Your internal order id in{" "}
-                  <span className="font-mono text-ink">metadata.order_id</span>
+                  {rich(t("docs.integrations.store1"), { code: mono })}
                 </li>
                 <li>
-                  The returned{" "}
-                  <span className="font-mono text-ink">invoice.id</span>
+                  {rich(t("docs.integrations.store2"), { code: mono })}
                 </li>
               </ul>
               <p className="mt-3">
-                Webhook payloads include{" "}
-                <span className="font-mono text-ink">receipt_url</span>. XMR
-                Checkout does not email customers; send the receipt link from
-                your own system if you want customers to get one.
+                {rich(t("docs.integrations.receiptNote"), { code: mono })}
               </p>
             </div>
           </div>
 
           <div className={`${sectionCardClass} border-t-4 border-t-clay`}>
             <h2 className="font-sans text-2xl font-semibold">
-              Environment variables
+              {t("docs.integrations.envTitle")}
             </h2>
             <p className="mt-2 text-ink-soft">
-              Keep secrets server-side. Never expose API keys or webhook secrets
-              in browser code.
+              {t("docs.integrations.envBody")}
             </p>
             <dl className="mt-4 divide-y divide-stroke border-y border-stroke text-sm">
               <div className="py-4">
@@ -213,7 +201,7 @@ export default function IntegrationsPage() {
                   XMRCHECKOUT_API_KEY
                 </dt>
                 <dd className="mt-1 text-ink-soft">
-                  Used to call authenticated endpoints.
+                  {t("docs.integrations.envApiKey")}
                 </dd>
               </div>
               <div className="py-4">
@@ -221,9 +209,7 @@ export default function IntegrationsPage() {
                   XMRCHECKOUT_WEBHOOK_SECRET
                 </dt>
                 <dd className="mt-1 text-ink-soft">
-                  Used to verify the{" "}
-                  <span className="font-mono text-ink">X-Webhook-Secret</span>{" "}
-                  header on webhook deliveries.
+                  {rich(t("docs.integrations.envSecret"), { code: mono })}
                 </dd>
               </div>
               <div className="py-4">
@@ -231,8 +217,7 @@ export default function IntegrationsPage() {
                   XMRCHECKOUT_API_BASE_URL
                 </dt>
                 <dd className="mt-1 break-words text-ink-soft">
-                  Public base URL, including{" "}
-                  <span className="font-mono text-ink">/api/core</span>:{" "}
+                  {rich(t("docs.integrations.envBase"), { code: mono })}{" "}
                   <span className="break-all font-mono text-ink">
                     {publicApiBaseUrl}
                   </span>
@@ -247,60 +232,51 @@ export default function IntegrationsPage() {
           className="mt-12 grid scroll-mt-24 gap-6 border-t border-stroke pt-8"
           aria-labelledby="btcpay-title"
         >
-          <RecipeHeader
+          <RecipeHeader t={t}
             id="btcpay"
             index="01"
-            title="BTCPay compatibility (WooCommerce)"
+            title={t("docs.btcpayTitle")}
           >
             <p className="text-ink-soft">
-              Use the official WooCommerce Greenfield plugin with the
-              compatibility endpoints using the standard XMR Checkout access
-              model.
+              {t("docs.integrations.btcpayIntro")}
             </p>
           </RecipeHeader>
           <details className="group grid gap-6 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>View setup and compatibility code</span>
+              <span>{t("docs.integrations.viewSetup")}</span>
               <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
-                Expand
+                {t("docs.integrations.expand")}
               </span>
               <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
-                Collapse
+                {t("docs.integrations.collapse")}
               </span>
             </summary>
           <div className="grid gap-6 lg:grid-cols-2">
             <div className={sectionCardClass}>
-              <h3 className="font-sans font-semibold text-xl">Setup steps</h3>
+              <h3 className="font-sans font-semibold text-xl">{t("docs.integrations.setupSteps")}</h3>
               <ol className="mt-3 list-decimal space-y-3 pl-5 text-ink-soft marker:font-mono marker:text-ink-soft">
-                <li>Connect to XMR Checkout to get your API key.</li>
+                <li>{t("docs.integrations.btcpayConnect")}</li>
                 <li>
-                  Store id: returned by the login response or via{" "}
-                  <span className="font-mono text-ink">GET /api/v1/stores</span>
-                  . The stores call returns a single store (one per primary
-                  address); use the{" "}
-                  <span className="font-mono text-ink">id</span> field.
+                  {rich(t("docs.integrations.btcpayStoreId"), { code: mono })}
                 </li>
-                <li>Install the official BTCPay WooCommerce plugin.</li>
+                <li>{t("docs.integrations.btcpayInstall")}</li>
                 <li>
-                  In WooCommerce → BTCPay settings, set:
+                  {t("docs.integrations.btcpaySettings")}
                   <ul className="mt-2 list-disc space-y-1 pl-5">
                     <li>
-                      Server URL:{" "}
+                      {t("docs.integrations.serverUrl")}{" "}
                       <span className="font-mono text-ink">
                         {normalizedSiteUrl}
                       </span>{" "}
-                      (the plugin appends{" "}
-                      <span className="font-mono text-ink">/api/v1</span>).
+                      {rich(t("docs.integrations.pluginAppends"), { code: mono })}
                     </li>
-                    <li>Store ID: the id returned from the stores call.</li>
-                    <li>API key: your XMR Checkout API key.</li>
+                    <li>{t("docs.integrations.btcpayStoreField")}</li>
+                    <li>{t("docs.integrations.btcpayApiKey")}</li>
                     <li>
-                      Payment method: XMR-CHAIN (shows as XMR_CHAIN in
-                      WooCommerce).
+                      {t("docs.integrations.btcpayMethod")}
                     </li>
                     <li>
-                      Modal checkout is supported; the hosted invoice page is
-                      recommended for clarity.
+                      {t("docs.integrations.btcpayModal")}
                     </li>
                   </ul>
                 </li>
@@ -308,18 +284,17 @@ export default function IntegrationsPage() {
             </div>
             <div className={`${sectionCardClass} border-t-4 border-t-sage`}>
               <h3 className="font-sans font-semibold text-xl">
-                Behavior notes
+                {t("docs.integrations.behaviorNotes")}
               </h3>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
                 <li>
-                  Authorization header: Authorization: token &lt;api_key&gt;.
+                  {t("docs.integrations.authHeader")}
                 </li>
                 <li>
-                  Status mapping: pending → New, payment detected → Processing,
-                  confirmed → final.
+                  {t("docs.integrations.statusMapping")}
                 </li>
-                <li>Expired and Invalid statuses map directly.</li>
-                <li>Webhook deliveries use the BTCPay-Sig header.</li>
+                <li>{t("docs.integrations.expiredInvalid")}</li>
+                <li>{t("docs.integrations.btcpaySig")}</li>
               </ul>
             </div>
           </div>
@@ -339,19 +314,19 @@ curl -sS "$XMRCHECKOUT_BTCPAY_URL/stores" \\
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="curl-title"
         >
-          <RecipeHeader id="curl" index="02" title="curl">
+          <RecipeHeader t={t} id="curl" index="02" title="curl">
             <p className="text-ink-soft">
-              Create an invoice, then poll status until it is confirmed.
+              {t("docs.integrations.curlIntro")}
             </p>
           </RecipeHeader>
           <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>View curl examples</span>
+              <span>{t("docs.integrations.viewCurl")}</span>
               <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
-                Expand
+                {t("docs.integrations.expand")}
               </span>
               <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
-                Collapse
+                {t("docs.integrations.collapse")}
               </span>
             </summary>
           <div className="grid gap-4">
@@ -398,21 +373,19 @@ curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="node-title"
         >
-          <RecipeHeader id="node" index="03" title="Node.js">
+          <RecipeHeader t={t} id="node" index="03" title="Node.js">
             <p className="text-ink-soft">
-              Example shows creating an invoice with{" "}
-              <span className="font-mono text-ink">fetch</span> and receiving
-              webhooks with Express.
+              {rich(t("docs.integrations.nodeIntro"), { code: mono })}
             </p>
           </RecipeHeader>
           <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>View Node.js examples</span>
+              <span>{t("docs.integrations.viewNode")}</span>
               <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
-                Expand
+                {t("docs.integrations.expand")}
               </span>
               <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
-                Collapse
+                {t("docs.integrations.collapse")}
               </span>
             </summary>
           <div className="grid gap-4">
@@ -484,19 +457,19 @@ app.listen(3001, () => {
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="php-title"
         >
-          <RecipeHeader id="php" index="04" title="PHP">
+          <RecipeHeader t={t} id="php" index="04" title="PHP">
             <p className="text-ink-soft">
-              Minimal create-invoice example and a webhook receiver endpoint.
+              {t("docs.integrations.phpIntro")}
             </p>
           </RecipeHeader>
           <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>View PHP examples</span>
+              <span>{t("docs.integrations.viewPhp")}</span>
               <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
-                Expand
+                {t("docs.integrations.expand")}
               </span>
               <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
-                Collapse
+                {t("docs.integrations.collapse")}
               </span>
             </summary>
           <div className="grid gap-4">
@@ -567,21 +540,19 @@ http_response_code(204);`}</code>
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="python-title"
         >
-          <RecipeHeader id="python" index="05" title="Python">
+          <RecipeHeader t={t} id="python" index="05" title="Python">
             <p className="text-ink-soft">
-              Create an invoice with{" "}
-              <span className="font-mono text-ink">requests</span> and receive
-              webhooks with FastAPI.
+              {rich(t("docs.integrations.pythonIntro"), { code: mono })}
             </p>
           </RecipeHeader>
           <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>View Python examples</span>
+              <span>{t("docs.integrations.viewPython")}</span>
               <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
-                Expand
+                {t("docs.integrations.expand")}
               </span>
               <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
-                Collapse
+                {t("docs.integrations.collapse")}
               </span>
             </summary>
           <div className="grid gap-4">
@@ -642,21 +613,19 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="go-title"
         >
-          <RecipeHeader id="go" index="06" title="Go">
+          <RecipeHeader t={t} id="go" index="06" title="Go">
             <p className="text-ink-soft">
-              Create an invoice with{" "}
-              <span className="font-mono text-ink">net/http</span> and receive
-              webhooks with a standard handler.
+              {rich(t("docs.integrations.goIntro"), { code: mono })}
             </p>
           </RecipeHeader>
           <details className="group grid gap-4 rounded-surface border border-stroke bg-card p-4 shadow-soft sm:p-5">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl border border-stroke bg-white/70 px-4 py-3 font-sans font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <span>View Go examples</span>
+              <span>{t("docs.integrations.viewGo")}</span>
               <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:hidden">
-                Expand
+                {t("docs.integrations.expand")}
               </span>
               <span className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft group-open:inline">
-                Collapse
+                {t("docs.integrations.collapse")}
               </span>
             </summary>
           <div className="grid gap-4">

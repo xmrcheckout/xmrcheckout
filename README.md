@@ -487,7 +487,7 @@ server {
 
 The UI picks its language from the visitor's choice in the footer language
 menu (stored in the `xmrcheckout_locale` cookie), else the browser's
-`Accept-Language` header, else English. Supported: English, Spanish, Russian, German, French and Portuguese.
+`Accept-Language` header, else English. Supported: English, Spanish, Russian, German, French, Portuguese and Italian.
 
 UI text lives in `ui/messages/<locale>.json`. `en.json` is the source; any key
 missing from another catalog shows in English. To add a language:

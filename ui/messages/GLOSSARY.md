@@ -184,3 +184,41 @@ interface (e.g. *Settings → Wallet*) stay in English.
 | saque, sacar, retirada/retirar fundos | withdrawal implies custody |
 | saldo | "balance" implies held funds |
 | empresa de pagamentos | "payments company" |
+
+## Italian (`it`)
+
+Informal *tu* throughout. "Merchant" is *l'esercente*, "customer" is
+*il cliente*. *Webhook*, *endpoint*, *dashboard* (feminine, *la dashboard*),
+*payload* and *self-hosting* stay as is, and menu labels of wallets without an
+Italian interface (e.g. *Settings → Wallet*) stay in English.
+
+| English | Italian |
+| --- | --- |
+| checkout | pagamento / pagina di pagamento (product name "XMR Checkout" stays as is) |
+| invoice | fattura |
+| payment detected | pagamento rilevato |
+| confirmation | conferma |
+| confirmation target | obiettivo di conferme |
+| view-only / view key | in sola lettura / chiave di visualizzazione (privata) |
+| spend key / seed | chiave di spesa / frase di recupero (seed) |
+| wallet | portafoglio |
+| subaddress | sottoindirizzo |
+| expired | scaduta |
+| on-chain | sulla blockchain |
+| fiat (reference) | valuta fiat (di riferimento) |
+| rate / quote | tasso / quotazione |
+| custody / non-custodial | custodia / senza custodia |
+| reconciler | servizio di riconciliazione |
+| allowance | quota |
+| snapshot | istantanea |
+| relay (events) | inoltrare |
+| self-host | ospitare in autonomia |
+
+| Avoid (Italian) | Why |
+| --- | --- |
+| processore / elaboratore di pagamenti, istituto di pagamento | implies a payment processor; allowed only as "non è un processore" |
+| liquidazione, regolamento | "settlement" |
+| erogazione, accredito / accreditare | "payout" / crediting implies the service moves funds |
+| prelievo, prelevare | withdrawal implies custody |
+| saldo | "balance" implies held funds |
+| società di pagamenti | "payments company" |

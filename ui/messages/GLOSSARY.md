@@ -146,3 +146,41 @@ stay in English.
 | versement, retrait, retirer des fonds | "payout" / withdrawal implies custody |
 | solde | "balance" implies held funds |
 | société / entreprise de paiement | "payments company" |
+
+## Portuguese (`pt`)
+
+Brazilian Portuguese, informal *você* throughout. "Merchant" is
+*o comerciante*, "customer" is *o cliente*. *Webhook*, *endpoint*, *payload*
+and *handler* stay as is, and menu labels of wallets without a Portuguese
+interface (e.g. *Settings → Wallet*) stay in English.
+
+| English | Portuguese |
+| --- | --- |
+| checkout | pagamento / página de pagamento (product name "XMR Checkout" stays as is) |
+| invoice | fatura |
+| payment detected | pagamento detectado |
+| confirmation | confirmação |
+| confirmation target | meta de confirmações |
+| view-only / view key | somente leitura / chave de visualização (privada) |
+| spend key / seed | chave de gasto / frase de recuperação (seed) |
+| wallet | carteira |
+| subaddress | subendereço |
+| expired | expirada |
+| on-chain | na blockchain |
+| fiat (reference) | moeda fiduciária (de referência) |
+| rate / quote | cotação |
+| custody / non-custodial | custódia / sem custódia |
+| reconciler | serviço de conciliação |
+| allowance | cota |
+| relay (events) | encaminhar |
+| dashboard | painel |
+| self-host | auto-hospedar |
+
+| Avoid (Portuguese) | Why |
+| --- | --- |
+| processador / intermediador de pagamento | implies a payment processor; allowed only as "não é um processador" |
+| liquidação, liquidar | "settlement" |
+| repasse | "payout" to the merchant |
+| saque, sacar, retirada/retirar fundos | withdrawal implies custody |
+| saldo | "balance" implies held funds |
+| empresa de pagamentos | "payments company" |

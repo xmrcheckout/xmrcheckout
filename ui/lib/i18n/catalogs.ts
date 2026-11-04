@@ -3,6 +3,7 @@ import es from "../../messages/es.json";
 import ru from "../../messages/ru.json";
 import de from "../../messages/de.json";
 import fr from "../../messages/fr.json";
+import pt from "../../messages/pt.json";
 import type { Locale } from "./config";
 import { createTranslator, mergeMessages, type Messages, type Translate } from "./translate";
 
@@ -12,6 +13,7 @@ const catalogs: Record<Locale, Messages> = {
   ru: mergeMessages(en, ru),
   de: mergeMessages(en, de),
   fr: mergeMessages(en, fr),
+  pt: mergeMessages(en, pt),
 };
 
 export const getCatalog = (locale: Locale): Messages => catalogs[locale];

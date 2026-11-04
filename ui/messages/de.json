@@ -966,6 +966,7 @@
       "needReviewCount": "{count} zu prüfen",
       "none": "Noch keine Webhook-Aufrufe erfasst.",
       "noResponse": "Keine Antwort",
+      "queued": "In der Warteschlange",
       "redeliver": "Erneut zustellen",
       "attempt": "Versuch {attempt}",
       "retryScheduled": "Automatische Wiederholung geplant: {time}",

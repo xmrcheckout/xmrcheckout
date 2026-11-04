@@ -984,6 +984,7 @@
       "needReviewCount": "Do przeglądu: {count}",
       "none": "Nie zarejestrowano jeszcze wywołań webhooków.",
       "noResponse": "Brak odpowiedzi",
+      "queued": "W kolejce",
       "redeliver": "Dostarcz ponownie",
       "attempt": "Próba {attempt}",
       "retryScheduled": "Automatyczne ponowienie zaplanowane: {time}",

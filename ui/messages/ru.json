@@ -984,6 +984,7 @@
       "needReviewCount": "Требуют проверки: {count}",
       "none": "Вызовов вебхуков пока не записано.",
       "noResponse": "Нет ответа",
+      "queued": "В очереди",
       "redeliver": "Доставить повторно",
       "attempt": "Попытка {attempt}",
       "retryScheduled": "Автоматический повтор запланирован: {time}",

@@ -966,6 +966,7 @@
       "needReviewCount": "{count} need review",
       "none": "No webhook calls recorded yet.",
       "noResponse": "No response",
+      "queued": "Queued",
       "redeliver": "Redeliver",
       "attempt": "Attempt {attempt}",
       "retryScheduled": "Automatic retry scheduled: {time}",

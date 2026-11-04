@@ -957,6 +957,7 @@
       "needReviewCount": "{count} 次需要查看",
       "none": "尚无 Webhook 调用记录。",
       "noResponse": "无响应",
+      "queued": "排队中",
       "redeliver": "重新投递",
       "attempt": "第 {attempt} 次尝试",
       "retryScheduled": "已安排自动重试：{time}",

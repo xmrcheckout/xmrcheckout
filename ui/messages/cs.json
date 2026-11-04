@@ -984,6 +984,7 @@
       "needReviewCount": "Ke kontrole: {count}",
       "none": "Zatím nejsou zaznamenána žádná volání webhooků.",
       "noResponse": "Bez odpovědi",
+      "queued": "Ve frontě",
       "redeliver": "Doručit znovu",
       "attempt": "Pokus {attempt}",
       "retryScheduled": "Automatické opakování naplánováno: {time}",

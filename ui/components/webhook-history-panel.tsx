@@ -55,10 +55,12 @@ export default function WebhookHistoryPanel({
   }, [mode, router, state.success]);
 
   const formatTimestamp = (value: string) => new Date(value).toLocaleString(locale);
+  // Attempt 0 means the delivery is queued and has not been sent yet.
+  const isQueued = (delivery: WebhookDeliverySummary) => delivery.attempt === 0;
   const failedCount = deliveries.filter(
     (delivery) =>
-      delivery.http_status === null ||
-      (delivery.http_status !== null && delivery.http_status >= 400),
+      !isQueued(delivery) &&
+      (delivery.http_status === null || delivery.http_status >= 400),
   ).length;
 
   return (
@@ -97,14 +99,15 @@ export default function WebhookHistoryPanel({
       ) : (
         <div className="grid gap-3">
           {deliveries.map((delivery) => {
-            const statusLabel =
-              delivery.http_status !== null
+            const queued = isQueued(delivery);
+            const statusLabel = queued
+              ? t("webhooks.history.queued")
+              : delivery.http_status !== null
                 ? delivery.http_status.toString()
                 : t("webhooks.history.noResponse");
             const isFailed =
-              delivery.http_status === null ||
-              (typeof delivery.http_status === "number" &&
-                delivery.http_status >= 400);
+              !queued &&
+              (delivery.http_status === null || delivery.http_status >= 400);
             const hasInvoiceDetails =
               Boolean(delivery.invoice_id) ||
               Boolean(delivery.invoice_address) ||
@@ -131,7 +134,7 @@ export default function WebhookHistoryPanel({
                         ? ` · ${t("webhooks.history.attempt", { attempt: delivery.attempt })}`
                         : null}
                     </p>
-                    {delivery.next_attempt_at ? (
+                    {delivery.next_attempt_at && !queued ? (
                       <p className="mt-1 text-xs text-ink-soft">
                         {t("webhooks.history.retryScheduled", {
                           time: formatTimestamp(delivery.next_attempt_at),
@@ -142,7 +145,7 @@ export default function WebhookHistoryPanel({
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge
                       label={statusLabel}
-                      tone={isFailed ? "error" : "success"}
+                      tone={queued ? "neutral" : isFailed ? "error" : "success"}
                     />
                     {isFailed ? (
                       <form action={formAction}>

@@ -966,6 +966,7 @@
       "needReviewCount": "{count} à examiner",
       "none": "Aucun appel de webhook enregistré pour l’instant.",
       "noResponse": "Aucune réponse",
+      "queued": "En file d’attente",
       "redeliver": "Renvoyer",
       "attempt": "Tentative {attempt}",
       "retryScheduled": "Nouvelle tentative automatique prévue : {time}",

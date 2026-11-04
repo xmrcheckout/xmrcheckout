@@ -966,6 +966,7 @@
       "needReviewCount": "{count} requieren revisión",
       "none": "Todavía no hay llamadas de webhook registradas.",
       "noResponse": "Sin respuesta",
+      "queued": "En cola",
       "redeliver": "Reenviar",
       "attempt": "Intento {attempt}",
       "retryScheduled": "Reintento automático programado: {time}",

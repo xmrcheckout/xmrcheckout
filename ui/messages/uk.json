@@ -984,6 +984,7 @@
       "needReviewCount": "Потребують перевірки: {count}",
       "none": "Викликів вебхуків ще не записано.",
       "noResponse": "Немає відповіді",
+      "queued": "У черзі",
       "redeliver": "Доставити повторно",
       "attempt": "Спроба {attempt}",
       "retryScheduled": "Автоматичний повтор заплановано: {time}",

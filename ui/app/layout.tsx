@@ -21,7 +21,7 @@ const siteUrl = (
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost"
 ).replace(/\/+$/, "");
 const siteName = "XMR Checkout";
-const openGraphLocales = { en: "en_US", es: "es_ES", ru: "ru_RU", de: "de_DE", fr: "fr_FR", pt: "pt_BR", it: "it_IT" } as const;
+const openGraphLocales = { en: "en_US", es: "es_ES", ru: "ru_RU", de: "de_DE", fr: "fr_FR", pt: "pt_BR", it: "it_IT", pl: "pl_PL" } as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();

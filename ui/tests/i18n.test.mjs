@@ -8,7 +8,7 @@ import { createTranslator, mergeMessages, splitRich } from '../lib/i18n/translat
 const root = new URL('..', import.meta.url).pathname;
 const load = (locale) => JSON.parse(readFileSync(join(root, 'messages', `${locale}.json`), 'utf8'));
 const en = load('en');
-const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr'), pt: load('pt'), it: load('it') };
+const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr'), pt: load('pt'), it: load('it'), pl: load('pl') };
 
 // Forbidden terms per DESIGN_PRINCIPLES.md §9 and messages/GLOSSARY.md.
 // Each entry is [pattern, allowed negation pattern or null].
@@ -19,6 +19,7 @@ const forbidden = {
   de: [[/zahlungsabwickl|zahlungsdienstleist|prozessor/i, /kein(?:en)? (?:Zahlungsabwickler|Zahlungsdienstleister)/i], [/abrechn/i, null], [/auszahl/i, null], [/abheb|abhebung/i, null], [/guthaben|\bsaldo|kontostand/i, null], [/zahlungsunternehmen/i, null]],
   pt: [[/processador|intermediador\S* de pagamento/i, /não é um processador/i], [/liquida/i, null], [/repasse/i, null], [/\bsaque|\bsacar|retirada de fundos|retirar fundos/i, null], [/\bsaldo/i, null], [/empresa de pagamentos?/i, null]],
   it: [[/processore|elaboratore di pagament|prestatore di servizi di pagamento|istituto di pagamento/i, /non è un (?:processore|elaboratore)/i], [/liquidazion|\bregolament/i, null], [/\berogazion|accredit/i, null], [/prelie|prelev/i, null], [/\bsaldo/i, null], [/società di pagament/i, null], [/fattur/i, null]],
+  pl: [[/procesor\S* płatno|operator\S* płatno|agent\S* rozliczeniow/i, /nie jest procesorem płatności/i], [/rozlicz/i, null], [/wypła[tc]/i, null], [/\bsald/i, null], [/(?:instytucj|firm)\S* płatnicz/i, null], [/faktur|rachun/i, null]],
   fr: [[/processeur|prestataire de (?:services de )?paiement/i, /n['’]est pas un (?:processeur|prestataire)/i], [/règlement/i, null], [/versement/i, null], [/\bretrait|retirer/i, null], [/\bsolde/i, null], [/(?:société|entreprise) de paiement/i, null]],
 };
 
@@ -47,6 +48,7 @@ test('locale matching follows Accept-Language preference and falls back to Engli
   assert.equal(matchLocale('fr-FR,fr;q=0.9,en;q=0.8'), 'fr');
   assert.equal(matchLocale('pt-BR,pt;q=0.9,en;q=0.8'), 'pt');
   assert.equal(matchLocale('it-IT,it;q=0.9,en;q=0.8'), 'it');
+  assert.equal(matchLocale('pl-PL,pl;q=0.9,en;q=0.8'), 'pl');
 });
 
 test('translator interpolates, pluralizes, and falls back to English', () => {

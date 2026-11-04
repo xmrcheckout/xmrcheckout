@@ -223,3 +223,46 @@ Italian interface (e.g. *Settings → Wallet*) stay in English.
 | saldo | "balance" implies held funds |
 | società di pagamenti | "payments company" |
 | fattura | a formal tax document in Italy (mandatory e-invoicing); XMR Checkout does not issue one |
+
+## Polish (`pl`)
+
+Informal *ty* throughout (lowercase), and gender-neutral phrasing: avoid
+second-person past tense (*zgubiłeś*) and adjectives such as *gotowy* that
+assume the reader's gender. "Merchant" is *sprzedawca*, "customer" is
+*klient*. *Webhook* (plural *webhooki*), *endpoint*, *seed* and *checkout* stay
+as is, and menu labels of wallets without a Polish interface (e.g.
+*Settings → Wallet*) stay in English. Plural messages need `one`, `few`,
+`many` and `other`.
+
+| English | Polish |
+| --- | --- |
+| checkout | płatność / strona płatności (product name "XMR Checkout" stays as is) |
+| invoice | prośba o płatność (plural *prośby o płatność*, genitive plural *próśb o płatność*); for API calls use *wywołanie* |
+| receipt | potwierdzenie płatności |
+| payment detected | wykryto płatność |
+| confirmation / confirmation target | potwierdzenie / (wymagana) liczba potwierdzeń |
+| view-only / view key | tylko do odczytu / (prywatny) klucz widoku |
+| spend key / seed | klucz wydawania / fraza odzyskiwania (seed) |
+| wallet | portfel |
+| subaddress | podadres |
+| expired | wygasła |
+| on-chain | w blockchainie |
+| fiat (reference) | waluta fiat (wartość orientacyjna) |
+| rate / quote | kurs / notowanie |
+| custody / non-custodial | przechowywanie środków / bez powierzania środków |
+| reconciler | usługa uzgadniania |
+| allowance | limit |
+| address capacity | pula adresów |
+| snapshot | migawka |
+| relay (events) | przekazywać |
+| dashboard | panel |
+| self-host | hostować samodzielnie |
+
+| Avoid (Polish) | Why |
+| --- | --- |
+| procesor / operator płatności, agent rozliczeniowy | implies a payment processor; allowed only as "nie jest procesorem płatności" |
+| rozliczenie, rozliczać | "settlement" |
+| wypłata, wypłacać | "payout" / withdrawal implies custody |
+| saldo | "balance" implies held funds |
+| instytucja / firma płatnicza | "payments company" |
+| faktura, rachunek | formal tax documents in Poland (mandatory KSeF e-invoicing); *rachunek* also means a bank account |

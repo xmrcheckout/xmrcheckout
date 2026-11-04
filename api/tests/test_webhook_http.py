@@ -71,6 +71,7 @@ class WebhookUrlValidationTests(unittest.TestCase):
             validate_webhook_url("https://missing.example.test/events")
 
 
+@patch.dict("os.environ", {"WEBHOOK_RELAY_ENABLED": "false"})
 class WebhookRedirectTests(unittest.TestCase):
     @staticmethod
     def resolve(host, port, **_kwargs):

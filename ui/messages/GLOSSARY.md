@@ -195,7 +195,7 @@ Italian interface (e.g. *Settings → Wallet*) stay in English.
 | English | Italian |
 | --- | --- |
 | checkout | pagamento / pagina di pagamento (product name "XMR Checkout" stays as is) |
-| invoice | fattura |
+| invoice | richiesta di pagamento (plural *richieste di pagamento*); for API calls use *chiamata*, not *richiesta* |
 | payment detected | pagamento rilevato |
 | confirmation | conferma |
 | confirmation target | obiettivo di conferme |
@@ -222,3 +222,4 @@ Italian interface (e.g. *Settings → Wallet*) stay in English.
 | prelievo, prelevare | withdrawal implies custody |
 | saldo | "balance" implies held funds |
 | società di pagamenti | "payments company" |
+| fattura | a formal tax document in Italy (mandatory e-invoicing); XMR Checkout does not issue one |

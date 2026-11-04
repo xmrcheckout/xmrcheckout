@@ -18,7 +18,7 @@ const forbidden = {
   ru: [[/процессор|процессинг/i, /не (?:является )?платёжн\S* процессор\S*/i], [/расч[её]т/i, null], [/выплат/i, null], [/вывод средств|вывести средства|снятие средств/i, null], [/баланс/i, null], [/платёжн\S* компани/i, null]],
   de: [[/zahlungsabwickl|zahlungsdienstleist|prozessor/i, /kein(?:en)? (?:Zahlungsabwickler|Zahlungsdienstleister)/i], [/abrechn/i, null], [/auszahl/i, null], [/abheb|abhebung/i, null], [/guthaben|\bsaldo|kontostand/i, null], [/zahlungsunternehmen/i, null]],
   pt: [[/processador|intermediador\S* de pagamento/i, /não é um processador/i], [/liquida/i, null], [/repasse/i, null], [/\bsaque|\bsacar|retirada de fundos|retirar fundos/i, null], [/\bsaldo/i, null], [/empresa de pagamentos?/i, null]],
-  it: [[/processore|elaboratore di pagament|prestatore di servizi di pagamento|istituto di pagamento/i, /non è un (?:processore|elaboratore)/i], [/liquidazion|\bregolament/i, null], [/\berogazion|accredit/i, null], [/prelie|prelev/i, null], [/\bsaldo/i, null], [/società di pagament/i, null]],
+  it: [[/processore|elaboratore di pagament|prestatore di servizi di pagamento|istituto di pagamento/i, /non è un (?:processore|elaboratore)/i], [/liquidazion|\bregolament/i, null], [/\berogazion|accredit/i, null], [/prelie|prelev/i, null], [/\bsaldo/i, null], [/società di pagament/i, null], [/fattur/i, null]],
   fr: [[/processeur|prestataire de (?:services de )?paiement/i, /n['’]est pas un (?:processeur|prestataire)/i], [/règlement/i, null], [/versement/i, null], [/\bretrait|retirer/i, null], [/\bsolde/i, null], [/(?:société|entreprise) de paiement/i, null]],
 };
 

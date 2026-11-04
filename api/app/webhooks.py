@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import logging
 import uuid
+from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from datetime import datetime, timezone
 
 from requests import RequestException
@@ -17,6 +19,17 @@ from .webhook_http import UnsafeWebhookUrl, post_webhook_with_redirects
 from .webhook_retry import next_attempt_time
 
 logger = logging.getLogger(__name__)
+
+# Upper bound on the wall-clock time one delivery attempt may take, however
+# slowly the receiving server answers.
+DELIVERY_DEADLINE_SECONDS = 15
+# How many due deliveries one merchant may have sent per sweep; the rest wait
+# for the next sweep so one merchant cannot crowd out the others.
+MAX_DELIVERIES_PER_MERCHANT = 5
+_SEND_POOL = ThreadPoolExecutor(max_workers=16, thread_name_prefix="webhook-send")
+# Attempts that ran past the deadline and are still waiting on their server.
+# A merchant with one of these gets no new attempts until it finishes.
+_overdue_sends: dict[str, Future] = {}
 
 
 def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
@@ -83,7 +96,15 @@ def dispatch_webhooks(
     user_id: str,
     event: str,
     invoice: Invoice,
+    *,
+    queue: bool = False,
 ) -> None:
+    """Record and send webhooks for an event.
+
+    With queue=True nothing is sent here: each delivery is saved as due now
+    and the delivery loop makes the first attempt, so the caller never waits
+    on a merchant's server.
+    """
     hooks = (
         db.query(Webhook)
         .filter(
@@ -110,9 +131,16 @@ def dispatch_webhooks(
                 extra={"webhook_id": str(hook.id), "event": event},
             )
             continue
-        status_code, error_message = send_native_webhook(
-            target_url, payload, webhook_secret, webhook_id=hook.id
-        )
+        now = datetime.now(timezone.utc)
+        if queue:
+            status_code, error_message = None, None
+            attempt, next_attempt_at = 0, now
+        else:
+            status_code, error_message = send_native_webhook(
+                target_url, payload, webhook_secret, webhook_id=hook.id
+            )
+            attempt = 1
+            next_attempt_at = next_attempt_time(1, status_code, now)
         deliveries.append(
             WebhookDelivery(
                 user_id=user_uuid,
@@ -128,10 +156,8 @@ def dispatch_webhooks(
                 payload_json=payload,
                 http_status=status_code,
                 error_message=error_message,
-                attempt=1,
-                next_attempt_at=next_attempt_time(
-                    1, status_code, datetime.now(timezone.utc)
-                ),
+                attempt=attempt,
+                next_attempt_at=next_attempt_at,
             )
         )
     if deliveries:
@@ -147,28 +173,41 @@ def retry_due_deliveries(
     db: Session,
     *,
     now: datetime | None = None,
-    limit: int = 20,
+    limit: int = 50,
 ) -> int:
-    """Retry failed deliveries whose scheduled retry time has passed.
+    """Send queued deliveries and retry failed ones whose time has come.
 
-    Each retry is recorded as a new delivery row, so the history shows every
-    attempt. Returns the number of retries sent.
+    A queued delivery (attempt 0) is updated in place with its first attempt;
+    each retry is recorded as a new delivery row, so the history shows every
+    attempt. Each merchant gets at most MAX_DELIVERIES_PER_MERCHANT attempts
+    per sweep. Returns the number of attempts sent.
     """
     now = now or datetime.now(timezone.utc)
-    due_ids = [
-        row.id
-        for row in (
-            db.query(WebhookDelivery.id)
-            .filter(
-                WebhookDelivery.next_attempt_at.isnot(None),
-                WebhookDelivery.next_attempt_at <= now,
-            )
-            .order_by(WebhookDelivery.next_attempt_at.asc())
-            .limit(limit)
-            .all()
+    for key in [key for key, future in _overdue_sends.items() if future.done()]:
+        del _overdue_sends[key]
+    rows = (
+        db.query(WebhookDelivery.id, WebhookDelivery.user_id)
+        .filter(
+            WebhookDelivery.next_attempt_at.isnot(None),
+            WebhookDelivery.next_attempt_at <= now,
         )
-    ]
+        .order_by(WebhookDelivery.next_attempt_at.asc())
+        .limit(limit * 10)
+        .all()
+    )
     db.rollback()
+    per_merchant: dict[str, int] = {}
+    due_ids = []
+    for row in rows:
+        merchant = str(row.user_id)
+        if merchant in _overdue_sends:
+            continue
+        if per_merchant.get(merchant, 0) >= MAX_DELIVERIES_PER_MERCHANT:
+            continue
+        per_merchant[merchant] = per_merchant.get(merchant, 0) + 1
+        due_ids.append(row.id)
+        if len(due_ids) >= limit:
+            break
     sent = 0
     for delivery_id in due_ids:
         try:
@@ -200,6 +239,7 @@ def _retry_delivery(db: Session, delivery_id: object, now: datetime) -> bool:
         db.rollback()
         return False
     delivery.next_attempt_at = None
+    first_attempt = delivery.attempt == 0
     payload = delivery.payload_json if isinstance(delivery.payload_json, dict) else None
     if payload is None or delivery.webhook_id is None:
         db.commit()
@@ -213,15 +253,18 @@ def _retry_delivery(db: Session, delivery_id: object, now: datetime) -> bool:
             )
             .first()
         )
+        # automaticRedelivery only governs retries, never the first attempt.
         if (
             hook is None
             or not hook.enabled
-            or not hook.automatic_redelivery
+            or (not first_attempt and not hook.automatic_redelivery)
             or not btcpay_event_allowed(hook.authorized_events, delivery.event)
         ):
             db.commit()
             return False
-        status_code, error_message = send_btcpay_webhook(hook, delivery.url, payload)
+        status_code, error_message = _send_with_deadline(
+            delivery.user_id, send_btcpay_webhook, hook, delivery.url, payload
+        )
     else:
         hook = (
             db.query(Webhook)
@@ -235,12 +278,24 @@ def _retry_delivery(db: Session, delivery_id: object, now: datetime) -> bool:
         if hook is None or not hook.active or delivery.event not in (hook.events or []) or user is None:
             db.commit()
             return False
-        status_code, error_message = send_native_webhook(
+        status_code, error_message = _send_with_deadline(
+            delivery.user_id,
+            send_native_webhook,
             delivery.url,
             payload,
             _ensure_webhook_secret(db, user),
             webhook_id=hook.id,
         )
+    if first_attempt:
+        delivery.attempt = 1
+        delivery.http_status = status_code
+        delivery.error_message = error_message
+        if delivery.kind != "btcpay" or hook.automatic_redelivery:
+            delivery.next_attempt_at = next_attempt_time(
+                1, status_code, datetime.now(timezone.utc)
+            )
+        db.commit()
+        return True
     attempt = (delivery.attempt or 1) + 1
     db.add(
         WebhookDelivery(
@@ -265,6 +320,17 @@ def _retry_delivery(db: Session, delivery_id: object, now: datetime) -> bool:
     )
     db.commit()
     return True
+
+
+def _send_with_deadline(user_id: object, send, *args, **kwargs) -> tuple[int | None, str | None]:
+    """Run one delivery attempt, giving up on it after DELIVERY_DEADLINE_SECONDS."""
+    future = _SEND_POOL.submit(send, *args, **kwargs)
+    try:
+        return future.result(timeout=DELIVERY_DEADLINE_SECONDS)
+    except FutureTimeout:
+        _overdue_sends[str(user_id)] = future
+        logger.warning("Webhook delivery timed out", extra={"user_id": str(user_id)})
+        return None, "Webhook delivery timed out"
 
 
 def _isoformat(value: datetime | None) -> str | None:

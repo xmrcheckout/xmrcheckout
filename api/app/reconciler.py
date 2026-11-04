@@ -3,6 +3,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 import hashlib
 import logging
+import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -30,6 +31,8 @@ from .webhooks import dispatch_webhooks, retry_due_deliveries
 logger = logging.getLogger(__name__)
 MONERO_CONNECTIVITY_STATUS_NAME = "monero_connectivity"
 _UNSET = object()
+# How often the delivery loop looks for queued or due webhook deliveries.
+WEBHOOK_DELIVERY_INTERVAL_SECONDS = 2
 
 
 @dataclass(frozen=True)
@@ -57,6 +60,11 @@ def main() -> None:
     level = getattr(logging, level_name.upper(), logging.INFO)
     _configure_logging(level)
     service = MoneroWalletService()
+    # Webhooks are sent from their own thread so a slow merchant server never
+    # delays payment detection.
+    threading.Thread(
+        target=_webhook_delivery_loop, name="webhook-delivery", daemon=True
+    ).start()
     while True:
         status_db: Session | None = None
         try:
@@ -99,18 +107,23 @@ def main() -> None:
         finally:
             if status_db is not None:
                 status_db.close()
-        _retry_webhook_deliveries()
         _wait_with_terminal_checks(service, INVOICE_RECONCILE_INTERVAL_SECONDS)
 
 
+def _webhook_delivery_loop() -> None:
+    while True:
+        _retry_webhook_deliveries()
+        time.sleep(WEBHOOK_DELIVERY_INTERVAL_SECONDS)
+
+
 def _retry_webhook_deliveries() -> None:
-    """Send due webhook retries; failures here never affect invoice detection."""
+    """Send queued and due webhook deliveries; failures never affect invoice detection."""
     db: Session | None = None
     try:
         db = SessionLocal()
         sent = retry_due_deliveries(db)
         if sent:
-            logger.info("Retried webhook deliveries", extra={"retried": sent})
+            logger.info("Sent webhook deliveries", extra={"sent": sent})
     except Exception as exc:
         logger.warning("Webhook retry sweep failed: %s", exc)
     finally:
@@ -347,8 +360,8 @@ def _reconcile_invoice(
             invoice.status = "expired"
             db.add(invoice)
             db.commit()
-            dispatch_webhooks(db, str(user.id), "invoice.expired", invoice)
-            dispatch_btcpay_webhooks(db, str(user.id), "InvoiceExpired", invoice)
+            dispatch_webhooks(db, str(user.id), "invoice.expired", invoice, queue=True)
+            dispatch_btcpay_webhooks(db, str(user.id), "InvoiceExpired", invoice, queue=True)
             return True
         if invoice.status == "pending" and total_atomic > 0:
             logger.info(
@@ -420,15 +433,15 @@ def _reconcile_invoice(
             invoice.detected_at = now
         db.add(invoice)
         db.commit()
-        dispatch_webhooks(db, str(user.id), "invoice.payment_detected", invoice)
+        dispatch_webhooks(db, str(user.id), "invoice.payment_detected", invoice, queue=True)
         if not was_partially_paid or total_changed:
             # A final top-up is a newly received payment; an invoice that was
             # already signalled for the same observed amount is not.
             dispatch_btcpay_webhooks(
-                db, str(user.id), "InvoiceReceivedPayment", invoice
+                db, str(user.id), "InvoiceReceivedPayment", invoice, queue=True
             )
-        dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaidInFull", invoice)
-        dispatch_btcpay_webhooks(db, str(user.id), "InvoiceProcessing", invoice)
+        dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaidInFull", invoice, queue=True)
+        dispatch_btcpay_webhooks(db, str(user.id), "InvoiceProcessing", invoice, queue=True)
 
     if confirmations >= invoice.confirmation_target and invoice.status != "confirmed":
         logger.info(
@@ -440,15 +453,15 @@ def _reconcile_invoice(
             invoice.confirmed_at = now
         db.add(invoice)
         db.commit()
-        dispatch_webhooks(db, str(user.id), "invoice.confirmed", invoice)
-        dispatch_btcpay_webhooks(db, str(user.id), "InvoiceSettled", invoice)
-        dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaymentSettled", invoice)
+        dispatch_webhooks(db, str(user.id), "invoice.confirmed", invoice, queue=True)
+        dispatch_btcpay_webhooks(db, str(user.id), "InvoiceSettled", invoice, queue=True)
+        dispatch_btcpay_webhooks(db, str(user.id), "InvoicePaymentSettled", invoice, queue=True)
     return True
 
 
 def _dispatch_partial_payment(db: Session, user: User, invoice: Invoice) -> None:
-    dispatch_webhooks(db, str(user.id), "invoice.partially_paid", invoice)
-    dispatch_btcpay_webhooks(db, str(user.id), "InvoiceReceivedPayment", invoice)
+    dispatch_webhooks(db, str(user.id), "invoice.partially_paid", invoice, queue=True)
+    dispatch_btcpay_webhooks(db, str(user.id), "InvoiceReceivedPayment", invoice, queue=True)
 
 
 def eligible_allocation_transfers(

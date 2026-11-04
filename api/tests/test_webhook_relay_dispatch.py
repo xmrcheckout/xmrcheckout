@@ -79,7 +79,7 @@ class RelayDispatchTests(unittest.TestCase):
             http_status=500, payload_json=self.payload, invoice_id=self.invoice_id,
             url="https://merchant.example/events", webhook_id=uuid4(), event="invoice.created",
             invoice_address="fixture-address", invoice_subaddress_index=1,
-            invoice_amount_xmr=1, invoice_status="pending",
+            invoice_amount_xmr=1, invoice_status="pending", attempt=1,
         )
         db = MagicMock()
         db.query.return_value.filter.return_value.first.return_value = delivery

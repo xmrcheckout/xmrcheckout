@@ -45,6 +45,17 @@ class BtcpayWebhookDeliveryTests(unittest.TestCase):
     def recorded(self):
         return self.db.add_all.call_args.args[0]
 
+    def test_queued_dispatch_records_without_sending(self):
+        btcpay_webhooks.dispatch_btcpay_webhooks(
+            self.db, str(uuid4()), "InvoiceProcessing", self.invoice, queue=True
+        )
+
+        self.post.assert_not_called()
+        [delivery] = self.recorded()
+        self.assertEqual(delivery.attempt, 0)
+        self.assertIsNone(delivery.http_status)
+        self.assertIsNotNone(delivery.next_attempt_at)
+
     def test_success_is_recorded_without_retry(self):
         self.dispatch()
 

@@ -163,13 +163,18 @@ def post_webhook_with_redirects(
         if relay is not None:
             response = _post_via_relay(relay, current_url, data, headers, timeout)
         else:
+            # Only the status line and headers matter. Streaming and closing
+            # without reading the body stops a slow receiver from holding the
+            # connection open by sending its body a byte at a time.
             response = requests.post(
                 current_url,
                 data=data,
                 headers=headers,
                 timeout=timeout,
                 allow_redirects=False,
+                stream=True,
             )
+            response.close()
         if response.status_code not in _REDIRECT_STATUSES:
             return response
         location = response.headers.get("Location")

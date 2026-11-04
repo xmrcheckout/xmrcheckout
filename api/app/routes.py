@@ -819,6 +819,11 @@ def redeliver_webhook_delivery(
             status_code=status.HTTP_409_CONFLICT,
             detail="Only failed deliveries can be redelivered",
         )
+    if delivery.attempt == 0:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This delivery is queued and has not been attempted yet",
+        )
     payload = delivery.payload_json
     if not isinstance(payload, dict):
         payload = None

@@ -120,7 +120,9 @@ def dispatch_btcpay_webhooks(
     invoice: Invoice,
     *,
     manually_marked: bool = False,
+    queue: bool = False,
 ) -> None:
+    """Record and send BTCPay webhooks; queue=True leaves sending to the delivery loop."""
     hooks = (
         db.query(BtcpayWebhook)
         .filter(
@@ -142,10 +144,15 @@ def dispatch_btcpay_webhooks(
     for hook in hooks:
         if not event_allowed(hook.authorized_events, event_type):
             continue
-        status_code, error_message = send_btcpay_webhook(hook, hook.url, payload)
-        next_attempt_at = None
-        if getattr(hook, "automatic_redelivery", True):
-            next_attempt_at = next_attempt_time(1, status_code, datetime.now(timezone.utc))
+        now = datetime.now(timezone.utc)
+        if queue:
+            status_code, error_message = None, None
+            attempt, next_attempt_at = 0, now
+        else:
+            status_code, error_message = send_btcpay_webhook(hook, hook.url, payload)
+            attempt, next_attempt_at = 1, None
+            if getattr(hook, "automatic_redelivery", True):
+                next_attempt_at = next_attempt_time(1, status_code, now)
         deliveries.append(
             WebhookDelivery(
                 user_id=uuid.UUID(str(user_id)),
@@ -161,7 +168,7 @@ def dispatch_btcpay_webhooks(
                 payload_json=payload,
                 http_status=status_code,
                 error_message=error_message,
-                attempt=1,
+                attempt=attempt,
                 next_attempt_at=next_attempt_at,
             )
         )

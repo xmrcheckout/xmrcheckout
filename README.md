@@ -243,6 +243,12 @@ automatic retry. Retries stop if the webhook is deleted, disabled, or no longer
 subscribed to the event; BTCPay-compatible webhooks are retried only when
 `automaticRedelivery` is enabled.
 
+Webhooks for events found during payment detection are queued and sent by a
+separate delivery loop in the reconciler, usually within a few seconds, so a
+slow merchant server never delays detection. Each attempt is abandoned after
+15 seconds and counts as failed, response bodies are not read, and each merchant
+gets at most five attempts per delivery pass.
+
 3. Choose a Monero daemon (`MONERO_DAEMON_URL` is required; the stack will not
    start without it):
 - The view-only wallet trusts the blocks the daemon reports. A hostile daemon, or

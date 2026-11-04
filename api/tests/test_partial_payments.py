@@ -34,6 +34,9 @@ def _reconcile(invoice, transfers):
     ):
         ok = reconciler._reconcile_invoice(db, _Service(transfers), USER, invoice)
     assert ok
+    # Detection only queues webhooks; the delivery loop sends them.
+    for call in native.call_args_list + btcpay.call_args_list:
+        assert call.kwargs.get("queue") is True, call
     return (
         [call.args[2] for call in native.call_args_list],
         [call.args[2] for call in btcpay.call_args_list],

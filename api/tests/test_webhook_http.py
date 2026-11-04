@@ -94,6 +94,9 @@ class WebhookRedirectTests(unittest.TestCase):
 
         self.assertIs(response, delivered)
         self.assertEqual(post.call_count, 2)
+        # The body is never read, so a receiver cannot drip it out slowly.
+        self.assertTrue(post.call_args.kwargs["stream"])
+        delivered.close.assert_called_once()
 
     @patch("app.webhook_http.requests.post")
     @patch("app.webhook_http.socket.getaddrinfo")

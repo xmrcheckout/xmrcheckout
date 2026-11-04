@@ -389,7 +389,7 @@ class MoneroWalletService:
         total_atomic = 0
         max_confirmations = 0
         seen_txids: set[str] = set()
-        for item in [*incoming, *pool]:
+        for item, in_pool in self._tagged_transfers(incoming, pool):
             if not isinstance(item, dict):
                 continue
             txid = item.get("txid")
@@ -399,6 +399,9 @@ class MoneroWalletService:
                 seen_txids.add(txid)
             if self._is_time_locked(item):
                 self._log_time_locked(item, address)
+                continue
+            if in_pool and self._is_double_spend_suspect(item):
+                self._log_double_spend_suspect(item, address)
                 continue
             total_atomic += int(item.get("amount", 0) or 0)
             confirmations = int(item.get("confirmations", 0) or 0)
@@ -440,7 +443,7 @@ class MoneroWalletService:
                     raise HTTPException(502, "Incomplete confirmed transfer snapshot")
         details: list[TransferDetail] = []
         seen_txids: set[str] = set()
-        for item in [*incoming, *pool]:
+        for item, in_pool in self._tagged_transfers(incoming, pool):
             if not isinstance(item, dict):
                 continue
             txid = item.get("txid")
@@ -451,6 +454,9 @@ class MoneroWalletService:
             seen_txids.add(txid)
             if self._is_time_locked(item):
                 self._log_time_locked(item, address)
+                continue
+            if in_pool and self._is_double_spend_suspect(item):
+                self._log_double_spend_suspect(item, address)
                 continue
             amount_atomic = int(item.get("amount", 0) or 0)
             confirmations = int(item.get("confirmations", 0) or 0)
@@ -467,6 +473,31 @@ class MoneroWalletService:
                 )
             )
         return details
+
+    @staticmethod
+    def _tagged_transfers(
+        incoming: list[object], pool: list[object]
+    ) -> list[tuple[object, bool]]:
+        """Pair each transfer with whether it is still in the transaction pool."""
+        return [(item, False) for item in incoming] + [(item, True) for item in pool]
+
+    @staticmethod
+    def _is_double_spend_suspect(item: dict) -> bool:
+        """Return True for a pool transfer the node flagged as a double-spend attempt.
+
+        Such a transaction may never be mined, so it must not count toward an
+        invoice (in particular one that needs zero confirmations). If it is
+        mined later it moves to the confirmed list and counts normally.
+        """
+        return item.get("double_spend_seen") is True
+
+    @staticmethod
+    def _log_double_spend_suspect(item: dict, address: str) -> None:
+        logger.warning(
+            "Ignoring pool transfer flagged as double-spend attempt txid=%s address=%s",
+            item.get("txid"),
+            address,
+        )
 
     @staticmethod
     def _is_time_locked(item: dict) -> bool:

@@ -366,7 +366,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Open source. Auto-hébergeable.",
-    "donate": "Faire un don"
+    "donate": "Faire un don",
+    "sourceCommit": "Commit en service {commit}"
   },
   "nav": {
     "checkInvoice": "Vérifier une facture",

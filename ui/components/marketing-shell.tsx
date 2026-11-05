@@ -6,6 +6,7 @@ import "../app/(marketing)/marketing.css";
 import LoginModal from "./login-modal";
 import LanguageSwitcher from "./language-switcher";
 import SiteHeader from "./site-header";
+import SourceLinks from "./source-links";
 import { areDonationsEnabled } from "../lib/donations";
 import { getI18n } from "../lib/i18n/server";
 
@@ -45,14 +46,7 @@ export default async function MarketingShell({
           <p>
             {t("footer.tagline")}
           </p>
-          <p>
-            <Link
-              className="underline underline-offset-4"
-              href="https://github.com/xmrcheckout/xmrcheckout"
-            >
-              GitHub
-            </Link>
-          </p>
+          <SourceLinks />
           <LanguageSwitcher />
         </div>
         {donationsEnabled ? (

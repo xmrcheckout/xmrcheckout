@@ -366,7 +366,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Open Source. Selbst hostbar.",
-    "donate": "Spenden"
+    "donate": "Spenden",
+    "sourceCommit": "Laufender Commit {commit}"
   },
   "nav": {
     "checkInvoice": "Rechnung prüfen",

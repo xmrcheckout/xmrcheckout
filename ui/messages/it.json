@@ -366,7 +366,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Open source. Ospitabile in autonomia.",
-    "donate": "Dona"
+    "donate": "Dona",
+    "sourceCommit": "Commit in esecuzione {commit}"
   },
   "nav": {
     "checkInvoice": "Verifica pagamento",

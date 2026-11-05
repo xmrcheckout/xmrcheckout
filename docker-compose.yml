@@ -300,6 +300,8 @@ services:
         DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
         NEXT_PUBLIC_DONATIONS_ENABLED: ${DONATIONS_ENABLED:-false}
         NEXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost}
+        # Build with SOURCE_COMMIT=$(git rev-parse HEAD) to show that commit in the footer.
+        NEXT_PUBLIC_SOURCE_COMMIT: ${SOURCE_COMMIT:-}
     user: "1000:1000"
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://nginx/api}

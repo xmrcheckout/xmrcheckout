@@ -372,7 +372,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Otwarte oprogramowanie. Do samodzielnego hostowania.",
-    "donate": "Wesprzyj"
+    "donate": "Wesprzyj",
+    "sourceCommit": "Działający commit {commit}"
   },
   "nav": {
     "checkInvoice": "Sprawdź płatność",

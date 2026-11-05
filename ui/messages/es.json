@@ -366,7 +366,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Código abierto. Autoalojable.",
-    "donate": "Donar"
+    "donate": "Donar",
+    "sourceCommit": "Commit en ejecución {commit}"
   },
   "nav": {
     "checkInvoice": "Consultar factura",

@@ -363,7 +363,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · 开源，可自托管。",
-    "donate": "捐赠"
+    "donate": "捐赠",
+    "sourceCommit": "运行中的提交 {commit}"
   },
   "nav": {
     "checkInvoice": "查询账单",

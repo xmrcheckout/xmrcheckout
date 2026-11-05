@@ -372,7 +372,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Відкритий код. Можна розмістити у себе.",
-    "donate": "Пожертвувати"
+    "donate": "Пожертвувати",
+    "sourceCommit": "Поточний коміт {commit}"
   },
   "nav": {
     "checkInvoice": "Перевірити рахунок",

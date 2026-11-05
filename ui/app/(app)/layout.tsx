@@ -3,6 +3,7 @@ import Link from "next/link";
 import "../(marketing)/marketing.css";
 import SiteHeader from "../../components/site-header";
 import LanguageSwitcher from "../../components/language-switcher";
+import SourceLinks from "../../components/source-links";
 import { areDonationsEnabled } from "../../lib/donations";
 import { getI18n } from "../../lib/i18n/server";
 
@@ -21,14 +22,7 @@ export default async function AppLayout({
       <footer className="site-footer">
         <div className="site-footer-copy">
           <p>{t("footer.tagline")}</p>
-          <p>
-            <Link
-              className="underline underline-offset-4"
-              href="https://github.com/xmrcheckout/xmrcheckout"
-            >
-              GitHub
-            </Link>
-          </p>
+          <SourceLinks />
           <LanguageSwitcher />
         </div>
         {donationsEnabled ? (

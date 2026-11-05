@@ -372,7 +372,8 @@
   },
   "footer": {
     "tagline": "XMR Checkout · Otevřený zdrojový kód. Lze hostovat samostatně.",
-    "donate": "Přispět"
+    "donate": "Přispět",
+    "sourceCommit": "Běžící commit {commit}"
   },
   "nav": {
     "checkInvoice": "Kontrola platební výzvy",

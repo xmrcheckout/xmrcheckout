@@ -848,7 +848,7 @@
     "guiGuide": "Guida ufficiale della GUI",
     "featherSteps": "Apri Wallet → Keys. Copia solo l'indirizzo principale e la chiave di visualizzazione privata.",
     "featherGuide": "Guida ufficiale di Feather",
-    "cakeSteps": "Apri il menu del tuo portafoglio Monero → Sicurezza e backup → Mostra seed/chiavi e autenticati in locale. Copia solo l'indirizzo principale e la chiave di visualizzazione privata. I nomi dei menu possono variare a seconda della versione; non copiare mai il seed o la chiave di spesa in questo sito.",
+    "cakeSteps": "Apri il menu del tuo portafoglio Monero → Sicurezza e backup → Mostra seed/chiavi e autenticati in locale. Copia solo l'indirizzo principale e la chiave di visualizzazione privata. I nomi dei menu possono variare a seconda della versione.",
     "cakeGuide": "Guida ufficiale di Cake Wallet",
     "otherWallets": "Altri portafogli",
     "otherSteps": "Usa le istruzioni ufficiali del tuo portafoglio per trovare l'indirizzo principale di 95 caratteri che inizia con 4 e la chiave di visualizzazione privata di 64 caratteri. Una chiave di visualizzazione pubblica o un sottoindirizzo non funzionano qui. Se l'esportazione della chiave di visualizzazione non è disponibile, non inviare altri segreti.",
@@ -875,7 +875,7 @@
     "modalTitle": "Collega il tuo portafoglio per creare richieste di pagamento.",
     "closeModal": "Chiudi la finestra di accesso",
     "beforeContinue": "Prima di continuare",
-    "disclosure": "Questa istanza riceve il tuo indirizzo principale e la tua chiave di visualizzazione privata per osservare i pagamenti in arrivo, comprese le attività in entrata non legate alle richieste di pagamento del checkout. Condividili solo con un'istanza di cui ti fidi. La chiave è cifrata a riposo. I pagamenti vanno direttamente al tuo portafoglio; questo accesso non può spendere fondi. Non inviare mai una chiave di spesa o una frase di recupero."
+    "disclosure": "Questa istanza riceve il tuo indirizzo principale e la tua chiave di visualizzazione privata per osservare i pagamenti in arrivo, comprese le attività in entrata non legate alle richieste di pagamento del checkout. Condividili solo con un'istanza di cui ti fidi. La chiave è cifrata a riposo. Questo accesso non può spendere fondi."
   },
   "addresses": {
     "title": "Disponibilità degli indirizzi di pagamento",
@@ -1014,7 +1014,7 @@
     "demoQ": "Stai esplorando la demo?",
     "demoA": "Tutti i pagamenti sono simulati. Non serve collegare un portafoglio.",
     "readyQ": "Pronto ad accettare pagamenti?",
-    "readyA": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata. I pagamenti dei clienti vanno direttamente al tuo portafoglio.",
+    "readyA": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
     "processKicker": "Pagamento del cliente",
     "processTitle": "Offri ai clienti un modo chiaro per pagare.",
     "step1": "Crea e condividi una richiesta di pagamento",
@@ -1025,7 +1025,7 @@
     "step3Body": "I clienti possono seguire il rilevamento del pagamento e l'avanzamento verso il tuo obiettivo di conferme.",
     "terminalKicker": "Terminali per punto vendita",
     "terminalTitle": "Accetta Monero al tuo banco.",
-    "terminalBody": "Trasforma un tablet o uno smartphone in un terminale per punto vendita. Digita l'importo, il cliente scansiona il codice QR e lo schermo mostra il pagamento in pochi secondi. Ogni vendita è una normale richiesta di pagamento in XMR pagata direttamente al tuo portafoglio.",
+    "terminalBody": "Trasforma un tablet o uno smartphone in un terminale per punto vendita. Digita l'importo, il cliente scansiona il codice QR e lo schermo mostra il pagamento in pochi secondi.",
     "terminalCta": "Leggi la guida al terminale",
     "terminalDevice": "Qualsiasi tablet o smartphone",
     "terminalDeviceBody": "Apri il link del terminale alla tua cassa e aggiungilo alla schermata principale. Nessun hardware aggiuntivo.",
@@ -1039,7 +1039,7 @@
     "walletReceives": "Il tuo portafoglio riceve gli XMR",
     "walletReceivesBody": "Usa il portafoglio che già controlli.",
     "viewOnly": "Accesso in sola lettura",
-    "viewOnlyBody": "Il tuo indirizzo principale e la tua chiave di visualizzazione privata permettono di rilevare i pagamenti in arrivo. Non inviare mai una chiave di spesa o una frase di recupero.",
+    "viewOnlyBody": "Il tuo indirizzo principale e la tua chiave di visualizzazione privata permettono di rilevare i pagamenti in arrivo.",
     "target": "Il tuo obiettivo di conferme",
     "targetBody": "Scegli quante conferme servono per ogni richiesta di pagamento. Il rilevamento del pagamento e il raggiungimento di quell'obiettivo sono stati distinti.",
     "startKicker": "Per iniziare",
@@ -1195,7 +1195,7 @@
       },
       "access": {
         "q": "Quale accesso al portafoglio richiede XMR Checkout?",
-        "p1": "Il permesso massimo che chiediamo è l'accesso in sola lettura: il tuo indirizzo principale e la tua chiave di visualizzazione privata. Non chiediamo mai chiavi di spesa né l'accesso per firmare."
+        "p1": "Accesso in sola lettura: il tuo indirizzo principale e la tua chiave di visualizzazione privata."
       },
       "setup": {
         "q": "Cosa richiede la configurazione?",
@@ -1291,11 +1291,11 @@
       "title": "Accetta Monero in presenza con un terminale",
       "metaDescription": "Trasforma un tablet o uno smartphone in una cassa Monero. Digita l'importo, mostra un codice QR e vedi arrivare il pagamento in pochi secondi, direttamente nel tuo portafoglio.",
       "eyebrow": "Guida · Terminali",
-      "intro": "Per bar, bancarelle, meetup e negozi. Un terminale è una pagina su un tablet o uno smartphone alla tua cassa. Ogni vendita è una normale richiesta di pagamento in XMR pagata direttamente al tuo portafoglio. Il terminale non riceve né trattiene mai fondi.",
+      "intro": "Per bar, bancarelle, meetup e negozi. Un terminale è una pagina su un tablet o uno smartphone alla tua cassa. Ogni vendita è una normale richiesta di pagamento in XMR pagata direttamente al tuo portafoglio.",
       "sectionsLabel": "Sezioni della guida al terminale",
       "setup": {
         "title": "Configura un terminale",
-        "step1": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata. Non inserire mai una chiave di spesa privata o una frase di recupero.",
+        "step1": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
         "step2": "Apri <strong>Dashboard → Terminali</strong> e scegli <strong>Crea un terminale</strong>. Dagli un nome come “Bancone principale” e scegli una valuta predefinita.",
         "step3": "La dashboard mostra una sola volta il link del terminale e un codice QR. Scansionalo con il dispositivo che userai alla cassa o copiaci il link.",
         "step4": "Sul dispositivo, aggiungi la pagina alla schermata Home per avere una cassa a schermo intero. Il dispositivo ricorda il terminale finché non scegli <strong>Dimentica questo terminale</strong>.",
@@ -1346,7 +1346,7 @@
         "title": "Configura un link di pagamento",
         "body": {
           "1": {
-            "1": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata. Non inviare mai una chiave di spesa privata o una frase di recupero. I pagamenti dei clienti vanno direttamente al tuo portafoglio.",
+            "1": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
             "2": "Apri <dashboard>Dashboard → Link di pagamento</dashboard>, poi scegli <strong>Crea un link di pagamento</strong>.",
             "3": "Inserisci un titolo e una descrizione facoltativa. Per esempio, usa “Guida digitale” con un importo fisso di 20 e valuta EUR. Puoi anche scegliere un importo esatto in XMR oppure selezionare <strong>Il cliente inserisce l'importo</strong> per farlo digitare al cliente (vedi <donations>donazioni</donations>).",
             "4": "Scegli le conferme richieste. Il modulo parte dal tuo valore predefinito di esercente; zero accetta il rilevamento senza attendere la conferma di un blocco. Facoltativamente, aggiungi un URL di ritorno HTTPS dell'esercente e un <message>messaggio di conferma</message> mostrato dopo il pagamento.",
@@ -1465,7 +1465,7 @@
       "hostTitle": "Raccogli la configurazione prima di avviare lo stack.",
       "host1": "Un server in grado di eseguire Docker Compose e di conservare i dati di Postgres e del portafoglio.",
       "host2": "Un URL pubblico del sito in HTTPS per le pagine ospitate delle richieste di pagamento e le destinazioni dei webhook.",
-      "host3": "Un indirizzo principale Monero e una chiave di visualizzazione privata. Non fornire mai una chiave di spesa privata.",
+      "host3": "Un indirizzo principale Monero e una chiave di visualizzazione privata.",
       "host4": "Un daemon Monero e una destinazione wallet-rpc raggiungibili, inclusi o esterni.",
       "hostNote": "Il riferimento completo delle variabili d'ambiente e le note di installazione si trovano nel README del repository. Leggili prima di esporre un'installazione a Internet.",
       "composeRef": "Leggi il riferimento all'installazione con Docker Compose →",
@@ -1647,7 +1647,7 @@
       "r105": "Fa scadere subito la richiesta di pagamento quando è in sospeso e non ha ricevuto nulla; altrimenti restituisce 409. I pagamenti tardivi su una richiesta di pagamento annullata vengono comunque rilevati e segnalati come pagati dopo la scadenza.",
       "r106": "L'indirizzo della richiesta di pagamento resta occupato per il consueto periodo di riutilizzo dopo la scadenza.",
       "r107": "Solo l'indirizzo principale; sottoindirizzi e indirizzi integrati vengono rifiutati.",
-      "r108": "Usa la chiave di visualizzazione privata (non inviare mai una chiave di spesa).",
+      "r108": "Chiave di visualizzazione privata.",
       "r109": "invoice_id (percorso)",
       "r110": "Restituisce lo stato della richiesta di pagamento e i dati di pagamento.",
       "r111": "confirmation_message è null finché la richiesta di pagamento non è confermata; per le richieste di pagamento confermate dei link di pagamento contiene il messaggio in testo semplice del link.",
@@ -1747,7 +1747,7 @@
     },
     "introLabel": "Introduzione alla documentazione",
     "title": "Guida rapida e riferimento API.",
-    "intro": "Crea richieste di pagamento, manda i clienti alle pagine delle richieste di pagamento ospitate e ricevi lo stato delle richieste di pagamento tramite polling o webhook. La configurazione usa il tuo indirizzo principale e la tua chiave di visualizzazione privata; le chiavi di spesa non vengono mai richieste.",
+    "intro": "Crea richieste di pagamento, manda i clienti alle pagine delle richieste di pagamento ospitate e ricevi lo stato delle richieste di pagamento tramite polling o webhook. La configurazione usa il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
     "recipes": "Ricette di integrazione",
     "recipesHelp": "Esempi da copiare e incollare per curl, Node, PHP, Python e Go.",
     "sectionsLabel": "Sezioni della documentazione",

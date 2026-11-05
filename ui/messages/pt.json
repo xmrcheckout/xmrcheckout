@@ -848,7 +848,7 @@
     "guiGuide": "Guia oficial da GUI",
     "featherSteps": "Abra Wallet → Keys. Copie apenas o endereço principal e a chave de visualização privada.",
     "featherGuide": "Guia oficial da Feather",
-    "cakeSteps": "Abra o menu da sua carteira Monero → Segurança e backup → Mostrar seed/chaves e autentique-se localmente. Copie apenas o endereço principal e a chave de visualização privada. Os nomes dos menus podem variar conforme a versão; nunca copie a seed nem a chave de gasto para este site.",
+    "cakeSteps": "Abra o menu da sua carteira Monero → Segurança e backup → Mostrar seed/chaves e autentique-se localmente. Copie apenas o endereço principal e a chave de visualização privada. Os nomes dos menus podem variar conforme a versão.",
     "cakeGuide": "Guia oficial da Cake Wallet",
     "otherWallets": "Outras carteiras",
     "otherSteps": "Use as instruções oficiais da sua carteira para localizar o endereço principal de 95 caracteres que começa com 4 e a chave de visualização privada de 64 caracteres. Uma chave de visualização pública ou um subendereço não funcionam aqui. Se não for possível exportar a chave de visualização, não envie outros segredos.",
@@ -875,7 +875,7 @@
     "modalTitle": "Conecte a sua carteira para criar faturas.",
     "closeModal": "Fechar janela de login",
     "beforeContinue": "Antes de continuar",
-    "disclosure": "Esta instância recebe o seu endereço principal e a sua chave de visualização privada para observar pagamentos recebidos, incluindo atividades de entrada além das faturas do checkout. Compartilhe-os apenas com uma instância em que você confia. A chave é criptografada em repouso. Os pagamentos vão diretamente para a sua carteira; este acesso não pode gastar fundos. Nunca envie uma chave de gasto ou frase de recuperação."
+    "disclosure": "Esta instância recebe o seu endereço principal e a sua chave de visualização privada para observar pagamentos recebidos, incluindo atividades de entrada além das faturas do checkout. Compartilhe-os apenas com uma instância em que você confia. A chave é criptografada em repouso. Este acesso não pode gastar fundos."
   },
   "addresses": {
     "title": "Disponibilidade de endereços de fatura",
@@ -1014,7 +1014,7 @@
     "demoQ": "Explorando a demonstração?",
     "demoA": "Todos os pagamentos são simulados. Não é necessário conectar uma carteira.",
     "readyQ": "Pronto para aceitar pagamentos?",
-    "readyA": "Conecte a sua carteira usando o seu endereço principal e a sua chave de visualização privada. Os pagamentos dos clientes vão diretamente para a sua carteira.",
+    "readyA": "Conecte a sua carteira usando o seu endereço principal e a sua chave de visualização privada.",
     "processKicker": "Pagamento do cliente",
     "processTitle": "Ofereça aos clientes uma forma clara de pagar.",
     "step1": "Crie e compartilhe uma fatura",
@@ -1025,7 +1025,7 @@
     "step3Body": "Os clientes podem acompanhar a detecção do pagamento e o progresso até a sua meta de confirmações.",
     "terminalKicker": "Terminais de ponto de venda",
     "terminalTitle": "Receba Monero no seu balcão.",
-    "terminalBody": "Transforme um tablet ou celular em um terminal de ponto de venda. Digite o valor, o cliente escaneia o QR code e a tela mostra o pagamento em segundos. Cada venda é uma fatura normal em XMR paga diretamente para a sua carteira.",
+    "terminalBody": "Transforme um tablet ou celular em um terminal de ponto de venda. Digite o valor, o cliente escaneia o QR code e a tela mostra o pagamento em segundos.",
     "terminalCta": "Leia o guia do terminal",
     "terminalDevice": "Qualquer tablet ou celular",
     "terminalDeviceBody": "Abra o link do terminal no seu caixa e adicione-o à tela inicial. Sem hardware extra.",
@@ -1039,7 +1039,7 @@
     "walletReceives": "A sua carteira recebe o XMR",
     "walletReceivesBody": "Use a carteira que você já controla.",
     "viewOnly": "Acesso somente leitura",
-    "viewOnlyBody": "O seu endereço principal e a sua chave de visualização privada permitem detectar pagamentos recebidos. Nunca envie uma chave de gasto ou frase de recuperação.",
+    "viewOnlyBody": "O seu endereço principal e a sua chave de visualização privada permitem detectar pagamentos recebidos.",
     "target": "A sua meta de confirmações",
     "targetBody": "Escolha quantas confirmações uma fatura exige. A detecção do pagamento e o alcance dessa meta são estados separados.",
     "startKicker": "Primeiros passos",
@@ -1195,7 +1195,7 @@
       },
       "access": {
         "q": "Que acesso à carteira o XMR Checkout exige?",
-        "p1": "A permissão máxima que pedimos é o acesso somente leitura: o seu endereço principal e a sua chave de visualização privada. Nunca solicitamos chaves de gasto nem acesso para assinar."
+        "p1": "Acesso somente leitura: o seu endereço principal e a sua chave de visualização privada."
       },
       "setup": {
         "q": "O que a configuração exige?",
@@ -1291,11 +1291,11 @@
       "title": "Aceite Monero presencialmente com um terminal",
       "metaDescription": "Transforme um tablet ou celular em um caixa Monero. Digite o valor, mostre um QR code e veja o pagamento chegar em segundos, direto na sua carteira.",
       "eyebrow": "Guia · Terminais",
-      "intro": "Para cafés, barracas de feira, encontros e lojas. Um terminal é uma página em um tablet ou celular no seu caixa. Cada venda é uma fatura XMR normal, paga diretamente na sua carteira. O terminal nunca recebe nem guarda fundos.",
+      "intro": "Para cafés, barracas de feira, encontros e lojas. Um terminal é uma página em um tablet ou celular no seu caixa. Cada venda é uma fatura XMR normal, paga diretamente na sua carteira.",
       "sectionsLabel": "Seções do guia do terminal",
       "setup": {
         "title": "Configure um terminal",
-        "step1": "Conecte a sua carteira com o seu endereço principal e a sua chave de visualização privada. Nunca digite uma chave de gasto privada ou frase de recuperação.",
+        "step1": "Conecte a sua carteira com o seu endereço principal e a sua chave de visualização privada.",
         "step2": "Abra <strong>Painel → Terminais</strong> e escolha <strong>Criar terminal</strong>. Dê a ele um nome como “Balcão da frente” e escolha uma moeda padrão.",
         "step3": "O painel mostra o link do terminal e um QR code uma única vez. Escaneie-o com o dispositivo que você usará no caixa ou copie o link para ele.",
         "step4": "No dispositivo, adicione a página à tela inicial para ter um caixa em tela cheia. O dispositivo lembra o terminal até você escolher <strong>Esquecer este terminal</strong>.",
@@ -1346,7 +1346,7 @@
         "title": "Configure um link de pagamento",
         "body": {
           "1": {
-            "1": "Conecte a sua carteira usando o seu endereço principal e a sua chave de visualização privada. Nunca envie uma chave de gasto privada ou frase de recuperação. Os pagamentos dos clientes vão diretamente para a sua carteira.",
+            "1": "Conecte a sua carteira usando o seu endereço principal e a sua chave de visualização privada.",
             "2": "Abra <dashboard>Painel → Links de pagamento</dashboard> e escolha <strong>Criar link de pagamento</strong>.",
             "3": "Digite um título e uma descrição opcional. Por exemplo, use “Guia digital” com um valor fixo de 20 e a moeda EUR. Você também pode escolher um valor exato em XMR ou selecionar <strong>O cliente informa o valor</strong> para que o cliente o digite (veja <donations>doações</donations>).",
             "4": "Escolha as confirmações exigidas. O formulário começa com o seu padrão de comerciante; zero aceita a detecção sem esperar a confirmação de um bloco. Opcionalmente, adicione uma URL de retorno HTTPS do comerciante e uma <message>mensagem de confirmação</message> mostrada após o pagamento.",
@@ -1465,7 +1465,7 @@
       "hostTitle": "Reúna a configuração antes de iniciar a stack.",
       "host1": "Um servidor que possa rodar o Docker Compose e manter os dados do Postgres e da carteira.",
       "host2": "Uma URL de site pública com HTTPS para as páginas hospedadas de fatura e os destinos de webhook.",
-      "host3": "Um endereço principal Monero e uma chave de visualização privada. Nunca forneça uma chave de gasto privada.",
+      "host3": "Um endereço principal Monero e uma chave de visualização privada.",
       "host4": "Um daemon Monero e um destino wallet-rpc acessíveis, incluídos ou externos.",
       "hostNote": "A referência completa das variáveis de ambiente e as notas de implantação são mantidas no README do repositório. Revise-as antes de expor uma instalação à internet pública.",
       "composeRef": "Ler a referência de implantação com Docker Compose →",
@@ -1647,7 +1647,7 @@
       "r105": "Faz a fatura expirar imediatamente quando ela está pendente sem nada recebido; caso contrário, retorna 409. Pagamentos atrasados para uma fatura cancelada ainda são detectados e informados como pagos após a expiração.",
       "r106": "O endereço da fatura fica reservado pelo período usual de reutilização após a expiração.",
       "r107": "Apenas o endereço principal; subendereços e endereços integrados são rejeitados.",
-      "r108": "Use a chave de visualização privada (nunca envie uma chave de gasto).",
+      "r108": "Chave de visualização privada.",
       "r109": "invoice_id (caminho)",
       "r110": "Retorna o status da fatura e os dados de pagamento.",
       "r111": "confirmation_message é null até a fatura ser confirmada; para faturas confirmadas de links de pagamento, contém a mensagem em texto simples do link.",
@@ -1747,7 +1747,7 @@
     },
     "introLabel": "Introdução à documentação",
     "title": "Início rápido e referência da API.",
-    "intro": "Crie faturas, envie os clientes para páginas de fatura hospedadas e receba o status das faturas por consulta periódica ou webhooks. A configuração usa o seu endereço principal e a sua chave de visualização privada; chaves de gasto nunca são solicitadas.",
+    "intro": "Crie faturas, envie os clientes para páginas de fatura hospedadas e receba o status das faturas por consulta periódica ou webhooks. A configuração usa o seu endereço principal e a sua chave de visualização privada.",
     "recipes": "Receitas de integração",
     "recipesHelp": "Exemplos para copiar e colar em curl, Node, PHP, Python e Go.",
     "sectionsLabel": "Seções da documentação",

@@ -848,7 +848,7 @@
     "guiGuide": "Offizielle GUI-Anleitung",
     "featherSteps": "Öffnen Sie Wallet → Keys. Kopieren Sie nur die Hauptadresse und den privaten View-Key.",
     "featherGuide": "Offizielle Feather-Anleitung",
-    "cakeSteps": "Öffnen Sie das Menü Ihrer Monero-Wallet → Sicherheit und Backup → Seed/Schlüssel anzeigen und authentifizieren Sie sich lokal. Kopieren Sie nur die Hauptadresse und den privaten View-Key. Menübezeichnungen können je nach Version abweichen; kopieren Sie niemals den Seed oder den Spend-Key auf diese Website.",
+    "cakeSteps": "Öffnen Sie das Menü Ihrer Monero-Wallet → Sicherheit und Backup → Seed/Schlüssel anzeigen und authentifizieren Sie sich lokal. Kopieren Sie nur die Hauptadresse und den privaten View-Key. Menübezeichnungen können je nach Version abweichen.",
     "cakeGuide": "Offizielle Cake-Wallet-Anleitung",
     "otherWallets": "Andere Wallets",
     "otherSteps": "Folgen Sie der offiziellen Anleitung Ihrer Wallet, um die 95-stellige Hauptadresse, die mit 4 beginnt, und den 64-stelligen privaten View-Key zu finden. Ein öffentlicher View-Key oder eine Subadresse funktioniert hier nicht. Ist der Export des View-Keys nicht möglich, geben Sie keine anderen Geheimnisse ein.",
@@ -875,7 +875,7 @@
     "modalTitle": "Verbinden Sie Ihre Wallet, um Rechnungen zu erstellen.",
     "closeModal": "Anmeldedialog schließen",
     "beforeContinue": "Bevor Sie fortfahren",
-    "disclosure": "Diese Instanz erhält Ihre Hauptadresse und Ihren privaten View-Key, um eingehende Zahlungen zu beobachten – einschließlich eingehender Aktivität außerhalb von Checkout-Rechnungen. Teilen Sie diese nur mit einer Instanz, der Sie vertrauen. Der Schlüssel wird verschlüsselt gespeichert. Zahlungen gehen direkt an Ihre Wallet; dieser Zugriff kann keine Gelder ausgeben. Geben Sie niemals einen Spend-Key oder Wiederherstellungs-Seed ein."
+    "disclosure": "Diese Instanz erhält Ihre Hauptadresse und Ihren privaten View-Key, um eingehende Zahlungen zu beobachten – einschließlich eingehender Aktivität außerhalb von Checkout-Rechnungen. Teilen Sie diese nur mit einer Instanz, der Sie vertrauen. Der Schlüssel wird verschlüsselt gespeichert. Dieser Zugriff kann keine Gelder ausgeben."
   },
   "addresses": {
     "title": "Verfügbarkeit der Rechnungsadressen",
@@ -1014,7 +1014,7 @@
     "demoQ": "Sie sehen sich die Demo an?",
     "demoA": "Alle Zahlungen sind simuliert. Es ist keine Wallet-Verbindung nötig.",
     "readyQ": "Bereit, Zahlungen anzunehmen?",
-    "readyA": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key. Kundenzahlungen gehen direkt an Ihre Wallet.",
+    "readyA": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key.",
     "processKicker": "Checkout für Kunden",
     "processTitle": "Bieten Sie Kunden einen klaren Zahlungsweg.",
     "step1": "Rechnung erstellen und teilen",
@@ -1025,7 +1025,7 @@
     "step3Body": "Kunden können die Zahlungserkennung und den Fortschritt bis zu Ihrem Bestätigungsziel verfolgen.",
     "terminalKicker": "Point-of-Sale-Terminals",
     "terminalTitle": "Nehmen Sie Monero an Ihrer Theke an.",
-    "terminalBody": "Machen Sie ein Tablet oder Smartphone zu einem Point-of-Sale-Terminal. Betrag eintippen, der Kunde scannt den QR-Code, und der Bildschirm zeigt die Zahlung in Sekunden. Jeder Verkauf ist eine normale XMR-Rechnung, die direkt an Ihre Wallet gezahlt wird.",
+    "terminalBody": "Machen Sie ein Tablet oder Smartphone zu einem Point-of-Sale-Terminal. Betrag eintippen, der Kunde scannt den QR-Code, und der Bildschirm zeigt die Zahlung in Sekunden.",
     "terminalCta": "Zum Terminal-Leitfaden",
     "terminalDevice": "Jedes Tablet oder Smartphone",
     "terminalDeviceBody": "Öffnen Sie den Terminal-Link an Ihrer Kasse und legen Sie ihn auf den Startbildschirm. Keine zusätzliche Hardware.",
@@ -1039,7 +1039,7 @@
     "walletReceives": "Ihre Wallet empfängt die XMR",
     "walletReceivesBody": "Verwenden Sie die Wallet, die Sie bereits kontrollieren.",
     "viewOnly": "Zugriff nur zum Lesen",
-    "viewOnlyBody": "Ihre Hauptadresse und Ihr privater View-Key ermöglichen die Erkennung eingehender Zahlungen. Geben Sie niemals einen Spend-Key oder Wiederherstellungs-Seed ein.",
+    "viewOnlyBody": "Ihre Hauptadresse und Ihr privater View-Key ermöglichen die Erkennung eingehender Zahlungen.",
     "target": "Ihr Bestätigungsziel",
     "targetBody": "Legen Sie fest, wie viele Bestätigungen eine Rechnung erfordert. Zahlungserkennung und das Erreichen dieses Ziels sind getrennte Zustände.",
     "startKicker": "Erste Schritte",
@@ -1195,7 +1195,7 @@
       },
       "access": {
         "q": "Welchen Wallet-Zugriff benötigt XMR Checkout?",
-        "p1": "Die höchste Berechtigung, die wir verlangen, ist reiner Lesezugriff: Ihre Hauptadresse und Ihr privater View-Key. Wir fragen niemals nach Spend-Keys und niemals nach Signaturzugriff."
+        "p1": "Reiner Lesezugriff: Ihre Hauptadresse und Ihr privater View-Key."
       },
       "setup": {
         "q": "Was ist für die Einrichtung nötig?",
@@ -1291,11 +1291,11 @@
       "title": "Monero vor Ort mit einem Terminal annehmen",
       "metaDescription": "Machen Sie ein Tablet oder Smartphone zur Monero-Kasse. Betrag eintippen, QR-Code zeigen und die Zahlung in Sekunden eintreffen sehen – direkt an Ihre Wallet bezahlt.",
       "eyebrow": "Anleitung · Terminals",
-      "intro": "Für Cafés, Marktstände, Treffen und Läden. Ein Terminal ist eine Seite auf einem Tablet oder Smartphone an Ihrer Kasse. Jeder Verkauf ist eine normale XMR-Rechnung, die direkt an Ihre Wallet bezahlt wird. Das Terminal empfängt oder hält niemals Gelder.",
+      "intro": "Für Cafés, Marktstände, Treffen und Läden. Ein Terminal ist eine Seite auf einem Tablet oder Smartphone an Ihrer Kasse. Jeder Verkauf ist eine normale XMR-Rechnung, die direkt an Ihre Wallet bezahlt wird.",
       "sectionsLabel": "Abschnitte der Terminal-Anleitung",
       "setup": {
         "title": "Ein Terminal einrichten",
-        "step1": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key. Geben Sie niemals einen privaten Spend-Key oder Wiederherstellungs-Seed ein.",
+        "step1": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key.",
         "step2": "Öffnen Sie <strong>Dashboard → Terminals</strong> und wählen Sie <strong>Terminal erstellen</strong>. Geben Sie ihm einen Namen wie „Vordere Theke“ und wählen Sie eine Standardwährung.",
         "step3": "Das Dashboard zeigt den Terminal-Link und einen QR-Code einmalig an. Scannen Sie ihn mit dem Gerät, das Sie an der Kasse verwenden, oder kopieren Sie den Link dorthin.",
         "step4": "Fügen Sie die Seite auf dem Gerät zum Startbildschirm hinzu, um eine Vollbild-Kasse zu erhalten. Das Gerät merkt sich das Terminal, bis Sie <strong>Dieses Terminal vergessen</strong> wählen.",
@@ -1346,7 +1346,7 @@
         "title": "Einen Zahlungslink konfigurieren",
         "body": {
           "1": {
-            "1": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key. Geben Sie niemals einen privaten Spend-Key oder Wiederherstellungs-Seed ein. Kundenzahlungen gehen direkt an Ihre Wallet.",
+            "1": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key.",
             "2": "Öffnen Sie <dashboard>Dashboard → Zahlungslinks</dashboard> und wählen Sie <strong>Zahlungslink erstellen</strong>.",
             "3": "Geben Sie einen Titel und optional eine Beschreibung ein. Verwenden Sie zum Beispiel „Digitaler Ratgeber“ mit einem festen Betrag von 20 und der Währung EUR. Sie können auch einen genauen XMR-Betrag wählen oder <strong>Kunde gibt den Betrag ein</strong> auswählen, damit der Kunde ihn eintippt (siehe <donations>Spenden</donations>).",
             "4": "Wählen Sie die erforderlichen Bestätigungen. Das Formular beginnt mit Ihrem Händlerstandard; null akzeptiert die Erkennung, ohne auf eine Blockbestätigung zu warten. Fügen Sie optional eine HTTPS-Rücksprung-URL und eine <message>Bestätigungsnachricht</message> hinzu, die nach der Zahlung angezeigt wird.",
@@ -1465,7 +1465,7 @@
       "hostTitle": "Sammeln Sie die Konfiguration, bevor Sie den Stack starten.",
       "host1": "Ein Host, der Docker Compose ausführen und Postgres- sowie Wallet-Daten dauerhaft speichern kann.",
       "host2": "Eine öffentliche HTTPS-Website-URL für gehostete Rechnungsseiten und Webhook-Ziele.",
-      "host3": "Eine Monero-Hauptadresse und ein privater View-Key. Geben Sie niemals einen privaten Spend-Key heraus.",
+      "host3": "Eine Monero-Hauptadresse und ein privater View-Key.",
       "host4": "Ein erreichbarer Monero-Daemon und ein wallet-rpc-Ziel, mitgeliefert oder extern.",
       "hostNote": "Die vollständige Referenz der Umgebungsvariablen und die Bereitstellungshinweise werden im README des Repositorys gepflegt. Lesen Sie sie, bevor Sie eine Installation öffentlich im Internet erreichbar machen.",
       "composeRef": "Referenz zur Bereitstellung mit Docker Compose lesen →",
@@ -1647,7 +1647,7 @@
       "r105": "Lässt die Rechnung sofort ablaufen, wenn sie offen ist und nichts eingegangen ist; andernfalls wird 409 geliefert. Verspätete Zahlungen an eine stornierte Rechnung werden weiterhin erkannt und als nach Ablauf bezahlt gemeldet.",
       "r106": "Die Rechnungsadresse wird nach dem Ablauf für die übliche Wartezeit vor Wiederverwendung zurückgehalten.",
       "r107": "Nur Hauptadresse; Subadressen und integrierte Adressen werden abgelehnt.",
-      "r108": "Verwenden Sie den privaten View-Key (geben Sie niemals einen Spend-Key ein).",
+      "r108": "Privater View-Key.",
       "r109": "invoice_id (Pfad)",
       "r110": "Liefert Rechnungsstatus und Zahlungsdetails.",
       "r111": "confirmation_message ist null, bis die Rechnung bestätigt ist; bei bestätigten Rechnungen aus Zahlungslinks enthält es die Textnachricht des Links.",
@@ -1747,7 +1747,7 @@
     },
     "introLabel": "Einleitung zur Dokumentation",
     "title": "Schnellstart und API-Referenz.",
-    "intro": "Erstellen Sie Rechnungen, schicken Sie Kunden zu gehosteten Rechnungsseiten und erhalten Sie den Rechnungsstatus per Abfrage oder Webhook. Die Einrichtung verwendet Ihre Hauptadresse und Ihren privaten View-Key; Spend-Keys werden nie abgefragt.",
+    "intro": "Erstellen Sie Rechnungen, schicken Sie Kunden zu gehosteten Rechnungsseiten und erhalten Sie den Rechnungsstatus per Abfrage oder Webhook. Die Einrichtung verwendet Ihre Hauptadresse und Ihren privaten View-Key.",
     "recipes": "Integrationsrezepte",
     "recipesHelp": "Beispiele zum Kopieren für curl, Node, PHP, Python und Go.",
     "sectionsLabel": "Abschnitte der Dokumentation",

@@ -10,7 +10,7 @@ Self-hosted Monero checkout software for merchants who want payments sent to the
 
 XMR Checkout is open source and self-hostable. It creates XMR invoices, shows a hosted payment page, watches for incoming transactions, and sends status updates through the API or webhooks.
 
-It uses a wallet address and private view key for detection. It never asks for spend keys, signs transactions, or moves funds.
+It uses a wallet address and private view key to detect payments. It does not sign transactions or move funds.
 
 ## Contents
 
@@ -44,7 +44,7 @@ Typical flow:
 
 Funds move from the customer to the merchant wallet. XMR Checkout watches for the payment and reports what it sees.
 
-Configure the app with a wallet address and private view key only. If a setup path asks for spend authority, stop and fix the configuration before using it.
+Configure the app with a wallet address and private view key only.
 
 ## Documentation and guides
 

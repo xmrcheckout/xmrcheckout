@@ -848,7 +848,7 @@
     "guiGuide": "Official GUI guide",
     "featherSteps": "Open Wallet → Keys. Copy the primary address and private view key only.",
     "featherGuide": "Official Feather guide",
-    "cakeSteps": "Open your Monero wallet’s menu → Security and backup → Show seed/keys, and authenticate locally. Copy only the primary address and private view key. Menu labels can vary by version; never copy the seed or spend key into this site.",
+    "cakeSteps": "Open your Monero wallet’s menu → Security and backup → Show seed/keys, and authenticate locally. Copy only the primary address and private view key. Menu labels can vary by version.",
     "cakeGuide": "Official Cake Wallet guide",
     "otherWallets": "Other wallets",
     "otherSteps": "Use your wallet’s official instructions to locate the 95-character primary address starting with 4 and the 64-character private view key. A public view key or subaddress will not work here. If view-key export is unavailable, do not submit other secrets.",
@@ -875,7 +875,7 @@
     "modalTitle": "Connect your wallet to create invoices.",
     "closeModal": "Close login modal",
     "beforeContinue": "Before you continue",
-    "disclosure": "This instance receives your primary address and private view key to observe incoming payments, including incoming activity beyond checkout invoices. Share it only with an instance you trust. The key is encrypted at rest. Payments go directly to your wallet; this access cannot spend funds. Never submit a spend key or recovery seed."
+    "disclosure": "This instance receives your primary address and private view key to observe incoming payments, including incoming activity beyond checkout invoices. Share it only with an instance you trust. The key is encrypted at rest. This access cannot spend funds."
   },
   "addresses": {
     "title": "Invoice address availability",
@@ -1014,7 +1014,7 @@
     "demoQ": "Exploring the demo?",
     "demoA": "All payments are simulated. No wallet connection is needed.",
     "readyQ": "Ready to accept payments?",
-    "readyA": "Connect your wallet using your primary address and private view key. Customer payments go directly to your wallet.",
+    "readyA": "Connect your wallet using your primary address and private view key.",
     "processKicker": "Customer checkout",
     "processTitle": "Give customers a clear way to pay.",
     "step1": "Create and share an invoice",
@@ -1025,7 +1025,7 @@
     "step3Body": "Customers can follow payment detection and progress toward your confirmation target.",
     "terminalKicker": "Point-of-sale terminals",
     "terminalTitle": "Take Monero at your counter.",
-    "terminalBody": "Turn a tablet or phone into a point-of-sale terminal. Type the amount, the customer scans the QR code, and the screen shows the payment within seconds. Each sale is a normal XMR invoice paid directly to your wallet.",
+    "terminalBody": "Turn a tablet or phone into a point-of-sale terminal. Type the amount, the customer scans the QR code, and the screen shows the payment within seconds.",
     "terminalCta": "Read the terminal guide",
     "terminalDevice": "Any tablet or phone",
     "terminalDeviceBody": "Open the terminal link at your till and add it to the home screen. No extra hardware.",
@@ -1039,7 +1039,7 @@
     "walletReceives": "Your wallet receives the XMR",
     "walletReceivesBody": "Use the wallet you already control.",
     "viewOnly": "View-only access",
-    "viewOnlyBody": "Your primary address and private view key enable incoming payment detection. Never submit a spend key or recovery seed.",
+    "viewOnlyBody": "Your primary address and private view key enable incoming payment detection.",
     "target": "Your confirmation target",
     "targetBody": "Choose how many confirmations an invoice requires. Payment detection and reaching that target are separate states.",
     "startKicker": "Getting started",
@@ -1195,7 +1195,7 @@
       },
       "access": {
         "q": "What wallet access does XMR Checkout require?",
-        "p1": "The maximum permission we ask for is view-only access: your primary address and your private view key. We never request spend keys and we never request signing access."
+        "p1": "View-only access: your primary address and private view key."
       },
       "setup": {
         "q": "What does setup require?",
@@ -1291,11 +1291,11 @@
       "title": "Accept Monero in person with a terminal",
       "metaDescription": "Turn a tablet or phone into a Monero till. Type the amount, show a QR code, and see the payment arrive in seconds, paid directly to your wallet.",
       "eyebrow": "Guide · Terminals",
-      "intro": "For cafés, market stalls, meetups, and shops. A terminal is a page on a tablet or phone at your till. Each sale is a normal XMR invoice paid directly to your wallet. The terminal never receives or holds funds.",
+      "intro": "For cafés, market stalls, meetups, and shops. A terminal is a page on a tablet or phone at your till. Each sale is a normal XMR invoice paid directly to your wallet.",
       "sectionsLabel": "Terminal guide sections",
       "setup": {
         "title": "Set up a terminal",
-        "step1": "Connect your wallet with your primary address and private view key. Never enter a private spend key or recovery seed.",
+        "step1": "Connect your wallet with your primary address and private view key.",
         "step2": "Open <strong>Dashboard → Terminals</strong> and choose <strong>Create terminal</strong>. Give it a name such as “Front counter”, and pick a default currency.",
         "step3": "The dashboard shows the terminal link and a QR code once. Scan it with the device you will use at the till, or copy the link to it.",
         "step4": "On the device, add the page to the home screen for a full-screen till. The device remembers the terminal until you choose <strong>Forget this terminal</strong>.",
@@ -1346,7 +1346,7 @@
         "title": "Configure a payment link",
         "body": {
           "1": {
-            "1": "Connect your wallet using your primary address and private view key. Never submit a private spend key or recovery seed. Customer payments go directly to your wallet.",
+            "1": "Connect your wallet using your primary address and private view key.",
             "2": "Open <dashboard>Dashboard → Payment links</dashboard>, then choose <strong>Create payment link</strong>.",
             "3": "Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount, or select <strong>Customer enters the amount</strong> to let the customer type it (see <donations>donations</donations>).",
             "4": "Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL and a <message>confirmation message</message> shown after payment.",
@@ -1465,7 +1465,7 @@
       "hostTitle": "Gather the configuration before starting the stack.",
       "host1": "A host that can run Docker Compose and persist Postgres and wallet data.",
       "host2": "A public HTTPS site URL for hosted invoice pages and webhook destinations.",
-      "host3": "A Monero primary address and private view key. Never provide a private spend key.",
+      "host3": "A Monero primary address and private view key.",
       "host4": "A reachable Monero daemon and wallet-rpc target, either bundled or external.",
       "hostNote": "The full environment variable reference and deployment notes are maintained in the repository README. Review them before exposing an installation to the public internet.",
       "composeRef": "Read the Docker Compose deployment reference →",
@@ -1647,7 +1647,7 @@
       "r105": "Sets the invoice to expire now when it is pending with nothing received; otherwise returns 409. Late payments to a cancelled invoice are still detected and reported as paid after expiry.",
       "r106": "The invoice address is held for the usual reuse period after expiry.",
       "r107": "Primary address only; subaddresses and integrated addresses are rejected.",
-      "r108": "Use the private view key (never submit a spend key).",
+      "r108": "Private view key.",
       "r109": "invoice_id (path)",
       "r110": "Returns invoice status and payment details.",
       "r111": "confirmation_message is null until the invoice is confirmed; for confirmed payment-link invoices it contains the link's plain-text message.",
@@ -1747,7 +1747,7 @@
     },
     "introLabel": "Documentation introduction",
     "title": "Quick start and API reference.",
-    "intro": "Create invoices, send customers to hosted invoice pages, and receive invoice status through polling or webhooks. Setup uses your primary address and private view key; spend keys are never requested.",
+    "intro": "Create invoices, send customers to hosted invoice pages, and receive invoice status through polling or webhooks. Setup uses your primary address and private view key.",
     "recipes": "Integration recipes",
     "recipesHelp": "Copy/paste examples for curl, Node, PHP, Python, and Go.",
     "sectionsLabel": "Documentation sections",

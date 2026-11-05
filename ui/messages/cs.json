@@ -864,7 +864,7 @@
     "guiGuide": "Oficiální návod pro GUI",
     "featherSteps": "Otevřete Wallet → Keys. Zkopírujte pouze primární adresu a soukromý klíč pro prohlížení.",
     "featherGuide": "Oficiální návod pro Feather",
-    "cakeSteps": "Otevřete nabídku své peněženky Monero → Security and backup → Show seed/keys a ověřte se na zařízení. Zkopírujte pouze primární adresu a soukromý klíč pro prohlížení. Názvy položek se mohou podle verze lišit; seed ani klíč pro utrácení do tohoto webu nikdy nekopírujte.",
+    "cakeSteps": "Otevřete nabídku své peněženky Monero → Security and backup → Show seed/keys a ověřte se na zařízení. Zkopírujte pouze primární adresu a soukromý klíč pro prohlížení. Názvy položek se mohou podle verze lišit.",
     "cakeGuide": "Oficiální návod pro Cake Wallet",
     "otherWallets": "Jiné peněženky",
     "otherSteps": "Podle oficiálních pokynů své peněženky najděte 95znakovou primární adresu začínající 4 a 64znakový soukromý klíč pro prohlížení. Veřejný klíč pro prohlížení ani podadresa zde fungovat nebudou. Pokud export klíče pro prohlížení není k dispozici, nezadávejte jiné tajné údaje.",
@@ -891,7 +891,7 @@
     "modalTitle": "Připojte peněženku a vytvářejte platební výzvy.",
     "closeModal": "Zavřít přihlašovací okno",
     "beforeContinue": "Než budete pokračovat",
-    "disclosure": "Tato instance obdrží vaši primární adresu a soukromý klíč pro prohlížení, aby mohla sledovat příchozí platby, včetně příchozí aktivity mimo platební výzvy. Sdílejte je pouze s instancí, které důvěřujete. Klíč je uložen šifrovaně. Platby jdou přímo do vaší peněženky; tento přístup nemůže prostředky utratit. Nikdy nezadávejte klíč pro utrácení ani obnovovací frázi (seed)."
+    "disclosure": "Tato instance obdrží vaši primární adresu a soukromý klíč pro prohlížení, aby mohla sledovat příchozí platby, včetně příchozí aktivity mimo platební výzvy. Sdílejte je pouze s instancí, které důvěřujete. Klíč je uložen šifrovaně. Tento přístup nemůže prostředky utratit."
   },
   "addresses": {
     "title": "Dostupnost adres pro platební výzvy",
@@ -1032,7 +1032,7 @@
     "demoQ": "Zkoušíte demo?",
     "demoA": "Všechny platby jsou simulované. Připojení peněženky není potřeba.",
     "readyQ": "Chcete začít přijímat platby?",
-    "readyA": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení. Platby zákazníků jdou přímo do vaší peněženky.",
+    "readyA": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení.",
     "processKicker": "Platba zákazníka",
     "processTitle": "Dejte zákazníkům jasný způsob, jak zaplatit.",
     "step1": "Vytvořte a sdílejte platební výzvu",
@@ -1043,7 +1043,7 @@
     "step3Body": "Zákazníci mohou sledovat zjištění platby a postup k vašemu požadovanému počtu potvrzení.",
     "terminalKicker": "Terminály na prodejním místě",
     "terminalTitle": "Přijímejte Monero u svého pultu.",
-    "terminalBody": "Proměňte tablet nebo telefon v terminál na prodejním místě. Zadejte částku, zákazník naskenuje QR kód a během několika sekund se na obrazovce objeví platba. Každý prodej je běžná platební výzva v XMR placená přímo do vaší peněženky.",
+    "terminalBody": "Proměňte tablet nebo telefon v terminál na prodejním místě. Zadejte částku, zákazník naskenuje QR kód a během několika sekund se na obrazovce objeví platba.",
     "terminalCta": "Přečtěte si průvodce terminálem",
     "terminalDevice": "Jakýkoli tablet nebo telefon",
     "terminalDeviceBody": "Otevřete odkaz na terminál u pokladny a přidejte jej na domovskou obrazovku. Žádný další hardware.",
@@ -1057,7 +1057,7 @@
     "walletReceives": "XMR přijímá vaše peněženka",
     "walletReceivesBody": "Používejte peněženku, kterou už ovládáte.",
     "viewOnly": "Přístup pouze pro prohlížení",
-    "viewOnlyBody": "Primární adresa a soukromý klíč pro prohlížení umožňují detekci příchozích plateb. Nikdy nezadávejte klíč pro utrácení ani obnovovací frázi (seed).",
+    "viewOnlyBody": "Primární adresa a soukromý klíč pro prohlížení umožňují detekci příchozích plateb.",
     "target": "Váš požadovaný počet potvrzení",
     "targetBody": "Zvolte, kolik potvrzení platební výzva vyžaduje. Zjištění platby a dosažení tohoto počtu jsou samostatné stavy.",
     "startKicker": "Začínáme",
@@ -1213,7 +1213,7 @@
       },
       "access": {
         "q": "Jaký přístup k peněžence XMR Checkout potřebuje?",
-        "p1": "Nejvyšší oprávnění, o které žádáme, je přístup pouze pro prohlížení: vaše primární adresa a soukromý klíč pro prohlížení. Nikdy nežádáme klíče pro utrácení ani přístup k podepisování."
+        "p1": "Přístup pouze pro prohlížení: vaše primární adresa a soukromý klíč pro prohlížení."
       },
       "setup": {
         "q": "Co vyžaduje nastavení?",
@@ -1311,11 +1311,11 @@
       "title": "Přijímejte Monero osobně pomocí terminálu",
       "metaDescription": "Proměňte tablet nebo telefon v pokladnu pro Monero. Zadejte částku, ukažte QR kód a během několika sekund uvidíte platbu, zaplacenou přímo do vaší peněženky.",
       "eyebrow": "Návod · Terminály",
-      "intro": "Pro kavárny, stánky, setkání a obchody. Terminál je stránka na tabletu nebo telefonu u pokladny. Každý prodej je běžná platební výzva v XMR placená přímo do vaší peněženky. Terminál nikdy prostředky nepřijímá ani nedrží.",
+      "intro": "Pro kavárny, stánky, setkání a obchody. Terminál je stránka na tabletu nebo telefonu u pokladny. Každý prodej je běžná platební výzva v XMR placená přímo do vaší peněženky.",
       "sectionsLabel": "Sekce návodu k terminálu",
       "setup": {
         "title": "Nastavení terminálu",
-        "step1": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení. Nikdy nezadávejte soukromý klíč pro utrácení ani obnovovací frázi (seed).",
+        "step1": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení.",
         "step2": "Otevřete <strong>Panel → Terminály</strong> a zvolte <strong>Vytvořit terminál</strong>. Pojmenujte ho, například „Přední pult“, a vyberte výchozí měnu.",
         "step3": "Panel jednou zobrazí odkaz na terminál a QR kód. Naskenujte ho zařízením, které budete používat u pokladny, nebo do něj odkaz zkopírujte.",
         "step4": "Na zařízení přidejte stránku na plochu, abyste měli pokladnu přes celou obrazovku. Zařízení si terminál pamatuje, dokud nezvolíte <strong>Zapomenout tento terminál</strong>.",
@@ -1366,7 +1366,7 @@
         "title": "Nastavení platebního odkazu",
         "body": {
           "1": {
-            "1": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení. Nikdy nezadávejte soukromý klíč pro utrácení ani obnovovací frázi (seed). Platby zákazníků jdou přímo do vaší peněženky.",
+            "1": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení.",
             "2": "Otevřete <dashboard>Panel → Platební odkazy</dashboard> a zvolte <strong>Vytvořit platební odkaz</strong>.",
             "3": "Zadejte název a volitelný popis. Použijte například „Digitální příručka“ s pevnou částkou 20 a měnou EUR. Můžete také zvolit přesnou částku v XMR, nebo vybrat <strong>Částku zadává zákazník</strong>, aby ji zákazník napsal sám (viz <donations>dary</donations>).",
             "4": "Zvolte požadovaný počet potvrzení. Formulář začíná vaší výchozí hodnotou obchodníka; nula přijme detekci bez čekání na potvrzení v bloku. Volitelně přidejte návratovou HTTPS URL obchodníka a <message>zprávu po potvrzení</message> zobrazenou po platbě.",
@@ -1485,7 +1485,7 @@
       "hostTitle": "Před spuštěním připravte konfiguraci.",
       "host1": "Server, na kterém běží Docker Compose a který trvale uchová data Postgres a peněženky.",
       "host2": "Veřejnou HTTPS URL webu pro hostované stránky platebních výzev a cíle webhooků.",
-      "host3": "Primární adresu Monero a soukromý klíč pro prohlížení. Nikdy neposkytujte soukromý klíč pro utrácení.",
+      "host3": "Primární adresu Monero a soukromý klíč pro prohlížení.",
       "host4": "Dostupný daemon Monero a cíl wallet-rpc, buď přibalený, nebo externí.",
       "hostNote": "Úplný přehled proměnných prostředí a poznámky k nasazení jsou v README repozitáře. Projděte si je dříve, než instalaci zpřístupníte z veřejného internetu.",
       "composeRef": "Přečíst referenci k nasazení přes Docker Compose →",
@@ -1667,7 +1667,7 @@
       "r105": "Nastaví okamžité vypršení platební výzvy, pokud čeká a nic nebylo přijato; jinak vrací 409. Pozdní platby na zrušenou platební výzvu se stále zjišťují a hlásí jako zaplacené po vypršení.",
       "r106": "Adresa platební výzvy je po vypršení držena po obvyklou dobu před opětovným použitím.",
       "r107": "Pouze primární adresa; podadresy a integrované adresy jsou odmítnuty.",
-      "r108": "Použijte soukromý klíč pro prohlížení (nikdy nezadávejte klíč pro utrácení).",
+      "r108": "Soukromý klíč pro prohlížení.",
       "r109": "invoice_id (cesta)",
       "r110": "Vrací stav platební výzvy a platební údaje.",
       "r111": "confirmation_message je null, dokud není platební výzva potvrzena; u potvrzených platebních výzev z platebních odkazů obsahuje textovou zprávu odkazu.",
@@ -1771,7 +1771,7 @@
     },
     "introLabel": "Úvod do dokumentace",
     "title": "Rychlý start a reference API.",
-    "intro": "Vytvářejte platební výzvy, posílejte zákazníky na hostované stránky platebních výzev a přijímejte stav platebních výzev dotazováním nebo přes webhooky. Nastavení používá vaši primární adresu a soukromý klíč pro prohlížení; klíče pro utrácení se nikdy nevyžadují.",
+    "intro": "Vytvářejte platební výzvy, posílejte zákazníky na hostované stránky platebních výzev a přijímejte stav platebních výzev dotazováním nebo přes webhooky. Nastavení používá vaši primární adresu a soukromý klíč pro prohlížení.",
     "recipes": "Integrační recepty",
     "recipesHelp": "Příklady ke zkopírování pro curl, Node, PHP, Python a Go.",
     "sectionsLabel": "Sekce dokumentace",

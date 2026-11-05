@@ -848,7 +848,7 @@
     "guiGuide": "Guide officiel de la GUI",
     "featherSteps": "Ouvrez Wallet → Keys. Copiez uniquement l’adresse principale et la clé de visualisation privée.",
     "featherGuide": "Guide officiel de Feather",
-    "cakeSteps": "Ouvrez le menu de votre portefeuille Monero → Sécurité et sauvegarde → Afficher la seed/les clés, puis authentifiez-vous localement. Copiez uniquement l’adresse principale et la clé de visualisation privée. Les libellés des menus peuvent varier selon la version ; ne copiez jamais la seed ni la clé de dépense sur ce site.",
+    "cakeSteps": "Ouvrez le menu de votre portefeuille Monero → Sécurité et sauvegarde → Afficher la seed/les clés, puis authentifiez-vous localement. Copiez uniquement l’adresse principale et la clé de visualisation privée. Les libellés des menus peuvent varier selon la version.",
     "cakeGuide": "Guide officiel de Cake Wallet",
     "otherWallets": "Autres portefeuilles",
     "otherSteps": "Suivez les instructions officielles de votre portefeuille pour trouver l’adresse principale de 95 caractères commençant par 4 et la clé de visualisation privée de 64 caractères. Une clé de visualisation publique ou une sous-adresse ne fonctionnera pas ici. Si l’export de la clé de visualisation n’est pas disponible, ne soumettez aucun autre secret.",
@@ -875,7 +875,7 @@
     "modalTitle": "Connectez votre portefeuille pour créer des factures.",
     "closeModal": "Fermer la fenêtre de connexion",
     "beforeContinue": "Avant de continuer",
-    "disclosure": "Cette instance reçoit votre adresse principale et votre clé de visualisation privée afin d’observer les paiements entrants, y compris l’activité entrante sans rapport avec les factures de paiement. Ne les partagez qu’avec une instance de confiance. La clé est chiffrée au repos. Les paiements vont directement à votre portefeuille ; cet accès ne permet pas de dépenser des fonds. Ne soumettez jamais de clé de dépense ni de phrase de récupération."
+    "disclosure": "Cette instance reçoit votre adresse principale et votre clé de visualisation privée afin d’observer les paiements entrants, y compris l’activité entrante sans rapport avec les factures de paiement. Ne les partagez qu’avec une instance de confiance. La clé est chiffrée au repos. Cet accès ne permet pas de dépenser des fonds."
   },
   "addresses": {
     "title": "Disponibilité des adresses de facture",
@@ -1014,7 +1014,7 @@
     "demoQ": "Vous explorez la démo ?",
     "demoA": "Tous les paiements sont simulés. Aucune connexion de portefeuille n’est nécessaire.",
     "readyQ": "Prêt à accepter des paiements ?",
-    "readyA": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée. Les paiements des clients vont directement à votre portefeuille.",
+    "readyA": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée.",
     "processKicker": "Paiement client",
     "processTitle": "Offrez à vos clients un moyen simple de payer.",
     "step1": "Créez et partagez une facture",
@@ -1025,7 +1025,7 @@
     "step3Body": "Les clients peuvent suivre la détection du paiement et sa progression vers votre objectif de confirmations.",
     "terminalKicker": "Terminaux de point de vente",
     "terminalTitle": "Acceptez Monero à votre comptoir.",
-    "terminalBody": "Transformez une tablette ou un téléphone en terminal de point de vente. Saisissez le montant, le client scanne le QR code et l’écran affiche le paiement en quelques secondes. Chaque vente est une facture XMR ordinaire payée directement à votre portefeuille.",
+    "terminalBody": "Transformez une tablette ou un téléphone en terminal de point de vente. Saisissez le montant, le client scanne le QR code et l’écran affiche le paiement en quelques secondes.",
     "terminalCta": "Lire le guide du terminal",
     "terminalDevice": "N’importe quelle tablette ou téléphone",
     "terminalDeviceBody": "Ouvrez le lien du terminal à votre caisse et ajoutez-le à l’écran d’accueil. Aucun matériel supplémentaire.",
@@ -1039,7 +1039,7 @@
     "walletReceives": "Votre portefeuille reçoit les XMR",
     "walletReceivesBody": "Utilisez le portefeuille que vous contrôlez déjà.",
     "viewOnly": "Accès en lecture seule",
-    "viewOnlyBody": "Votre adresse principale et votre clé de visualisation privée permettent de détecter les paiements entrants. Ne soumettez jamais de clé de dépense ni de phrase de récupération.",
+    "viewOnlyBody": "Votre adresse principale et votre clé de visualisation privée permettent de détecter les paiements entrants.",
     "target": "Votre objectif de confirmations",
     "targetBody": "Choisissez combien de confirmations une facture exige. La détection du paiement et l’atteinte de cet objectif sont deux états distincts.",
     "startKicker": "Premiers pas",
@@ -1195,7 +1195,7 @@
       },
       "access": {
         "q": "Quel accès au portefeuille XMR Checkout exige-t-il ?",
-        "p1": "L’autorisation maximale que nous demandons est un accès en lecture seule : votre adresse principale et votre clé de visualisation privée. Nous ne demandons jamais de clé de dépense ni d’accès de signature."
+        "p1": "Un accès en lecture seule : votre adresse principale et votre clé de visualisation privée."
       },
       "setup": {
         "q": "Que faut-il pour la configuration ?",
@@ -1291,11 +1291,11 @@
       "title": "Acceptez Monero en personne avec un terminal",
       "metaDescription": "Transformez une tablette ou un téléphone en caisse Monero. Saisissez le montant, affichez un QR code et voyez le paiement arriver en quelques secondes, directement dans votre portefeuille.",
       "eyebrow": "Guide · Terminaux",
-      "intro": "Pour les cafés, les stands de marché, les rencontres et les boutiques. Un terminal est une page affichée sur une tablette ou un téléphone à votre caisse. Chaque vente est une facture XMR normale, payée directement à votre portefeuille. Le terminal ne reçoit ni ne détient jamais de fonds.",
+      "intro": "Pour les cafés, les stands de marché, les rencontres et les boutiques. Un terminal est une page affichée sur une tablette ou un téléphone à votre caisse. Chaque vente est une facture XMR normale, payée directement à votre portefeuille.",
       "sectionsLabel": "Sections du guide du terminal",
       "setup": {
         "title": "Configurer un terminal",
-        "step1": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée. Ne saisissez jamais de clé de dépense privée ni de phrase de récupération.",
+        "step1": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée.",
         "step2": "Ouvrez <strong>Tableau de bord → Terminaux</strong> et choisissez <strong>Créer un terminal</strong>. Donnez-lui un nom tel que « Comptoir principal » et choisissez une devise par défaut.",
         "step3": "Le tableau de bord affiche une seule fois le lien du terminal et un QR code. Scannez-le avec l’appareil que vous utiliserez à la caisse, ou copiez-y le lien.",
         "step4": "Sur l’appareil, ajoutez la page à l’écran d’accueil pour obtenir une caisse en plein écran. L’appareil mémorise le terminal jusqu’à ce que vous choisissiez <strong>Oublier ce terminal</strong>.",
@@ -1346,7 +1346,7 @@
         "title": "Configurer un lien de paiement",
         "body": {
           "1": {
-            "1": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée. Ne soumettez jamais de clé de dépense privée ni de phrase de récupération. Les paiements des clients vont directement à votre portefeuille.",
+            "1": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée.",
             "2": "Ouvrez <dashboard>Tableau de bord → Liens de paiement</dashboard>, puis choisissez <strong>Créer un lien de paiement</strong>.",
             "3": "Saisissez un titre et une description facultative. Par exemple, utilisez « Guide numérique » avec un montant fixe de 20 et la devise EUR. Vous pouvez aussi choisir un montant exact en XMR, ou sélectionner <strong>Le client saisit le montant</strong> pour laisser le client l’indiquer (voir <donations>dons</donations>).",
             "4": "Choisissez le nombre de confirmations requises. Le formulaire reprend votre valeur par défaut de commerçant ; zéro accepte la détection sans attendre la confirmation d’un bloc. Ajoutez éventuellement une URL de retour du commerçant en HTTPS et un <message>message de confirmation</message> affiché après le paiement.",
@@ -1465,7 +1465,7 @@
       "hostTitle": "Réunissez la configuration avant de démarrer la pile.",
       "host1": "Un hôte capable d’exécuter Docker Compose et de conserver les données Postgres et du portefeuille.",
       "host2": "Une URL de site publique en HTTPS pour les pages de facture hébergées et les destinations des webhooks.",
-      "host3": "Une adresse principale Monero et une clé de visualisation privée. Ne fournissez jamais de clé de dépense privée.",
+      "host3": "Une adresse principale Monero et une clé de visualisation privée.",
       "host4": "Un démon Monero et un wallet-rpc joignables, fournis avec la pile ou externes.",
       "hostNote": "La référence complète des variables d’environnement et les notes de déploiement se trouvent dans le README du dépôt. Consultez-les avant d’exposer une installation sur Internet.",
       "composeRef": "Lire la référence du déploiement Docker Compose →",
@@ -1647,7 +1647,7 @@
       "r105": "Fait expirer immédiatement la facture lorsqu’elle est en attente sans aucun montant reçu ; sinon, renvoie 409. Les paiements tardifs vers une facture annulée sont tout de même détectés et signalés comme payés après expiration.",
       "r106": "L’adresse de la facture est réservée pendant la période habituelle avant réutilisation après l’expiration.",
       "r107": "Adresse principale uniquement ; les sous-adresses et les adresses intégrées sont rejetées.",
-      "r108": "Utilisez la clé de visualisation privée (ne soumettez jamais de clé de dépense).",
+      "r108": "Clé de visualisation privée.",
       "r109": "invoice_id (chemin)",
       "r110": "Renvoie le statut de la facture et les informations de paiement.",
       "r111": "confirmation_message vaut null jusqu’à la confirmation de la facture ; pour les factures confirmées issues d’un lien de paiement, il contient le message en texte brut du lien.",
@@ -1747,7 +1747,7 @@
     },
     "introLabel": "Introduction de la documentation",
     "title": "Démarrage rapide et référence de l’API.",
-    "intro": "Créez des factures, envoyez les clients vers des pages de facture hébergées et recevez le statut des factures par interrogation ou par webhooks. La configuration utilise votre adresse principale et votre clé de visualisation privée ; aucune clé de dépense n’est jamais demandée.",
+    "intro": "Créez des factures, envoyez les clients vers des pages de facture hébergées et recevez le statut des factures par interrogation ou par webhooks. La configuration utilise votre adresse principale et votre clé de visualisation privée.",
     "recipes": "Recettes d’intégration",
     "recipesHelp": "Exemples à copier-coller pour curl, Node, PHP, Python et Go.",
     "sectionsLabel": "Sections de la documentation",

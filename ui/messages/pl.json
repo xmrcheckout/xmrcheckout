@@ -864,7 +864,7 @@
     "guiGuide": "Oficjalny poradnik GUI",
     "featherSteps": "Otwórz Wallet → Keys. Skopiuj tylko adres główny i prywatny klucz widoku.",
     "featherGuide": "Oficjalny poradnik Feather",
-    "cakeSteps": "Otwórz menu portfela Monero → Bezpieczeństwo i kopia zapasowa → Pokaż seed/klucze i uwierzytelnij się lokalnie. Skopiuj tylko adres główny i prywatny klucz widoku. Nazwy menu mogą się różnić w zależności od wersji; nigdy nie kopiuj na tę stronę seeda ani klucza wydawania.",
+    "cakeSteps": "Otwórz menu portfela Monero → Bezpieczeństwo i kopia zapasowa → Pokaż seed/klucze i uwierzytelnij się lokalnie. Skopiuj tylko adres główny i prywatny klucz widoku. Nazwy menu mogą się różnić w zależności od wersji.",
     "cakeGuide": "Oficjalny poradnik Cake Wallet",
     "otherWallets": "Inne portfele",
     "otherSteps": "Skorzystaj z oficjalnych instrukcji swojego portfela, aby znaleźć 95-znakowy adres główny zaczynający się od 4 oraz 64-znakowy prywatny klucz widoku. Publiczny klucz widoku ani podadres tu nie zadziałają. Jeśli eksport klucza widoku jest niedostępny, nie podawaj innych sekretów.",
@@ -891,7 +891,7 @@
     "modalTitle": "Połącz portfel, aby tworzyć prośby o płatność.",
     "closeModal": "Zamknij okno logowania",
     "beforeContinue": "Zanim przejdziesz dalej",
-    "disclosure": "Ta instancja otrzymuje twój adres główny i prywatny klucz widoku, aby obserwować płatności przychodzące, w tym aktywność przychodzącą niezwiązaną z prośbami o płatność. Udostępniaj je tylko instancji, której ufasz. Klucz jest szyfrowany w spoczynku. Płatności trafiają bezpośrednio do twojego portfela; ten dostęp nie pozwala wydawać środków. Nigdy nie podawaj klucza wydawania ani frazy odzyskiwania."
+    "disclosure": "Ta instancja otrzymuje twój adres główny i prywatny klucz widoku, aby obserwować płatności przychodzące, w tym aktywność przychodzącą niezwiązaną z prośbami o płatność. Udostępniaj je tylko instancji, której ufasz. Klucz jest szyfrowany w spoczynku. Ten dostęp nie pozwala wydawać środków."
   },
   "addresses": {
     "title": "Dostępność adresów płatności",
@@ -1032,7 +1032,7 @@
     "demoQ": "Przeglądasz demo?",
     "demoA": "Wszystkie płatności są symulowane. Nie trzeba łączyć portfela.",
     "readyQ": "Chcesz przyjmować płatności?",
-    "readyA": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku. Płatności klientów trafiają bezpośrednio do twojego portfela.",
+    "readyA": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku.",
     "processKicker": "Płatność klienta",
     "processTitle": "Daj klientom jasny sposób zapłaty.",
     "step1": "Utwórz i udostępnij prośbę o płatność",
@@ -1043,7 +1043,7 @@
     "step3Body": "Klienci mogą śledzić wykrycie płatności i postęp do wymaganej przez ciebie liczby potwierdzeń.",
     "terminalKicker": "Terminale w punkcie sprzedaży",
     "terminalTitle": "Przyjmuj Monero przy swojej kasie.",
-    "terminalBody": "Zamień tablet lub telefon w terminal w punkcie sprzedaży. Wpisz kwotę, klient skanuje kod QR, a ekran pokazuje płatność w kilka sekund. Każda sprzedaż to zwykła prośba o płatność w XMR, opłacana bezpośrednio na twój portfel.",
+    "terminalBody": "Zamień tablet lub telefon w terminal w punkcie sprzedaży. Wpisz kwotę, klient skanuje kod QR, a ekran pokazuje płatność w kilka sekund.",
     "terminalCta": "Przeczytaj przewodnik po terminalu",
     "terminalDevice": "Dowolny tablet lub telefon",
     "terminalDeviceBody": "Otwórz link terminala przy kasie i dodaj go do ekranu głównego. Bez dodatkowego sprzętu.",
@@ -1057,7 +1057,7 @@
     "walletReceives": "XMR trafia do twojego portfela",
     "walletReceivesBody": "Używaj portfela, nad którym już masz kontrolę.",
     "viewOnly": "Dostęp tylko do odczytu",
-    "viewOnlyBody": "Adres główny i prywatny klucz widoku pozwalają wykrywać płatności przychodzące. Nigdy nie podawaj klucza wydawania ani frazy odzyskiwania.",
+    "viewOnlyBody": "Adres główny i prywatny klucz widoku pozwalają wykrywać płatności przychodzące.",
     "target": "Twoja liczba potwierdzeń",
     "targetBody": "Wybierz, ilu potwierdzeń wymaga prośba o płatność. Wykrycie płatności i osiągnięcie tej liczby to dwa osobne stany.",
     "startKicker": "Pierwsze kroki",
@@ -1213,7 +1213,7 @@
       },
       "access": {
         "q": "Jakiego dostępu do portfela wymaga XMR Checkout?",
-        "p1": "Najwyższe uprawnienie, o jakie prosimy, to dostęp tylko do odczytu: twój adres główny i prywatny klucz widoku. Nigdy nie prosimy o klucze wydawania ani o dostęp do podpisywania."
+        "p1": "Dostęp tylko do odczytu: twój adres główny i prywatny klucz widoku."
       },
       "setup": {
         "q": "Czego wymaga konfiguracja?",
@@ -1311,11 +1311,11 @@
       "title": "Przyjmuj Monero na miejscu za pomocą terminala",
       "metaDescription": "Zamień tablet lub telefon w kasę Monero. Wpisz kwotę, pokaż kod QR i zobacz, jak płatność trafia w kilka sekund bezpośrednio do twojego portfela.",
       "eyebrow": "Poradnik · Terminale",
-      "intro": "Dla kawiarni, stoisk, spotkań i sklepów. Terminal to strona na tablecie lub telefonie przy kasie. Każda sprzedaż to zwykła prośba o płatność w XMR, opłacana bezpośrednio na twój portfel. Terminal nigdy nie otrzymuje ani nie przechowuje środków.",
+      "intro": "Dla kawiarni, stoisk, spotkań i sklepów. Terminal to strona na tablecie lub telefonie przy kasie. Każda sprzedaż to zwykła prośba o płatność w XMR, opłacana bezpośrednio na twój portfel.",
       "sectionsLabel": "Sekcje poradnika terminala",
       "setup": {
         "title": "Skonfiguruj terminal",
-        "step1": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku. Nigdy nie wpisuj prywatnego klucza wydawania ani frazy odzyskiwania.",
+        "step1": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku.",
         "step2": "Otwórz <strong>Panel → Terminale</strong> i wybierz <strong>Utwórz terminal</strong>. Nadaj mu nazwę, np. „Kasa przy wejściu”, i wybierz domyślną walutę.",
         "step3": "Panel jednorazowo pokazuje link terminala i kod QR. Zeskanuj go urządzeniem, którego będziesz używać przy kasie, lub skopiuj na nie link.",
         "step4": "Na urządzeniu dodaj stronę do ekranu głównego, aby mieć kasę na pełnym ekranie. Urządzenie pamięta terminal, dopóki nie wybierzesz <strong>Zapomnij ten terminal</strong>.",
@@ -1366,7 +1366,7 @@
         "title": "Skonfiguruj link płatności",
         "body": {
           "1": {
-            "1": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku. Nigdy nie podawaj prywatnego klucza wydawania ani frazy odzyskiwania. Płatności klientów trafiają bezpośrednio do twojego portfela.",
+            "1": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku.",
             "2": "Otwórz <dashboard>Panel → Linki płatności</dashboard>, a następnie wybierz <strong>Utwórz link płatności</strong>.",
             "3": "Wpisz tytuł i opcjonalny opis. Na przykład użyj „Poradnik cyfrowy” ze stałą kwotą 20 w walucie EUR. Możesz też podać dokładną kwotę w XMR albo wybrać <strong>Klient wpisuje kwotę</strong>, aby kwotę wpisał klient (zobacz <donations>darowizny</donations>).",
             "4": "Wybierz wymaganą liczbę potwierdzeń. Formularz zaczyna od twojej wartości domyślnej; zero akceptuje wykrycie bez czekania na potwierdzenie w bloku. Opcjonalnie dodaj adres powrotny HTTPS i <message>wiadomość po potwierdzeniu</message> wyświetlaną po płatności.",
@@ -1485,7 +1485,7 @@
       "hostTitle": "Zbierz konfigurację przed uruchomieniem stosu.",
       "host1": "Serwer, który może uruchomić Docker Compose i trwale przechowywać dane Postgresa i portfela.",
       "host2": "Publiczny adres strony z HTTPS dla hostowanych stron próśb o płatność i miejsc docelowych webhooków.",
-      "host3": "Adres główny Monero i prywatny klucz widoku. Nigdy nie podawaj prywatnego klucza wydawania.",
+      "host3": "Adres główny Monero i prywatny klucz widoku.",
       "host4": "Osiągalny demon Monero i wallet-rpc, dołączone lub zewnętrzne.",
       "hostNote": "Pełna lista zmiennych środowiskowych i uwagi dotyczące wdrożenia znajdują się w README repozytorium. Przejrzyj je, zanim udostępnisz instalację w publicznym internecie.",
       "composeRef": "Przeczytaj opis wdrożenia z Docker Compose →",
@@ -1667,7 +1667,7 @@
       "r105": "Natychmiast unieważnia prośbę o płatność, jeśli jest oczekująca i nic nie otrzymano; w przeciwnym razie zwraca 409. Spóźnione płatności na anulowaną prośbę są nadal wykrywane i zgłaszane jako opłacone po wygaśnięciu.",
       "r106": "Po wygaśnięciu adres prośby o płatność jest blokowany przez zwykły okres ponownego użycia.",
       "r107": "Tylko adres główny; podadresy i adresy zintegrowane są odrzucane.",
-      "r108": "Użyj prywatnego klucza widoku (nigdy nie podawaj klucza wydawania).",
+      "r108": "Prywatny klucz widoku.",
       "r109": "invoice_id (ścieżka)",
       "r110": "Zwraca status prośby o płatność i dane płatności.",
       "r111": "confirmation_message ma wartość null do czasu potwierdzenia prośby o płatność; dla potwierdzonych próśb z linków płatności zawiera tekst wiadomości z linku.",
@@ -1771,7 +1771,7 @@
     },
     "introLabel": "Wprowadzenie do dokumentacji",
     "title": "Szybki start i dokumentacja API.",
-    "intro": "Twórz prośby o płatność, kieruj klientów na hostowane strony płatności i odbieraj status próśb przez odpytywanie lub webhooki. Konfiguracja wymaga adresu głównego i prywatnego klucza widoku; klucze wydawania nigdy nie są wymagane.",
+    "intro": "Twórz prośby o płatność, kieruj klientów na hostowane strony płatności i odbieraj status próśb przez odpytywanie lub webhooki. Konfiguracja wymaga adresu głównego i prywatnego klucza widoku.",
     "recipes": "Przepisy integracji",
     "recipesHelp": "Przykłady do skopiowania dla curl, Node, PHP, Pythona i Go.",
     "sectionsLabel": "Sekcje dokumentacji",

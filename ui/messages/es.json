@@ -848,7 +848,7 @@
     "guiGuide": "Guía oficial de la GUI",
     "featherSteps": "Abre Billetera → Claves. Copia solo la dirección principal y la clave privada de visualización.",
     "featherGuide": "Guía oficial de Feather",
-    "cakeSteps": "Abre el menú de tu billetera Monero → Seguridad y copia de seguridad → Mostrar semilla/claves, y autentícate en el dispositivo. Copia solo la dirección principal y la clave privada de visualización. Los nombres de los menús pueden variar según la versión; nunca copies la semilla ni la clave de gasto en este sitio.",
+    "cakeSteps": "Abre el menú de tu billetera Monero → Seguridad y copia de seguridad → Mostrar semilla/claves, y autentícate en el dispositivo. Copia solo la dirección principal y la clave privada de visualización. Los nombres de los menús pueden variar según la versión.",
     "cakeGuide": "Guía oficial de Cake Wallet",
     "otherWallets": "Otras billeteras",
     "otherSteps": "Sigue las instrucciones oficiales de tu billetera para encontrar la dirección principal de 95 caracteres que empieza por 4 y la clave privada de visualización de 64 caracteres. Aquí no sirven una clave pública de visualización ni una subdirección. Si no puedes exportar la clave de visualización, no envíes otros secretos.",
@@ -875,7 +875,7 @@
     "modalTitle": "Conecta tu billetera para crear facturas.",
     "closeModal": "Cerrar la ventana de inicio de sesión",
     "beforeContinue": "Antes de continuar",
-    "disclosure": "Esta instancia recibe tu dirección principal y tu clave privada de visualización para observar los pagos entrantes, incluida la actividad entrante ajena a las facturas. Compártelas solo con una instancia de confianza. La clave se guarda cifrada. Los pagos van directamente a tu billetera; este acceso no puede gastar fondos. Nunca envíes una clave de gasto ni una semilla de recuperación."
+    "disclosure": "Esta instancia recibe tu dirección principal y tu clave privada de visualización para observar los pagos entrantes, incluida la actividad entrante ajena a las facturas. Compártelas solo con una instancia de confianza. La clave se guarda cifrada. Este acceso no puede gastar fondos."
   },
   "addresses": {
     "title": "Disponibilidad de direcciones de factura",
@@ -1014,7 +1014,7 @@
     "demoQ": "¿Exploras la demostración?",
     "demoA": "Todos los pagos son simulados. No hace falta conectar una billetera.",
     "readyQ": "¿Listo para aceptar pagos?",
-    "readyA": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización. Los pagos de los clientes van directamente a tu billetera.",
+    "readyA": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización.",
     "processKicker": "Pago del cliente",
     "processTitle": "Ofrece a tus clientes una forma clara de pagar.",
     "step1": "Crea y comparte una factura",
@@ -1025,7 +1025,7 @@
     "step3Body": "Los clientes pueden seguir la detección del pago y el avance hacia tu objetivo de confirmaciones.",
     "terminalKicker": "Terminales de punto de venta",
     "terminalTitle": "Acepta Monero en tu mostrador.",
-    "terminalBody": "Convierte una tableta o un teléfono en un terminal de punto de venta. Escribe el importe, el cliente escanea el código QR y la pantalla muestra el pago en segundos. Cada venta es una factura normal en XMR pagada directamente a tu billetera.",
+    "terminalBody": "Convierte una tableta o un teléfono en un terminal de punto de venta. Escribe el importe, el cliente escanea el código QR y la pantalla muestra el pago en segundos.",
     "terminalCta": "Lee la guía del terminal",
     "terminalDevice": "Cualquier tableta o teléfono",
     "terminalDeviceBody": "Abre el enlace del terminal en tu caja y añádelo a la pantalla de inicio. Sin hardware adicional.",
@@ -1039,7 +1039,7 @@
     "walletReceives": "Tu billetera recibe los XMR",
     "walletReceivesBody": "Usa la billetera que ya controlas.",
     "viewOnly": "Acceso de solo lectura",
-    "viewOnlyBody": "Tu dirección principal y tu clave privada de visualización permiten detectar los pagos entrantes. Nunca envíes una clave de gasto ni una semilla de recuperación.",
+    "viewOnlyBody": "Tu dirección principal y tu clave privada de visualización permiten detectar los pagos entrantes.",
     "target": "Tu objetivo de confirmaciones",
     "targetBody": "Elige cuántas confirmaciones requiere una factura. La detección del pago y alcanzar ese objetivo son estados distintos.",
     "startKicker": "Primeros pasos",
@@ -1195,7 +1195,7 @@
       },
       "access": {
         "q": "¿Qué acceso a la billetera necesita XMR Checkout?",
-        "p1": "El permiso máximo que pedimos es el acceso de solo lectura: tu dirección principal y tu clave privada de visualización. Nunca pedimos claves de gasto ni acceso para firmar."
+        "p1": "Acceso de solo lectura: tu dirección principal y tu clave privada de visualización."
       },
       "setup": {
         "q": "¿Qué hace falta para empezar?",
@@ -1291,11 +1291,11 @@
       "title": "Acepta Monero en persona con un terminal",
       "metaDescription": "Convierte una tableta o un teléfono en una caja para Monero. Escribe el importe, muestra un código QR y ve llegar el pago en segundos, directamente a tu billetera.",
       "eyebrow": "Guía · Terminales",
-      "intro": "Para cafeterías, puestos de mercado, encuentros y tiendas. Un terminal es una página en una tableta o un teléfono en tu caja. Cada venta es una factura normal en XMR pagada directamente a tu billetera. El terminal nunca recibe ni guarda fondos.",
+      "intro": "Para cafeterías, puestos de mercado, encuentros y tiendas. Un terminal es una página en una tableta o un teléfono en tu caja. Cada venta es una factura normal en XMR pagada directamente a tu billetera.",
       "sectionsLabel": "Secciones de la guía del terminal",
       "setup": {
         "title": "Configura un terminal",
-        "step1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización. Nunca introduzcas una clave privada de gasto ni una semilla de recuperación.",
+        "step1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización.",
         "step2": "Abre <strong>Panel → Terminales</strong> y elige <strong>Crear terminal</strong>. Ponle un nombre como «Mostrador principal» y elige una moneda predeterminada.",
         "step3": "El panel muestra el enlace del terminal y un código QR una sola vez. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él.",
         "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal hasta que elijas <strong>Olvidar este terminal</strong>.",
@@ -1346,7 +1346,7 @@
         "title": "Configura un enlace de pago",
         "body": {
           "1": {
-            "1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización. Nunca envíes una clave privada de gasto ni una semilla de recuperación. Los pagos de los clientes van directamente a tu billetera.",
+            "1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización.",
             "2": "Abre <dashboard>Panel → Enlaces de pago</dashboard> y elige <strong>Crear enlace de pago</strong>.",
             "3": "Escribe un título y una descripción opcional. Por ejemplo, usa «Guía digital» con un importe fijo de 20 y la moneda EUR. También puedes elegir un importe exacto en XMR o seleccionar <strong>El cliente introduce el importe</strong> para que el cliente lo escriba (consulta <donations>donaciones</donations>).",
             "4": "Elige las confirmaciones requeridas. El formulario parte de tu valor predeterminado; cero acepta la detección sin esperar la confirmación de un bloque. Si quieres, añade una URL de retorno HTTPS y un <message>mensaje de confirmación</message> que se muestre tras el pago.",
@@ -1465,7 +1465,7 @@
       "hostTitle": "Reúne la configuración antes de arrancar los servicios.",
       "host1": "Un servidor que pueda ejecutar Docker Compose y conservar los datos de Postgres y de la billetera.",
       "host2": "Una URL pública HTTPS para las páginas de factura y los destinos de webhooks.",
-      "host3": "Una dirección principal de Monero y una clave privada de visualización. Nunca proporciones una clave privada de gasto.",
+      "host3": "Una dirección principal de Monero y una clave privada de visualización.",
       "host4": "Un daemon de Monero y un wallet-rpc accesibles, ya sean los incluidos o externos.",
       "hostNote": "La referencia completa de variables de entorno y las notas de despliegue están en el README del repositorio. Revísalas antes de exponer una instalación a internet.",
       "composeRef": "Lee la referencia de despliegue con Docker Compose →",
@@ -1647,7 +1647,7 @@
       "r105": "Hace que la factura venza ahora si está pendiente y no ha recibido nada; si no, devuelve 409. Los pagos tardíos a una factura cancelada se siguen detectando y se informan como pagados tras el vencimiento.",
       "r106": "La dirección de la factura se reserva durante el periodo de reutilización habitual tras el vencimiento.",
       "r107": "Solo dirección principal; se rechazan las subdirecciones y las direcciones integradas.",
-      "r108": "Usa la clave privada de visualización (nunca envíes una clave de gasto).",
+      "r108": "Clave privada de visualización.",
       "r109": "invoice_id (ruta)",
       "r110": "Devuelve el estado de la factura y los datos de pago.",
       "r111": "confirmation_message es null hasta que la factura se confirma; en las facturas confirmadas de enlaces de pago contiene el mensaje de texto del enlace.",
@@ -1747,7 +1747,7 @@
     },
     "introLabel": "Introducción de la documentación",
     "title": "Inicio rápido y referencia de la API.",
-    "intro": "Crea facturas, envía a los clientes a las páginas de factura alojadas y recibe el estado de las facturas mediante consultas periódicas o webhooks. La configuración usa tu dirección principal y tu clave privada de visualización; nunca se piden claves de gasto.",
+    "intro": "Crea facturas, envía a los clientes a las páginas de factura alojadas y recibe el estado de las facturas mediante consultas periódicas o webhooks. La configuración usa tu dirección principal y tu clave privada de visualización.",
     "recipes": "Recetas de integración",
     "recipesHelp": "Ejemplos para copiar y pegar en curl, Node, PHP, Python y Go.",
     "sectionsLabel": "Secciones de la documentación",

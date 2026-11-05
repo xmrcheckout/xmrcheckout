@@ -89,15 +89,6 @@ Post-login UI:
 
 ## Quick start
 
-### Homepage only (Docker)
-
-```
-docker build -t xmrcheckout-home .
-docker run --rm -p 8080:80 xmrcheckout-home
-```
-
-Open `http://localhost:8080`.
-
 ### Full stack (Docker Compose)
 
 ```
@@ -144,121 +135,6 @@ cp .env.example .env
   connect your own wallet once, then set it to `false` and restart the API.
   Existing merchants can always log in.
 
-### Invoice address reuse
-
-Each merchant uses a pool of up to 199 invoice subaddresses (indices 1-199) in
-account 0. All invoice addresses are within the default range every Monero
-wallet watches, so merchants never need to raise their wallet's subaddress
-lookahead. Never-issued addresses are used first. After the pool has been
-issued, an address can be reused only when all its previous invoices are
-confirmed or expired, and three days have passed since the latest confirmation
-or expiry.
-Archiving an invoice does not release its address. Pending or payment-detected
-invoices continue to reserve their address until reconciliation closes them.
-
-Set `SUBADDRESS_REUSE_COOLDOWN_SECONDS` to change the three-day default
-(`259200`). It must be longer than `LATE_PAYMENT_LOOKBACK_HOURS`, so an address
-is never reused while its previous invoice is still watched for late payments. If every address is reserved or cooling down,
-invoice creation returns HTTP 429 with `Retry-After`. When closure timestamps are
-missing, the address remains unavailable. Existing merchant quotas also apply.
-
-Reuse requires a fresh, synchronized view-only wallet snapshot. Snapshot failure
-returns HTTP 503 without creating an invoice. Historical confirmed and pending
-transfers are excluded from the new invoice, with a blockchain cutoff and
-persistent transaction exclusions protecting subsequent checks. Old allocation
-periods stop receiving updates once the address is reassigned. A genuinely new
-late or repeated payment intended for an older invoice can still be mistaken for
-payment of the new invoice; cooldown reduces this risk but cannot eliminate it.
-
-These protections apply to new native, BTCPay-compatible, and donation invoices.
-Existing totals, confirmations, and webhook history are not repaired or replayed.
-The additive `subaddress_allocations` table is created at API startup. Deploy API
-and reconciler changes together: briefly stop both services, build their images,
-start the API and wait for schema initialization, then start the reconciler.
-Do not run an older reconciler alongside the new API. Before rollback, stop both
-services; restore a compatible version before resuming creation and detection.
-
-Validation uses wallet fixtures and isolated PostgreSQL schemas, without sending
-transactions. Run the API suite with `python -m unittest discover -s tests` from
-`api/`. Set `SUBADDRESS_DATABASE_TESTS=1` to include concurrency and allocation
-integration tests; the configured database role must be allowed to create and
-drop temporary schemas. Tests do not use existing merchant rows.
-
-Authenticated merchants can inspect `GET /api/core/subaddresses/status` (use
-`Authorization: ApiKey …`). The response is uncached and reads local records only:
-it never contacts wallet RPC, reserves an address, or consumes creation quotas.
-The supported pool is partitioned into `never_issued`, `eligible_for_reuse`,
-`reserved`, `cooling_down`, and `needs_review`. Missing closure times, invalid
-prior invoices, and inconsistent allocation history require review. Past-expiry
-pending invoices keep their addresses reserved until their status updates.
-Estimated cooldown completion does not guarantee creation; wallet availability,
-pending invoices, and merchant quotas still apply.
-
-The additive `snapshot_status` table retains only each merchant's latest reuse
-snapshot attempt and last-success timestamp. New merchants have no recorded
-attempt. Diagnostics commit independently of the invoice transaction, so a failed
-creation cannot erase them. A diagnostic storage failure is logged without
-changing the creation result. Operator JSON logs correlate `snapshot_succeeded`,
-`snapshot_failed`, and `allocation_rejected` with merchant-visible reference IDs.
-They contain stable reason codes and numeric RPC codes, never raw RPC messages,
-credentials, or key material. `diagnostic_storage_unavailable` means the latest
-stored status may be incomplete; use the correlated operator logs.
-
-Allocation failures preserve HTTP status and string `detail`, and add `code`,
-`diagnostic_id`, and optional `retry_after_seconds`. Codes are `pool_exhausted`,
-`allocation_contention`, and `snapshot_failed`; existing `Retry-After` headers
-remain. Public donation errors stay generic and may include a reference ID.
-Merchant diagnostics are excluded from public system health. The dashboard uses
-manual refresh and refreshes availability after invoice creation attempts; it
-adds no background monitoring or notification service.
-
-For this additive reporting update, build API/reconciler and UI images, replace
-the API first and wait for schema initialization, then replace reconciler and UI.
-Reload Nginx after replacement, verify authenticated availability and public
-health, and check a fresh successful reconciliation cycle. Validate creation
-scenarios only with isolated fixtures, never real merchant wallets.
-
-Late-payment classification uses the on-chain time when cumulative positive
-transfers first reach the invoice amount. `detected_at` remains the time the
-checkout observed the payment; `paid_after_expiry_at` records the on-chain
-threshold-crossing time for payments that arrived after expiry. If transfer
-timing is unavailable, detection time is used conservatively.
-
-After upgrading an existing installation, review and repair stored late-payment
-metadata with the reconciler's idempotent maintenance command. Run it without
-`--apply` first to inspect the proposed changes:
-
-```
-docker compose exec -T reconciler python -m app.reclassify_invoice_timing
-docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
-```
-
-Outgoing webhooks can optionally go through an authenticated relay to keep the
-server IP private from recipients. This defaults to off. To use one, set
-`WEBHOOK_RELAY_ENABLED=true`, an HTTPS `WEBHOOK_RELAY_URL` and a
-`WEBHOOK_RELAY_TOKEN` of at least 32 characters. The API then POSTs each
-delivery to the relay as a JSON envelope (target URL, base64 body, selected
-headers, timeout) with the token as a bearer credential.
-
-Webhook destinations must use HTTPS and resolve exclusively to public IP
-addresses. Loopback, private, link-local, and other special-use destinations
-are rejected, including at redirect hops. This restriction applies to both the
-native API and the BTCPay-compatible API.
-
-Failed webhook deliveries (no response or HTTP 400 and above) are recorded and
-retried automatically by the reconciler up to six times, after 1 minute,
-5 minutes, 30 minutes, 2 hours, 6 hours, and 24 hours. Each attempt appears as
-its own entry in webhook history, and a manual redelivery cancels the pending
-automatic retry. Retries stop if the webhook is deleted, disabled, or no longer
-subscribed to the event; BTCPay-compatible webhooks are retried only when
-`automaticRedelivery` is enabled.
-
-Webhooks for events found during payment detection are queued and sent by a
-separate delivery loop in the reconciler, usually within a few seconds, so a
-slow merchant server never delays detection. Each attempt is abandoned after
-15 seconds and counts as failed, response bodies are not read, and each merchant
-gets at most five attempts per delivery pass.
-
 3. Choose a Monero daemon (`MONERO_DAEMON_URL` is required; the stack will not
    start without it):
 - The view-only wallet trusts the blocks the daemon reports. A hostile daemon, or
@@ -299,6 +175,67 @@ If you use a daemon outside this stack:
 ```
 docker compose up --build -d
 ```
+
+### Invoice address reuse
+
+Each merchant uses a pool of up to 199 invoice subaddresses (indices 1-199) in
+account 0, all within the default range every Monero wallet watches, so
+merchants never need to raise their wallet's subaddress lookahead. Never-issued
+addresses are used first; an address is reused only after all its previous
+invoices are confirmed or expired and a cooldown has passed. Archiving an
+invoice does not release its address, and pending or payment-detected invoices
+keep reserving theirs until reconciliation closes them.
+
+Set `SUBADDRESS_REUSE_COOLDOWN_SECONDS` to change the three-day default
+(`259200`); it must be longer than `LATE_PAYMENT_LOOKBACK_HOURS` so an address
+is never reused while its previous invoice is still watched for late payments.
+When every address is reserved or cooling down, invoice creation returns HTTP
+429 with `Retry-After`. Reuse also requires a fresh view-only wallet snapshot;
+snapshot failure returns HTTP 503 without creating an invoice. A genuinely new
+late or repeated payment intended for an older invoice can still be mistaken for
+the new one; cooldown reduces this risk but cannot eliminate it.
+
+Authenticated merchants can inspect the pool with
+`GET /api/core/subaddresses/status`; it reads local records only and never
+contacts wallet RPC or consumes quota. Allocation failures carry a `code`
+(`pool_exhausted`, `allocation_contention`, or `snapshot_failed`) and a
+`diagnostic_id` for the correlated operator logs. The
+[self-hosting guide](https://xmrcheckout.com/guides/self-hosted-monero-checkout)
+covers the conceptual walkthrough.
+
+The additive `subaddress_allocations` and `snapshot_status` tables are created
+at API startup; when upgrading, deploy the API before the reconciler and UI, and
+do not run an older reconciler against the new API. Late-payment timing uses the
+on-chain time cumulative transfers first reach the invoice amount. After an
+upgrade you can review and repair stored timing with the reconciler's idempotent
+maintenance command (omit `--apply` to preview):
+
+```
+docker compose exec -T reconciler python -m app.reclassify_invoice_timing
+docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
+```
+
+### Webhooks
+
+Webhook destinations must use HTTPS and resolve exclusively to public IP
+addresses; loopback, private, link-local, and other special-use destinations are
+rejected, including at redirect hops. This applies to both the native and
+BTCPay-compatible APIs.
+
+Webhooks found during payment detection are queued and sent by a separate
+delivery loop in the reconciler, usually within seconds, so a slow merchant
+server never delays detection. Failed deliveries (no response or HTTP 400 and
+above) are retried up to six times (after 1 minute, 5 minutes, 30 minutes,
+2 hours, 6 hours, and 24 hours), each attempt recorded in webhook history; a
+manual redelivery cancels the pending retry. Retries stop if the webhook is
+deleted, disabled, or unsubscribed from the event (BTCPay-compatible webhooks
+retry only when `automaticRedelivery` is enabled).
+
+Outgoing webhooks can optionally use an authenticated relay to keep the server
+IP private from recipients (off by default). Set `WEBHOOK_RELAY_ENABLED=true`, an
+HTTPS `WEBHOOK_RELAY_URL`, and a `WEBHOOK_RELAY_TOKEN` of at least 32 characters;
+the API then POSTs each delivery to the relay as a JSON envelope (target URL,
+base64 body, selected headers, timeout) with the token as a bearer credential.
 
 ### Troubleshooting first payment detection
 
@@ -621,11 +558,9 @@ Price, receiving wallet, confirmation, and URL overrides are rejected. Generated
 invoices appear in the normal invoice list and webhook events, with a snapshot
 in `metadata.payment_link`; search invoice metadata for the product or link ID.
 
-Deploy the additive API schema before the UI. Rebuild API/UI/Nginx and restart;
-verify read-only page and health responses. Observe public creation counts,
-HTTP 429 responses, quote failures, and allocation diagnostics in service logs.
-For rollback, disable links, restore preceding application images/configuration,
-and retain additive tables and invoice records.
+Deploy the additive API schema before the UI, then rebuild and restart. For
+rollback, disable links and restore the preceding images; additive tables and
+invoice records can remain.
 
 ### In-person terminals
 

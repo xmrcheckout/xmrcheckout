@@ -821,9 +821,20 @@
     },
     "lastUsed": "Dernière utilisation : {time}",
     "never": "jamais",
-    "editOrRotate": "Modifier les paramètres ou créer un nouveau lien",
     "demoNote": "Mode démo : les terminaux sont simulés. Rien n’est enregistré et aucun lien de terminal n’est émis. Essayez la caisse pour voir ce que voient le personnel et les clients au comptoir.",
-    "demoTill": "Essayer la caisse de démo"
+    "demoTill": "Essayer la caisse de démo",
+    "yourTerminals": "Vos terminaux",
+    "notFound": "Ce terminal est introuvable. Tous les terminaux sont affichés.",
+    "colName": "Nom",
+    "colSettings": "Paramètres",
+    "colStatus": "Statut",
+    "colLastUsed": "Dernière utilisation",
+    "colActions": "Actions",
+    "manage": "Gérer",
+    "manageLabel": "Gérer {name}",
+    "back": "Tous les terminaux",
+    "settings": "Paramètres",
+    "aboutAddresses": "À propos des adresses de facture"
   },
   "settings": {
     "requiredConfirmations": "Confirmations requises",

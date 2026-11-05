@@ -835,9 +835,20 @@
     },
     "lastUsed": "Ostatnio używany: {time}",
     "never": "nigdy",
-    "editOrRotate": "Edytuj ustawienia lub utwórz nowy link",
     "demoNote": "Tryb demo: terminale są symulowane. Nic nie jest zapisywane i nie jest wydawany żaden link terminala. Wypróbuj kasę, aby zobaczyć, co widzą obsługa i klienci przy ladzie.",
-    "demoTill": "Wypróbuj kasę demo"
+    "demoTill": "Wypróbuj kasę demo",
+    "yourTerminals": "Twoje terminale",
+    "notFound": "Nie znaleziono tego terminala. Wyświetlono wszystkie terminale.",
+    "colName": "Nazwa",
+    "colSettings": "Ustawienia",
+    "colStatus": "Status",
+    "colLastUsed": "Ostatnie użycie",
+    "colActions": "Działania",
+    "manage": "Zarządzaj",
+    "manageLabel": "Zarządzaj: {name}",
+    "back": "Wszystkie terminale",
+    "settings": "Ustawienia",
+    "aboutAddresses": "O adresach płatności"
   },
   "settings": {
     "requiredConfirmations": "Wymagane potwierdzenia",

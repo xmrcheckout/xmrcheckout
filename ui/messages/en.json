@@ -821,9 +821,20 @@
     },
     "lastUsed": "Last used: {time}",
     "never": "never",
-    "editOrRotate": "Edit settings or create a new link",
     "demoNote": "Demo mode: terminals are simulated. Nothing is saved and no terminal link is issued. Try the till to see what staff and customers see at the counter.",
-    "demoTill": "Try the demo till"
+    "demoTill": "Try the demo till",
+    "yourTerminals": "Your terminals",
+    "notFound": "That terminal was not found. Showing all terminals.",
+    "colName": "Name",
+    "colSettings": "Settings",
+    "colStatus": "Status",
+    "colLastUsed": "Last used",
+    "colActions": "Actions",
+    "manage": "Manage",
+    "manageLabel": "Manage {name}",
+    "back": "All terminals",
+    "settings": "Settings",
+    "aboutAddresses": "About invoice addresses"
   },
   "settings": {
     "requiredConfirmations": "Required confirmations",

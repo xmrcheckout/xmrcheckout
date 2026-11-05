@@ -821,9 +821,20 @@
     },
     "lastUsed": "Último uso: {time}",
     "never": "nunca",
-    "editOrRotate": "Editar configurações ou criar um novo link",
     "demoNote": "Modo de demonstração: os terminais são simulados. Nada é salvo e nenhum link de terminal é emitido. Experimente o caixa para ver o que a equipe e os clientes veem no balcão.",
-    "demoTill": "Experimentar o caixa de demonstração"
+    "demoTill": "Experimentar o caixa de demonstração",
+    "yourTerminals": "Seus terminais",
+    "notFound": "Esse terminal não foi encontrado. Mostrando todos os terminais.",
+    "colName": "Nome",
+    "colSettings": "Configurações",
+    "colStatus": "Status",
+    "colLastUsed": "Último uso",
+    "colActions": "Ações",
+    "manage": "Gerenciar",
+    "manageLabel": "Gerenciar {name}",
+    "back": "Todos os terminais",
+    "settings": "Configurações",
+    "aboutAddresses": "Sobre os endereços de fatura"
   },
   "settings": {
     "requiredConfirmations": "Confirmações exigidas",

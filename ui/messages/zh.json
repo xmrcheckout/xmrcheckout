@@ -814,9 +814,20 @@
     },
     "lastUsed": "上次使用：{time}",
     "never": "从未",
-    "editOrRotate": "编辑设置或创建新链接",
     "demoNote": "演示模式：收款终端均为模拟。不会保存任何内容，也不会生成终端链接。试用收银台，看看店员和顾客在柜台前看到的内容。",
-    "demoTill": "试用演示收银台"
+    "demoTill": "试用演示收银台",
+    "yourTerminals": "你的终端",
+    "notFound": "未找到该终端。现显示全部终端。",
+    "colName": "名称",
+    "colSettings": "设置",
+    "colStatus": "状态",
+    "colLastUsed": "上次使用",
+    "colActions": "操作",
+    "manage": "管理",
+    "manageLabel": "管理 {name}",
+    "back": "全部终端",
+    "settings": "设置",
+    "aboutAddresses": "关于账单地址"
   },
   "settings": {
     "requiredConfirmations": "所需确认数",

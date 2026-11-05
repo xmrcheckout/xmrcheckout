@@ -68,7 +68,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
     {tour ? <p className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">{t("paymentLinks.demoNote")}</p> : null}
     {selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("paymentLinks.notFound")}</p> : null}
 
-    <details className="rounded-2xl open:border open:border-stroke open:p-5" open={links.length === 0}>
+    <details className="rounded-2xl open:border open:border-stroke open:p-5">
       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-full bg-ink px-5 py-2 font-semibold text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">{t("paymentLinks.create")}</summary>
       <div className="mt-5 grid gap-4">
         <p className="text-sm text-ink-soft">{t("paymentLinks.donationTip")}</p>
@@ -94,7 +94,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
               <Link className={linkClass} href={detailHref(mode, link.id)}>{link.title}</Link>
             </th>
             <td data-label={t("paymentLinks.colPrice")} className={cell}>{priceLabel(link, t)}</td>
-            <td data-label={t("paymentLinks.colStatus")} className={cell}>{statusBadge(link, t)}</td>
+            <td data-label={t("paymentLinks.colStatus")} className={`${cell} whitespace-nowrap`}>{statusBadge(link, t)}</td>
             <td data-label={t("paymentLinks.colLink")} className={cell}>
               <span className="inline-flex items-center gap-2 align-middle">
                 <CopyIconButton value={link.url} label={t("paymentLinks.copyLink", { title: link.title })} />
@@ -103,7 +103,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
                 </a>
               </span>
             </td>
-            <td className="block pt-2 sm:table-cell sm:px-3 sm:py-3 sm:text-right sm:align-middle">
+            <td className="block whitespace-nowrap pt-2 sm:table-cell sm:px-3 sm:py-3 sm:text-right sm:align-middle">
               <Link className="inline-flex min-h-11 items-center rounded-full border border-stroke px-4 py-2 text-sm font-semibold transition hover:border-ink/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50" href={detailHref(mode, link.id)} aria-label={t("paymentLinks.manageLabel", { title: link.title })}>{t("paymentLinks.manage")}</Link>
             </td>
           </tr>)}

@@ -761,6 +761,7 @@ export default async function TourPage({
               terminals={fixture.terminals}
               currencies={fixture.paymentLinkUsage.supported_currencies}
               addressStatus={null}
+              selectedId={typeof resolvedSearchParams?.terminal === "string" ? resolvedSearchParams.terminal : undefined}
             />
           ) : null}
 

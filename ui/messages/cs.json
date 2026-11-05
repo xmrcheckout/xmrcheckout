@@ -835,9 +835,20 @@
     },
     "lastUsed": "Naposledy použito: {time}",
     "never": "nikdy",
-    "editOrRotate": "Upravit nastavení nebo vytvořit nový odkaz",
     "demoNote": "Režim dema: terminály jsou simulované. Nic se neukládá a nevydává se žádný odkaz na terminál. Vyzkoušejte pokladnu a podívejte se, co vidí obsluha a zákazníci u pultu.",
-    "demoTill": "Vyzkoušet ukázkovou pokladnu"
+    "demoTill": "Vyzkoušet ukázkovou pokladnu",
+    "yourTerminals": "Vaše terminály",
+    "notFound": "Tento terminál nebyl nalezen. Zobrazují se všechny terminály.",
+    "colName": "Název",
+    "colSettings": "Nastavení",
+    "colStatus": "Stav",
+    "colLastUsed": "Naposledy použito",
+    "colActions": "Akce",
+    "manage": "Spravovat",
+    "manageLabel": "Spravovat {name}",
+    "back": "Všechny terminály",
+    "settings": "Nastavení",
+    "aboutAddresses": "O adresách pro platební výzvy"
   },
   "settings": {
     "requiredConfirmations": "Požadovaná potvrzení",

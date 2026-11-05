@@ -821,9 +821,20 @@
     },
     "lastUsed": "Ultimo utilizzo: {time}",
     "never": "mai",
-    "editOrRotate": "Modifica le impostazioni o crea un nuovo link",
     "demoNote": "Modalità demo: i terminali sono simulati. Non viene salvato nulla e non viene emesso alcun link del terminale. Prova la cassa per vedere cosa vedono il personale e i clienti al banco.",
-    "demoTill": "Prova la cassa demo"
+    "demoTill": "Prova la cassa demo",
+    "yourTerminals": "I tuoi terminali",
+    "notFound": "Questo terminale non è stato trovato. Vengono mostrati tutti i terminali.",
+    "colName": "Nome",
+    "colSettings": "Impostazioni",
+    "colStatus": "Stato",
+    "colLastUsed": "Ultimo utilizzo",
+    "colActions": "Azioni",
+    "manage": "Gestisci",
+    "manageLabel": "Gestisci {name}",
+    "back": "Tutti i terminali",
+    "settings": "Impostazioni",
+    "aboutAddresses": "Indirizzi di pagamento"
   },
   "settings": {
     "requiredConfirmations": "Conferme richieste",

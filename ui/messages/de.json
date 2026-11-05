@@ -821,9 +821,20 @@
     },
     "lastUsed": "Zuletzt verwendet: {time}",
     "never": "nie",
-    "editOrRotate": "Einstellungen bearbeiten oder neuen Link erstellen",
     "demoNote": "Demo-Modus: Terminals werden simuliert. Es wird nichts gespeichert und kein Terminal-Link ausgegeben. Probieren Sie die Kasse aus, um zu sehen, was Personal und Kunden an der Theke sehen.",
-    "demoTill": "Demo-Kasse ausprobieren"
+    "demoTill": "Demo-Kasse ausprobieren",
+    "yourTerminals": "Deine Terminals",
+    "notFound": "Dieses Terminal wurde nicht gefunden. Alle Terminals werden angezeigt.",
+    "colName": "Name",
+    "colSettings": "Einstellungen",
+    "colStatus": "Status",
+    "colLastUsed": "Zuletzt verwendet",
+    "colActions": "Aktionen",
+    "manage": "Verwalten",
+    "manageLabel": "{name} verwalten",
+    "back": "Alle Terminals",
+    "settings": "Einstellungen",
+    "aboutAddresses": "Zu Rechnungsadressen"
   },
   "settings": {
     "requiredConfirmations": "Erforderliche Bestätigungen",

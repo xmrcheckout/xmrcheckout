@@ -937,7 +937,6 @@
     "notConfigured": "Não configurado",
     "unknown": "Desconhecido",
     "title": "Saúde do sistema",
-    "question": "A detecção de pagamentos está em dia?",
     "intro": "Uma visão focada dos serviços que observam pagamentos e encaminham eventos de fatura.",
     "refresh": "Atualizar saúde",
     "detectionStatus": "Status da detecção",

@@ -64,15 +64,11 @@ export default async function SystemHealthPanel({ status }: SystemHealthPanelPro
     <section className="grid min-w-0 grid-cols-1 gap-6" aria-labelledby="system-health-title">
       <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
         <div className="max-w-2xl">
-          <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <span className="h-2 w-2 rounded-full bg-sage" aria-hidden="true" />
-            {t("health.title")}
-          </p>
           <h1
-            className="mt-1 font-sans text-3xl font-semibold leading-tight"
+            className="font-sans text-3xl font-semibold leading-tight"
             id="system-health-title"
           >
-            {t("health.question")}
+            {t("health.title")}
           </h1>
           <p className="mt-2 text-ink-soft">
             {t("health.intro")}

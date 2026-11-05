@@ -937,7 +937,6 @@
     "notConfigured": "Non configuré",
     "unknown": "Inconnu",
     "title": "État du système",
-    "question": "La détection des paiements suit-elle le rythme ?",
     "intro": "Une vue ciblée des services qui observent les paiements et relaient les événements de facture.",
     "refresh": "Actualiser l’état",
     "detectionStatus": "Statut de la détection",

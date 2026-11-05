@@ -929,7 +929,6 @@
     "notConfigured": "未配置",
     "unknown": "未知",
     "title": "系统状态",
-    "question": "付款检测是否跟得上？",
     "intro": "集中显示负责观测付款和转发账单事件的服务。",
     "refresh": "刷新状态",
     "detectionStatus": "检测状态",

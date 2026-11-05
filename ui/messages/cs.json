@@ -953,7 +953,6 @@
     "notConfigured": "Nenastaveno",
     "unknown": "Neznámé",
     "title": "Stav systému",
-    "question": "Stíhá detekce plateb?",
     "intro": "Přehled služeb, které sledují platby a předávají události platebních výzev.",
     "refresh": "Obnovit stav",
     "detectionStatus": "Stav detekce",

@@ -937,7 +937,6 @@
     "notConfigured": "Non configurato",
     "unknown": "Sconosciuto",
     "title": "Stato del sistema",
-    "question": "Il rilevamento dei pagamenti è al passo?",
     "intro": "Una vista mirata dei servizi che osservano i pagamenti e inoltrano gli eventi delle richieste di pagamento.",
     "refresh": "Aggiorna lo stato",
     "detectionStatus": "Stato del rilevamento",

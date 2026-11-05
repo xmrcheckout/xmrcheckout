@@ -937,7 +937,6 @@
     "notConfigured": "Nicht konfiguriert",
     "unknown": "Unbekannt",
     "title": "Systemzustand",
-    "question": "Hält die Zahlungserkennung Schritt?",
     "intro": "Ein gezielter Blick auf die Dienste, die Zahlungen beobachten und Rechnungsereignisse weiterleiten.",
     "refresh": "Zustand aktualisieren",
     "detectionStatus": "Erkennungsstatus",

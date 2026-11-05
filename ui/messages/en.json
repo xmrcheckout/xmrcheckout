@@ -937,7 +937,6 @@
     "notConfigured": "Not configured",
     "unknown": "Unknown",
     "title": "System health",
-    "question": "Is payment detection keeping up?",
     "intro": "A focused view of services that observe payments and relay invoice events.",
     "refresh": "Refresh health",
     "detectionStatus": "Detection status",

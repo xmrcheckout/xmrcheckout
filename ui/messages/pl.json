@@ -953,7 +953,6 @@
     "notConfigured": "Nieskonfigurowany",
     "unknown": "Nieznany",
     "title": "Stan systemu",
-    "question": "Czy wykrywanie płatności nadąża?",
     "intro": "Skupiony widok usług, które obserwują płatności i przekazują zdarzenia próśb o płatność.",
     "refresh": "Odśwież stan",
     "detectionStatus": "Status wykrywania",

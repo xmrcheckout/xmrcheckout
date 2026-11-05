@@ -164,7 +164,7 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
       const value = amount.replace(/\.$/, "");
       const rate = demoRates[currency];
       setSale({
-        id: "demo_sale", address: "", amount_xmr: rate ? (Number(value) / rate).toFixed(12) : value,
+        id: "demo_sale", address: "", amount_xmr: rate ? (Number(value) / rate).toFixed(6) : value,
         amount_paid_xmr: null, amount_remaining_xmr: null, status: "pending",
         confirmation_target: DEMO_TERMINAL.confirmation_target, confirmations: 0,
         expires_at: new Date(Date.now() + DEMO_TERMINAL.expiry_minutes * 60000).toISOString(),

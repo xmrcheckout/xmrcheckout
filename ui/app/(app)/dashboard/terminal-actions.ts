@@ -39,3 +39,8 @@ export async function saveTerminal(_state: TerminalState, form: FormData): Promi
     return { error: t("dashboard.terminalActions.notConfirmed"), success: "", url: "" };
   }
 }
+
+export async function saveTerminalTourAction(_state: TerminalState, _form: FormData): Promise<TerminalState> {
+  const { t } = await getI18n();
+  return { error: "", success: t("dashboard.actions.tourNoop"), url: "" };
+}

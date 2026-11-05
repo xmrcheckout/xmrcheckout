@@ -13,3 +13,5 @@ export function simulatedInvoice(status: SimulatedStatus, target: number, create
   return { status: effectiveStatus, target, confirmations: effectiveStatus === "confirmed" ? target : effectiveStatus === "payment_detected" ? Math.max(0, target - 1) : 0, timeline };
 }
 export type SimulatedSnapshot = ReturnType<typeof simulatedInvoice>;
+// Fixed example prices of 1 XMR in fiat, used only by demo pages.
+export const demoRates: Record<string, number> = { USD: 200, EUR: 180, GBP: 160 };

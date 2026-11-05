@@ -359,7 +359,13 @@
     "creating": "Tworzenie prośby o płatność…",
     "charge": "Pobierz płatność",
     "conversionNote": "Kwoty w {currency} są przeliczane na XMR po kursie orientacyjnym w chwili utworzenia prośby o płatność.",
-    "forgetConfirm": "Usunąć ten terminal z tego urządzenia? Aby go używać, znów będziesz potrzebować linku terminala."
+    "forgetConfirm": "Usunąć ten terminal z tego urządzenia? Aby go używać, znów będziesz potrzebować linku terminala.",
+    "demoBack": "Wróć do demo",
+    "demoName": "Kasa demo",
+    "demoMetaTitle": "Kasa demo",
+    "demoSimulateSeen": "Symuluj wykrycie płatności",
+    "demoSimulateConfirmed": "Symuluj potwierdzenie",
+    "demoSimulateExpired": "Symuluj wygaśnięcie"
   },
   "error": {
     "eyebrow": "Błąd",
@@ -475,7 +481,8 @@
       "scan": "Zeskanuj, aby zapłacić w Monero"
     },
     "allowanceNoteDetail": "Powtarzane wysłania mogą tworzyć osobne prośby. Dane kupującego nie są zbierane; realizację ustal z klientem na podstawie identyfikatora prośby o płatność. Adresy powrotne nie chronią pobierania plików.",
-    "allowanceNoteMore": "Więcej o wysłaniach i realizacji"
+    "allowanceNoteMore": "Więcej o wysłaniach i realizacji",
+    "demoNote": "Tryb demo: linki płatności są symulowane. Nic nie jest zapisywane, a przykładowe przyciski otwierają symulowaną stronę płatności."
   },
   "diagnostic": {
     "label": "Identyfikator referencyjny:",
@@ -810,7 +817,9 @@
     },
     "lastUsed": "Ostatnio używany: {time}",
     "never": "nigdy",
-    "editOrRotate": "Edytuj ustawienia lub utwórz nowy link"
+    "editOrRotate": "Edytuj ustawienia lub utwórz nowy link",
+    "demoNote": "Tryb demo: terminale są symulowane. Nic nie jest zapisywane i nie jest wydawany żaden link terminala. Wypróbuj kasę, aby zobaczyć, co widzą obsługa i klienci przy ladzie.",
+    "demoTill": "Wypróbuj kasę demo"
   },
   "settings": {
     "requiredConfirmations": "Wymagane potwierdzenia",
@@ -1124,7 +1133,7 @@
   },
   "tour": {
     "metaTitle": "Demo checkoutu Monero | XMR Checkout",
-    "metaDescription": "Poznaj symulowany obszar roboczy XMR Checkout z prośbami o płatność, publicznymi stronami płatności i webhookami.",
+    "metaDescription": "Poznaj symulowany obszar roboczy XMR Checkout z prośbami o płatność, publicznymi stronami płatności, linkami płatności, terminalami i webhookami.",
     "endpointsTab": "Endpointy",
     "historyTab": "Historia dostarczeń",
     "banner": "<strong>Obszar roboczy demo.</strong> Cała aktywność jest symulowana; płatność nie jest wymagana.",
@@ -1136,7 +1145,7 @@
     "environment": "Środowisko demo",
     "eyebrow": "Obszar roboczy demo",
     "title": "Zobacz, jak działa checkout Monero.",
-    "intro": "Przejrzyj przykładowe prośby o płatność, strony płatności dla klientów i powiadomienia dla sklepu. Cała aktywność jest symulowana; nie trzeba łączyć portfela ani płacić.",
+    "intro": "Przejrzyj przykładowe prośby o płatność, strony płatności dla klientów, linki płatności, terminal do sprzedaży na miejscu i powiadomienia dla sklepu. Cała aktywność jest symulowana; nie trzeba łączyć portfela ani płacić.",
     "sections": "Sekcje demo",
     "simulated": "Symulowane",
     "healthHelp": "W tym demo dostępne są symulowane usługi obserwowania płatności.",
@@ -1147,7 +1156,12 @@
       "renewal": "Odnowienie subskrypcji",
       "invoice": "Prośba o płatność nr 8841",
       "abandoned": "Porzucona płatność",
-      "upstream": "Serwer źródłowy zwrócił 500"
+      "upstream": "Serwer źródłowy zwrócił 500",
+      "linkEbook": "E-book: Monero dla sklepów",
+      "linkTip": "Słoik na napiwki",
+      "linkTipButton": "Zostaw napiwek",
+      "terminalCounter": "Główna lada",
+      "terminalMarket": "Stoisko na weekendowym targu"
     }
   },
   "faq": {

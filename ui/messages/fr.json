@@ -353,7 +353,13 @@
     "creating": "Création de la facture…",
     "charge": "Encaisser",
     "conversionNote": "Les montants en {currency} sont convertis en XMR à un cours de référence lors de la création de la facture.",
-    "forgetConfirm": "Supprimer ce terminal de cet appareil ? Vous aurez de nouveau besoin du lien du terminal pour l’utiliser."
+    "forgetConfirm": "Supprimer ce terminal de cet appareil ? Vous aurez de nouveau besoin du lien du terminal pour l’utiliser.",
+    "demoBack": "Retour à la démo",
+    "demoName": "Caisse de démo",
+    "demoMetaTitle": "Caisse de démo",
+    "demoSimulateSeen": "Simuler un paiement détecté",
+    "demoSimulateConfirmed": "Simuler la confirmation",
+    "demoSimulateExpired": "Simuler l’expiration"
   },
   "error": {
     "eyebrow": "Erreur",
@@ -469,7 +475,8 @@
       "scan": "Scannez pour payer en Monero"
     },
     "allowanceNoteDetail": "Des envois répétés peuvent créer des factures distinctes. Aucune donnée de l’acheteur n’est collectée ; organisez la livraison avec votre client à l’aide de l’identifiant de facture. Les URL de retour ne protègent pas les téléchargements.",
-    "allowanceNoteMore": "En savoir plus sur les envois et la livraison"
+    "allowanceNoteMore": "En savoir plus sur les envois et la livraison",
+    "demoNote": "Mode démo : les liens de paiement sont simulés. Rien n’est enregistré et les boutons d’exemple ouvrent un paiement simulé."
   },
   "diagnostic": {
     "label": "Identifiant de référence :",
@@ -796,7 +803,9 @@
     },
     "lastUsed": "Dernière utilisation : {time}",
     "never": "jamais",
-    "editOrRotate": "Modifier les paramètres ou créer un nouveau lien"
+    "editOrRotate": "Modifier les paramètres ou créer un nouveau lien",
+    "demoNote": "Mode démo : les terminaux sont simulés. Rien n’est enregistré et aucun lien de terminal n’est émis. Essayez la caisse pour voir ce que voient le personnel et les clients au comptoir.",
+    "demoTill": "Essayer la caisse de démo"
   },
   "settings": {
     "requiredConfirmations": "Confirmations requises",
@@ -1106,7 +1115,7 @@
   },
   "tour": {
     "metaTitle": "Démo de paiement Monero | XMR Checkout",
-    "metaDescription": "Explorez un espace de travail XMR Checkout simulé avec des factures, des pages de paiement publiques et des webhooks.",
+    "metaDescription": "Explorez un espace de travail XMR Checkout simulé avec des factures, des pages de paiement publiques, des liens de paiement, des terminaux et des webhooks.",
     "endpointsTab": "Points de terminaison",
     "historyTab": "Historique des envois",
     "banner": "<strong>Espace de démonstration.</strong> Toute l’activité est simulée ; aucun paiement n’est demandé.",
@@ -1118,7 +1127,7 @@
     "environment": "Environnement de démonstration",
     "eyebrow": "Espace de démonstration",
     "title": "Découvrez le fonctionnement du paiement Monero.",
-    "intro": "Explorez des exemples de factures, de pages de paiement client et de notifications de boutique. Toute l’activité est simulée ; aucune connexion de portefeuille ni aucun paiement n’est nécessaire.",
+    "intro": "Explorez des exemples de factures, de pages de paiement client, de liens de paiement, un terminal pour la vente en personne et des notifications de boutique. Toute l’activité est simulée ; aucune connexion de portefeuille ni aucun paiement n’est nécessaire.",
     "sections": "Sections de la démo",
     "simulated": "Simulé",
     "healthHelp": "Des services simulés d’observation des paiements sont disponibles pour cette démo.",
@@ -1129,7 +1138,12 @@
       "renewal": "Renouvellement d’abonnement",
       "invoice": "Facture n° 8841",
       "abandoned": "Paiement abandonné",
-      "upstream": "Le serveur amont a renvoyé une erreur 500"
+      "upstream": "Le serveur amont a renvoyé une erreur 500",
+      "linkEbook": "Livre numérique : Monero pour les boutiques",
+      "linkTip": "Pourboires",
+      "linkTipButton": "Laisser un pourboire",
+      "terminalCounter": "Comptoir principal",
+      "terminalMarket": "Stand du marché du week-end"
     }
   },
   "faq": {

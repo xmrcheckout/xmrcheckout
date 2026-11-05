@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useId, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import QRCode from "qrcode";
-import { saveTerminal, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
+import { saveTerminal, saveTerminalTourAction, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
 import ConfirmSubmitButton from "./confirm-submit-button";
 import CopyCodeBlock from "./copy-code-block";
 import { useI18n } from "./i18n-provider";
@@ -33,10 +33,11 @@ function NewLink({ url }: { url: string }) {
   </div>;
 }
 
-export default function TerminalEditor({ terminal, currencies }: { terminal?: TerminalData; currencies: string[] }) {
+export default function TerminalEditor({ terminal, currencies, mode = "live" }: { terminal?: TerminalData; currencies: string[]; mode?: "live" | "tour" }) {
+  const save = mode === "tour" ? saveTerminalTourAction : saveTerminal;
   const { t } = useI18n();
-  const [state, action] = useFormState<TerminalState, FormData>(saveTerminal, { error: "", success: "", url: "" });
-  const [rotated, rotate] = useFormState<TerminalState, FormData>(saveTerminal, { error: "", success: "", url: "" });
+  const [state, action] = useFormState<TerminalState, FormData>(save, { error: "", success: "", url: "" });
+  const [rotated, rotate] = useFormState<TerminalState, FormData>(save, { error: "", success: "", url: "" });
   const prefix = useId();
   return <div className="grid min-w-0 gap-6"><form action={action} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={terminal?.id ?? ""} />

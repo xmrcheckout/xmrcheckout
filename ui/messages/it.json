@@ -353,7 +353,13 @@
     "creating": "Creazione della richiesta di pagamento…",
     "charge": "Incassa",
     "conversionNote": "Gli importi in {currency} vengono convertiti in XMR a un tasso di riferimento quando viene creata la richiesta di pagamento.",
-    "forgetConfirm": "Rimuovere questo terminale da questo dispositivo? Per usarlo di nuovo ti servirà ancora il link del terminale."
+    "forgetConfirm": "Rimuovere questo terminale da questo dispositivo? Per usarlo di nuovo ti servirà ancora il link del terminale.",
+    "demoBack": "Torna alla demo",
+    "demoName": "Cassa demo",
+    "demoMetaTitle": "Cassa demo",
+    "demoSimulateSeen": "Simula pagamento rilevato",
+    "demoSimulateConfirmed": "Simula conferma",
+    "demoSimulateExpired": "Simula scadenza"
   },
   "error": {
     "eyebrow": "Errore",
@@ -469,7 +475,8 @@
       "scan": "Scansiona per pagare con Monero"
     },
     "allowanceNoteDetail": "Invii ripetuti possono creare richieste di pagamento separate. Non vengono raccolti dati dell'acquirente; organizza l'evasione con il tuo cliente usando l'ID della richiesta di pagamento. Gli URL di ritorno non proteggono i download.",
-    "allowanceNoteMore": "Altro su invii ed evasione"
+    "allowanceNoteMore": "Altro su invii ed evasione",
+    "demoNote": "Modalità demo: i link di pagamento sono simulati. Non viene salvato nulla e i pulsanti di esempio aprono un pagamento simulato."
   },
   "diagnostic": {
     "label": "ID di riferimento:",
@@ -796,7 +803,9 @@
     },
     "lastUsed": "Ultimo utilizzo: {time}",
     "never": "mai",
-    "editOrRotate": "Modifica le impostazioni o crea un nuovo link"
+    "editOrRotate": "Modifica le impostazioni o crea un nuovo link",
+    "demoNote": "Modalità demo: i terminali sono simulati. Non viene salvato nulla e non viene emesso alcun link del terminale. Prova la cassa per vedere cosa vedono il personale e i clienti al banco.",
+    "demoTill": "Prova la cassa demo"
   },
   "settings": {
     "requiredConfirmations": "Conferme richieste",
@@ -1106,7 +1115,7 @@
   },
   "tour": {
     "metaTitle": "Demo del checkout Monero | XMR Checkout",
-    "metaDescription": "Esplora un'area di lavoro simulata di XMR Checkout con richieste di pagamento, pagine di pagamento pubbliche e webhook.",
+    "metaDescription": "Esplora un'area di lavoro simulata di XMR Checkout con richieste di pagamento, pagine di pagamento pubbliche, link di pagamento, terminali e webhook.",
     "endpointsTab": "Endpoint",
     "historyTab": "Cronologia delle consegne",
     "banner": "<strong>Area di lavoro demo.</strong> Tutta l'attività è simulata; non viene richiesto alcun pagamento.",
@@ -1118,7 +1127,7 @@
     "environment": "Ambiente demo",
     "eyebrow": "Area di lavoro demo",
     "title": "Scopri come funziona il checkout Monero.",
-    "intro": "Esplora richieste di pagamento di esempio, pagine di pagamento per i clienti e notifiche al negozio. Tutta l'attività è simulata; non servono né il collegamento di un portafoglio né pagamenti.",
+    "intro": "Esplora richieste di pagamento di esempio, pagine di pagamento per i clienti, link di pagamento, un terminale per la vendita di persona e notifiche al negozio. Tutta l'attività è simulata; non servono né il collegamento di un portafoglio né pagamenti.",
     "sections": "Sezioni della demo",
     "simulated": "Simulato",
     "healthHelp": "In questa demo sono disponibili servizi simulati di osservazione dei pagamenti.",
@@ -1129,7 +1138,12 @@
       "renewal": "Rinnovo dell'abbonamento",
       "invoice": "Richiesta di pagamento n. 8841",
       "abandoned": "Pagamento abbandonato",
-      "upstream": "Il server a monte ha restituito 500"
+      "upstream": "Il server a monte ha restituito 500",
+      "linkEbook": "E-book: Monero per i negozi",
+      "linkTip": "Mance",
+      "linkTipButton": "Lascia una mancia",
+      "terminalCounter": "Banco principale",
+      "terminalMarket": "Bancarella del mercato del weekend"
     }
   },
   "faq": {

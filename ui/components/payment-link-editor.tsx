@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { savePaymentLink, type PaymentLinkState } from "../app/(app)/dashboard/payment-link-actions";
+import { savePaymentLink, savePaymentLinkTourAction, type PaymentLinkState } from "../app/(app)/dashboard/payment-link-actions";
 import { rich } from "../lib/i18n/rich";
 import { useI18n } from "./i18n-provider";
 
@@ -18,7 +18,7 @@ function Buttons({ canDisable }: { canDisable: boolean }) {
   const { pending } = useFormStatus();
   return <div className="flex flex-wrap gap-3"><button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? t("common.saving") : t("paymentLinks.editor.save")}</button>{canDisable ? <button disabled={pending} formNoValidate name="mode" value="disable" className="min-h-11 rounded-full border border-stroke px-5 py-2">{t("paymentLinks.editor.disable")}</button> : null}</div>;
 }
-export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null }) {
+export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies, mode = "live" }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null; mode?: "live" | "tour" }) {
   const { t } = useI18n();
   const empty = { button_text: t("paymentLinks.editor.defaultButton"), title: "", description: "", amount: "", currency: "XMR", confirmation_target: String(defaultTarget), checkout_continue_url: "", confirmation_message: "", minimum_amount_xmr: "" };
   const [values, setValues] = useState(link ? { button_text: link.button_text, title: link.title, description: link.description, amount: link.amount_xmr ?? link.amount_fiat ?? "", currency: link.currency ?? "XMR", confirmation_target: String(link.confirmation_target), checkout_continue_url: link.checkout_continue_url ?? "", confirmation_message: link.confirmation_message ?? "", minimum_amount_xmr: link.minimum_amount_xmr ?? "" } : empty);
@@ -26,7 +26,7 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies 
   const [automatic, setAutomatic] = useState(link?.auto_create_invoice ?? false);
   const [enabled, setEnabled] = useState(link?.enabled ?? true);
   const [state, action] = useFormState<PaymentLinkState, FormData>(async (previous, data) => {
-    const result = await savePaymentLink(previous, data);
+    const result = await (mode === "tour" ? savePaymentLinkTourAction : savePaymentLink)(previous, data);
     if (result.success && !link) { setValues(empty); setEnabled(true); setAutomatic(false); setCustomerAmount(false); }
     if (result.disabled) setEnabled(false);
     return result;

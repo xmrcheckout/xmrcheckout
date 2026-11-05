@@ -350,7 +350,13 @@
     "creating": "正在创建账单…",
     "charge": "收款",
     "conversionNote": "{currency} 金额会在创建账单时按参考汇率换算为 XMR。",
-    "forgetConfirm": "要从此设备中移除此终端吗？之后需要再次使用终端链接才能使用它。"
+    "forgetConfirm": "要从此设备中移除此终端吗？之后需要再次使用终端链接才能使用它。",
+    "demoBack": "返回演示",
+    "demoName": "演示收银台",
+    "demoMetaTitle": "演示收银台",
+    "demoSimulateSeen": "模拟检测到付款",
+    "demoSimulateConfirmed": "模拟确认",
+    "demoSimulateExpired": "模拟过期"
   },
   "error": {
     "eyebrow": "错误",
@@ -466,7 +472,8 @@
       "scan": "扫码用门罗币付款"
     },
     "allowanceNoteDetail": "重复提交可能会创建多张单独的账单。系统不收集买家信息；请凭账单 ID 与顾客商定交付事宜。返回 URL 无法保护下载内容。",
-    "allowanceNoteMore": "关于提交与交付的更多说明"
+    "allowanceNoteMore": "关于提交与交付的更多说明",
+    "demoNote": "演示模式：付款链接均为模拟。不会保存任何内容，示例按钮会打开模拟的结账页面。"
   },
   "diagnostic": {
     "label": "参考 ID：",
@@ -789,7 +796,9 @@
     },
     "lastUsed": "上次使用：{time}",
     "never": "从未",
-    "editOrRotate": "编辑设置或创建新链接"
+    "editOrRotate": "编辑设置或创建新链接",
+    "demoNote": "演示模式：收款终端均为模拟。不会保存任何内容，也不会生成终端链接。试用收银台，看看店员和顾客在柜台前看到的内容。",
+    "demoTill": "试用演示收银台"
   },
   "settings": {
     "requiredConfirmations": "所需确认数",
@@ -1097,7 +1106,7 @@
   },
   "tour": {
     "metaTitle": "门罗币结账演示 | XMR Checkout",
-    "metaDescription": "体验模拟的 XMR Checkout 工作区，包括账单、公开付款页面和 Webhook。",
+    "metaDescription": "体验模拟的 XMR Checkout 工作区，包括账单、公开付款页面、付款链接、收款终端和 Webhook。",
     "endpointsTab": "端点",
     "historyTab": "投递历史",
     "banner": "<strong>演示工作区。</strong>所有活动均为模拟；不会请求任何付款。",
@@ -1109,7 +1118,7 @@
     "environment": "演示环境",
     "eyebrow": "演示工作区",
     "title": "了解门罗币结账的工作方式。",
-    "intro": "浏览示例账单、顾客结账页面和商店通知。所有活动均为模拟；无需连接钱包，也无需付款。",
+    "intro": "浏览示例账单、顾客结账页面、付款链接、线下收款终端和商店通知。所有活动均为模拟；无需连接钱包，也无需付款。",
     "sections": "演示栏目",
     "simulated": "模拟",
     "healthHelp": "此演示提供模拟的付款观测服务。",
@@ -1120,7 +1129,12 @@
       "renewal": "订阅续费",
       "invoice": "账单 #8841",
       "abandoned": "已放弃的结账",
-      "upstream": "上游返回 500"
+      "upstream": "上游返回 500",
+      "linkEbook": "电子书：商店的 Monero 指南",
+      "linkTip": "小费罐",
+      "linkTipButton": "留下小费",
+      "terminalCounter": "前台柜台",
+      "terminalMarket": "周末市集摊位"
     }
   },
   "faq": {

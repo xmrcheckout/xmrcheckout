@@ -359,7 +359,13 @@
     "creating": "Vytváří se platební výzva…",
     "charge": "Účtovat",
     "conversionNote": "Částky v {currency} se při vytvoření platební výzvy převedou na XMR orientačním kurzem.",
-    "forgetConfirm": "Odebrat tento terminál z tohoto zařízení? Pro další použití budete znovu potřebovat odkaz na terminál."
+    "forgetConfirm": "Odebrat tento terminál z tohoto zařízení? Pro další použití budete znovu potřebovat odkaz na terminál.",
+    "demoBack": "Zpět na demo",
+    "demoName": "Ukázková pokladna",
+    "demoMetaTitle": "Ukázková pokladna",
+    "demoSimulateSeen": "Simulovat zjištěnou platbu",
+    "demoSimulateConfirmed": "Simulovat potvrzení",
+    "demoSimulateExpired": "Simulovat vypršení"
   },
   "error": {
     "eyebrow": "Chyba",
@@ -475,7 +481,8 @@
       "scan": "Naskenujte a zaplaťte v Monero"
     },
     "allowanceNoteDetail": "Opakovaná odeslání mohou vytvořit samostatné platební výzvy. Neshromažďují se žádné údaje o kupujícím; vyřízení domluvte se zákazníkem pomocí ID platební výzvy. Návratové URL nechrání stahování.",
-    "allowanceNoteMore": "Více o odesláních a vyřízení"
+    "allowanceNoteMore": "Více o odesláních a vyřízení",
+    "demoNote": "Režim dema: platební odkazy jsou simulované. Nic se neukládá a ukázková tlačítka otevřou simulovanou platební stránku."
   },
   "diagnostic": {
     "label": "Referenční ID:",
@@ -810,7 +817,9 @@
     },
     "lastUsed": "Naposledy použito: {time}",
     "never": "nikdy",
-    "editOrRotate": "Upravit nastavení nebo vytvořit nový odkaz"
+    "editOrRotate": "Upravit nastavení nebo vytvořit nový odkaz",
+    "demoNote": "Režim dema: terminály jsou simulované. Nic se neukládá a nevydává se žádný odkaz na terminál. Vyzkoušejte pokladnu a podívejte se, co vidí obsluha a zákazníci u pultu.",
+    "demoTill": "Vyzkoušet ukázkovou pokladnu"
   },
   "settings": {
     "requiredConfirmations": "Požadovaná potvrzení",
@@ -1124,7 +1133,7 @@
   },
   "tour": {
     "metaTitle": "Demo plateb v Monero | XMR Checkout",
-    "metaDescription": "Prozkoumejte simulovaný pracovní prostor XMR Checkout s platebními výzvami, veřejnými platebními stránkami a webhooky.",
+    "metaDescription": "Prozkoumejte simulovaný pracovní prostor XMR Checkout s platebními výzvami, veřejnými platebními stránkami, platebními odkazy, terminály a webhooky.",
     "endpointsTab": "Endpointy",
     "historyTab": "Historie doručení",
     "banner": "<strong>Ukázkový pracovní prostor.</strong> Veškerá aktivita je simulovaná; žádná platba není požadována.",
@@ -1136,7 +1145,7 @@
     "environment": "Ukázkové prostředí",
     "eyebrow": "Ukázkový pracovní prostor",
     "title": "Podívejte se, jak fungují platby v Monero.",
-    "intro": "Prozkoumejte ukázkové platební výzvy, platební stránky pro zákazníky a oznámení pro obchod. Veškerá aktivita je simulovaná; není potřeba připojovat peněženku ani platit.",
+    "intro": "Prozkoumejte ukázkové platební výzvy, platební stránky pro zákazníky, platební odkazy, terminál pro prodej na místě a oznámení pro obchod. Veškerá aktivita je simulovaná; není potřeba připojovat peněženku ani platit.",
     "sections": "Sekce dema",
     "simulated": "Simulováno",
     "healthHelp": "Pro toto demo jsou k dispozici simulované služby sledování plateb.",
@@ -1147,7 +1156,12 @@
       "renewal": "Obnovení předplatného",
       "invoice": "Platební výzva č. 8841",
       "abandoned": "Opuštěná platba",
-      "upstream": "Upstream vrátil 500"
+      "upstream": "Upstream vrátil 500",
+      "linkEbook": "E-kniha: Monero pro obchody",
+      "linkTip": "Spropitné",
+      "linkTipButton": "Nechat spropitné",
+      "terminalCounter": "Hlavní pult",
+      "terminalMarket": "Stánek na víkendovém trhu"
     }
   },
   "faq": {

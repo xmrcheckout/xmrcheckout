@@ -353,7 +353,13 @@
     "creating": "Criando fatura…",
     "charge": "Cobrar",
     "conversionNote": "Valores em {currency} são convertidos para XMR a uma cotação de referência quando a fatura é criada.",
-    "forgetConfirm": "Remover este terminal deste dispositivo? Você precisará do link do terminal novamente para usá-lo."
+    "forgetConfirm": "Remover este terminal deste dispositivo? Você precisará do link do terminal novamente para usá-lo.",
+    "demoBack": "Voltar à demonstração",
+    "demoName": "Caixa de demonstração",
+    "demoMetaTitle": "Caixa de demonstração",
+    "demoSimulateSeen": "Simular pagamento detectado",
+    "demoSimulateConfirmed": "Simular confirmação",
+    "demoSimulateExpired": "Simular expiração"
   },
   "error": {
     "eyebrow": "Erro",
@@ -469,7 +475,8 @@
       "scan": "Escaneie para pagar com Monero"
     },
     "allowanceNoteDetail": "Envios repetidos podem criar faturas separadas. Nenhum dado do comprador é coletado; combine a entrega com o seu cliente usando o ID da fatura. URLs de retorno não protegem downloads.",
-    "allowanceNoteMore": "Mais sobre envios e entrega"
+    "allowanceNoteMore": "Mais sobre envios e entrega",
+    "demoNote": "Modo de demonstração: os links de pagamento são simulados. Nada é salvo, e os botões de exemplo abrem um pagamento simulado."
   },
   "diagnostic": {
     "label": "ID de referência:",
@@ -796,7 +803,9 @@
     },
     "lastUsed": "Último uso: {time}",
     "never": "nunca",
-    "editOrRotate": "Editar configurações ou criar um novo link"
+    "editOrRotate": "Editar configurações ou criar um novo link",
+    "demoNote": "Modo de demonstração: os terminais são simulados. Nada é salvo e nenhum link de terminal é emitido. Experimente o caixa para ver o que a equipe e os clientes veem no balcão.",
+    "demoTill": "Experimentar o caixa de demonstração"
   },
   "settings": {
     "requiredConfirmations": "Confirmações exigidas",
@@ -1106,7 +1115,7 @@
   },
   "tour": {
     "metaTitle": "Demonstração do checkout Monero | XMR Checkout",
-    "metaDescription": "Explore uma área de trabalho simulada do XMR Checkout com faturas, páginas públicas de pagamento e webhooks.",
+    "metaDescription": "Explore uma área de trabalho simulada do XMR Checkout com faturas, páginas públicas de pagamento, links de pagamento, terminais e webhooks.",
     "endpointsTab": "Endpoints",
     "historyTab": "Histórico de entregas",
     "banner": "<strong>Área de trabalho de demonstração.</strong> Toda a atividade é simulada; nenhum pagamento é solicitado.",
@@ -1118,7 +1127,7 @@
     "environment": "Ambiente de demonstração",
     "eyebrow": "Área de trabalho de demonstração",
     "title": "Veja como funciona o checkout Monero.",
-    "intro": "Explore faturas de exemplo, páginas de pagamento para clientes e notificações da loja. Toda a atividade é simulada; não é necessário conectar uma carteira nem fazer pagamentos.",
+    "intro": "Explore faturas de exemplo, páginas de pagamento para clientes, links de pagamento, um terminal presencial e notificações da loja. Toda a atividade é simulada; não é necessário conectar uma carteira nem fazer pagamentos.",
     "sections": "Seções da demonstração",
     "simulated": "Simulado",
     "healthHelp": "Serviços simulados de observação de pagamentos estão disponíveis nesta demonstração.",
@@ -1129,7 +1138,12 @@
       "renewal": "Renovação de assinatura",
       "invoice": "Fatura nº 8841",
       "abandoned": "Pagamento abandonado",
-      "upstream": "O servidor de origem retornou 500"
+      "upstream": "O servidor de origem retornou 500",
+      "linkEbook": "E-book: Monero para lojas",
+      "linkTip": "Caixinha de gorjetas",
+      "linkTipButton": "Deixar uma gorjeta",
+      "terminalCounter": "Balcão principal",
+      "terminalMarket": "Barraca da feira de fim de semana"
     }
   },
   "faq": {

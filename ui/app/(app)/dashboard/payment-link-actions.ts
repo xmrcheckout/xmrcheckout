@@ -46,3 +46,8 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
     return { error: t("dashboard.paymentLinkActions.notConfirmed"), success: "", fieldErrors };
   }
 }
+
+export async function savePaymentLinkTourAction(_state: PaymentLinkState, _form: FormData): Promise<PaymentLinkState> {
+  const { t } = await getI18n();
+  return { error: "", success: t("dashboard.actions.tourNoop"), fieldErrors: {} };
+}

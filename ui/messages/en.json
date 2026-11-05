@@ -353,7 +353,13 @@
     "creating": "Creating invoice…",
     "charge": "Charge",
     "conversionNote": "{currency} amounts are converted to XMR at a reference rate when the invoice is created.",
-    "forgetConfirm": "Remove this terminal from this device? You will need the terminal link again to use it."
+    "forgetConfirm": "Remove this terminal from this device? You will need the terminal link again to use it.",
+    "demoBack": "Back to the demo",
+    "demoName": "Demo till",
+    "demoMetaTitle": "Demo till",
+    "demoSimulateSeen": "Simulate payment seen",
+    "demoSimulateConfirmed": "Simulate confirmation",
+    "demoSimulateExpired": "Simulate expiry"
   },
   "error": {
     "eyebrow": "Error",
@@ -469,7 +475,8 @@
       "scan": "Scan to pay with Monero"
     },
     "allowanceNoteDetail": "Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.",
-    "allowanceNoteMore": "More on submissions and fulfillment"
+    "allowanceNoteMore": "More on submissions and fulfillment",
+    "demoNote": "Demo mode: payment links are simulated. Nothing is saved, and the sample buttons open a simulated checkout."
   },
   "diagnostic": {
     "label": "Reference ID:",
@@ -796,7 +803,9 @@
     },
     "lastUsed": "Last used: {time}",
     "never": "never",
-    "editOrRotate": "Edit settings or create a new link"
+    "editOrRotate": "Edit settings or create a new link",
+    "demoNote": "Demo mode: terminals are simulated. Nothing is saved and no terminal link is issued. Try the till to see what staff and customers see at the counter.",
+    "demoTill": "Try the demo till"
   },
   "settings": {
     "requiredConfirmations": "Required confirmations",
@@ -1106,7 +1115,7 @@
   },
   "tour": {
     "metaTitle": "Monero Checkout Demo | XMR Checkout",
-    "metaDescription": "Explore a simulated XMR Checkout workspace for invoices, public payment pages, and webhooks.",
+    "metaDescription": "Explore a simulated XMR Checkout workspace for invoices, public payment pages, payment links, terminals, and webhooks.",
     "endpointsTab": "Endpoints",
     "historyTab": "Delivery history",
     "banner": "<strong>Demo workspace.</strong> All activity is simulated; no payment is requested.",
@@ -1118,7 +1127,7 @@
     "environment": "Demo environment",
     "eyebrow": "Demo workspace",
     "title": "See how Monero checkout works.",
-    "intro": "Explore sample invoices, customer checkout pages, and store notifications. All activity is simulated; no wallet connection or payment is required.",
+    "intro": "Explore sample invoices, customer checkout pages, payment links, an in-person terminal, and store notifications. All activity is simulated; no wallet connection or payment is required.",
     "sections": "Demo sections",
     "simulated": "Simulated",
     "healthHelp": "Simulated payment observation services are available for this demo.",
@@ -1129,7 +1138,12 @@
       "renewal": "Subscription renewal",
       "invoice": "Invoice #8841",
       "abandoned": "Abandoned checkout",
-      "upstream": "Upstream returned 500"
+      "upstream": "Upstream returned 500",
+      "linkEbook": "E-book: Monero for shops",
+      "linkTip": "Tip jar",
+      "linkTipButton": "Leave a tip",
+      "terminalCounter": "Front counter",
+      "terminalMarket": "Weekend market stall"
     }
   },
   "faq": {

@@ -3,6 +3,10 @@ import { invoiceContext } from "../../../lib/invoice-display";
 import Link from "next/link";
 
 import InvoicePanel from "../../../components/invoice-panel";
+import type { PaymentLinkData } from "../../../components/payment-link-editor";
+import { PaymentLinksView } from "../../../components/payment-links";
+import type { TerminalData } from "../../../components/terminal-editor";
+import { TerminalsView } from "../../../components/terminals";
 import PageIntroBand from "../../../components/page-intro-band";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import TourInvoicePreview from "../../../components/tour-invoice-preview";
@@ -30,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const tabs = ["overview", "invoices", "invoice", "webhooks"] as const;
+const tabs = ["overview", "invoices", "invoice", "payment-links", "terminals", "webhooks"] as const;
 const webhookTabs = ["settings", "history"] as const;
 const invoiceStatuses = [
   "pending",
@@ -62,8 +66,18 @@ const tabDetails = (t: Translate): Record<
     label: t("demo.invoice.view"),
     detail: t("tour.navInvoiceDetail"),
   },
-  webhooks: {
+  "payment-links": {
     index: "04",
+    label: t("dashboard.page.navPaymentLinks"),
+    detail: t("dashboard.page.navPaymentLinksDetail"),
+  },
+  terminals: {
+    index: "05",
+    label: t("dashboard.page.navTerminals"),
+    detail: t("dashboard.page.navTerminalsDetail"),
+  },
+  webhooks: {
+    index: "06",
     label: t("dashboard.page.navWebhooks"),
     detail: t("tour.navWebhooksDetail"),
   },
@@ -240,11 +254,85 @@ const buildNowFixture = (t: Translate) => {
     },
   ];
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost";
+  const demoLinkUrl = (id: string) => new URL(`/pay/${id}`, siteUrl).href;
+  const paymentLinks: PaymentLinkData[] = [
+    {
+      id: "demo_link_ebook",
+      title: t("tour.fixture.linkEbook"),
+      description: "",
+      button_text: t("paymentLinks.editor.defaultButton"),
+      amount_xmr: "0.05",
+      amount_fiat: null,
+      currency: "XMR",
+      confirmation_target: 1,
+      auto_create_invoice: true,
+      checkout_continue_url: "https://example.com/thanks",
+      confirmation_message: null,
+      enabled: true,
+      url: demoLinkUrl("demo_link_ebook"),
+      action_url: demoLinkUrl("demo_link_ebook"),
+      customer_amount: false,
+      minimum_amount_xmr: null,
+    },
+    {
+      id: "demo_link_tip",
+      title: t("tour.fixture.linkTip"),
+      description: "",
+      button_text: t("tour.fixture.linkTipButton"),
+      amount_xmr: null,
+      amount_fiat: null,
+      currency: null,
+      confirmation_target: 0,
+      auto_create_invoice: false,
+      checkout_continue_url: null,
+      confirmation_message: null,
+      enabled: true,
+      url: demoLinkUrl("demo_link_tip"),
+      action_url: demoLinkUrl("demo_link_tip"),
+      customer_amount: true,
+      minimum_amount_xmr: "0.001",
+    },
+  ];
+  const paymentLinkUsage = {
+    remaining: 47,
+    used: 3,
+    daily_limit: 50,
+    window_hours: 24,
+    retrieved_at: iso(-60 * 1000),
+    supported_currencies: ["USD", "EUR", "GBP"],
+  };
+  const terminals: TerminalData[] = [
+    {
+      id: "demo_terminal_counter",
+      name: t("tour.fixture.terminalCounter"),
+      default_currency: "EUR",
+      confirmation_target: 0,
+      expiry_minutes: 15,
+      enabled: true,
+      created_at: iso(-12 * 24 * 60 * 60 * 1000),
+      last_used_at: iso(-42 * 60 * 1000),
+    },
+    {
+      id: "demo_terminal_market",
+      name: t("tour.fixture.terminalMarket"),
+      default_currency: "XMR",
+      confirmation_target: 1,
+      expiry_minutes: 20,
+      enabled: false,
+      created_at: iso(-30 * 24 * 60 * 60 * 1000),
+      last_used_at: null,
+    },
+  ];
+
   return {
     defaultConfirmationTarget: 2,
     invoices,
     webhooks,
     deliveries,
+    paymentLinks,
+    paymentLinkUsage,
+    terminals,
   };
 };
 
@@ -654,6 +742,25 @@ export default async function TourPage({
 
           {activeTab === "invoice" ? (
             <TourInvoicePreview invoice={exampleInvoice} />
+          ) : null}
+
+          {activeTab === "payment-links" ? (
+            <PaymentLinksView
+              mode="tour"
+              links={fixture.paymentLinks}
+              usage={fixture.paymentLinkUsage}
+              addressStatus={null}
+              target={fixture.defaultConfirmationTarget}
+            />
+          ) : null}
+
+          {activeTab === "terminals" ? (
+            <TerminalsView
+              mode="tour"
+              terminals={fixture.terminals}
+              currencies={fixture.paymentLinkUsage.supported_currencies}
+              addressStatus={null}
+            />
           ) : null}
 
           {activeTab === "webhooks" ? (

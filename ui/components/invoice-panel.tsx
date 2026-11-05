@@ -30,6 +30,7 @@ import {
 import AccessibleDialog from "./accessible-dialog";
 import InvoiceTransactionsDialog from "./invoice-transactions-dialog";
 import StatusBadge, { type StatusTone } from "./status-badge";
+import { demoRates } from "../lib/simulated-invoice";
 
 import {
   createInvoiceAction,
@@ -183,7 +184,6 @@ function CreateInvoiceModal({
     status: liveFiatRateStatus,
     source: fiatRateSource,
   } = useXmrFiatRate(mode !== "tour" && amountMode === "fiat" ? fiatCurrency : null);
-  const demoRates: Record<string, number> = { USD: 200, EUR: 180, GBP: 160 };
   const fiatRate = mode === "tour" ? demoRates[fiatCurrency] ?? null : liveFiatRate;
   const fiatRateStatus = mode === "tour" ? (fiatRate ? "ready" : "error") : liveFiatRateStatus;
 

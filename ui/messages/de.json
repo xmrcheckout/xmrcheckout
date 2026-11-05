@@ -353,7 +353,13 @@
     "creating": "Rechnung wird erstellt…",
     "charge": "Kassieren",
     "conversionNote": "{currency}-Beträge werden bei Erstellung der Rechnung zu einem Richtkurs in XMR umgerechnet.",
-    "forgetConfirm": "Dieses Terminal von diesem Gerät entfernen? Sie benötigen den Terminal-Link erneut, um es zu verwenden."
+    "forgetConfirm": "Dieses Terminal von diesem Gerät entfernen? Sie benötigen den Terminal-Link erneut, um es zu verwenden.",
+    "demoBack": "Zurück zur Demo",
+    "demoName": "Demo-Kasse",
+    "demoMetaTitle": "Demo-Kasse",
+    "demoSimulateSeen": "Erkannte Zahlung simulieren",
+    "demoSimulateConfirmed": "Bestätigung simulieren",
+    "demoSimulateExpired": "Ablauf simulieren"
   },
   "error": {
     "eyebrow": "Fehler",
@@ -469,7 +475,8 @@
       "scan": "Scannen, um mit Monero zu bezahlen"
     },
     "allowanceNoteDetail": "Wiederholte Übermittlungen können separate Rechnungen erstellen. Es werden keine Käuferdaten erfasst; vereinbaren Sie die Abwicklung der Bestellung mit Ihrem Kunden anhand der Rechnungs-ID. Rücksprung-URLs schützen keine Downloads.",
-    "allowanceNoteMore": "Mehr zu Übermittlungen und Abwicklung"
+    "allowanceNoteMore": "Mehr zu Übermittlungen und Abwicklung",
+    "demoNote": "Demo-Modus: Zahlungslinks werden simuliert. Es wird nichts gespeichert, und die Beispiel-Buttons öffnen einen simulierten Checkout."
   },
   "diagnostic": {
     "label": "Referenz-ID:",
@@ -796,7 +803,9 @@
     },
     "lastUsed": "Zuletzt verwendet: {time}",
     "never": "nie",
-    "editOrRotate": "Einstellungen bearbeiten oder neuen Link erstellen"
+    "editOrRotate": "Einstellungen bearbeiten oder neuen Link erstellen",
+    "demoNote": "Demo-Modus: Terminals werden simuliert. Es wird nichts gespeichert und kein Terminal-Link ausgegeben. Probieren Sie die Kasse aus, um zu sehen, was Personal und Kunden an der Theke sehen.",
+    "demoTill": "Demo-Kasse ausprobieren"
   },
   "settings": {
     "requiredConfirmations": "Erforderliche Bestätigungen",
@@ -1106,7 +1115,7 @@
   },
   "tour": {
     "metaTitle": "Monero-Checkout-Demo | XMR Checkout",
-    "metaDescription": "Erkunden Sie einen simulierten XMR-Checkout-Arbeitsbereich mit Rechnungen, öffentlichen Zahlungsseiten und Webhooks.",
+    "metaDescription": "Erkunden Sie einen simulierten XMR-Checkout-Arbeitsbereich mit Rechnungen, öffentlichen Zahlungsseiten, Zahlungslinks, Terminals und Webhooks.",
     "endpointsTab": "Endpunkte",
     "historyTab": "Zustellverlauf",
     "banner": "<strong>Demo-Arbeitsbereich.</strong> Alle Aktivitäten sind simuliert; es wird keine Zahlung angefordert.",
@@ -1118,7 +1127,7 @@
     "environment": "Demo-Umgebung",
     "eyebrow": "Demo-Arbeitsbereich",
     "title": "So funktioniert der Monero-Checkout.",
-    "intro": "Sehen Sie sich Beispielrechnungen, Checkout-Seiten für Kunden und Shop-Benachrichtigungen an. Alle Aktivitäten sind simuliert; es ist weder eine Wallet-Verbindung noch eine Zahlung erforderlich.",
+    "intro": "Sehen Sie sich Beispielrechnungen, Checkout-Seiten für Kunden, Zahlungslinks, ein Terminal für den Verkauf vor Ort und Shop-Benachrichtigungen an. Alle Aktivitäten sind simuliert; es ist weder eine Wallet-Verbindung noch eine Zahlung erforderlich.",
     "sections": "Demo-Bereiche",
     "simulated": "Simuliert",
     "healthHelp": "Für diese Demo stehen simulierte Dienste zur Zahlungsbeobachtung bereit.",
@@ -1129,7 +1138,12 @@
       "renewal": "Abo-Verlängerung",
       "invoice": "Rechnung #8841",
       "abandoned": "Abgebrochener Checkout",
-      "upstream": "Upstream lieferte 500"
+      "upstream": "Upstream lieferte 500",
+      "linkEbook": "E-Book: Monero für Shops",
+      "linkTip": "Trinkgeldkasse",
+      "linkTipButton": "Trinkgeld geben",
+      "terminalCounter": "Vordere Theke",
+      "terminalMarket": "Stand auf dem Wochenendmarkt"
     }
   },
   "faq": {

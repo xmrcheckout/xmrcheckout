@@ -8,6 +8,6 @@ const TerminalScreen = dynamic(() => import("./terminal-screen"), {
   loading: () => <main className="min-h-dvh bg-cream" />,
 });
 
-export default function TerminalClient() {
-  return <TerminalScreen />;
+export default function TerminalClient({ demo = false }: { demo?: boolean }) {
+  return <TerminalScreen demo={demo} />;
 }

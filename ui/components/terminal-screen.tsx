@@ -5,7 +5,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { formatFiatAmount, formatXmrAmount } from "../lib/formatting";
 import { useI18n } from "./i18n-provider";
+import Link from "next/link";
 import LanguageSwitcher from "./language-switcher";
+import { demoRates } from "../lib/simulated-invoice";
 
 type TerminalStatus = {
   name: string; default_currency: string; confirmation_target: number; expiry_minutes: number;
@@ -20,6 +22,11 @@ type Sale = {
 
 const STORAGE_KEY = "xmrcheckout_terminal_key";
 const POLL_MS = 2000;
+// Sample settings for the public demo till; nothing here reaches the API.
+const DEMO_TERMINAL: TerminalStatus = {
+  name: "", default_currency: "EUR", confirmation_target: 1, expiry_minutes: 15,
+  currencies: ["XMR", ...Object.keys(demoRates)], available_addresses: 50, low_addresses: false,
+};
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"];
 
 function readStoredKey(): string | null {
@@ -55,14 +62,14 @@ function errorDetail(data: unknown, fallback: string) {
   return fallback;
 }
 
-export default function TerminalScreen() {
+export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
   const { locale, t } = useI18n();
   // Rendered client-only, so the fragment and storage are available on first render.
-  const [key, setKey] = useState<string | null>(initialKey);
-  const [terminal, setTerminal] = useState<TerminalStatus | null>(null);
+  const [key, setKey] = useState<string | null>(() => demo ? null : initialKey());
+  const [terminal, setTerminal] = useState<TerminalStatus | null>(() => demo ? { ...DEMO_TERMINAL, name: t("terminal.demoName") } : null);
   const [fatal, setFatal] = useState("");
   const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("XMR");
+  const [currency, setCurrency] = useState(demo ? DEMO_TERMINAL.default_currency : "XMR");
   const [note, setNote] = useState("");
   const [sale, setSale] = useState<Sale | null>(null);
   const [qrImage, setQrImage] = useState<{ uri: string; url: string } | null>(null);
@@ -114,7 +121,7 @@ export default function TerminalScreen() {
     return () => { active = false; };
   }, [key, t]);
 
-  const dueUri = sale ? moneroUri(sale.address, sale.status === "partially_paid" && sale.amount_remaining_xmr ? sale.amount_remaining_xmr : sale.amount_xmr) : null;
+  const dueUri = sale && !demo ? moneroUri(sale.address, sale.status === "partially_paid" && sale.amount_remaining_xmr ? sale.amount_remaining_xmr : sale.amount_xmr) : null;
   useEffect(() => {
     if (!dueUri) return;
     let active = true;
@@ -129,13 +136,14 @@ export default function TerminalScreen() {
     if (!open || !sale) return;
     const timer = window.setInterval(async () => {
       setNow(Date.now());
+      if (demo) return;
       try {
         const { response, data } = await call(`/invoices/${sale.id}`);
         if (response.ok) setSale(data);
       } catch { /* keep showing the last known state */ }
     }, POLL_MS);
     return () => window.clearInterval(timer);
-  }, [open, sale, call]);
+  }, [open, sale, call, demo]);
 
   function press(value: string) {
     setError("");
@@ -152,6 +160,19 @@ export default function TerminalScreen() {
 
   async function charge() {
     if (!amount || Number(amount) <= 0) return setError(t("terminal.enterAmount"));
+    if (demo) {
+      const value = amount.replace(/\.$/, "");
+      const rate = demoRates[currency];
+      setSale({
+        id: "demo_sale", address: "", amount_xmr: rate ? (Number(value) / rate).toFixed(12) : value,
+        amount_paid_xmr: null, amount_remaining_xmr: null, status: "pending",
+        confirmation_target: DEMO_TERMINAL.confirmation_target, confirmations: 0,
+        expires_at: new Date(Date.now() + DEMO_TERMINAL.expiry_minutes * 60000).toISOString(),
+        note: note || null, quote: rate ? { fiat_amount: value, fiat_currency: currency } : null, invoice_url: "",
+      });
+      setNow(Date.now());
+      return;
+    }
     setBusy(true); setError("");
     attempt.current ??= newAttemptKey();
     try {
@@ -170,6 +191,7 @@ export default function TerminalScreen() {
 
   async function cancel() {
     if (!sale) return;
+    if (demo) return newSale();
     setBusy(true);
     try {
       const { response, data } = await call(`/invoices/${sale.id}/cancel`, { method: "POST" });
@@ -180,15 +202,25 @@ export default function TerminalScreen() {
 
   function newSale() {
     setSale(null); setAmount(""); setNote(""); setError(""); attempt.current = null;
-    void loadStatus();
+    if (!demo) void loadStatus();
   }
 
   function forget() {
     storeKey(null); setKey(null); setTerminal(null); setFatal("");
   }
 
+  function simulate(status: Sale["status"]) {
+    setSale(current => current && { ...current, status, confirmations: status === "confirmed" ? current.confirmation_target : 0 });
+  }
+
   const shell = "flex min-h-dvh flex-col items-center justify-center bg-cream px-4 py-6 text-ink";
-  if (!key || fatal) return <main className={shell}><div className="max-w-md text-center">
+  const banner = demo ? <div className="mb-6 grid w-full max-w-md justify-items-center gap-2 rounded-xl border-l-2 border-clay bg-clay/5 px-4 py-3 text-center text-sm text-ink-soft">
+    <p className="font-semibold text-ink" role="status">{t("demo.simulatedNoPayment")}</p>
+    <Link className="min-h-11 py-2 font-semibold underline underline-offset-4" href="/tour?tab=terminals">{t("terminal.demoBack")}</Link>
+  </div> : null;
+  const simulateButton = (status: Sale["status"], label: string) => <button key={status} onClick={() => simulate(status)} className="min-h-11 rounded-full border border-clay px-4 text-sm font-semibold">{label}</button>;
+  const demoControls = (steps: [Sale["status"], string][]) => demo ? <div className="mt-2 flex flex-wrap justify-center gap-2" aria-label={t("demo.previewState")}>{steps.map(([status, label]) => simulateButton(status, label))}</div> : null;
+  if (!demo && (!key || fatal)) return <main className={shell}><div className="max-w-md text-center">
     <h1 className="font-sans text-3xl font-semibold">{t("terminal.unavailable")}</h1>
     <p className="mt-4" role="alert">{fatal || t("terminal.openFromDashboard")}</p>
     {fatal ? <button onClick={forget} className="mt-6 min-h-12 rounded-full border border-stroke px-6">{t("terminal.forget")}</button> : null}
@@ -202,6 +234,7 @@ export default function TerminalScreen() {
     if (sale.status === "confirmed" || sale.status === "payment_detected") {
       const waiting = sale.status === "payment_detected";
       return <main className={`${shell} ${waiting ? "" : "bg-emerald-50"}`} aria-live="polite">
+        {banner}
         <div className="max-w-md text-center">
           <p className={`mx-auto grid size-28 place-items-center rounded-full text-6xl ${waiting ? "bg-amber-100 text-amber-800" : "bg-emerald-600 text-white"}`} aria-hidden="true">{waiting ? "…" : "✓"}</p>
           <h1 className="mt-6 font-sans text-4xl font-semibold">{waiting ? t("terminal.seen") : sale.confirmation_target === 0 ? t("terminal.seen") : t("invoicePage.timelineConfirmed")}</h1>
@@ -209,25 +242,28 @@ export default function TerminalScreen() {
           {waiting ? <p className="mt-3">{t("terminal.waiting", { confirmations: sale.confirmations, target: sale.confirmation_target })}</p> : null}
           {sale.confirmation_target === 0 && !waiting ? <p className="mt-3 text-sm text-ink-soft">{t("terminal.notInBlock")}</p> : null}
           {sale.note ? <p className="mt-2 text-ink-soft">{sale.note}</p> : null}
+          {waiting ? <div className="mt-6">{demoControls([["confirmed", t("terminal.demoSimulateConfirmed")]])}</div> : null}
           <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">{t("terminal.newSale")}</button>
         </div>
       </main>;
     }
     if (sale.status === "expired" || sale.status === "invalid") {
-      return <main className={shell}><div className="max-w-md text-center">
+      return <main className={shell}>{banner}<div className="max-w-md text-center">
         <h1 className="font-sans text-3xl font-semibold">{sale.status === "invalid" ? t("terminal.invalid") : t("terminal.expired")}</h1>
         {sale.amount_paid_xmr && Number(sale.amount_paid_xmr) > 0 ? <p className="mt-3">{t("terminal.receivedCheck", { amount: formatXmrAmount(sale.amount_paid_xmr) })}</p> : <p className="mt-3">{t("terminal.noPayment")}</p>}
         <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">{t("terminal.newSale")}</button>
       </div></main>;
     }
     return <main className={shell}>
+      {banner}
       <div className="grid w-full max-w-md justify-items-center gap-4 text-center">
         <p className="text-sm uppercase tracking-wide text-ink-soft">{terminal?.name} · {t("pay.scan")}</p>
         <p className="font-sans text-4xl font-semibold break-all">{formatXmrAmount(due)} XMR</p>
         {remaining ? <p className="font-semibold text-amber-800">{t("terminal.partial")}</p> : fiat ? <p className="text-lg text-ink-soft">{t("terminal.fiatReference", { amount: fiat })}</p> : null}
-        {qr ? <Image src={qr} alt={t("terminal.qrAlt", { amount: formatXmrAmount(due) })} width={320} height={320} unoptimized className="w-full max-w-[min(80vw,360px)] rounded-2xl bg-white p-3" /> : <div className="aspect-square w-full max-w-[360px] animate-pulse rounded-2xl bg-white" />}
+        {demo ? <div className="grid aspect-square w-full max-w-[360px] place-items-center rounded-2xl border-2 border-dashed border-stroke bg-white p-6 text-sm">{t("demo.qrPlaceholder")}</div> : qr ? <Image src={qr} alt={t("terminal.qrAlt", { amount: formatXmrAmount(due) })} width={320} height={320} unoptimized className="w-full max-w-[min(80vw,360px)] rounded-2xl bg-white p-3" /> : <div className="aspect-square w-full max-w-[360px] animate-pulse rounded-2xl bg-white" />}
         {sale.note ? <p className="text-ink-soft">{sale.note}</p> : null}
         <p className="text-sm text-ink-soft" aria-live="off">{seconds !== null ? t("terminal.expiresIn", { time: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` }) : null} · {t("terminal.watching")}</p>
+        {demoControls([["payment_detected", t("terminal.demoSimulateSeen")], ["confirmed", t("terminal.demoSimulateConfirmed")], ["expired", t("terminal.demoSimulateExpired")]])}
         {error ? <p role="alert" className="text-red-700">{error}</p> : null}
         <button onClick={cancel} disabled={busy || Boolean(remaining)} className="min-h-12 w-full rounded-full border border-stroke px-6 disabled:opacity-50">{t("terminal.cancel")}</button>
       </div>
@@ -236,6 +272,7 @@ export default function TerminalScreen() {
 
   const currencies = terminal?.currencies ?? ["XMR"];
   return <main className={shell}>
+    {banner}
     <div className="grid w-full max-w-sm gap-4">
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-sans text-lg font-semibold">{terminal?.name ?? t("terminal.title")}</h1>
@@ -252,7 +289,7 @@ export default function TerminalScreen() {
       {error ? <p role="alert" className="text-red-700">{error}</p> : null}
       <button onClick={charge} disabled={busy || !terminal} className="min-h-16 rounded-full bg-ink text-xl font-semibold text-cream disabled:opacity-60">{busy ? t("terminal.creating") : t("terminal.charge")}</button>
       {currency !== "XMR" ? <p className="text-center text-xs text-ink-soft">{t("terminal.conversionNote", { currency })}</p> : null}
-      <button onClick={() => { if (window.confirm(t("terminal.forgetConfirm"))) forget(); }} className="mx-auto min-h-11 px-4 text-sm text-ink-soft underline underline-offset-4">{t("terminal.forget")}</button>
+      {demo ? null : <button onClick={() => { if (window.confirm(t("terminal.forgetConfirm"))) forget(); }} className="mx-auto min-h-11 px-4 text-sm text-ink-soft underline underline-offset-4">{t("terminal.forget")}</button>}
       <LanguageSwitcher className="mx-auto text-ink-soft" />
     </div>
   </main>;

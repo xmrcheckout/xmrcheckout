@@ -74,6 +74,24 @@ export default async function MarketingHomePage({
         </ol>
       </section>
 
+      <section className="home-wallet" aria-labelledby="home-terminal-title">
+        <div className="home-wallet-copy">
+          <p className="home-kicker">{t("home.terminalKicker")}</p>
+          <h2 id="home-terminal-title">{t("home.terminalTitle")}</h2>
+          <p>{t("home.terminalBody")}</p>
+          <p>
+            <Link className="home-doc-link" href="/guides/in-person-monero-checkout">
+              {t("home.terminalCta")}
+            </Link>
+          </p>
+        </div>
+        <div className="home-wallet-table">
+          <div><h3>{t("home.terminalDevice")}</h3><p>{t("home.terminalDeviceBody")}</p></div>
+          <div><h3>{t("home.terminalSpeed")}</h3><p>{t("home.terminalSpeedBody")}</p></div>
+          <div><h3>{t("home.terminalScope")}</h3><p>{t("home.terminalScopeBody")}</p></div>
+        </div>
+      </section>
+
       <section className="home-wallet" aria-labelledby="home-wallet-title">
         <div className="home-wallet-copy">
           <p className="home-kicker">{t("home.walletKicker")}</p>

@@ -6,8 +6,10 @@ import json
 import os
 from pathlib import Path
 import select
+import shutil
 import socket
 import socketserver
+import ssl
 import subprocess
 import tempfile
 import threading
@@ -17,6 +19,29 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
 CANARY = "request-protection-secret-canary"
+# Compose names images after the checkout directory; override for other checkouts.
+IMAGE_PREFIX = os.environ.get("IMAGE_PREFIX", "xmrcheckout")
+# The fixture Nginx serves a self-signed development certificate.
+INSECURE_TLS = ssl.create_default_context()
+INSECURE_TLS.check_hostname = False
+INSECURE_TLS.verify_mode = ssl.CERT_NONE
+
+
+def image(name):
+    return f"{IMAGE_PREFIX}-{name}"
+
+
+def nginx_conf_dir(trusted_peer=None):
+    # Copy only the tracked default.conf, never a deployment's local-*.conf.
+    # Optionally trust one fixture peer's X-Forwarded-For, as a proxy would be.
+    conf = Path(tempfile.mkdtemp(prefix="xmrcheckout-nginx-conf-"))
+    shutil.copyfile(ROOT / "nginx/conf.d/default.conf", conf / "default.conf")
+    if trusted_peer:
+        (conf / "test-real-ip.conf").write_text(f"set_real_ip_from {trusted_peer};\nreal_ip_header X-Forwarded-For;\n")
+    conf.chmod(0o755)
+    for path in conf.iterdir():
+        path.chmod(0o644)
+    return conf
 
 
 def command(*args, input=None):
@@ -26,12 +51,12 @@ def command(*args, input=None):
     return result.stdout.strip()
 
 
-def local_forwarder(proxy_ip):
+def local_forwarder(proxy_ip, port=443):
     # Internal Docker networks do not publish ports. Forward only loopback
     # connections into the isolated network; fixture containers have no egress.
     class Forward(socketserver.BaseRequestHandler):
         def handle(self):
-            with socket.create_connection((proxy_ip, 80), timeout=10) as upstream:
+            with socket.create_connection((proxy_ip, port), timeout=10) as upstream:
                 peers = [self.request, upstream]
                 while True:
                     ready, _, _ = select.select(peers, [], [], 15)
@@ -58,7 +83,7 @@ def local_forwarder(proxy_ip):
 def request(base, path, method="GET", headers=None, body=None):
     req = urllib.request.Request(base + path, data=body, method=method, headers=headers or {})
     try:
-        response = urllib.request.urlopen(req, timeout=10)
+        response = urllib.request.urlopen(req, timeout=10, context=INSECURE_TLS)
     except urllib.error.HTTPError as error:
         response = error
     with response:
@@ -76,9 +101,10 @@ def main():
     common = ["--network", network, "--read-only", "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--memory", "512m", "--pids-limit", "128"]
     created = []
     forwarder = None
+    conf_dir = nginx_conf_dir(trusted_peer="trusted-proxy")
     try:
         command("docker", "network", "create", "--internal", network)
-        command("docker", "run", "-d", "--name", names["client"], *common, "--network-alias", "cloudflared", "--user", "1000:1000", "--entrypoint", "sleep", "xmrcheckout-ui", "infinity")
+        command("docker", "run", "-d", "--name", names["client"], *common, "--network-alias", "trusted-proxy", "--user", "1000:1000", "--entrypoint", "sleep", image("ui"), "infinity")
         created.append(names["client"])
         command("docker", "run", "-d", "--name", names["ui"], *common,
                 "--network-alias", "ui", "--network-alias", "api", "--user", "1000:1000",
@@ -86,19 +112,20 @@ def main():
                 "--tmpfs", "/app/.next/cache:rw,noexec,nosuid,nodev,uid=1000,gid=1000,mode=0750",
                 "-e", "API_BASE_URL=http://127.0.0.1:8000",
                 "-v", f"{ROOT}/ui/tests/fixture-server.cjs:/fixture.cjs:ro",
-                "--entrypoint", "node", "xmrcheckout-ui", "/fixture.cjs")
+                "--entrypoint", "node", image("ui"), "/fixture.cjs")
         created.append(names["ui"])
         command("docker", "run", "-d", "--name", names["nginx"], *common,
                 "--user", "101:101", "--sysctl", "net.ipv4.ip_unprivileged_port_start=0",
                 "--tmpfs", "/tmp:rw,noexec,nosuid,nodev,uid=101,gid=101,mode=1777",
                 "--tmpfs", "/var/cache/nginx:rw,noexec,nosuid,nodev,uid=101,gid=101,mode=0750",
                 "--tmpfs", "/var/run:rw,noexec,nosuid,nodev,uid=101,gid=101,mode=0750",
-                "-v", f"{ROOT}/nginx/conf.d:/etc/nginx/conf.d:ro", "xmrcheckout-nginx")
+                "--tmpfs", "/etc/nginx/certs:rw,noexec,nosuid,nodev,uid=101,gid=101,mode=0700",
+                "-v", f"{conf_dir}:/etc/nginx/conf.d:ro", image("nginx"))
         created.append(names["nginx"])
         proxy_ip = command("docker", "inspect", "--format", "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}", names["nginx"])
         forwarder = local_forwarder(proxy_ip)
         port = forwarder.server_address[1]
-        base = f"http://127.0.0.1:{port}"
+        base = f"https://127.0.0.1:{port}"
         for attempt in range(50):
             try:
                 if request(base, "/")[0] == 200:
@@ -125,22 +152,26 @@ def main():
 
         # Browser flows get a fresh rate bucket before the flood tests.
         if args.playwright_module:
+            # New Docker interfaces gain IPv6 link-local addresses a moment
+            # after they come up, and Chromium aborts connections in progress
+            # (ERR_NETWORK_CHANGED) when host addresses change. Let them settle.
+            time.sleep(3)
             env = {**os.environ, "PLAYWRIGHT_MODULE": str(Path(args.playwright_module).resolve())}
             subprocess.run(["node", str(ROOT / "ui/tests/browser-request-protection.cjs"), base], env=env, check=True, timeout=120)
 
-        # A host request is not from the trusted tunnel peer: changing CF headers
-        # must not change the limiter identity.
+        # A host request is not from the trusted proxy peer: changing its
+        # X-Forwarded-For header must not change the limiter identity.
         def spoofed_post(index):
-            return request(base, "/app", "POST", {"CF-Connecting-IP": f"192.0.2.{index + 1}", "Content-Type": "application/json"}, b"{}")[0]
+            return request(base, "/app", "POST", {"X-Forwarded-For": f"192.0.2.{index + 1}", "Content-Type": "application/json"}, b"{}")[0]
         with concurrent.futures.ThreadPoolExecutor(max_workers=30) as pool:
             statuses = list(pool.map(spoofed_post, range(30)))
         assert 429 in statuses and set(statuses) <= {404, 429}, statuses
         print("Untrusted client-IP headers cannot bypass UI POST limit: passed", flush=True)
 
         client_code = r'''
-const http = require('node:http');
+const https = require('node:https');
 function send(path, method, ip) { return new Promise((resolve, reject) => {
- const req=http.request({hostname:process.argv[1],port:80,path,method,headers:{'CF-Connecting-IP':ip,'Content-Type':'application/json'}},res=>{res.resume();res.on('end',()=>resolve(res.statusCode));});
+ const req=https.request({hostname:process.argv[1],port:443,path,method,rejectUnauthorized:false,headers:{'X-Forwarded-For':ip,'Content-Type':'application/json'}},res=>{res.resume();res.on('end',()=>resolve(res.statusCode));});
  req.setTimeout(10000,()=>req.destroy(new Error('timeout')));req.on('error',reject);req.end(method==='POST'?'{}':undefined);
 }); }
 (async()=>{
@@ -179,6 +210,7 @@ function send(path, method, ip) { return new Promise((resolve, reject) => {
             (artifacts / f"{name}.log").write_bytes(logs.stdout + logs.stderr)
             subprocess.run(["docker", "rm", "-f", name], capture_output=True)
         subprocess.run(["docker", "network", "rm", network], capture_output=True)
+        shutil.rmtree(conf_dir, ignore_errors=True)
         print(f"Isolated test artifacts: {artifacts}", flush=True)
 
 

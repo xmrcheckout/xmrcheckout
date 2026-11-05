@@ -6,7 +6,7 @@ async function main() {
   const browser = await chromium.launch({
     headless: true,
     executablePath: process.env.CHROMIUM_PATH || undefined,
-    args: ["--no-sandbox"],
+    args: ["--no-sandbox", "--ignore-certificate-errors"],
   });
   try {
     for (const width of [320, 390, 768, 1440]) {

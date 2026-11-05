@@ -15,12 +15,13 @@ Public payment-link POSTs under `/api/core/public/payment-links/` have a separat
 `Retry-After: 60`. Read-only product requests do not consume that bucket. The
 existing global 50 requests/second, burst 200 limit still applies.
 
-Only the `cloudflared` service may supply `CF-Connecting-IP`. Other peers use
-their connection address, regardless of incoming client-IP headers. Nginx
-resolves the trusted service at startup/reload: reload Nginx after recreating
-the tunnel if its IP changes. For deployments without this tunnel, remove the
-two real-IP directives or configure the exact trusted ingress peer instead.
-Do not trust an entire Docker subnet or publish a tunnel-only origin directly.
+By default every peer is identified by its connection address, regardless of
+incoming client-IP headers. Behind a tunnel or reverse proxy, add a
+`conf.d/local-*.conf` file (ignored by git) that trusts only that peer, with
+`set_real_ip_from <proxy service>;` and `real_ip_header <its client-IP header>;`.
+Nginx resolves a service name at startup/reload, so reload Nginx after
+recreating the proxy container. Do not trust an entire Docker subnet or
+publish a proxy-only origin directly.
 
 ## Verification
 
@@ -35,7 +36,10 @@ python3 tests/check_ui_request_protection.py
 ```
 
 Pass `--playwright-module /path/to/installed/playwright` to include browser
-login and invoice failure/success tests. Set `CHROMIUM_PATH` if the browser
+login and invoice failure/success tests. The tests use images named
+`xmrcheckout-ui` and `xmrcheckout-nginx`; Compose names images after the
+checkout directory, so set `IMAGE_PREFIX` (for example
+`IMAGE_PREFIX=my-checkout`) if yours differ. Set `CHROMIUM_PATH` if the browser
 executable is outside Playwright's default cache. All integration requests use
 an isolated internal Docker network and a fake API; no production credentials,
 wallet RPC, or invoice records are involved. Test logs are saved privately in

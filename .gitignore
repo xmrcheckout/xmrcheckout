@@ -19,6 +19,10 @@ ui/*.tsbuildinfo
 design.md
 nginx/conf.d/*.pre-*
 
+# Local deployment wiring (never committed).
+/local/
+nginx/conf.d/local-*.conf
+
 # Local browser diagnostics and audit captures (preserved on disk).
 /.playwright-mcp/
 /audit-home*.png

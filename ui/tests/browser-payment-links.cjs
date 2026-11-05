@@ -14,7 +14,7 @@ async function main() {
   const merchant = process.argv[3];
   assert.ok(merchant, "A separate merchant origin is required");
   assert.notEqual(new URL(base).origin, new URL(merchant).origin);
-  const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH, args: ["--no-sandbox"] });
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH, args: ["--no-sandbox", "--ignore-certificate-errors"] });
   try {
     for (const width of [320, 390, 768, 1440]) {
       const context = await browser.newContext({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });

@@ -1,6 +1,6 @@
 # Translation glossary
 
-UI text is a regulatory and trust surface (see DESIGN_PRINCIPLES.md §9).
+UI text is a regulatory and trust surface.
 Translations must describe the same non-custodial reality as the English
 source: funds go directly to the merchant's wallet, and XMR Checkout only
 detects payments with view-only access.

@@ -59,6 +59,7 @@ The guides cover the two common paths into the project:
 
 - `ui/`: web UI
 - `api/`: API service (Python)
+- `scripts/`: operational helper scripts
 - `docker-compose.yml`: local stack and self-hosted deployment
 - `nginx/`: optional reverse proxy / TLS termination (used by Docker Compose)
 
@@ -232,9 +233,12 @@ docker compose exec -T reconciler python -m app.reclassify_invoice_timing
 docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
 ```
 
-Outgoing webhooks can optionally use an authenticated Cloudflare Worker relay to
-keep the server IP private from recipients. This defaults to off; see the
-[webhook relay deployment guide](workers/webhook-relay/README.md).
+Outgoing webhooks can optionally go through an authenticated relay to keep the
+server IP private from recipients. This defaults to off. To use one, set
+`WEBHOOK_RELAY_ENABLED=true`, an HTTPS `WEBHOOK_RELAY_URL` and a
+`WEBHOOK_RELAY_TOKEN` of at least 32 characters. The API then POSTs each
+delivery to the relay as a JSON envelope (target URL, base64 body, selected
+headers, timeout) with the token as a bearer credential.
 
 Webhook destinations must use HTTPS and resolve exclusively to public IP
 addresses. Loopback, private, link-local, and other special-use destinations

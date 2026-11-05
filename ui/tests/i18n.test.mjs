@@ -10,7 +10,7 @@ const load = (locale) => JSON.parse(readFileSync(join(root, 'messages', `${local
 const en = load('en');
 const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr'), pt: load('pt'), it: load('it'), pl: load('pl'), zh: load('zh'), uk: load('uk'), cs: load('cs') };
 
-// Forbidden terms per DESIGN_PRINCIPLES.md §9 and messages/GLOSSARY.md.
+// Forbidden terms per messages/GLOSSARY.md.
 // Each entry is [pattern, allowed negation pattern or null].
 const forbidden = {
   en: [[/processor/i, /not a (?:payment )?processor/i], [/settle/i, null], [/payout/i, null], [/\bbalance/i, null], [/payments company/i, null]],

@@ -55,7 +55,9 @@ try:
     request = urllib.request.Request(base + f"/api/core/public/payment-links/{token}/invoices", method="POST", headers={"Accept": "application/json"})
     invoice_id = json.load(urllib.request.urlopen(request, timeout=10, context=INSECURE_TLS))["invoice_url"].rsplit("/", 1)[1]
     pending = urllib.request.urlopen(base + f"/invoice/{invoice_id}", timeout=30, context=INSECURE_TLS).read().decode()
-    assert "Invoice timeline" in pending and "ebook-1" not in pending and "buyer" not in pending, "message leaked before confirmation"
+    # Pages embed UI catalog text that mentions buyers and an example ebook link,
+    # so look for the merchant's own message by its unique URL.
+    assert "Invoice timeline" in pending and "merchant.example" not in pending, "message leaked before confirmation"
     command("docker", "exec", dbname, "psql", "-U", "fixture", "-d", "payment_link_tests", "-c", f"UPDATE invoices SET status='confirmed', confirmations=1, confirmed_at=now() WHERE id='{invoice_id}'")
     confirmed = urllib.request.urlopen(base + f"/invoice/{invoice_id}", timeout=30, context=INSECURE_TLS).read().decode()
     assert "Message from the merchant" in confirmed, "message missing after confirmation"

@@ -17,8 +17,10 @@ export function badgeImageUrl(siteUrl: string, variant: BadgeVariant = "dark") {
   return new URL(variant === "light" ? "/badges/monero-accepted-here-light.svg" : "/badges/monero-accepted-here.svg", siteUrl).href;
 }
 
-export function badgeHtml(siteUrl: string, variant: BadgeVariant = "dark") {
-  return `<img src="${escapeHtml(badgeImageUrl(siteUrl, variant))}" alt="Monero accepted here" width="320" height="80" style="display:block;max-width:100%;height:auto;border:0;" />`;
+// With href, the badge links to that payment link so visitors can pay from it.
+export function badgeHtml(siteUrl: string, variant: BadgeVariant = "dark", href?: string) {
+  const image = `<img src="${escapeHtml(badgeImageUrl(siteUrl, variant))}" alt="Monero accepted here" width="320" height="80" style="display:block;max-width:100%;height:auto;border:0;" />`;
+  return href ? `<a href="${escapeHtml(href)}">\n  ${image}\n</a>` : image;
 }
 
 type SignPriceFields = { customer_amount: boolean; amount_xmr: string | null; amount_fiat: string | null };

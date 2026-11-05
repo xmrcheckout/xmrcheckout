@@ -751,6 +751,7 @@ export default async function TourPage({
               usage={fixture.paymentLinkUsage}
               addressStatus={null}
               target={fixture.defaultConfirmationTarget}
+              selectedId={typeof resolvedSearchParams?.link === "string" ? resolvedSearchParams.link : undefined}
             />
           ) : null}
 

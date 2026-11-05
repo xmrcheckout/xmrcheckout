@@ -689,7 +689,7 @@ export default async function DashboardPage({
             </section>
           ) : null}
 
-          {activeTab === "payment-links" ? <PaymentLinks /> : null}
+          {activeTab === "payment-links" ? <PaymentLinks selectedId={typeof resolvedSearchParams.link === "string" ? resolvedSearchParams.link : undefined} /> : null}
           {activeTab === "terminals" ? <Terminals /> : null}
           {activeTab === "health" ? (
             <div className="grid min-w-0 grid-cols-1 gap-6">

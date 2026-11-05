@@ -23,26 +23,35 @@ async function main() {
       page.setDefaultTimeout(15000);
       await page.goto(base + "/dashboard?tab=payment-links", { waitUntil: "networkidle" });
       await page.getByRole("heading", { name: "Payment links", exact: true }).waitFor();
-      const card = page.locator("article").filter({ has: page.locator('a[href$="/pay/fixture-token"]') });
+      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+      const row = page.locator("tbody tr").filter({ has: page.locator('a[href$="/pay/fixture-token"]') });
+      await row.getByRole("button", { name: "Copy link for Fixture product", exact: true }).click();
+      assert.equal(await page.evaluate(() => navigator.clipboard.readText()), base + "/pay/fixture-token");
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `list overflow ${width}`);
+      if (width === 1440) assert.deepEqual(await axeViolations(page), [], "Payment links list must pass WCAG 2.1 AA");
+      await row.getByRole("link", { name: "Manage Fixture product", exact: true }).click();
+      await page.getByRole("heading", { name: "Fixture product", level: 1 }).waitFor();
+      const detailUrl = page.url();
+      assert.match(detailUrl, /tab=payment-links&link=/);
+      const card = page.locator("#main-content");
       const preview = card.getByRole("link", { name: "Buy with Monero via xmrcheckout", exact: true });
       await preview.scrollIntoViewIfNeeded();
       await preview.getByRole("img").evaluate(image => image.decode());
       assert.equal(await preview.getAttribute("href"), base + "/pay/fixture-token");
-      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-      await card.getByRole("button", { name: "Copy code", exact: true }).nth(1).click();
+      await page.getByRole("region", { name: "Button for your website", exact: true }).getByRole("button", { name: "Copy code", exact: true }).click();
       const snippet = await page.evaluate(() => navigator.clipboard.readText());
       assert.match(snippet, /<a href=/);
       assert.match(snippet, /<img src=/);
       assert.equal(snippet.includes("<form"), false);
       assert.equal((await fetch(merchant, { method: "POST", body: snippet })).status, 204);
       if (width === 1440) {
-        const badges = page.getByRole("region", { name: "Show that you accept Monero" });
+        const badges = page.getByRole("region", { name: "“Monero accepted here” badge" });
         await badges.getByRole("img", { name: "Monero accepted here" }).first().evaluate(image => image.decode());
         await badges.getByRole("button", { name: "Copy code", exact: true }).first().click();
         const badgeSnippet = await page.evaluate(() => navigator.clipboard.readText());
-        assert.match(badgeSnippet, /^<img src="[^"?]+\/badges\/monero-accepted-here\.svg" alt="Monero accepted here"/);
+        assert.match(badgeSnippet, /^<a href="[^"]+\/pay\/fixture-token">\n  <img src="[^"?]+\/badges\/monero-accepted-here\.svg" alt="Monero accepted here"/);
         assert.equal((await fetch(badgeSnippet.match(/src="([^"]+)"/)[1].replace(/^https?:\/\/[^/]+/, base))).status, 200);
-        assert.deepEqual(await axeViolations(page), [], "Payment links tab with badges must pass WCAG 2.1 AA");
+        assert.deepEqual(await axeViolations(page), [], "Payment link detail must pass WCAG 2.1 AA");
         await card.getByRole("link", { name: "Printable sign with QR code", exact: true }).click();
         await page.getByRole("heading", { name: "Printable sign", exact: true }).waitFor();
         const sign = page.getByRole("article", { name: "Sign preview" });
@@ -63,11 +72,10 @@ async function main() {
         await page.getByRole("heading", { name: "Payment links", exact: true }).waitFor();
         await page.goto(base + "/dashboard/payment-links/00000000-0000-4000-8000-000000000000/sign");
         await page.getByRole("alert").filter({ hasText: "This payment link was not found." }).waitFor();
-        await page.goto(base + "/dashboard?tab=payment-links", { waitUntil: "networkidle" });
+        await page.goto(detailUrl, { waitUntil: "networkidle" });
       }
       if (width === 320) {
-        const settings = card.locator("details");
-        await settings.locator("summary").click();
+        const settings = page.getByRole("region", { name: "Settings", exact: true });
         const skipReview = settings.getByRole("checkbox", { name: "Skip review and create invoice automatically" });
         await skipReview.check();
         await settings.getByLabel("Button text", { exact: true }).fill("Donate & <Monero>");
@@ -82,12 +90,11 @@ async function main() {
         const graphicUrl = await customized.getAttribute("src");
         const graphic = await (await fetch(graphicUrl)).text();
         assert.ok(graphic.includes("Donate &amp; &lt;Monero&gt;"));
-        await card.getByRole("button", { name: "Copy code", exact: true }).nth(1).click();
+        await page.getByRole("region", { name: "Button for your website", exact: true }).getByRole("button", { name: "Copy code", exact: true }).click();
         const customHtml = await page.evaluate(() => navigator.clipboard.readText());
         assert.ok(customHtml.includes("Donate &amp; &lt;Monero&gt; via xmrcheckout"));
         assert.ok(customHtml.includes("/buttons/payment.svg?text="));
         await page.reload({ waitUntil: "networkidle" });
-        await settings.locator("summary").click();
         assert.equal(await settings.getByLabel("Button text", { exact: true }).inputValue(), "Donate & <Monero>");
         assert.equal(await settings.getByLabel("Confirmation message (optional)", { exact: true }).inputValue(), message, "Confirmation message must survive reload");
         await settings.getByLabel("Button text", { exact: true }).fill("Buy with Monero");
@@ -102,6 +109,9 @@ async function main() {
       if (process.env.PAYMENT_LINK_SCREENSHOT_DIR) {
         await card.screenshot({ path: `${process.env.PAYMENT_LINK_SCREENSHOT_DIR}/payment-link-${width}.png` });
       }
+      await page.goto(base + "/dashboard?tab=payment-links", { waitUntil: "networkidle" });
+      await page.addStyleTag({ content: "html { font-size: 125%; }" });
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `list overflow at 125% ${width}`);
       await page.getByText("Create payment link", { exact: true }).focus();
       await page.keyboard.press("Enter");
       const editor = page.locator("details").filter({ hasText: "Create payment link" });
@@ -117,7 +127,7 @@ async function main() {
       await editor.getByRole("button", { name: "Save payment link" }).click();
       await editor.getByRole("status").filter({ hasText: "Payment link saved" }).waitFor();
       await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-      await page.locator("article").getByRole("button", { name: "Copy code", exact: true }).first().click();
+      await page.getByRole("button", { name: /^Copy link for / }).first().click();
       const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));
       assert.equal(copied.origin, new URL(base).origin);
       assert.match(copied.pathname, /^\/pay\/[A-Za-z0-9_-]+$/);
@@ -135,6 +145,7 @@ async function main() {
         await page.getByRole("region", { name: "Invoice address availability", exact: true }).getByText("Unavailable. Refresh to try again.", { exact: true }).waitFor();
         await fetch(base + "/api/core/__fixture/failure?mode=none");
       }
+      await page.goto(detailUrl, { waitUntil: "networkidle" });
       await preview.focus();
       await page.keyboard.press("Enter");
       await page.waitForURL(base + "/pay/fixture-token");

@@ -393,7 +393,7 @@
     "title": "Payment links",
     "unavailable": "Payment links are unavailable. Refresh to try again.",
     "intro": "Create a reusable button for a product, service, or donation. Each submission creates a separate XMR invoice paid directly to your wallet.",
-    "allowanceNote": "Public invoice creation has a daily allowance and shares your address capacity. Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.",
+    "allowanceNote": "Public invoice creation has a daily allowance and shares your address capacity.",
     "donationTip": "For contributions, use a title such as “Support my project”, set Button text to “Donate with Monero”, and choose “Customer enters the amount” so donors type their own amount. Recurring collection is not supported.",
     "guide": "Payment link setup guide",
     "acceptTitle": "Show that you accept Monero",
@@ -467,7 +467,9 @@
       "preview": "Sign preview",
       "badgeAlt": "Monero accepted here",
       "scan": "Scan to pay with Monero"
-    }
+    },
+    "allowanceNoteDetail": "Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.",
+    "allowanceNoteMore": "More on submissions and fulfillment"
   },
   "diagnostic": {
     "label": "Reference ID:",
@@ -1032,7 +1034,7 @@
     "terminalScope": "Limited to its own sales",
     "terminalScopeBody": "The terminal link can only create invoices to your wallet, show their status, and cancel its own unpaid sales. It cannot move funds, change settings, or open your dashboard.",
     "walletKicker": "Wallet access",
-    "walletTitle": "Track payments. Keep control of your wallet.",
+    "walletTitle": "Track payments while keeping control of your wallet.",
     "walletBody": "Payments go directly from the customer to your Monero wallet. XMR Checkout observes incoming payments; the software cannot spend your funds.",
     "walletReceives": "Your wallet receives the XMR",
     "walletReceivesBody": "Use the wallet you already control.",
@@ -1041,7 +1043,7 @@
     "target": "Your confirmation target",
     "targetBody": "Choose how many confirmations an invoice requires. Payment detection and reaching that target are separate states.",
     "startKicker": "Getting started",
-    "startTitle": "Start here. Integrate when you’re ready.",
+    "startTitle": "Start here, and integrate when you’re ready.",
     "startBody": "Connect your wallet to this instance to create invoices and share customer checkout pages. A store connection is optional; add API calls or configure webhooks only if you want your store to receive invoice updates.",
     "startLinks": "Getting started links",
     "readApiGuide": "Read the API guide",
@@ -1246,7 +1248,7 @@
     "introLabel": "FAQ introduction",
     "eyebrow": "FAQ",
     "title": "Direct answers about control, access, and operations.",
-    "description": "Answers about setup, control, operations, and deployment.",
+    "description": "Each one is short and specific, with no custody and no surprises.",
     "categories": "FAQ categories",
     "browse": "Browse by topic",
     "browseHelp": "Control, operations, and deployment.",

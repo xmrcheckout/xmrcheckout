@@ -33,6 +33,10 @@ export default async function PaymentLinks() {
     <div><h1 className="font-sans text-2xl font-semibold sm:text-3xl">{t("paymentLinks.title")}</h1>
       <p className="mt-2 text-ink-soft">{t("paymentLinks.intro")}</p>
       <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.allowanceNote")}</p>
+      <details className="mt-1 text-sm text-ink-soft">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center py-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50">{t("paymentLinks.allowanceNoteMore")}</summary>
+        <p className="mt-1">{t("paymentLinks.allowanceNoteDetail")}</p>
+      </details>
       <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.donationTip")}</p>
       <p className="mt-3"><Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">{t("paymentLinks.guide")}</Link></p>
     </div>

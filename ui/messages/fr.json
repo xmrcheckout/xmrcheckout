@@ -393,7 +393,7 @@
     "title": "Liens de paiement",
     "unavailable": "Les liens de paiement sont indisponibles. Actualisez pour réessayer.",
     "intro": "Créez un bouton réutilisable pour un produit, un service ou un don. Chaque envoi crée une facture XMR distincte, payée directement à votre portefeuille.",
-    "allowanceNote": "La création publique de factures dispose d’un quota quotidien et partage la capacité de vos adresses. Des envois répétés peuvent créer des factures distinctes. Aucune donnée de l’acheteur n’est collectée ; organisez la livraison avec votre client à l’aide de l’identifiant de facture. Les URL de retour ne protègent pas les téléchargements.",
+    "allowanceNote": "La création publique de factures dispose d’un quota quotidien et partage la capacité de vos adresses.",
     "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet », définissez le texte du bouton sur « Faire un don en Monero » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. La collecte récurrente n’est pas prise en charge.",
     "guide": "Guide de configuration des liens de paiement",
     "acceptTitle": "Montrez que vous acceptez Monero",
@@ -467,7 +467,9 @@
       "preview": "Aperçu de l’affiche",
       "badgeAlt": "Monero accepté ici",
       "scan": "Scannez pour payer en Monero"
-    }
+    },
+    "allowanceNoteDetail": "Des envois répétés peuvent créer des factures distinctes. Aucune donnée de l’acheteur n’est collectée ; organisez la livraison avec votre client à l’aide de l’identifiant de facture. Les URL de retour ne protègent pas les téléchargements.",
+    "allowanceNoteMore": "En savoir plus sur les envois et la livraison"
   },
   "diagnostic": {
     "label": "Identifiant de référence :",
@@ -1032,7 +1034,7 @@
     "terminalScope": "Limité à ses propres ventes",
     "terminalScopeBody": "Le lien du terminal permet uniquement de créer des factures vers votre portefeuille, d’afficher leur statut et d’annuler ses propres ventes impayées. Il ne permet pas de déplacer des fonds, de modifier les paramètres ni d’ouvrir votre tableau de bord.",
     "walletKicker": "Accès au portefeuille",
-    "walletTitle": "Suivez les paiements. Gardez le contrôle de votre portefeuille.",
+    "walletTitle": "Suivez les paiements tout en gardant le contrôle de votre portefeuille.",
     "walletBody": "Les paiements vont directement du client à votre portefeuille Monero. XMR Checkout observe les paiements entrants ; le logiciel ne peut pas dépenser vos fonds.",
     "walletReceives": "Votre portefeuille reçoit les XMR",
     "walletReceivesBody": "Utilisez le portefeuille que vous contrôlez déjà.",
@@ -1041,7 +1043,7 @@
     "target": "Votre objectif de confirmations",
     "targetBody": "Choisissez combien de confirmations une facture exige. La détection du paiement et l’atteinte de cet objectif sont deux états distincts.",
     "startKicker": "Premiers pas",
-    "startTitle": "Commencez ici. Intégrez quand vous êtes prêt.",
+    "startTitle": "Commencez ici et intégrez quand vous êtes prêt.",
     "startBody": "Connectez votre portefeuille à cette instance pour créer des factures et partager des pages de paiement avec vos clients. La connexion d’une boutique est facultative ; ajoutez des appels d’API ou configurez des webhooks uniquement si vous voulez que votre boutique reçoive les mises à jour des factures.",
     "startLinks": "Liens pour bien démarrer",
     "readApiGuide": "Lire le guide de l’API",
@@ -1246,7 +1248,7 @@
     "introLabel": "Introduction de la FAQ",
     "eyebrow": "FAQ",
     "title": "Des réponses directes sur le contrôle, l’accès et l’exploitation.",
-    "description": "Réponses sur la configuration, le contrôle, l’exploitation et le déploiement.",
+    "description": "Chacune est courte et précise, sans conservation de fonds et sans surprises.",
     "categories": "Catégories de la FAQ",
     "browse": "Parcourir par thème",
     "browseHelp": "Contrôle, exploitation et déploiement.",

@@ -399,7 +399,7 @@
     "title": "Linki płatności",
     "unavailable": "Linki płatności są niedostępne. Odśwież, aby spróbować ponownie.",
     "intro": "Utwórz przycisk wielokrotnego użytku dla produktu, usługi lub darowizny. Każde wysłanie tworzy osobną prośbę o płatność w XMR, opłacaną bezpośrednio na twój portfel.",
-    "allowanceNote": "Publiczne tworzenie próśb o płatność ma dzienny limit i korzysta z tej samej puli adresów. Powtarzane wysłania mogą tworzyć osobne prośby. Dane kupującego nie są zbierane; realizację ustal z klientem na podstawie identyfikatora prośby o płatność. Adresy powrotne nie chronią pobierania plików.",
+    "allowanceNote": "Publiczne tworzenie próśb o płatność ma dzienny limit i korzysta z tej samej puli adresów.",
     "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt”, ustaw Tekst przycisku na „Wesprzyj w Monero” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Płatności cykliczne nie są obsługiwane.",
     "guide": "Poradnik konfiguracji linków płatności",
     "acceptTitle": "Pokaż, że przyjmujesz Monero",
@@ -473,7 +473,9 @@
       "preview": "Podgląd plakatu",
       "badgeAlt": "Tu przyjmujemy Monero",
       "scan": "Zeskanuj, aby zapłacić w Monero"
-    }
+    },
+    "allowanceNoteDetail": "Powtarzane wysłania mogą tworzyć osobne prośby. Dane kupującego nie są zbierane; realizację ustal z klientem na podstawie identyfikatora prośby o płatność. Adresy powrotne nie chronią pobierania plików.",
+    "allowanceNoteMore": "Więcej o wysłaniach i realizacji"
   },
   "diagnostic": {
     "label": "Identyfikator referencyjny:",
@@ -1050,7 +1052,7 @@
     "terminalScope": "Tylko własna sprzedaż",
     "terminalScopeBody": "Link terminala pozwala jedynie tworzyć prośby o płatność na twój portfel, pokazywać ich status i anulować własne nieopłacone sprzedaże. Nie może przenosić środków, zmieniać ustawień ani otwierać twojego panelu.",
     "walletKicker": "Dostęp do portfela",
-    "walletTitle": "Śledź płatności. Zachowaj kontrolę nad portfelem.",
+    "walletTitle": "Śledź płatności, zachowując kontrolę nad portfelem.",
     "walletBody": "Płatności trafiają bezpośrednio od klienta do twojego portfela Monero. XMR Checkout obserwuje płatności przychodzące; oprogramowanie nie może wydawać twoich środków.",
     "walletReceives": "XMR trafia do twojego portfela",
     "walletReceivesBody": "Używaj portfela, nad którym już masz kontrolę.",
@@ -1059,7 +1061,7 @@
     "target": "Twoja liczba potwierdzeń",
     "targetBody": "Wybierz, ilu potwierdzeń wymaga prośba o płatność. Wykrycie płatności i osiągnięcie tej liczby to dwa osobne stany.",
     "startKicker": "Pierwsze kroki",
-    "startTitle": "Zacznij tutaj. Integruj, kiedy zechcesz.",
+    "startTitle": "Zacznij tutaj i integruj, kiedy zechcesz.",
     "startBody": "Połącz portfel z tą instancją, aby tworzyć prośby o płatność i udostępniać klientom strony płatności. Połączenie sklepu jest opcjonalne; dodaj wywołania API lub skonfiguruj webhooki tylko wtedy, gdy chcesz, aby sklep otrzymywał aktualizacje próśb o płatność.",
     "startLinks": "Linki na start",
     "readApiGuide": "Przeczytaj poradnik API",
@@ -1264,7 +1266,7 @@
     "introLabel": "Wprowadzenie do FAQ",
     "eyebrow": "FAQ",
     "title": "Konkretne odpowiedzi o kontroli, dostępie i działaniu.",
-    "description": "Odpowiedzi dotyczące konfiguracji, kontroli, działania i wdrożenia.",
+    "description": "Każda jest krótka i konkretna, bez przechowywania środków i bez niespodzianek.",
     "categories": "Kategorie FAQ",
     "browse": "Przeglądaj według tematu",
     "browseHelp": "Kontrola, działanie i wdrożenie.",

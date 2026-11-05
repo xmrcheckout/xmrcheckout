@@ -393,7 +393,7 @@
     "title": "Link di pagamento",
     "unavailable": "I link di pagamento non sono disponibili. Aggiorna per riprovare.",
     "intro": "Crea un pulsante riutilizzabile per un prodotto, un servizio o una donazione. Ogni invio crea una richiesta di pagamento in XMR separata, pagata direttamente al tuo portafoglio.",
-    "allowanceNote": "La creazione pubblica di richieste di pagamento ha una quota giornaliera e condivide la tua capacità di indirizzi. Invii ripetuti possono creare richieste di pagamento separate. Non vengono raccolti dati dell'acquirente; organizza l'evasione con il tuo cliente usando l'ID della richiesta di pagamento. Gli URL di ritorno non proteggono i download.",
+    "allowanceNote": "La creazione pubblica di richieste di pagamento ha una quota giornaliera e condivide la tua capacità di indirizzi.",
     "donationTip": "Per i contributi, usa un titolo come “Sostieni il mio progetto”, imposta il Testo del pulsante su “Dona con Monero” e scegli “Il cliente inserisce l'importo” così che i donatori digitino il proprio importo. Gli incassi ricorrenti non sono supportati.",
     "guide": "Guida alla configurazione dei link di pagamento",
     "acceptTitle": "Mostra che accetti Monero",
@@ -467,7 +467,9 @@
       "preview": "Anteprima del cartello",
       "badgeAlt": "Qui si accetta Monero",
       "scan": "Scansiona per pagare con Monero"
-    }
+    },
+    "allowanceNoteDetail": "Invii ripetuti possono creare richieste di pagamento separate. Non vengono raccolti dati dell'acquirente; organizza l'evasione con il tuo cliente usando l'ID della richiesta di pagamento. Gli URL di ritorno non proteggono i download.",
+    "allowanceNoteMore": "Altro su invii ed evasione"
   },
   "diagnostic": {
     "label": "ID di riferimento:",
@@ -1032,7 +1034,7 @@
     "terminalScope": "Limitato alle proprie vendite",
     "terminalScopeBody": "Il link del terminale può solo creare richieste di pagamento verso il tuo portafoglio, mostrarne lo stato e annullare le proprie vendite non pagate. Non può spostare fondi, modificare le impostazioni né aprire la tua dashboard.",
     "walletKicker": "Accesso al portafoglio",
-    "walletTitle": "Segui i pagamenti. Mantieni il controllo del tuo portafoglio.",
+    "walletTitle": "Segui i pagamenti mantenendo il controllo del tuo portafoglio.",
     "walletBody": "I pagamenti vanno direttamente dal cliente al tuo portafoglio Monero. XMR Checkout osserva i pagamenti in arrivo; il software non può spendere i tuoi fondi.",
     "walletReceives": "Il tuo portafoglio riceve gli XMR",
     "walletReceivesBody": "Usa il portafoglio che già controlli.",
@@ -1041,7 +1043,7 @@
     "target": "Il tuo obiettivo di conferme",
     "targetBody": "Scegli quante conferme servono per ogni richiesta di pagamento. Il rilevamento del pagamento e il raggiungimento di quell'obiettivo sono stati distinti.",
     "startKicker": "Per iniziare",
-    "startTitle": "Inizia da qui. Integra quando sei pronto.",
+    "startTitle": "Inizia da qui e integra quando sei pronto.",
     "startBody": "Collega il tuo portafoglio a questa istanza per creare richieste di pagamento e condividere pagine di pagamento con i clienti. Il collegamento di un negozio è facoltativo; aggiungi chiamate API o configura webhook solo se vuoi che il tuo negozio riceva gli aggiornamenti delle richieste di pagamento.",
     "startLinks": "Link per iniziare",
     "readApiGuide": "Leggi la guida API",
@@ -1246,7 +1248,7 @@
     "introLabel": "Introduzione alle domande frequenti",
     "eyebrow": "Domande frequenti",
     "title": "Risposte dirette su controllo, accesso e funzionamento.",
-    "description": "Risposte su configurazione, controllo, funzionamento e installazione.",
+    "description": "Ognuna è breve e specifica, senza custodia e senza sorprese.",
     "categories": "Categorie delle domande frequenti",
     "browse": "Sfoglia per argomento",
     "browseHelp": "Controllo, funzionamento e installazione.",

@@ -399,7 +399,7 @@
     "title": "Platební odkazy",
     "unavailable": "Platební odkazy nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
     "intro": "Vytvořte opakovaně použitelné tlačítko pro produkt, službu nebo dar. Každé odeslání vytvoří samostatnou platební výzvu v XMR placenou přímo do vaší peněženky.",
-    "allowanceNote": "Veřejné vytváření platebních výzev má denní limit a sdílí vaši zásobu adres. Opakovaná odeslání mohou vytvořit samostatné platební výzvy. Neshromažďují se žádné údaje o kupujícím; vyřízení domluvte se zákazníkem pomocí ID platební výzvy. Návratové URL nechrání stahování.",
+    "allowanceNote": "Veřejné vytváření platebních výzev má denní limit a sdílí vaši zásobu adres.",
     "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“, nastavte Text tlačítka na „Přispět v Monero“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Opakované platby nejsou podporovány.",
     "guide": "Návod k nastavení platebních odkazů",
     "acceptTitle": "Ukažte, že přijímáte Monero",
@@ -473,7 +473,9 @@
       "preview": "Náhled cedulky",
       "badgeAlt": "Zde přijímáme Monero",
       "scan": "Naskenujte a zaplaťte v Monero"
-    }
+    },
+    "allowanceNoteDetail": "Opakovaná odeslání mohou vytvořit samostatné platební výzvy. Neshromažďují se žádné údaje o kupujícím; vyřízení domluvte se zákazníkem pomocí ID platební výzvy. Návratové URL nechrání stahování.",
+    "allowanceNoteMore": "Více o odesláních a vyřízení"
   },
   "diagnostic": {
     "label": "Referenční ID:",
@@ -1050,7 +1052,7 @@
     "terminalScope": "Jen vlastní prodeje",
     "terminalScopeBody": "Odkaz na terminál může pouze vytvářet platební výzvy do vaší peněženky, zobrazovat jejich stav a rušit vlastní nezaplacené prodeje. Nemůže přesouvat prostředky, měnit nastavení ani otevřít váš panel.",
     "walletKicker": "Přístup k peněžence",
-    "walletTitle": "Sledujte platby. Peněženku máte stále pod kontrolou.",
+    "walletTitle": "Sledujte platby a mějte peněženku stále pod kontrolou.",
     "walletBody": "Platby jdou přímo od zákazníka do vaší peněženky Monero. XMR Checkout sleduje příchozí platby; software nemůže vaše prostředky utratit.",
     "walletReceives": "XMR přijímá vaše peněženka",
     "walletReceivesBody": "Používejte peněženku, kterou už ovládáte.",
@@ -1059,7 +1061,7 @@
     "target": "Váš požadovaný počet potvrzení",
     "targetBody": "Zvolte, kolik potvrzení platební výzva vyžaduje. Zjištění platby a dosažení tohoto počtu jsou samostatné stavy.",
     "startKicker": "Začínáme",
-    "startTitle": "Začněte tady. Integrujte, až budete chtít.",
+    "startTitle": "Začněte tady a integrujte, až budete chtít.",
     "startBody": "Připojte peněženku k této instanci, abyste mohli vytvářet platební výzvy a sdílet platební stránky se zákazníky. Propojení obchodu je volitelné; volání API přidejte nebo webhooky nastavte jen tehdy, pokud chcete, aby váš obchod dostával aktualizace platebních výzev.",
     "startLinks": "Odkazy pro začátek",
     "readApiGuide": "Přečíst návod k API",
@@ -1264,7 +1266,7 @@
     "introLabel": "Úvod k častým dotazům",
     "eyebrow": "Časté dotazy",
     "title": "Přímé odpovědi o kontrole, přístupu a provozu.",
-    "description": "Odpovědi o nastavení, kontrole, provozu a nasazení.",
+    "description": "Každá je krátká a konkrétní, bez úschovy prostředků a bez překvapení.",
     "categories": "Kategorie častých dotazů",
     "browse": "Procházet podle tématu",
     "browseHelp": "Kontrola, provoz a nasazení.",

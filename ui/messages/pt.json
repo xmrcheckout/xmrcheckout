@@ -393,7 +393,7 @@
     "title": "Links de pagamento",
     "unavailable": "Os links de pagamento estão indisponíveis. Atualize para tentar novamente.",
     "intro": "Crie um botão reutilizável para um produto, serviço ou doação. Cada envio cria uma fatura XMR separada, paga diretamente na sua carteira.",
-    "allowanceNote": "A criação pública de faturas tem uma cota diária e compartilha a sua capacidade de endereços. Envios repetidos podem criar faturas separadas. Nenhum dado do comprador é coletado; combine a entrega com o seu cliente usando o ID da fatura. URLs de retorno não protegem downloads.",
+    "allowanceNote": "A criação pública de faturas tem uma cota diária e compartilha a sua capacidade de endereços.",
     "donationTip": "Para contribuições, use um título como “Apoie o meu projeto”, defina o Texto do botão como “Doar com Monero” e escolha “O cliente informa o valor” para que os doadores digitem o próprio valor. Cobranças recorrentes não são suportadas.",
     "guide": "Guia de configuração de links de pagamento",
     "acceptTitle": "Mostre que você aceita Monero",
@@ -467,7 +467,9 @@
       "preview": "Prévia do cartaz",
       "badgeAlt": "Aceitamos Monero",
       "scan": "Escaneie para pagar com Monero"
-    }
+    },
+    "allowanceNoteDetail": "Envios repetidos podem criar faturas separadas. Nenhum dado do comprador é coletado; combine a entrega com o seu cliente usando o ID da fatura. URLs de retorno não protegem downloads.",
+    "allowanceNoteMore": "Mais sobre envios e entrega"
   },
   "diagnostic": {
     "label": "ID de referência:",
@@ -1032,7 +1034,7 @@
     "terminalScope": "Limitado às próprias vendas",
     "terminalScopeBody": "O link do terminal só pode criar faturas para a sua carteira, mostrar o status delas e cancelar as próprias vendas não pagas. Ele não pode mover fundos, alterar configurações nem abrir o seu painel.",
     "walletKicker": "Acesso à carteira",
-    "walletTitle": "Acompanhe os pagamentos. Mantenha o controle da sua carteira.",
+    "walletTitle": "Acompanhe os pagamentos mantendo o controle da sua carteira.",
     "walletBody": "Os pagamentos vão diretamente do cliente para a sua carteira Monero. O XMR Checkout observa os pagamentos recebidos; o software não pode gastar os seus fundos.",
     "walletReceives": "A sua carteira recebe o XMR",
     "walletReceivesBody": "Use a carteira que você já controla.",
@@ -1041,7 +1043,7 @@
     "target": "A sua meta de confirmações",
     "targetBody": "Escolha quantas confirmações uma fatura exige. A detecção do pagamento e o alcance dessa meta são estados separados.",
     "startKicker": "Primeiros passos",
-    "startTitle": "Comece aqui. Integre quando estiver pronto.",
+    "startTitle": "Comece aqui e integre quando estiver pronto.",
     "startBody": "Conecte a sua carteira a esta instância para criar faturas e compartilhar páginas de pagamento com clientes. Conectar uma loja é opcional; adicione chamadas de API ou configure webhooks apenas se quiser que a sua loja receba atualizações das faturas.",
     "startLinks": "Links de primeiros passos",
     "readApiGuide": "Ler o guia da API",
@@ -1246,7 +1248,7 @@
     "introLabel": "Introdução às perguntas frequentes",
     "eyebrow": "Perguntas frequentes",
     "title": "Respostas diretas sobre controle, acesso e operação.",
-    "description": "Respostas sobre configuração, controle, operação e implantação.",
+    "description": "Cada uma é curta e específica, sem custódia e sem surpresas.",
     "categories": "Categorias das perguntas frequentes",
     "browse": "Navegar por tema",
     "browseHelp": "Controle, operação e implantação.",

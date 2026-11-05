@@ -393,7 +393,7 @@
     "title": "Zahlungslinks",
     "unavailable": "Zahlungslinks sind nicht verfügbar. Aktualisieren Sie, um es erneut zu versuchen.",
     "intro": "Erstellen Sie eine wiederverwendbare Schaltfläche für ein Produkt, eine Dienstleistung oder eine Spende. Jede Übermittlung erstellt eine eigene XMR-Rechnung, die direkt an Ihre Wallet bezahlt wird.",
-    "allowanceNote": "Die öffentliche Rechnungserstellung hat ein Tageskontingent und teilt sich Ihre Adresskapazität. Wiederholte Übermittlungen können separate Rechnungen erstellen. Es werden keine Käuferdaten erfasst; vereinbaren Sie die Abwicklung der Bestellung mit Ihrem Kunden anhand der Rechnungs-ID. Rücksprung-URLs schützen keine Downloads.",
+    "allowanceNote": "Die öffentliche Rechnungserstellung hat ein Tageskontingent und teilt sich Ihre Adresskapazität.",
     "donationTip": "Für Beiträge verwenden Sie einen Titel wie „Unterstütze mein Projekt“, setzen den Schaltflächentext auf „Mit Monero spenden“ und wählen „Kunde gibt den Betrag ein“, damit Spender ihren eigenen Betrag eintippen. Wiederkehrende Zahlungen werden nicht unterstützt.",
     "guide": "Anleitung zur Einrichtung von Zahlungslinks",
     "acceptTitle": "Zeigen Sie, dass Sie Monero akzeptieren",
@@ -467,7 +467,9 @@
       "preview": "Vorschau des Schilds",
       "badgeAlt": "Monero wird hier akzeptiert",
       "scan": "Scannen, um mit Monero zu bezahlen"
-    }
+    },
+    "allowanceNoteDetail": "Wiederholte Übermittlungen können separate Rechnungen erstellen. Es werden keine Käuferdaten erfasst; vereinbaren Sie die Abwicklung der Bestellung mit Ihrem Kunden anhand der Rechnungs-ID. Rücksprung-URLs schützen keine Downloads.",
+    "allowanceNoteMore": "Mehr zu Übermittlungen und Abwicklung"
   },
   "diagnostic": {
     "label": "Referenz-ID:",
@@ -1032,7 +1034,7 @@
     "terminalScope": "Nur die eigenen Verkäufe",
     "terminalScopeBody": "Der Terminal-Link kann nur Rechnungen an Ihre Wallet erstellen, deren Status anzeigen und seine eigenen unbezahlten Verkäufe stornieren. Er kann keine Gelder bewegen, keine Einstellungen ändern und Ihr Dashboard nicht öffnen.",
     "walletKicker": "Wallet-Zugriff",
-    "walletTitle": "Zahlungen verfolgen. Kontrolle über Ihre Wallet behalten.",
+    "walletTitle": "Verfolgen Sie Zahlungen und behalten Sie die Kontrolle über Ihre Wallet.",
     "walletBody": "Zahlungen gehen direkt vom Kunden an Ihre Monero-Wallet. XMR Checkout beobachtet eingehende Zahlungen; die Software kann Ihre Gelder nicht ausgeben.",
     "walletReceives": "Ihre Wallet empfängt die XMR",
     "walletReceivesBody": "Verwenden Sie die Wallet, die Sie bereits kontrollieren.",
@@ -1041,7 +1043,7 @@
     "target": "Ihr Bestätigungsziel",
     "targetBody": "Legen Sie fest, wie viele Bestätigungen eine Rechnung erfordert. Zahlungserkennung und das Erreichen dieses Ziels sind getrennte Zustände.",
     "startKicker": "Erste Schritte",
-    "startTitle": "Hier starten. Integrieren, wenn Sie so weit sind.",
+    "startTitle": "Hier starten und integrieren, wenn Sie so weit sind.",
     "startBody": "Verbinden Sie Ihre Wallet mit dieser Instanz, um Rechnungen zu erstellen und Checkout-Seiten mit Kunden zu teilen. Eine Shop-Anbindung ist optional; fügen Sie API-Aufrufe hinzu oder konfigurieren Sie Webhooks nur, wenn Ihr Shop Rechnungsaktualisierungen erhalten soll.",
     "startLinks": "Links für den Einstieg",
     "readApiGuide": "API-Anleitung lesen",
@@ -1246,7 +1248,7 @@
     "introLabel": "FAQ-Einleitung",
     "eyebrow": "FAQ",
     "title": "Klare Antworten zu Kontrolle, Zugriff und Betrieb.",
-    "description": "Antworten zu Einrichtung, Kontrolle, Betrieb und Bereitstellung.",
+    "description": "Jede ist kurz und konkret, ohne Verwahrung und ohne Überraschungen.",
     "categories": "FAQ-Kategorien",
     "browse": "Nach Thema durchsuchen",
     "browseHelp": "Kontrolle, Betrieb und Bereitstellung.",

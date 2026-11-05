@@ -393,7 +393,7 @@
     "title": "Enlaces de pago",
     "unavailable": "Los enlaces de pago no están disponibles. Actualiza para volver a intentarlo.",
     "intro": "Crea un botón reutilizable para un producto, un servicio o una donación. Cada envío crea una factura en XMR distinta pagada directamente a tu billetera.",
-    "allowanceNote": "La creación pública de facturas tiene un cupo diario y comparte tu capacidad de direcciones. Los envíos repetidos pueden crear facturas distintas. No se recogen datos del comprador; coordina la entrega con tu cliente usando el ID de la factura. Las URL de retorno no protegen las descargas.",
+    "allowanceNote": "La creación pública de facturas tiene un cupo diario y comparte tu capacidad de direcciones.",
     "donationTip": "Para aportaciones, usa un título como «Apoya mi proyecto», pon como texto del botón «Donar con Monero» y elige «El cliente introduce el importe» para que cada donante escriba su propio importe. Los cobros recurrentes no están disponibles.",
     "guide": "Guía para configurar enlaces de pago",
     "acceptTitle": "Muestra que aceptas Monero",
@@ -467,7 +467,9 @@
       "preview": "Vista previa del cartel",
       "badgeAlt": "Monero accepted here",
       "scan": "Escanea para pagar con Monero"
-    }
+    },
+    "allowanceNoteDetail": "Los envíos repetidos pueden crear facturas distintas. No se recogen datos del comprador; coordina la entrega con tu cliente usando el ID de la factura. Las URL de retorno no protegen las descargas.",
+    "allowanceNoteMore": "Más sobre envíos y entrega"
   },
   "diagnostic": {
     "label": "ID de referencia:",
@@ -1032,7 +1034,7 @@
     "terminalScope": "Limitado a sus propias ventas",
     "terminalScopeBody": "El enlace del terminal solo puede crear facturas a tu billetera, mostrar su estado y cancelar sus propias ventas sin pagar. No puede mover fondos, cambiar la configuración ni abrir tu panel.",
     "walletKicker": "Acceso a la billetera",
-    "walletTitle": "Sigue los pagos. Conserva el control de tu billetera.",
+    "walletTitle": "Sigue los pagos conservando el control de tu billetera.",
     "walletBody": "Los pagos van directamente del cliente a tu billetera de Monero. XMR Checkout observa los pagos entrantes; el software no puede gastar tus fondos.",
     "walletReceives": "Tu billetera recibe los XMR",
     "walletReceivesBody": "Usa la billetera que ya controlas.",
@@ -1041,7 +1043,7 @@
     "target": "Tu objetivo de confirmaciones",
     "targetBody": "Elige cuántas confirmaciones requiere una factura. La detección del pago y alcanzar ese objetivo son estados distintos.",
     "startKicker": "Primeros pasos",
-    "startTitle": "Empieza aquí. Intégralo cuando quieras.",
+    "startTitle": "Empieza aquí e intégralo cuando quieras.",
     "startBody": "Conecta tu billetera a esta instancia para crear facturas y compartir páginas de pago con tus clientes. Conectar una tienda es opcional; añade llamadas a la API o configura webhooks solo si quieres que tu tienda reciba actualizaciones de las facturas.",
     "startLinks": "Enlaces de primeros pasos",
     "readApiGuide": "Lee la guía de la API",
@@ -1246,7 +1248,7 @@
     "introLabel": "Introducción de las preguntas frecuentes",
     "eyebrow": "Preguntas frecuentes",
     "title": "Respuestas directas sobre control, acceso y funcionamiento.",
-    "description": "Respuestas sobre la configuración, el control, el funcionamiento y el despliegue.",
+    "description": "Cada una es breve y concreta, sin custodia y sin sorpresas.",
     "categories": "Categorías de preguntas frecuentes",
     "browse": "Explora por tema",
     "browseHelp": "Control, funcionamiento y despliegue.",

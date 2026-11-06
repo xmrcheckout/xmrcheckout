@@ -46,11 +46,14 @@ For each combination, test wallet connection and invoice creation dialogs:
 
 ## Repeatable browser verification
 
-From `ui`, build and run the fixture service with unused local ports:
+From `ui` with Node 24, build and run the fixture service with unused local ports.
+Enable donations explicitly so the donation-page checks exercise their routes:
 
 ```sh
-npm run build
+DONATIONS_ENABLED=true NEXT_PUBLIC_DONATIONS_ENABLED=true \
+NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3336 npm run build
 PORT=3335 FIXTURE_PROXY_PORT=3336 FIXTURE_API_PORT=8035 \
+DONATIONS_ENABLED=true NEXT_PUBLIC_DONATIONS_ENABLED=true \
 FIXTURE_UI_URL=http://127.0.0.1:3336 API_BASE_URL=http://127.0.0.1:8035 \
 node tests/fixture-server.cjs
 ```
@@ -68,6 +71,9 @@ node tests/browser-expiry.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
 node tests/browser-wallet-connection.cjs http://127.0.0.1:3336
 node tests/browser-polish.cjs http://127.0.0.1:3336
 node tests/browser-invoice-transactions.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-ux-a.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-ux-b.cjs http://127.0.0.1:3336 http://127.0.0.1:8035
+node tests/browser-ux-c.cjs http://127.0.0.1:3336
 ```
 
 Screenshot contrast sampling requires Python 3 with Pillow. Set `CONTRAST_PYTHON`
@@ -178,3 +184,32 @@ Feature review: display and read-only status refresh only; no new key access,
 fund movement, price guarantees, invoice states, or payment-detection changes.
 Underpayment behavior is not part of this integration. Existing manual checks
 remain pending.
+
+## UX audit groups A–D — 2026-11-06
+
+Feature review: UI display, localized guidance, and unavailable-status handling
+only. No API, payment-detection, confirmation-threshold, or wallet-permission
+changes. A zero-target invoice uses the network-seen wording only when the
+reported confirmation count is zero; otherwise it shows its reported count.
+
+- Lint and all 28 unit tests passed with Node 24. The final UI passed an isolated
+  production-mode webpack build; production images were not rebuilt for tests.
+- The three focused browser suites above passed, covering receipt screen/print
+  safety, unavailable-status parent messages, zero-target invoices, partial
+  amounts, original quotes, delayed checking, donation errors, padded amounts,
+  demo wording, saved checkout layouts, webhook classifications/localization,
+  UTC health timestamps, tour defaults, and all 20 reference currencies.
+- Existing checkout-clarity, expiry, UX, link-error, layout, and polish suites
+  passed sequentially against the same isolated fixture. Checks included
+  320/390/768/1440px, enlarged text, reduced motion, and the expiry suite's
+  script-disabled and time-zone cases. All 40 polish axe scans reported no
+  WCAG-tagged violations; the HTML contrast sampler passed.
+- Corresponding D catalog labels were reviewed in every language. Only English
+  needed the requested casing corrections; other locales retain their existing
+  identifier terms and typography. All semantic changes and key additions or
+  removals were applied across all 11 catalogs.
+
+All wallet-application, SVG contrast, and manual assistive-technology checks
+previously marked Pending remain Pending. The fixture checks used no real
+wallet credentials, production writes, or on-chain payments. Production
+smoke checks remain pending deployment.

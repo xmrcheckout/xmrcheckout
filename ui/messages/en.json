@@ -153,7 +153,7 @@
     },
     "detectedAwaiting": "Payment detected. Awaiting confirmations.",
     "awaitingFunds": "Awaiting payment.",
-    "orderId": "Order id",
+    "orderId": "Order ID",
     "address": "Address",
     "noFurtherPayment": "No further payment is requested. Waiting for confirmations.",
     "viewDetails": "View payment details",
@@ -186,7 +186,7 @@
   "receipt": {
     "metaTitle": "Receipt",
     "eyebrow": "Payment receipt",
-    "notFoundHelp": "The invoice id does not match a known invoice. Check the id and try again.",
+    "notFoundHelp": "The invoice ID does not match a known invoice. Check the ID and try again.",
     "close": "Close",
     "returnToInvoice": "Return to invoice",
     "orderIdValue": "Order ID: {id}",
@@ -239,7 +239,7 @@
     "viewPrevious": "View previous invoice"
   },
   "lookup": {
-    "empty": "Enter an invoice id to continue.",
+    "empty": "Enter an invoice ID to continue.",
     "invalid": "Enter a complete invoice ID or an invoice link from this site.",
     "label": "Invoice ID or link",
     "placeholder": "Paste the complete invoice ID or link",
@@ -247,15 +247,15 @@
     "note": "Read-only status view. The invoice page checks for updates every 30 seconds."
   },
   "lookupPage": {
-    "metaTitle": "Check Invoice",
+    "metaTitle": "Check invoice",
     "metaDescription": "Check Monero invoice detection and confirmation progress using a public invoice ID.",
     "ogTitle": "Monero Invoice Status Lookup | XMR Checkout",
     "eyebrow": "Invoice status",
     "title": "Check a Monero invoice status.",
-    "description": "Paste an invoice id to see detection and confirmation progress.",
+    "description": "Paste an invoice ID to see detection and confirmation progress.",
     "publicLookup": "Public lookup",
     "find": "Find an invoice",
-    "publicNote": "Anyone with the invoice id can view its current state. This public page does not request wallet credentials or allow changes.",
+    "publicNote": "Anyone with the invoice ID can view its current state. This public page does not request wallet credentials or allow changes.",
     "exampleStatus": "Example status",
     "customerSees": "What the customer will see",
     "path": {
@@ -297,7 +297,7 @@
     "requestMetaTitle": "Donation Request",
     "statusPending": "Awaiting on-chain detection of your donation.",
     "statusPartial": "Part of the donation was received. Send the remaining amount to complete it.",
-    "notFoundHelp": "The donation id does not match a known invoice. Check the id and try again.",
+    "notFoundHelp": "The donation ID does not match a known invoice. Check the ID and try again.",
     "lookupEyebrow": "Donation lookup",
     "notFound": "Donation invoice not found",
     "loadFailed": "We could not load this donation status. Refresh the page or try again later.",
@@ -374,7 +374,7 @@
     "sourceCommit": "Running commit {commit}"
   },
   "nav": {
-    "checkInvoice": "Check Invoice",
+    "checkInvoice": "Check invoice",
     "demo": "Demo",
     "docs": "Documentation",
     "guides": "Guides",

@@ -118,7 +118,7 @@ export default async function InvoiceStatusDetailPage({
           title={t("checkout.statusUnavailable")}
         />
         <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 className="text-lg font-semibold">{t("invoicePage.tryLookupAgain")}</h2>
+          <h2 className="font-sans text-lg font-semibold">{t("invoicePage.tryLookupAgain")}</h2>
           <div className="mt-4 max-w-2xl">
             <InvoiceStatusLookup initialValue={invoiceId} compact />
           </div>
@@ -233,7 +233,7 @@ export default async function InvoiceStatusDetailPage({
               <p className="text-xs font-semibold text-ink-soft">
                 {t("invoicePage.context")}
               </p>
-              <h2 className="mt-1 text-lg font-semibold">{t("invoicePage.details")}</h2>
+              <h2 className="font-sans mt-1 text-lg font-semibold">{t("invoicePage.details")}</h2>
             </div>
             <StatusRefreshButton />
           </div>
@@ -285,7 +285,7 @@ export default async function InvoiceStatusDetailPage({
         className="mt-8 border-y border-stroke py-6"
         aria-labelledby="invoice-timeline"
       >
-        <h2 className="text-xl font-semibold" id="invoice-timeline">
+        <h2 className="font-sans text-xl font-semibold" id="invoice-timeline">
           {t("invoicePage.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -306,7 +306,7 @@ export default async function InvoiceStatusDetailPage({
 
       {confirmationMessage ? (
         <section aria-labelledby="confirmation-message-heading" className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 id="confirmation-message-heading" className="text-lg font-semibold">{t("invoicePage.merchantMessage")}</h2>
+          <h2 id="confirmation-message-heading" className="font-sans text-lg font-semibold">{t("invoicePage.merchantMessage")}</h2>
           <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words text-ink">
             {linkifyMessage(confirmationMessage).map((segment, index) =>
               segment.kind === "link" ? (

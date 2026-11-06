@@ -14,10 +14,10 @@ export default async function PaymentLinkPage({ params }: { params: Promise<{ to
   const { t, locale } = await getI18n();
   const response = await fetch(`${process.env.API_BASE_URL ?? "http://localhost:8000"}/api/core/public/payment-links/${encodeURIComponent(token)}`, { cache: "no-store" }).catch(() => null);
   if (response?.status === 404) notFound();
-  if (!response?.ok) return <main id="main-content" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16"><h1 className="text-2xl font-semibold">{t("paymentLink.checkoutUnavailable")}</h1><p>{t("paymentLink.checkoutUnavailableHelp")}</p></main>;
+  if (!response?.ok) return <main id="main-content" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16"><h1 className="font-sans text-2xl font-semibold">{t("paymentLink.checkoutUnavailable")}</h1><p>{t("paymentLink.checkoutUnavailableHelp")}</p></main>;
   const link = await response.json();
   return <main id="main-content" tabIndex={-1} className="mx-auto grid w-full max-w-2xl gap-5 px-6 py-16">
-    <h1 className="break-words text-3xl font-semibold">{link.title}</h1>
+    <h1 className="font-sans break-words text-3xl font-semibold">{link.title}</h1>
     <p className="whitespace-pre-wrap break-words">{link.description}</p>
     {link.customer_amount ? <CustomerAmountForm link={link} t={t} /> : <>
     <p className="text-xl">{link.amount_xmr ? `${formatXmrAmount(link.amount_xmr)} XMR` : t("pay.merchantPrice", { price: formatFiatAmount(link.amount_fiat, link.currency, locale) })}</p>

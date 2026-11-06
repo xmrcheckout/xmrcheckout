@@ -216,7 +216,7 @@ export default async function DonateStatusDetailPage({
               <p className="text-xs font-semibold text-ink-soft">
                 {t("donate.context")}
               </p>
-              <h2 className="mt-1 text-lg font-semibold">{t("donate.details")}</h2>
+              <h2 className="font-sans mt-1 text-lg font-semibold">{t("donate.details")}</h2>
             </div>
             <StatusRefreshButton />
           </div>
@@ -258,7 +258,7 @@ export default async function DonateStatusDetailPage({
         className="mt-8 border-y border-stroke py-6"
         aria-labelledby="donation-timeline"
       >
-        <h2 className="text-xl font-semibold" id="donation-timeline">
+        <h2 className="font-sans text-xl font-semibold" id="donation-timeline">
           {t("donate.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

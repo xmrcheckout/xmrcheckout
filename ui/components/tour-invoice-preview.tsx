@@ -80,7 +80,7 @@ export default function TourInvoicePreview({
             <p className="text-xs font-semibold text-ink-soft">
               {t("dashboard.invoices.context")}
             </p>
-            <h2 className="mt-1 text-lg font-semibold">{t("demo.invoice.details")}</h2>
+            <h2 className="font-sans mt-1 text-lg font-semibold">{t("demo.invoice.details")}</h2>
           </div>
 
           <dl className="divide-y divide-stroke px-5 py-2 text-sm">
@@ -138,7 +138,7 @@ export default function TourInvoicePreview({
       </div>
 
       <section className="border-y border-stroke py-6" aria-labelledby="tour-invoice-timeline">
-        <h2 className="text-xl font-semibold" id="tour-invoice-timeline">
+        <h2 className="font-sans text-xl font-semibold" id="tour-invoice-timeline">
           {t("demo.invoice.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

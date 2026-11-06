@@ -55,7 +55,7 @@ async function noOverflow(page, label) {
             await fixture({ invoiceExpiry });
             await page.goto(base + path, { waitUntil: 'domcontentloaded' });
             assert.match(await page.locator('[data-invoice-expiry]').innerText(), text);
-            assert.equal(await page.getByText('Awaiting funds', { exact: true }).count() > 0, true, 'deadline does not invent expired status');
+            assert.equal(await page.getByText('Awaiting payment', { exact: true }).count() > 0, true, 'deadline does not invent expired status');
           }
           await fixture({ invoiceExpiry: deadline, invoiceStatus: 'payment_detected' });
           await page.goto(base + path, { waitUntil: 'domcontentloaded' });
@@ -78,7 +78,7 @@ async function noOverflow(page, label) {
     const initial = await page.locator('[data-invoice-expiry]').innerText();
     await page.waitForFunction(text => document.querySelector('[data-invoice-expiry]').innerText !== text, initial, { timeout: 10000 });
     await page.getByText('Expiry time has passed. Status is being checked.', { exact: true }).waitFor();
-    assert.ok(await page.getByText('Awaiting funds', { exact: true }).count());
+    assert.ok(await page.getByText('Awaiting payment', { exact: true }).count());
     await fixture({ invoiceStatus: 'expired', invoiceExpiry: '2020-01-01T00:00:00Z' });
     await page.reload({ waitUntil: 'domcontentloaded' });
     assert.equal(await page.locator('[data-invoice-expiry]').count(), 0);

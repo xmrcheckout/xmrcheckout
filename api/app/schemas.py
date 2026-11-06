@@ -196,6 +196,8 @@ class InvoiceStatusResponse(BaseModel):
     btcpay_order_number: str | None = None
     product_title: str | None = None
     product_description: str | None = None
+    recipient_name: str | None = None
+    description: str | None = None
     payment_link_url: str | None = None
     checkout_continue_available: bool = False
     checking_delayed: bool = False

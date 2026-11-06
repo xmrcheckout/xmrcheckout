@@ -458,6 +458,22 @@ def _invoice_response(
     )
 
 
+def _public_display_fields(metadata: Any) -> dict[str, str]:
+    """Payee name and description for the customer's payment page.
+
+    These come from the dashboard's "Customer display" fields and are public to
+    anyone with the invoice link. BTCPay invoices keep client metadata private.
+    """
+    if not isinstance(metadata, dict) or "btcpay" in metadata:
+        return {}
+    fields: dict[str, str] = {}
+    for key in ("recipient_name", "description"):
+        value = metadata.get(key)
+        if isinstance(value, str) and value.strip():
+            fields[key] = value.strip()
+    return fields
+
+
 def _public_invoice_status_response(
     db: Session,
     invoice: Invoice,
@@ -517,6 +533,7 @@ def _public_invoice_status_response(
     if isinstance(product, dict):
         update["product_title"] = product.get("title")
         update["product_description"] = product.get("description")
+    update.update(_public_display_fields(metadata))
     continue_url = _get_checkout_continue_url(invoice)
     update["checkout_continue_available"] = bool(
         invoice.status == "confirmed" and continue_url

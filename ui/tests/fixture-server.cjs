@@ -86,7 +86,7 @@ const server = http.createServer((request, response) => {
       status = 405;
     } else if ([`/api/core/public/invoice/${fixtureInvoice}`, `/api/core/public/donation/${fixtureInvoice}`].includes(path)) {
       status = invoiceResponseStatus;
-      result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: invoiceStatus, confirmation_target: 2, confirmations: invoiceStatus === "confirmed" ? 2 : invoiceStatus === "payment_detected" ? 1 : 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
+      result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: invoiceStatus, confirmation_target: 2, confirmations: invoiceStatus === "confirmed" ? 2 : invoiceStatus === "payment_detected" ? 1 : 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", recipient_name: "Fixture shop", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
       if (invoiceExpiry !== undefined && invoiceExpiry !== "default") {
         result.expires_at = invoiceExpiry;
       }

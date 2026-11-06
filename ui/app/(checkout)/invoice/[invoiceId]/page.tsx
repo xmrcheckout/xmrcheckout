@@ -31,6 +31,8 @@ type InvoiceStatusResponse = {
   payment_link_url?: string;
   product_title?: string;
   product_description?: string;
+  recipient_name?: string | null;
+  description?: string | null;
   id: string;
   address: string;
   subaddress_index: number | null;
@@ -202,9 +204,13 @@ export default async function InvoiceStatusDetailPage({
           hasPartialAmount(invoice.amount_paid_xmr, invoice.amount_remaining_xmr),
           t,
         )}
-        eyebrow={t("invoicePage.eyebrow")}
+        eyebrow={
+          invoice.recipient_name
+            ? t("invoicePage.paymentTo", { name: invoice.recipient_name })
+            : t("invoicePage.eyebrow")
+        }
         id="payment-request-title"
-        title={invoice.product_title || t("checkout.paymentRequest")}
+        title={invoice.product_title || invoice.description || t("checkout.paymentRequest")}
       />
 
       {invoice.product_description ? <p className="mt-4 whitespace-pre-wrap break-words">{invoice.product_description}</p> : null}
@@ -287,7 +293,7 @@ export default async function InvoiceStatusDetailPage({
           {t("invoicePage.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[...timelineItems].reverse().map((item) => (
+          {timelineItems.map((item) => (
             <li className="border-l-2 border-sage pl-4" key={item.label}>
               <p className="text-xs font-semibold text-ink-soft">
                 {item.label}

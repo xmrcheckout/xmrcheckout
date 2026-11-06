@@ -12,7 +12,7 @@ export const invoiceStatuses = [
 
 export type InvoiceStatus = (typeof invoiceStatuses)[number];
 
-/** Plain status name, e.g. "Awaiting funds". */
+/** Plain status name, e.g. "Awaiting payment". */
 export const invoiceStatusName = (status: InvoiceStatus, t: Translate): string =>
   t(`invoiceStatus.${status}`);
 

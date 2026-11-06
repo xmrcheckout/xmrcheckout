@@ -61,6 +61,16 @@ const assertBranded = async (page,label) => {
     await page.keyboard.press('Enter');
     await page.getByRole('button',{name:'Try again',exact:true}).click();
     await page.getByRole('heading',{name:'Fixture product',exact:true}).waitFor();
+    // Customer payment pages keep the brand but offer no site navigation, wallet connection or donation.
+    for (const path of ['/pay/fixture-token',`/invoice/00000000-0000-4000-8000-000000000456`]) {
+      await page.goto(base+path,{waitUntil:'networkidle'});
+      await page.getByRole('heading',{name:'Fixture product',exact:true}).waitFor();
+      await assertBranded(page,path);
+      assert.equal(await page.getByRole('navigation',{name:'Primary navigation'}).count(),0,path+' navigation');
+      assert.equal(await page.getByText('Connect view-only wallet').count(),0,path+' wallet connection');
+      assert.equal(await page.getByRole('link',{name:'Donate'}).count(),0,path+' donation');
+    }
+    await page.getByText('Payment to Fixture shop',{exact:true}).waitFor();
     await page.close();
     const noScript = await browser.newContext({javaScriptEnabled:false});
     const staticPage = await noScript.newPage();

@@ -81,5 +81,32 @@ class InvoiceRoutingTests(unittest.TestCase):
         self.assertIn("donation", compiled)
 
 
+
+class PublicDisplayFieldsTests(unittest.TestCase):
+    def test_customer_display_fields_are_trimmed_and_shown(self):
+        self.assertEqual(
+            routes._public_display_fields(
+                {"recipient_name": "  Corner Bakery ", "description": "Order 1042", "order_id": "secret"}
+            ),
+            {"recipient_name": "Corner Bakery", "description": "Order 1042"},
+        )
+
+    def test_blank_or_non_text_fields_are_left_out(self):
+        self.assertEqual(
+            routes._public_display_fields({"recipient_name": "  ", "description": {"x": 1}}),
+            {},
+        )
+        for metadata in (None, [], "text"):
+            self.assertEqual(routes._public_display_fields(metadata), {})
+
+    def test_btcpay_metadata_stays_private(self):
+        self.assertEqual(
+            routes._public_display_fields(
+                {"btcpay": {"amount": "10"}, "recipient_name": "Shop", "description": "Customer note"}
+            ),
+            {},
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

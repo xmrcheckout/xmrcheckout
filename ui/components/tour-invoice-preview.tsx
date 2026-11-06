@@ -142,7 +142,7 @@ export default function TourInvoicePreview({
           {t("demo.invoice.timeline")}
         </h2>
         <ol className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[...timelineItems].reverse().map((item) => (
+          {timelineItems.map((item) => (
             <li className="border-l-2 border-sage pl-4" key={item.event}>
               <p className="text-xs font-semibold text-ink-soft">{t(`demo.timeline.${item.event}`)}</p>
               <p className="mt-1 text-sm font-semibold">

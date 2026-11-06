@@ -11,14 +11,37 @@ type SiteHeaderProps = {
   isAuthenticated: boolean;
   includeTour?: boolean;
   donationsEnabled?: boolean;
+  // Brand only: customer payment pages carry no site navigation.
+  minimal?: boolean;
 };
 
 export default async function SiteHeader({
   isAuthenticated,
   includeTour = false,
   donationsEnabled = false,
+  minimal = false,
 }: SiteHeaderProps) {
   const { t } = await getI18n();
+  const brand = (
+    <div className="brand">
+      <Link href="/" aria-label={t("nav.homeLabel")}>
+        <Image
+          className="brand-logo"
+          src="/logo.png"
+          alt={t("nav.logoAlt")}
+          width={128}
+          height={128}
+          priority
+        />
+      </Link>
+      <Link className="name" href="/">
+        XMR Checkout
+      </Link>
+    </div>
+  );
+  if (minimal) {
+    return <header className="site-header">{brand}</header>;
+  }
   const links = [
     { href: "/invoice", label: t("nav.checkInvoice") },
     ...(includeTour ? [{ href: "/tour", label: t("nav.demo") }] : []),
@@ -48,21 +71,7 @@ export default async function SiteHeader({
 
   return (
     <header className="site-header">
-      <div className="brand">
-        <Link href="/" aria-label={t("nav.homeLabel")}>
-          <Image
-            className="brand-logo"
-            src="/logo.png"
-            alt={t("nav.logoAlt")}
-            width={128}
-            height={128}
-            priority
-          />
-        </Link>
-        <Link className="name" href="/">
-          XMR Checkout
-        </Link>
-      </div>
+      {brand}
       <nav className="nav desktop-nav" aria-label={t("nav.primary")}>
         {renderNavigation()}
       </nav>

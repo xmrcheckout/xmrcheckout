@@ -259,7 +259,7 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
       <div className="grid w-full max-w-md justify-items-center gap-4 text-center">
         <p className="text-sm uppercase tracking-wide text-ink-soft">{terminal?.name} · {t("pay.scan")}</p>
         <p className="font-sans text-4xl font-semibold break-all">{formatXmrAmount(due)} XMR</p>
-        {remaining ? <p className="font-semibold text-amber-800">{t("terminal.partial")}</p> : fiat ? <p className="text-lg text-ink-soft">{t("terminal.fiatReference", { amount: fiat })}</p> : null}
+        {remaining ? <p className="font-semibold text-amber-800">{t("terminal.partial")}</p> : fiat ? <p className="text-lg text-ink-soft">{t("pay.merchantPrice", { price: fiat })}</p> : null}
         {demo ? <div className="grid aspect-square w-full max-w-[360px] place-items-center rounded-2xl border-2 border-dashed border-stroke bg-white p-6 text-sm">{t("demo.qrPlaceholder")}</div> : qr ? <Image src={qr} alt={t("terminal.qrAlt", { amount: formatXmrAmount(due) })} width={320} height={320} unoptimized className="w-full max-w-[min(80vw,360px)] rounded-2xl bg-white p-3" /> : <div className="aspect-square w-full max-w-[360px] animate-pulse rounded-2xl bg-white" />}
         {sale.note ? <p className="text-ink-soft">{sale.note}</p> : null}
         <p className="text-sm text-ink-soft" aria-live="off">{seconds !== null ? t("terminal.expiresIn", { time: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` }) : null} · {t("terminal.watching")}</p>

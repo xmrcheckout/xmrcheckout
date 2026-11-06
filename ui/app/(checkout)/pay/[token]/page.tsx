@@ -1,6 +1,6 @@
 import AutomaticPaymentLink from "../../../../components/automatic-payment-link";
 import { notFound } from "next/navigation";
-import { formatXmrAmount } from "../../../../lib/formatting";
+import { formatFiatAmount, formatXmrAmount } from "../../../../lib/formatting";
 import { getI18n } from "../../../../lib/i18n/server";
 import type { Translate } from "../../../../lib/i18n/translate";
 
@@ -11,7 +11,7 @@ export async function generateMetadata() {
 }
 export default async function PaymentLinkPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const { t } = await getI18n();
+  const { t, locale } = await getI18n();
   const response = await fetch(`${process.env.API_BASE_URL ?? "http://localhost:8000"}/api/core/public/payment-links/${encodeURIComponent(token)}`, { cache: "no-store" }).catch(() => null);
   if (response?.status === 404) notFound();
   if (!response?.ok) return <main id="main-content" tabIndex={-1} className="mx-auto max-w-2xl px-6 py-16"><h1 className="text-2xl font-semibold">{t("paymentLink.checkoutUnavailable")}</h1><p>{t("paymentLink.checkoutUnavailableHelp")}</p></main>;
@@ -20,7 +20,7 @@ export default async function PaymentLinkPage({ params }: { params: Promise<{ to
     <h1 className="break-words text-3xl font-semibold">{link.title}</h1>
     <p className="whitespace-pre-wrap break-words">{link.description}</p>
     {link.customer_amount ? <CustomerAmountForm link={link} t={t} /> : <>
-    <p className="text-xl">{link.amount_xmr ? `${link.amount_xmr} XMR` : t("paymentLink.fiatReference", { amount: link.amount_fiat, currency: link.currency })}</p>
+    <p className="text-xl">{link.amount_xmr ? `${link.amount_xmr} XMR` : t("pay.merchantPrice", { price: formatFiatAmount(link.amount_fiat, link.currency, locale) })}</p>
     {link.amount_fiat ? <p>{t("paymentLink.fiatNote")}</p> : null}
     <p>{t("paymentLink.directToWallet", { target: link.confirmation_target })}</p>
     {link.auto_create_invoice ? <AutomaticPaymentLink token={token} actionUrl={link.action_url} /> : null}

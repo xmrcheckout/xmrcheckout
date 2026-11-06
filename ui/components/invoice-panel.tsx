@@ -732,45 +732,50 @@ function CreateInvoiceModal({
                       {t("dashboard.invoices.customerDisplay")}
                     </summary>
                     <div className="mt-4 grid gap-5">
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <div className="grid gap-2">
-                          <label
-                            className={labelClass}
-                            htmlFor="wizard_recipient"
-                          >
-                            {t("dashboard.invoices.recipientName")}
-                          </label>
-                          <input
-                            className={inputClass}
-                            id="wizard_recipient"
-                            name="recipient_name"
-                            type="text"
-                            placeholder={t("dashboard.invoices.yourStore")}
-                            value={recipientName}
-                            onChange={(event) =>
-                              setRecipientName(event.target.value)
-                            }
-                          />
+                      <div className="grid gap-2">
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="grid gap-2">
+                            <label
+                              className={labelClass}
+                              htmlFor="wizard_recipient"
+                            >
+                              {t("dashboard.invoices.recipientName")}
+                            </label>
+                            <input
+                              className={inputClass}
+                              id="wizard_recipient"
+                              name="recipient_name"
+                              type="text"
+                              placeholder={t("dashboard.invoices.yourStore")}
+                              value={recipientName}
+                              onChange={(event) =>
+                                setRecipientName(event.target.value)
+                              }
+                            />
+                          </div>
+                          <div className="grid gap-2">
+                            <label
+                              className={labelClass}
+                              htmlFor="wizard_description"
+                            >
+                              {t("dashboard.invoices.description")}
+                            </label>
+                            <input
+                              className={inputClass}
+                              id="wizard_description"
+                              name="description"
+                              type="text"
+                              placeholder={t("dashboard.invoices.orderExample")}
+                              value={description}
+                              onChange={(event) =>
+                                setDescription(event.target.value)
+                              }
+                            />
+                          </div>
                         </div>
-                        <div className="grid gap-2">
-                          <label
-                            className={labelClass}
-                            htmlFor="wizard_description"
-                          >
-                            {t("dashboard.invoices.description")}
-                          </label>
-                          <input
-                            className={inputClass}
-                            id="wizard_description"
-                            name="description"
-                            type="text"
-                            placeholder={t("dashboard.invoices.orderExample")}
-                            value={description}
-                            onChange={(event) =>
-                              setDescription(event.target.value)
-                            }
-                          />
-                        </div>
+                        <p className="text-sm text-ink-soft">
+                          {t("dashboard.invoices.customerDisplayHelp")}
+                        </p>
                       </div>
 
                       <div className="grid gap-2">

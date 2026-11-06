@@ -165,7 +165,7 @@ async function main() {
     await page.getByRole("heading", { name: "Fixture product", exact: true }).waitFor();
     const requestPromise = page.waitForRequest(request => request.method() === "POST" && request.url().includes("/payment-links/fixture-token/invoices"));
     const responsePromise = page.waitForResponse(response => response.request().method() === "POST" && response.url().includes("/payment-links/fixture-token/invoices"));
-    await page.getByRole("button", { name: "Create invoice and pay with Monero", exact: true }).click();
+    await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
     const submitted = await requestPromise;
     assert.equal(new URL(submitted.url()).origin, new URL(base).origin);
     assert.equal(submitted.headers().origin, new URL(base).origin);
@@ -230,13 +230,13 @@ async function main() {
     const fallback = await browser.newContext({ javaScriptEnabled: false });
     const manual = await fallback.newPage();
     await manual.goto(base + "/pay/fixture-token");
-    await manual.getByRole("button", { name: "Create invoice and pay with Monero" }).waitFor();
+    await manual.getByRole("button", { name: "Continue to payment" }).waitFor();
     await fallback.close();
     const noStorage = await browser.newContext();
     await noStorage.addInitScript(() => Object.defineProperty(window, "sessionStorage", { get() { throw new Error("Storage unavailable"); } }));
     const unavailableStorage = await noStorage.newPage();
     await unavailableStorage.goto(base + "/pay/fixture-token", { waitUntil: "networkidle" });
-    await unavailableStorage.getByRole("button", { name: "Create invoice and pay with Monero" }).waitFor();
+    await unavailableStorage.getByRole("button", { name: "Continue to payment" }).waitFor();
     await noStorage.close();
     console.log("Payment-link browser checks passed at 320/390/768/1440px, enlarged text, keyboard, clipboard, graphic preview, badge snippet, printable sign, copied cross-origin embed, automatic creation, resumption, explicit new purchase, response recovery, prerender protection, and manual fallbacks.");
   } finally { await browser.close(); }

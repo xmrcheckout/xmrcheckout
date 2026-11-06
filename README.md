@@ -239,7 +239,7 @@ base64 body, selected headers, timeout) with the token as a bearer credential.
 
 ### Troubleshooting first payment detection
 
-If an invoice stays at `0` confirmations or never moves out of `Awaiting funds`, check these in order:
+If an invoice stays at `0` confirmations or never moves out of `Awaiting payment`, check these in order:
 
 1. Open the dashboard overview and confirm:
 - `Wallet RPC` shows `ok`

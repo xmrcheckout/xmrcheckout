@@ -12,13 +12,18 @@ import { getI18n } from "../lib/i18n/server";
 
 export default async function MarketingShell({
   children,
+  variant = "site",
 }: {
   children: React.ReactNode;
+  // "checkout" pages are for the merchant's customers: keep the branding,
+  // but no site navigation, wallet connection or donation prompts.
+  variant?: "site" | "checkout";
 }) {
   const cookieStore = await cookies();
   const apiKey = cookieStore.get("xmrcheckout_api_key")?.value;
   const isAuthenticated = Boolean(apiKey);
-  const donationsEnabled = areDonationsEnabled();
+  const isCheckout = variant === "checkout";
+  const donationsEnabled = !isCheckout && areDonationsEnabled();
   const { t } = await getI18n();
 
   return (
@@ -33,13 +38,16 @@ export default async function MarketingShell({
         donationsEnabled={donationsEnabled}
         isAuthenticated={isAuthenticated}
         includeTour
+        minimal={isCheckout}
       />
 
       {children}
 
-      <Suspense fallback={null}>
-        <LoginModal />
-      </Suspense>
+      {isCheckout ? null : (
+        <Suspense fallback={null}>
+          <LoginModal />
+        </Suspense>
+      )}
 
       <footer className="site-footer site-footer-dark">
         <div className="site-footer-copy">

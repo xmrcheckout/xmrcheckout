@@ -32,7 +32,7 @@ async function keyboard(page, dialog) {
    for(const [status,count,events] of [['pending','0/2',['Invoice created']],['payment_detected','1/2',['Invoice created','Payment detected']],['confirmed','2/2',['Invoice created','Payment detected','Payment confirmed']],['expired','0/2',['Invoice created','Invoice expired']],['invalid','0/2',['Invoice created','Invoice marked invalid']]]) {
     await preview.getByLabel('Preview payment state').selectOption(status);
     assert.equal(await page.getByTestId('context-confirmations').innerText(),count);
-    assert.deepEqual((await page.locator('#tour-invoice-timeline + ol li > p:first-child').allTextContents()).reverse(),events);
+    assert.deepEqual(await page.locator('#tour-invoice-timeline + ol li > p:first-child').allTextContents(),events);
     await scan(page,`tour ${width} ${status}`);
    }
    assert.match(await preview.ariaSnapshot(),/Simulated—no payment requested/);

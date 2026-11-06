@@ -636,12 +636,13 @@
       "workspace": "Pracovní prostor obchodníka",
       "sections": "Sekce panelu",
       "overviewTitle": "Aktivita obchodníka v přehledu",
-      "openInvoices": "Otevřené platební výzvy",
+      "openInvoices": "Zobrazit platební výzvy",
       "metrics": "Metriky obchodníka",
       "recentInvoices": "Nedávné platební výzvy",
       "recentInvoicesHelp": "Nejnovější platební výzvy obchodníka a jejich aktuální stav.",
       "viewAll": "Zobrazit vše",
       "noInvoices": "Zatím nebyly vytvořeny žádné platební výzvy.",
+      "firstSteps": "Vytvořte první <invoice>platební výzvu</invoice> nebo nastavte <links>platební odkaz</links> či <terminals>terminál</terminals>.",
       "recentDeliveries": "Nedávná doručení webhooků",
       "recentDeliveriesHelp": "Nejnovější pokusy o odeslání událostí platebních výzev na vaše nastavené endpointy.",
       "history": "Historie",
@@ -1204,9 +1205,13 @@
         "label": "Správa prostředků a přístup",
         "description": "Oprávnění k peněžence, přihlašovací údaje a kontrola obchodníka."
       },
+      "selling": {
+        "label": "Platební odkazy a prodej osobně",
+        "description": "Tlačítka, dary, odznaky, digitální doručení a terminály."
+      },
       "operations": {
-        "label": "Provoz a dostupnost",
-        "description": "Cena služby, dostupnost a bezpečné chování při výpadku."
+        "label": "Cena, potvrzení o platbě a výpadky",
+        "description": "Kolik to stojí, jak zákazníci získají potvrzení o platbě a co se stane, když služba nefunguje."
       },
       "comparisons": {
         "label": "Srovnání a vlastní hosting",
@@ -1262,7 +1267,7 @@
       },
       "setup": {
         "q": "Co vyžaduje nastavení?",
-        "p1": "Po přihlášení vytvářejte platební výzvy v panelu nebo přes API."
+        "p1": "Peněženku Monero, kterou máte pod kontrolou. Připojte ji pomocí primární adresy a soukromého klíče pro prohlížení (bez e-mailu a hesla) a potom vytvářejte platební výzvy, platební odkazy nebo terminály v panelu, případně použijte API."
       },
       "email": {
         "q": "Vyžadujete e-mail nebo osobní údaje?",
@@ -1311,7 +1316,7 @@
     "introLabel": "Úvod k častým dotazům",
     "eyebrow": "Časté dotazy",
     "title": "Přímé odpovědi o kontrole, přístupu a provozu.",
-    "description": "Každá je krátká a konkrétní, bez úschovy prostředků a bez překvapení.",
+    "description": "Krátké odpovědi o správě prostředků, nákladech, platebních odkazech, terminálech a samostatném hostování.",
     "categories": "Kategorie častých dotazů",
     "browse": "Procházet podle tématu",
     "browseHelp": "Kontrola, provoz a nasazení.",

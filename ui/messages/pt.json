@@ -628,12 +628,13 @@
       "workspace": "Área de trabalho do comerciante",
       "sections": "Seções do painel",
       "overviewTitle": "Atividade do comerciante em resumo",
-      "openInvoices": "Faturas em aberto",
+      "openInvoices": "Ver faturas",
       "metrics": "Métricas do comerciante",
       "recentInvoices": "Faturas recentes",
       "recentInvoicesHelp": "As faturas mais recentes do comerciante e o status atual delas.",
       "viewAll": "Ver todas",
       "noInvoices": "Nenhuma fatura criada ainda.",
+      "firstSteps": "Crie a sua primeira <invoice>fatura</invoice> ou configure um <links>link de pagamento</links> ou um <terminals>terminal</terminals>.",
       "recentDeliveries": "Entregas de webhook recentes",
       "recentDeliveriesHelp": "As tentativas mais recentes de envio de eventos de fatura para os seus endpoints configurados.",
       "history": "Histórico",
@@ -1186,9 +1187,13 @@
         "label": "Custódia e acesso",
         "description": "Permissões da carteira, dados de acesso e controle do comerciante."
       },
+      "selling": {
+        "label": "Links de pagamento e vendas presenciais",
+        "description": "Botões, doações, selos, entrega digital e terminais."
+      },
       "operations": {
-        "label": "Operação e disponibilidade",
-        "description": "Custo do serviço, disponibilidade e comportamento seguro em caso de falha."
+        "label": "Custo, recibos e indisponibilidade",
+        "description": "Quanto custa, como os clientes recebem recibos e o que acontece se o serviço estiver fora do ar."
       },
       "comparisons": {
         "label": "Comparações e auto-hospedagem",
@@ -1244,7 +1249,7 @@
       },
       "setup": {
         "q": "O que a configuração exige?",
-        "p1": "Depois de entrar, crie faturas pelo painel ou pela API."
+        "p1": "Uma carteira Monero que você controla. Conecte-a com o endereço principal e a chave de visualização privada (sem e-mail nem senha) e depois crie faturas, links de pagamento ou terminais no painel, ou use a API."
       },
       "email": {
         "q": "Vocês exigem e-mail ou dados pessoais?",
@@ -1293,7 +1298,7 @@
     "introLabel": "Introdução às perguntas frequentes",
     "eyebrow": "Perguntas frequentes",
     "title": "Respostas diretas sobre controle, acesso e operação.",
-    "description": "Cada uma é curta e específica, sem custódia e sem surpresas.",
+    "description": "Respostas curtas sobre custódia, custos, links de pagamento, terminais e auto-hospedagem.",
     "categories": "Categorias das perguntas frequentes",
     "browse": "Navegar por tema",
     "browseHelp": "Controle, operação e implantação.",

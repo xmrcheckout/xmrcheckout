@@ -628,12 +628,13 @@
       "workspace": "Area di lavoro dell'esercente",
       "sections": "Sezioni della dashboard",
       "overviewTitle": "L'attività dell'esercente a colpo d'occhio",
-      "openInvoices": "Richieste di pagamento aperte",
+      "openInvoices": "Vedi le richieste di pagamento",
       "metrics": "Metriche dell'esercente",
       "recentInvoices": "Richieste di pagamento recenti",
       "recentInvoicesHelp": "Le richieste di pagamento più recenti dell'esercente e il loro stato attuale.",
       "viewAll": "Vedi tutte",
       "noInvoices": "Nessuna richiesta di pagamento creata finora.",
+      "firstSteps": "Crea la tua prima <invoice>richiesta di pagamento</invoice> oppure configura un <links>link di pagamento</links> o un <terminals>terminale</terminals>.",
       "recentDeliveries": "Consegne webhook recenti",
       "recentDeliveriesHelp": "I tentativi più recenti di inviare eventi delle richieste di pagamento ai tuoi endpoint configurati.",
       "history": "Cronologia",
@@ -1186,9 +1187,13 @@
         "label": "Custodia e accesso",
         "description": "Permessi del portafoglio, dati di accesso e controllo dell'esercente."
       },
+      "selling": {
+        "label": "Link di pagamento e vendita in presenza",
+        "description": "Pulsanti, donazioni, badge, consegna digitale e terminali."
+      },
       "operations": {
-        "label": "Funzionamento e disponibilità",
-        "description": "Costo del servizio, disponibilità e comportamento sicuro in caso di guasto."
+        "label": "Costi, ricevute e interruzioni",
+        "description": "Quanto costa, come i clienti ottengono una ricevuta e cosa succede se il servizio non è disponibile."
       },
       "comparisons": {
         "label": "Confronti e self-hosting",
@@ -1244,7 +1249,7 @@
       },
       "setup": {
         "q": "Cosa richiede la configurazione?",
-        "p1": "Dopo l'accesso, crea richieste di pagamento dalla dashboard o tramite API."
+        "p1": "Un portafoglio Monero che controlli tu. Collegalo con il suo indirizzo principale e la sua chiave di visualizzazione privata (senza email né password), poi crea richieste di pagamento, link di pagamento o terminali dalla dashboard, oppure usa l'API."
       },
       "email": {
         "q": "Richiedete email o dati personali?",
@@ -1293,7 +1298,7 @@
     "introLabel": "Introduzione alle domande frequenti",
     "eyebrow": "Domande frequenti",
     "title": "Risposte dirette su controllo, accesso e funzionamento.",
-    "description": "Ognuna è breve e specifica, senza custodia e senza sorprese.",
+    "description": "Risposte brevi su custodia, costi, link di pagamento, terminali e self-hosting.",
     "categories": "Categorie delle domande frequenti",
     "browse": "Sfoglia per argomento",
     "browseHelp": "Controllo, funzionamento e installazione.",

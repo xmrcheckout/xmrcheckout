@@ -628,12 +628,13 @@
       "workspace": "Händlerbereich",
       "sections": "Dashboard-Bereiche",
       "overviewTitle": "Händleraktivität auf einen Blick",
-      "openInvoices": "Offene Rechnungen",
+      "openInvoices": "Rechnungen ansehen",
       "metrics": "Händlerkennzahlen",
       "recentInvoices": "Aktuelle Rechnungen",
       "recentInvoicesHelp": "Neueste Händlerrechnungen und ihr aktueller Status.",
       "viewAll": "Alle anzeigen",
       "noInvoices": "Noch keine Rechnungen erstellt.",
+      "firstSteps": "Erstellen Sie Ihre erste <invoice>Rechnung</invoice> oder richten Sie einen <links>Zahlungslink</links> oder ein <terminals>Terminal</terminals> ein.",
       "recentDeliveries": "Aktuelle Webhook-Zustellungen",
       "recentDeliveriesHelp": "Neueste Versuche, Rechnungsereignisse an Ihre konfigurierten Endpunkte zu senden.",
       "history": "Verlauf",
@@ -1186,9 +1187,13 @@
         "label": "Verwahrung & Zugriff",
         "description": "Wallet-Berechtigungen, Anmeldedaten und Kontrolle durch den Händler."
       },
+      "selling": {
+        "label": "Zahlungslinks & Verkauf vor Ort",
+        "description": "Buttons, Spenden, Badges, digitale Auslieferung und Terminals."
+      },
       "operations": {
-        "label": "Betrieb & Verfügbarkeit",
-        "description": "Kosten, Verfügbarkeit und sicheres Verhalten bei Ausfällen."
+        "label": "Kosten, Belege & Ausfälle",
+        "description": "Was es kostet, wie Kunden Belege erhalten und was passiert, wenn der Dienst ausfällt."
       },
       "comparisons": {
         "label": "Vergleiche & Selbsthosten",
@@ -1244,7 +1249,7 @@
       },
       "setup": {
         "q": "Was ist für die Einrichtung nötig?",
-        "p1": "Erstellen Sie nach der Anmeldung Rechnungen über das Dashboard oder die API."
+        "p1": "Eine Monero-Wallet, die Sie selbst kontrollieren. Verbinden Sie sie mit ihrer Hauptadresse und ihrem privaten View-Key (ohne E-Mail oder Passwort) und erstellen Sie dann Rechnungen, Zahlungslinks oder Terminals im Dashboard, oder nutzen Sie die API."
       },
       "email": {
         "q": "Benötigen Sie eine E-Mail-Adresse oder persönliche Daten?",
@@ -1293,7 +1298,7 @@
     "introLabel": "FAQ-Einleitung",
     "eyebrow": "FAQ",
     "title": "Klare Antworten zu Kontrolle, Zugriff und Betrieb.",
-    "description": "Jede ist kurz und konkret, ohne Verwahrung und ohne Überraschungen.",
+    "description": "Kurze Antworten zu Verwahrung, Kosten, Zahlungslinks, Terminals und Selbsthosting.",
     "categories": "FAQ-Kategorien",
     "browse": "Nach Thema durchsuchen",
     "browseHelp": "Kontrolle, Betrieb und Bereitstellung.",

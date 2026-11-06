@@ -513,8 +513,6 @@ export default async function DashboardPage({
                 </Link>
               </header>
 
-              <InvoiceAddressAvailability status={addressStatus} />
-
               <div
                 className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
                 aria-label={t("dashboard.page.metrics")}
@@ -537,6 +535,8 @@ export default async function DashboardPage({
                   </Link>
                 ))}
               </div>
+
+              <InvoiceAddressAvailability status={addressStatus} compact />
 
               <div className="grid gap-4 xl:grid-cols-2">
                 <section
@@ -590,9 +590,16 @@ export default async function DashboardPage({
                         </Link>
                       ))
                     ) : (
-                      <p className="text-sm text-ink-soft">
-                        {t("dashboard.page.noInvoices")}
-                      </p>
+                      <div className="grid gap-2 text-sm text-ink-soft">
+                        <p>{t("dashboard.page.noInvoices")}</p>
+                        <p>
+                          {rich(t("dashboard.page.firstSteps"), {
+                            invoice: (text) => <Link className="font-semibold text-ink underline underline-offset-4" href="/dashboard?tab=invoices">{text}</Link>,
+                            links: (text) => <Link className="font-semibold text-ink underline underline-offset-4" href="/dashboard?tab=payment-links">{text}</Link>,
+                            terminals: (text) => <Link className="font-semibold text-ink underline underline-offset-4" href="/dashboard?tab=terminals">{text}</Link>,
+                          })}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </section>

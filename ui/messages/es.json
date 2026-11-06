@@ -628,12 +628,13 @@
       "workspace": "Espacio del comercio",
       "sections": "Secciones del panel",
       "overviewTitle": "La actividad del comercio de un vistazo",
-      "openInvoices": "Abrir facturas",
+      "openInvoices": "Ver facturas",
       "metrics": "Métricas del comercio",
       "recentInvoices": "Facturas recientes",
       "recentInvoicesHelp": "Las últimas facturas del comercio y su estado actual.",
       "viewAll": "Ver todas",
       "noInvoices": "Aún no se han creado facturas.",
+      "firstSteps": "Crea tu primera <invoice>factura</invoice> o configura un <links>enlace de pago</links> o un <terminals>terminal</terminals>.",
       "recentDeliveries": "Entregas de webhooks recientes",
       "recentDeliveriesHelp": "Los últimos intentos de enviar eventos de facturas a tus endpoints configurados.",
       "history": "Historial",
@@ -1186,9 +1187,13 @@
         "label": "Custodia y acceso",
         "description": "Permisos de la billetera, datos de acceso y control del comercio."
       },
+      "selling": {
+        "label": "Enlaces de pago y venta en persona",
+        "description": "Botones, donaciones, insignias, entrega digital y terminales."
+      },
       "operations": {
-        "label": "Funcionamiento y disponibilidad",
-        "description": "Coste del servicio, disponibilidad y comportamiento seguro ante fallos."
+        "label": "Coste, recibos e interrupciones",
+        "description": "Cuánto cuesta, cómo obtienen los clientes sus recibos y qué pasa si el servicio no está disponible."
       },
       "comparisons": {
         "label": "Comparativas y autoalojamiento",
@@ -1244,7 +1249,7 @@
       },
       "setup": {
         "q": "¿Qué hace falta para empezar?",
-        "p1": "Después de iniciar sesión, crea facturas desde el panel o la API."
+        "p1": "Una billetera de Monero que controles. Conéctala con su dirección principal y su clave privada de visualización (sin correo ni contraseña) y luego crea facturas, enlaces de pago o terminales en el panel, o usa la API."
       },
       "email": {
         "q": "¿Piden correo electrónico o datos personales?",
@@ -1293,7 +1298,7 @@
     "introLabel": "Introducción de las preguntas frecuentes",
     "eyebrow": "Preguntas frecuentes",
     "title": "Respuestas directas sobre control, acceso y funcionamiento.",
-    "description": "Cada una es breve y concreta, sin custodia y sin sorpresas.",
+    "description": "Respuestas breves sobre custodia, costes, enlaces de pago, terminales y autoalojamiento.",
     "categories": "Categorías de preguntas frecuentes",
     "browse": "Explora por tema",
     "browseHelp": "Control, funcionamiento y despliegue.",

@@ -628,12 +628,13 @@
       "workspace": "Espace commerçant",
       "sections": "Sections du tableau de bord",
       "overviewTitle": "L’activité du commerçant en un coup d’œil",
-      "openInvoices": "Factures ouvertes",
+      "openInvoices": "Voir les factures",
       "metrics": "Indicateurs du commerçant",
       "recentInvoices": "Factures récentes",
       "recentInvoicesHelp": "Dernières factures du commerçant et leur statut actuel.",
       "viewAll": "Tout voir",
       "noInvoices": "Aucune facture créée pour l’instant.",
+      "firstSteps": "Créez votre première <invoice>facture</invoice>, ou configurez un <links>lien de paiement</links> ou un <terminals>terminal</terminals>.",
       "recentDeliveries": "Envois de webhooks récents",
       "recentDeliveriesHelp": "Dernières tentatives d’envoi d’événements de facture vers vos points de terminaison configurés.",
       "history": "Historique",
@@ -1186,9 +1187,13 @@
         "label": "Garde et accès",
         "description": "Autorisations du portefeuille, données de connexion et contrôle du commerçant."
       },
+      "selling": {
+        "label": "Liens de paiement et vente en personne",
+        "description": "Boutons, dons, badges, livraison numérique et terminaux."
+      },
       "operations": {
-        "label": "Exploitation et disponibilité",
-        "description": "Coût du service, disponibilité et comportement sûr en cas de panne."
+        "label": "Coût, reçus et pannes",
+        "description": "Ce que cela coûte, comment les clients obtiennent un reçu et ce qui se passe si le service est indisponible."
       },
       "comparisons": {
         "label": "Comparaisons et auto-hébergement",
@@ -1244,7 +1249,7 @@
       },
       "setup": {
         "q": "Que faut-il pour la configuration ?",
-        "p1": "Une fois connecté, créez des factures depuis le tableau de bord ou l’API."
+        "p1": "Un portefeuille Monero que vous contrôlez. Connectez-le avec son adresse principale et sa clé de visualisation privée (sans e-mail ni mot de passe), puis créez des factures, des liens de paiement ou des terminaux depuis le tableau de bord, ou utilisez l’API."
       },
       "email": {
         "q": "Demandez-vous une adresse e-mail ou des informations personnelles ?",
@@ -1293,7 +1298,7 @@
     "introLabel": "Introduction de la FAQ",
     "eyebrow": "FAQ",
     "title": "Des réponses directes sur le contrôle, l’accès et l’exploitation.",
-    "description": "Chacune est courte et précise, sans conservation de fonds et sans surprises.",
+    "description": "Des réponses courtes sur la garde des fonds, les coûts, les liens de paiement, les terminaux et l’auto-hébergement.",
     "categories": "Catégories de la FAQ",
     "browse": "Parcourir par thème",
     "browseHelp": "Contrôle, exploitation et déploiement.",

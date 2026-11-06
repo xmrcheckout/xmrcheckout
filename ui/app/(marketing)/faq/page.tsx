@@ -28,7 +28,7 @@ const donationsEnabled = areDonationsEnabled();
 
 export const dynamic = "force-dynamic";
 
-type FaqCategory = "custody" | "operations" | "comparisons";
+type FaqCategory = "custody" | "selling" | "operations" | "comparisons";
 
 type FaqItem = {
   id?: string;
@@ -39,6 +39,7 @@ type FaqItem = {
 
 const faqGroups: Array<{ id: FaqCategory; accentClass: string }> = [
   { id: "custody", accentClass: "bg-clay" },
+  { id: "selling", accentClass: "bg-monero" },
   { id: "operations", accentClass: "bg-sage" },
   { id: "comparisons", accentClass: "bg-ink" },
 ];
@@ -61,13 +62,13 @@ type FaqDef = {
 };
 
 const faqDefs: FaqDef[] = [
-  { key: "inPerson", id: "in-person-terminal", category: "operations", paragraphs: 2, cta: "/guides/in-person-monero-checkout" },
-  { key: "donations", id: "payment-link-donations", category: "operations", paragraphs: 2, cta: "/guides/monero-payment-buttons#donations" },
-  { key: "badge", id: "accepted-here-badge", category: "operations", paragraphs: 1, cta: "/guides/monero-payment-buttons#let-people-find-you" },
-  { key: "noWoo", category: "comparisons", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
-  { key: "vsQr", category: "operations", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
-  { key: "repeat", category: "operations", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
-  { key: "digital", category: "operations", paragraphs: 2, cta: "/guides/monero-payment-buttons#confirmation-message" },
+  { key: "inPerson", id: "in-person-terminal", category: "selling", paragraphs: 2, cta: "/guides/in-person-monero-checkout" },
+  { key: "donations", id: "payment-link-donations", category: "selling", paragraphs: 2, cta: "/guides/monero-payment-buttons#donations" },
+  { key: "badge", id: "accepted-here-badge", category: "selling", paragraphs: 1, cta: "/guides/monero-payment-buttons#let-people-find-you" },
+  { key: "noWoo", category: "selling", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
+  { key: "vsQr", category: "selling", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
+  { key: "repeat", category: "selling", paragraphs: 1, cta: "/guides/monero-payment-buttons" },
+  { key: "digital", category: "selling", paragraphs: 2, cta: "/guides/monero-payment-buttons#confirmation-message" },
   { key: "custodial", category: "custody", paragraphs: 1 },
   { key: "access", category: "custody", paragraphs: 1 },
   { key: "setup", category: "custody", paragraphs: 1 },

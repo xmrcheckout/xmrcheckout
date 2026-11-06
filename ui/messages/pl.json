@@ -636,12 +636,13 @@
       "workspace": "Obszar roboczy sprzedawcy",
       "sections": "Sekcje panelu",
       "overviewTitle": "Aktywność sprzedawcy w skrócie",
-      "openInvoices": "Otwarte prośby o płatność",
+      "openInvoices": "Zobacz prośby o płatność",
       "metrics": "Wskaźniki sprzedawcy",
       "recentInvoices": "Ostatnie prośby o płatność",
       "recentInvoicesHelp": "Najnowsze prośby o płatność sprzedawcy i ich bieżący status.",
       "viewAll": "Zobacz wszystkie",
       "noInvoices": "Nie utworzono jeszcze żadnej prośby o płatność.",
+      "firstSteps": "Utwórz pierwszą <invoice>prośbę o płatność</invoice> albo skonfiguruj <links>link płatności</links> lub <terminals>terminal</terminals>.",
       "recentDeliveries": "Ostatnie dostarczenia webhooków",
       "recentDeliveriesHelp": "Najnowsze próby wysłania zdarzeń próśb o płatność do skonfigurowanych endpointów.",
       "history": "Historia",
@@ -1204,9 +1205,13 @@
         "label": "Środki i dostęp",
         "description": "Uprawnienia portfela, dane logowania i kontrola sprzedawcy."
       },
+      "selling": {
+        "label": "Linki płatności i sprzedaż na miejscu",
+        "description": "Przyciski, darowizny, plakietki, dostawa cyfrowa i terminale."
+      },
       "operations": {
-        "label": "Działanie i dostępność",
-        "description": "Koszt usługi, dostępność i bezpieczne zachowanie w razie awarii."
+        "label": "Koszty, potwierdzenia płatności i awarie",
+        "description": "Ile to kosztuje, jak klienci dostają potwierdzenie płatności i co się dzieje, gdy usługa nie działa."
       },
       "comparisons": {
         "label": "Porównania i samodzielny hosting",
@@ -1262,7 +1267,7 @@
       },
       "setup": {
         "q": "Czego wymaga konfiguracja?",
-        "p1": "Po zalogowaniu twórz prośby o płatność w panelu lub przez API."
+        "p1": "Portfela Monero pod twoją kontrolą. Połącz go za pomocą adresu głównego i prywatnego klucza widoku (bez e-maila i hasła), a potem twórz prośby o płatność, linki płatności lub terminale w panelu albo korzystaj z API."
       },
       "email": {
         "q": "Czy wymagacie e-maila lub danych osobowych?",
@@ -1311,7 +1316,7 @@
     "introLabel": "Wprowadzenie do FAQ",
     "eyebrow": "FAQ",
     "title": "Konkretne odpowiedzi o kontroli, dostępie i działaniu.",
-    "description": "Każda jest krótka i konkretna, bez przechowywania środków i bez niespodzianek.",
+    "description": "Krótkie odpowiedzi o przechowywaniu środków, kosztach, linkach płatności, terminalach i samodzielnym hostingu.",
     "categories": "Kategorie FAQ",
     "browse": "Przeglądaj według tematu",
     "browseHelp": "Kontrola, działanie i wdrożenie.",

@@ -628,12 +628,13 @@
       "workspace": "Merchant workspace",
       "sections": "Dashboard sections",
       "overviewTitle": "Merchant activity at a glance",
-      "openInvoices": "Open invoices",
+      "openInvoices": "View invoices",
       "metrics": "Merchant metrics",
       "recentInvoices": "Recent invoices",
       "recentInvoicesHelp": "Latest merchant invoices and their current status.",
       "viewAll": "View all",
       "noInvoices": "No invoices created yet.",
+      "firstSteps": "Create your first <invoice>invoice</invoice>, or set up a <links>payment link</links> or <terminals>terminal</terminals>.",
       "recentDeliveries": "Recent webhook deliveries",
       "recentDeliveriesHelp": "Latest attempts to send invoice events to your configured endpoints.",
       "history": "History",
@@ -1186,9 +1187,13 @@
         "label": "Custody & access",
         "description": "Wallet permissions, sign-in data, and merchant control."
       },
+      "selling": {
+        "label": "Payment links & in-person",
+        "description": "Buttons, donations, badges, digital delivery and terminals."
+      },
       "operations": {
-        "label": "Operations & availability",
-        "description": "Service cost, uptime, and safe failure behavior."
+        "label": "Cost, receipts & outages",
+        "description": "What it costs, how customers get receipts, and what happens if the service is down."
       },
       "comparisons": {
         "label": "Comparisons & self-hosting",
@@ -1244,7 +1249,7 @@
       },
       "setup": {
         "q": "What does setup require?",
-        "p1": "After signing in, create invoices from the dashboard or API."
+        "p1": "A Monero wallet you control. Connect it with its primary address and private view key (no email or password), then create invoices, payment links or terminals in the dashboard, or use the API."
       },
       "email": {
         "q": "Do you require email or personal information?",
@@ -1293,7 +1298,7 @@
     "introLabel": "FAQ introduction",
     "eyebrow": "FAQ",
     "title": "Direct answers about control, access, and operations.",
-    "description": "Each one is short and specific, with no custody and no surprises.",
+    "description": "Short answers about custody, costs, payment links, terminals and self-hosting.",
     "categories": "FAQ categories",
     "browse": "Browse by topic",
     "browseHelp": "Control, operations, and deployment.",

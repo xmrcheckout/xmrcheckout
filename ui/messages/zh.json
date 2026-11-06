@@ -624,12 +624,13 @@
       "workspace": "商家工作区",
       "sections": "控制台栏目",
       "overviewTitle": "商家活动一览",
-      "openInvoices": "未结账单",
+      "openInvoices": "查看账单",
       "metrics": "商家指标",
       "recentInvoices": "最近的账单",
       "recentInvoicesHelp": "最新的商家账单及其当前状态。",
       "viewAll": "查看全部",
       "noInvoices": "尚未创建任何账单。",
+      "firstSteps": "创建你的第一张<invoice>账单</invoice>，或设置<links>付款链接</links>或<terminals>收款终端</terminals>。",
       "recentDeliveries": "最近的 Webhook 投递",
       "recentDeliveriesHelp": "最近向你配置的端点发送账单事件的尝试。",
       "history": "历史记录",
@@ -1177,9 +1178,13 @@
         "label": "托管与访问",
         "description": "钱包权限、登录数据和商家控制权。"
       },
+      "selling": {
+        "label": "付款链接与线下收款",
+        "description": "按钮、捐赠、徽章、数字交付和收款终端。"
+      },
       "operations": {
-        "label": "运行与可用性",
-        "description": "服务费用、在线时间和安全的故障行为。"
+        "label": "费用、收据与故障",
+        "description": "费用是多少、顾客如何获得收据，以及服务不可用时会怎样。"
       },
       "comparisons": {
         "label": "对比与自托管",
@@ -1235,7 +1240,7 @@
       },
       "setup": {
         "q": "设置需要做些什么？",
-        "p1": "登录后，即可从控制台或通过 API 创建账单。"
+        "p1": "需要一个由你掌控的门罗币钱包。用它的主地址和私有查看密钥连接（无需电子邮件或密码），然后在控制台中创建账单、付款链接或收款终端，或使用 API。"
       },
       "email": {
         "q": "需要电子邮件或个人信息吗？",
@@ -1284,7 +1289,7 @@
     "introLabel": "常见问题简介",
     "eyebrow": "常见问题",
     "title": "关于控制权、访问和运行的直接解答。",
-    "description": "每条都简短具体，不托管资金，没有意外。",
+    "description": "关于托管、费用、付款链接、收款终端和自托管的简短解答。",
     "categories": "常见问题分类",
     "browse": "按主题浏览",
     "browseHelp": "控制权、运行和部署。",

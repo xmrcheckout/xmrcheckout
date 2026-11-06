@@ -25,6 +25,8 @@ let invoiceTransportFailure = false;
 let checkoutStyle = "standard";
 let layoutFixture = false;
 let availabilityDelay = 0;
+let webhookDeliveries = [];
+let healthCompletedAt = null;
 let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", button_text: "Buy with Monero", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, confirmation_message: null, enabled: true,
   url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/pay/fixture-token`,
   action_url: `http://127.0.0.1:${process.env.FIXTURE_API_PORT || 8000}/api/core/public/payment-links/fixture-token/invoices` };
@@ -79,6 +81,12 @@ const server = http.createServer((request, response) => {
       invoiceTransportFailure = options.invoiceTransportFailure ?? invoiceTransportFailure;
       checkoutStyle = options.checkoutStyle ?? checkoutStyle;
       layoutFixture = options.layoutFixture ?? layoutFixture;
+      if (Object.hasOwn(options, "profileStyle")) {
+        if (options.profileStyle === null) delete profile.btcpay_checkout_style;
+        else profile.btcpay_checkout_style = options.profileStyle;
+      }
+      webhookDeliveries = options.webhookDeliveries ?? webhookDeliveries;
+      if (Object.hasOwn(options, "healthCompletedAt")) healthCompletedAt = options.healthCompletedAt;
       availabilityDelay = options.delay ?? 0;
       transferMode = options.transferMode ?? transferMode;
       transferDelay = options.transferDelay ?? 0;
@@ -122,6 +130,7 @@ const server = http.createServer((request, response) => {
     } else if (path === "/api/core/auth/login") {
       result = { api_key: "fixture-only-api-key", webhook_secret: "fixture-only-webhook-secret" };
     } else if (path === "/api/core/profile") {
+      if (request.method === "PATCH") Object.assign(profile, JSON.parse(body));
       result = profile;
     } else if (path === "/api/core/invoices" && request.method === "GET") {
       result = { items: [
@@ -148,8 +157,14 @@ const server = http.createServer((request, response) => {
     } else if (/^\/api\/core\/invoices\/[^/]+\/transfers$/.test(path)) {
       status = transferMode === "error" ? 503 : 200;
       result = transferMode === "error" ? { detail: "Unavailable" } : transferMode === "empty" ? [] : [{ txid: (path.includes("000000000001/") ? "b" : "a").repeat(64), amount_xmr: "0.1", confirmations: 3, timestamp: 1790000000 }];
+    } else if (path === "/api/core/webhooks/history") {
+      result = webhookDeliveries;
     } else if (path.includes("webhooks")) {
       result = [];
+    } else if (path === "/api/core/system/status") {
+      result = { wallet_rpc: "ok", daemon: "ok", reconciler: "ok", daemon_height: 3788216, invoice_reconcile_interval_seconds: 30,
+        last_reconcile_started_at: healthCompletedAt, last_reconcile_completed_at: healthCompletedAt, last_reconcile_error: null,
+        last_reconcile_attempted_invoices: 4, last_reconcile_succeeded_invoices: 4, last_reconcile_failed_invoices: 0 };
     } else if (path.startsWith("/api/core/public/rates/")) {
       result = { rate: "200", quoted_at: "2026-10-31T12:00:00Z", source: "fixture" };
     } else if (path === "/api/core/public/system/status") {

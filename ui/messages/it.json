@@ -575,7 +575,7 @@
       "webhookRemoved": "Webhook rimosso.",
       "invoiceIdMissing": "ID della richiesta di pagamento mancante.",
       "archiveFailed": "Impossibile archiviare la richiesta di pagamento.",
-      "archived": "Richiesta di pagamento archiviata fino alla scadenza.",
+      "archived": "Richiesta di pagamento archiviata.",
       "deliveryIdMissing": "ID della consegna mancante.",
       "redeliverFailed": "Impossibile reinviare il webhook.",
       "redeliveryQueued": "Reinvio messo in coda."
@@ -786,7 +786,7 @@
       "previous": "Precedente",
       "next": "Successiva",
       "archiveTitle": "Archiviare questa richiesta di pagamento?",
-      "archiveHelp": "Le richieste di pagamento archiviate restano disponibili nell'elenco delle archiviate.",
+      "archiveHelp": "Le richieste di pagamento archiviate sono nascoste nell'elenco; seleziona Mostra archiviate per vederle. L'archiviazione non interrompe il rilevamento dei pagamenti.",
       "demoNoChanges": "Modalità demo: nessuna modifica viene salvata."
     }
   },

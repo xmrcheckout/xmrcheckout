@@ -575,7 +575,7 @@
       "webhookRemoved": "Webhook removido.",
       "invoiceIdMissing": "ID da fatura ausente.",
       "archiveFailed": "Não foi possível arquivar a fatura.",
-      "archived": "Fatura arquivada até a expiração.",
+      "archived": "Fatura arquivada.",
       "deliveryIdMissing": "ID da entrega ausente.",
       "redeliverFailed": "Não foi possível reenviar o webhook.",
       "redeliveryQueued": "Reenvio colocado na fila."
@@ -786,7 +786,7 @@
       "previous": "Anterior",
       "next": "Próxima",
       "archiveTitle": "Arquivar esta fatura?",
-      "archiveHelp": "As faturas arquivadas continuam disponíveis na lista de arquivadas.",
+      "archiveHelp": "As faturas arquivadas ficam ocultas na lista; selecione Mostrar arquivadas para vê-las. O arquivamento não interrompe a detecção de pagamentos.",
       "demoNoChanges": "Modo de demonstração: nenhuma alteração é salva."
     }
   },

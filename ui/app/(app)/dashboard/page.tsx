@@ -372,7 +372,8 @@ export default async function DashboardPage({
   ).length;
   const failedWebhookCount = webhookHistory.filter(
     (delivery) =>
-      delivery.http_status === null || (delivery.http_status ?? 0) >= 400,
+      delivery.attempt !== 0 &&
+      (delivery.http_status === null || delivery.http_status >= 400),
   ).length;
   const recentInvoiceItems = allInvoices.slice(0, 5).map((invoice) => ({
     title: invoiceContext(invoice.metadata).title ?? invoice.id,
@@ -395,25 +396,30 @@ export default async function DashboardPage({
             ? "bg-clay"
             : "bg-red-500",
   }));
-  const recentActivityItems = webhookHistory.slice(0, 4).map((delivery) => ({
-    title: delivery.event,
-    detail:
-      delivery.http_status === null || delivery.http_status >= 400
-        ? delivery.invoice_id ? t("dashboard.page.deliveryFailedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryFailed")
-        : delivery.invoice_id ? t("dashboard.page.deliveryRecordedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryRecorded"),
-    status:
-      delivery.http_status === null || delivery.http_status >= 400
-        ? t("dashboard.page.needsReview")
-        : t("dashboard.page.accepted"),
-    tone:
-      delivery.http_status === null || delivery.http_status >= 400
-        ? ("error" as StatusTone)
-        : ("success" as StatusTone),
-    dotClass:
-      delivery.http_status === null || delivery.http_status >= 400
-        ? "bg-red-500"
-        : "bg-sage",
-  }));
+  const recentActivityItems = webhookHistory.slice(0, 4).map((delivery) => {
+    const queued = delivery.attempt === 0;
+    const failed =
+      !queued && (delivery.http_status === null || delivery.http_status >= 400);
+    return {
+      title: delivery.event,
+      detail: queued
+        ? t("webhooks.history.queued")
+        : failed
+          ? delivery.invoice_id ? t("dashboard.page.deliveryFailedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryFailed")
+          : delivery.invoice_id ? t("dashboard.page.deliveryRecordedFor", { id: delivery.invoice_id }) : t("dashboard.page.deliveryRecorded"),
+      status: queued
+        ? t("webhooks.history.queued")
+        : failed
+          ? t("dashboard.page.needsReview")
+          : t("dashboard.page.accepted"),
+      tone: queued
+        ? ("neutral" as StatusTone)
+        : failed
+          ? ("error" as StatusTone)
+          : ("success" as StatusTone),
+      dotClass: queued ? "bg-ink/30" : failed ? "bg-red-500" : "bg-sage",
+    };
+  });
   const reconcilerStatusBadge = reconcilerBadge(systemStatus, t);
   const subTabBaseClass =
     "inline-flex items-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2";
@@ -789,8 +795,8 @@ export default async function DashboardPage({
                   <section className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft sm:p-6">
                     <BtcpayCheckoutStyleSection
                       initialStyle={
-                        profileData?.btcpay_checkout_style === "btcpay_classic"
-                          ? "btcpay_classic"
+                        profileData?.btcpay_checkout_style === "standard"
+                          ? "standard"
                           : "btcpay_classic"
                       }
                     />

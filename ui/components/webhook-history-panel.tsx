@@ -11,7 +11,8 @@ import {
 } from "../app/(app)/dashboard/actions";
 import StatusBadge from "./status-badge";
 import { utcTimestamp } from "../lib/timestamps";
-import type { InvoiceStatus } from "../lib/invoice-status";
+import { invoiceStatusName, type InvoiceStatus } from "../lib/invoice-status";
+import { formatXmrAmount } from "../lib/formatting";
 import { useI18n } from "./i18n-provider";
 
 type WebhookDeliverySummary = {
@@ -207,7 +208,7 @@ export default function WebhookHistoryPanel({
                             {t("webhooks.history.amount")}
                           </p>
                           <p className="mt-1 text-xs text-ink">
-                            {delivery.invoice_amount_xmr}
+                            {formatXmrAmount(delivery.invoice_amount_xmr)} XMR
                           </p>
                         </div>
                       ) : null}
@@ -217,7 +218,7 @@ export default function WebhookHistoryPanel({
                             {t("webhooks.history.status")}
                           </p>
                           <p className="mt-1 text-xs text-ink">
-                            {delivery.invoice_status}
+                            {invoiceStatusName(delivery.invoice_status, t)}
                           </p>
                         </div>
                       ) : null}

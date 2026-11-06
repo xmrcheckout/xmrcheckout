@@ -575,7 +575,7 @@
       "webhookRemoved": "Webhook entfernt.",
       "invoiceIdMissing": "Rechnungs-ID fehlt.",
       "archiveFailed": "Rechnung konnte nicht archiviert werden.",
-      "archived": "Rechnung bis zum Ablauf archiviert.",
+      "archived": "Rechnung archiviert.",
       "deliveryIdMissing": "Zustellungs-ID fehlt.",
       "redeliverFailed": "Webhook konnte nicht erneut zugestellt werden.",
       "redeliveryQueued": "Erneute Zustellung eingereiht."
@@ -786,7 +786,7 @@
       "previous": "Zurück",
       "next": "Weiter",
       "archiveTitle": "Diese Rechnung archivieren?",
-      "archiveHelp": "Archivierte Rechnungen bleiben in der Archivliste verfügbar.",
+      "archiveHelp": "Archivierte Rechnungen werden in der Liste ausgeblendet; wählen Sie „Archivierte anzeigen“, um sie zu sehen. Die Archivierung stoppt die Zahlungserkennung nicht.",
       "demoNoChanges": "Demo-Modus: Es werden keine Änderungen gespeichert."
     }
   },

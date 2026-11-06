@@ -575,7 +575,7 @@
       "webhookRemoved": "Webhook removed.",
       "invoiceIdMissing": "Invoice id missing.",
       "archiveFailed": "Unable to archive invoice.",
-      "archived": "Invoice archived until expiry.",
+      "archived": "Invoice archived.",
       "deliveryIdMissing": "Delivery id missing.",
       "redeliverFailed": "Unable to redeliver the webhook.",
       "redeliveryQueued": "Redelivery queued."
@@ -786,7 +786,7 @@
       "previous": "Previous",
       "next": "Next",
       "archiveTitle": "Archive this invoice?",
-      "archiveHelp": "Archived invoices stay available in the archive list.",
+      "archiveHelp": "Archived invoices are hidden from the list; select Show archived to see them. Archiving does not stop payment detection.",
       "demoNoChanges": "Demo mode: no changes are saved."
     }
   },

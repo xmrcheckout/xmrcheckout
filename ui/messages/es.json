@@ -575,7 +575,7 @@
       "webhookRemoved": "Webhook quitado.",
       "invoiceIdMissing": "Falta el ID de la factura.",
       "archiveFailed": "No se pudo archivar la factura.",
-      "archived": "Factura archivada hasta su vencimiento.",
+      "archived": "Factura archivada.",
       "deliveryIdMissing": "Falta el ID del envío.",
       "redeliverFailed": "No se pudo reenviar el webhook.",
       "redeliveryQueued": "Reenvío en cola."
@@ -786,7 +786,7 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "archiveTitle": "¿Archivar esta factura?",
-      "archiveHelp": "Las facturas archivadas siguen disponibles en la lista de archivadas.",
+      "archiveHelp": "Las facturas archivadas se ocultan de la lista; selecciona Mostrar archivadas para verlas. Archivarlas no detiene la detección de pagos.",
       "demoNoChanges": "Modo de demostración: no se guarda ningún cambio."
     }
   },

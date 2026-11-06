@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { utcTimestamp } from "../lib/timestamps";
 import { getI18n } from "../lib/i18n/server";
@@ -22,7 +23,7 @@ const statusBadge = (terminal: TerminalData, t: Translate) =>
   <StatusBadge label={terminal.enabled ? t("terminals.enabled") : t("terminals.disabled")} tone={terminal.enabled ? "success" : "neutral"} />;
 const lastUsed = (terminal: TerminalData, t: Translate) => terminal.last_used_at ? utcTimestamp(terminal.last_used_at, t) : t("terminals.never");
 
-export default async function Terminals({ selectedId }: { selectedId?: string }) {
+export default async function Terminals({ selectedId, loginUrl }: { selectedId?: string; loginUrl: string }) {
   const { t } = await getI18n();
   const key = (await cookies()).get("xmrcheckout_api_key")?.value;
   const base = process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -32,6 +33,7 @@ export default async function Terminals({ selectedId }: { selectedId?: string })
     fetch(`${base}/api/core/payment-links/status`, { headers, cache: "no-store" }).catch(() => null),
     fetch(`${base}/api/core/subaddresses/status`, { headers, cache: "no-store" }).catch(() => null),
   ]);
+  if ([response, usageResponse, addressResponse].some(result => result?.status === 401)) redirect(loginUrl);
   if (!response?.ok) return <section><h1 className="font-sans text-2xl font-semibold">{t("terminals.title")}</h1><p role="alert">{t("terminals.unavailable")}</p></section>;
   const terminals: TerminalData[] = (await response.json()).terminals;
   const usage = usageResponse?.ok ? await usageResponse.json() : null;

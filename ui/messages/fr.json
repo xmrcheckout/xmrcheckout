@@ -578,7 +578,9 @@
       "archived": "Facture archivée.",
       "deliveryIdMissing": "Identifiant d’envoi manquant.",
       "redeliverFailed": "Impossible de renvoyer le webhook.",
-      "redeliveryQueued": "Renvoi mis en file d’attente."
+      "redeliveryQueued": "Renvoi mis en file d’attente.",
+      "authExpired": "Votre session a expiré. Reconnectez-vous.",
+      "changeNotConfirmed": "Impossible de confirmer cette modification. Vérifiez la liste ou les paramètres concernés avant de réessayer."
     },
     "page": {
       "createdAt": "Créé le {date}",
@@ -787,7 +789,8 @@
       "next": "Suivant",
       "archiveTitle": "Archiver cette facture ?",
       "archiveHelp": "Les factures archivées sont masquées dans la liste ; sélectionnez « Afficher les archives » pour les voir. L’archivage n’arrête pas la détection des paiements.",
-      "demoNoChanges": "Mode démo : aucune modification n’est enregistrée."
+      "demoNoChanges": "Mode démo : aucune modification n’est enregistrée.",
+      "archiving": "Archivage…"
     }
   },
   "terminals": {
@@ -834,7 +837,8 @@
     "manageLabel": "Gérer {name}",
     "back": "Tous les terminaux",
     "settings": "Paramètres",
-    "aboutAddresses": "À propos des adresses de facture"
+    "aboutAddresses": "À propos des adresses de facture",
+    "replacing": "Remplacement du lien…"
   },
   "settings": {
     "requiredConfirmations": "Confirmations requises",
@@ -1040,7 +1044,9 @@
     "active": "Actif",
     "paused": "En pause",
     "perEventOnly": "URL par événement uniquement",
-    "remove": "Supprimer"
+    "remove": "Supprimer",
+    "removing": "Suppression…",
+    "removeConfirm": "Supprimer ce webhook ? Les événements futurs ne lui seront plus envoyés."
   },
   "home": {
     "metaTitle": "Acceptez Monero directement dans votre portefeuille | XMR Checkout",

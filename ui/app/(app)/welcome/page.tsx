@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function WelcomePage() {
-  const session = (await cookies()).get("xmrcheckout_session")?.value;
+  const session = (await cookies()).get("xmrcheckout_api_key")?.value;
   if (!session) {
     redirect("/?login=1");
   }

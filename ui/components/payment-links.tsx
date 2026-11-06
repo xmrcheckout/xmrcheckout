@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { utcTimestamp } from "../lib/timestamps";
 import { getI18n } from "../lib/i18n/server";
 import { formatXmrAmount } from "../lib/formatting";
@@ -29,7 +30,7 @@ const priceLabel = (link: PaymentLinkData, t: Translate) => link.customer_amount
 const statusBadge = (link: PaymentLinkData, t: Translate) =>
   <StatusBadge label={link.enabled ? t("terminals.enabled") : t("terminals.disabled")} tone={link.enabled ? "success" : "neutral"} />;
 
-export default async function PaymentLinks({ selectedId }: { selectedId?: string }) {
+export default async function PaymentLinks({ selectedId, loginUrl }: { selectedId?: string; loginUrl: string }) {
   const { t } = await getI18n();
   const key = (await cookies()).get("xmrcheckout_api_key")?.value;
   const base = process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -40,6 +41,7 @@ export default async function PaymentLinks({ selectedId }: { selectedId?: string
     fetch(`${base}/api/core/payment-links/status`, { headers, cache: "no-store" }).catch(() => null),
     fetch(`${base}/api/core/subaddresses/status`, { headers, cache: "no-store" }).catch(() => null),
   ]);
+  if ([response, profile, usageResponse, addressResponse].some(result => result?.status === 401)) redirect(loginUrl);
   if (!response?.ok) return <section><h1 className="font-sans text-2xl font-semibold">{t("paymentLinks.title")}</h1><p role="alert">{t("paymentLinks.unavailable")}</p></section>;
   const usage: PaymentLinkUsage | null = usageResponse?.ok ? await usageResponse.json() : null;
   const addressStatus: SubaddressStatus | null = addressResponse?.ok ? await addressResponse.json() : null;

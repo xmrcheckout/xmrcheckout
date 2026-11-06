@@ -1152,12 +1152,9 @@ export default function InvoicePanel({
   };
 
   useEffect(() => {
-    if (
-      archiveState.archivedId &&
-      expandedInvoiceId === archiveState.archivedId
-    ) {
+    if (archiveState.success) {
       const timeoutId = window.setTimeout(() => {
-        setExpandedInvoiceId(null);
+        setExpandedInvoiceId(current => current === archiveState.archivedId ? null : current);
         setArchiveModalInvoiceId(null);
         if (mode !== "tour") {
           router.refresh();
@@ -1166,7 +1163,7 @@ export default function InvoicePanel({
       return () => window.clearTimeout(timeoutId);
     }
     return undefined;
-  }, [archiveState.archivedId, expandedInvoiceId, mode, router]);
+  }, [archiveState, mode, router]);
 
   const labelClass =
     "text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft";
@@ -1201,6 +1198,9 @@ export default function InvoicePanel({
 
   return (
     <section className="invoice-workspace grid min-w-0 grid-cols-1 gap-6" aria-labelledby="invoice-panel-title">
+      <div role="status" aria-live="polite" aria-atomic="true" className={archiveState.error ? "text-sm text-red-700" : "text-sm text-ink"}>
+        {archiveState.error || archiveState.success}
+      </div>
       <header className="flex flex-wrap items-end justify-between gap-5 border-b border-stroke pb-6">
         <div className="min-w-0 max-w-2xl">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
@@ -1559,17 +1559,6 @@ export default function InvoicePanel({
                               {t("dashboard.invoices.cannotArchive", { status: invoiceStatusName(invoice.status, t) })}
                             </p>
                           ) : null}
-                          {archiveState.error &&
-                          archiveModalInvoiceId === invoice.id ? (
-                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink">
-                              {archiveState.error}
-                            </p>
-                          ) : null}
-                          {archiveState.archivedId === invoice.id ? (
-                            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink">
-                              {t("dashboard.invoices.archivedDone")}
-                            </p>
-                          ) : null}
                         </div>
                       </div>
                     ) : null}
@@ -1862,18 +1851,6 @@ export default function InvoicePanel({
                                       {t("dashboard.invoices.cannotArchive", { status: invoiceStatusName(invoice.status, t) })}
                                     </p>
                                   ) : null}
-                                  {archiveState.error &&
-                                  archiveModalInvoiceId === invoice.id ? (
-                                    <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-                                      {archiveState.error}
-                                    </p>
-                                  ) : null}
-                                  {archiveState.success &&
-                                  archiveState.archivedId === invoice.id ? (
-                                    <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
-                                      {archiveState.success}
-                                    </p>
-                                  ) : null}
                                 </div>
                               </div>
                             </td>
@@ -1980,9 +1957,10 @@ export default function InvoicePanel({
                 name="invoice_id"
                 value={archiveModalInvoiceId}
               />
-              <button className={primaryButton} type="submit">
+              {archiveState.error ? <p role="alert" className="mb-3 text-sm text-red-700">{archiveState.error}</p> : null}
+              <PendingSubmitButton className={primaryButton} pendingLabel={t("dashboard.invoices.archiving")}>
                 {t("dashboard.invoices.archiveInvoice")}
-              </button>
+              </PendingSubmitButton>
             </form>
           </div>
         </AccessibleDialog>

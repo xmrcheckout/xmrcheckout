@@ -578,7 +578,9 @@
       "archived": "Rechnung archiviert.",
       "deliveryIdMissing": "Zustellungs-ID fehlt.",
       "redeliverFailed": "Webhook konnte nicht erneut zugestellt werden.",
-      "redeliveryQueued": "Erneute Zustellung eingereiht."
+      "redeliveryQueued": "Erneute Zustellung eingereiht.",
+      "authExpired": "Ihre Anmeldung ist abgelaufen. Melden Sie sich erneut an.",
+      "changeNotConfirmed": "Diese Änderung konnte nicht bestätigt werden. Prüfen Sie vor einem erneuten Versuch die entsprechende Liste oder die Einstellungen."
     },
     "page": {
       "createdAt": "Erstellt am {date}",
@@ -787,7 +789,8 @@
       "next": "Weiter",
       "archiveTitle": "Diese Rechnung archivieren?",
       "archiveHelp": "Archivierte Rechnungen werden in der Liste ausgeblendet; wählen Sie „Archivierte anzeigen“, um sie zu sehen. Die Archivierung stoppt die Zahlungserkennung nicht.",
-      "demoNoChanges": "Demo-Modus: Es werden keine Änderungen gespeichert."
+      "demoNoChanges": "Demo-Modus: Es werden keine Änderungen gespeichert.",
+      "archiving": "Wird archiviert…"
     }
   },
   "terminals": {
@@ -834,7 +837,8 @@
     "manageLabel": "{name} verwalten",
     "back": "Alle Terminals",
     "settings": "Einstellungen",
-    "aboutAddresses": "Zu Rechnungsadressen"
+    "aboutAddresses": "Zu Rechnungsadressen",
+    "replacing": "Link wird ersetzt…"
   },
   "settings": {
     "requiredConfirmations": "Erforderliche Bestätigungen",
@@ -1040,7 +1044,9 @@
     "active": "Aktiv",
     "paused": "Pausiert",
     "perEventOnly": "Nur URLs pro Ereignis",
-    "remove": "Entfernen"
+    "remove": "Entfernen",
+    "removing": "Wird entfernt…",
+    "removeConfirm": "Diesen Webhook entfernen? Künftige Ereignisse werden nicht mehr an ihn gesendet."
   },
   "home": {
     "metaTitle": "Monero direkt in Ihre Wallet empfangen | XMR Checkout",

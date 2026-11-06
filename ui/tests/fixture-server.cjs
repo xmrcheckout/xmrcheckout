@@ -25,6 +25,11 @@ let invoiceTransportFailure = false;
 let checkoutStyle = "standard";
 let layoutFixture = false;
 let availabilityDelay = 0;
+let dashboardFailure = null;
+let mutationCount = 0;
+let hooks = [{ id: "fixture-hook", url: "https://merchant.example/events", active: true, events: ["invoice.created"], created_at: "2026-10-01T00:00:00Z" }];
+let terminals = [{ id: "fixture-terminal", name: "Fixture terminal", default_currency: "XMR", confirmation_target: 0, expiry_minutes: 15, enabled: true, created_at: null, last_used_at: null }];
+const archived = new Set();
 let webhookDeliveries = [];
 let healthCompletedAt = null;
 let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", button_text: "Buy with Monero", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, confirmation_message: null, enabled: true,
@@ -68,6 +73,9 @@ const server = http.createServer((request, response) => {
     let result = {};
     if (path === "/__fixture" && request.method === "POST") {
       const options = JSON.parse(body);
+      if (Object.hasOwn(options, "dashboardFailure")) dashboardFailure = options.dashboardFailure;
+      if (options.resetDashboard) { mutationCount = 0; archived.clear(); hooks = [{ id: "fixture-hook", url: "https://merchant.example/events", active: true, events: ["invoice.created"], created_at: "2026-10-01T00:00:00Z" }]; }
+      result = { mutationCount };
       availabilityState = options.state ?? availabilityState;
       invoiceStatus = options.invoiceStatus ?? invoiceStatus;
       invoiceResponseStatus = options.invoiceResponseStatus ?? invoiceResponseStatus;
@@ -90,6 +98,34 @@ const server = http.createServer((request, response) => {
       availabilityDelay = options.delay ?? 0;
       transferMode = options.transferMode ?? transferMode;
       transferDelay = options.transferDelay ?? 0;
+    } else if (path === "/__fixture") {
+      result = { mutationCount };
+    } else if (dashboardFailure && path === dashboardFailure.path && request.method === dashboardFailure.method) {
+      if (request.method !== "GET") mutationCount++;
+      const fail = () => {
+        if (dashboardFailure?.disconnect) request.socket.destroy();
+        else { response.writeHead(dashboardFailure?.status ?? 503, { "Content-Type": "application/json" }); response.end(dashboardFailure?.malformed ? "{" : JSON.stringify({ detail: "Fixture rejected request" })); }
+      };
+      if (dashboardFailure.delay) setTimeout(fail, dashboardFailure.delay); else fail();
+      return;
+    } else if (path === "/api/core/terminals" && request.method === "GET") {
+      result = { terminals };
+    } else if (path.startsWith("/api/core/terminals") && ["POST", "PATCH"].includes(request.method)) {
+      mutationCount++;
+      const item = { ...terminals[0], ...(body ? JSON.parse(body) : {}) };
+      if (path === "/api/core/terminals") { item.id = "created-terminal"; terminals.push(item); }
+      else terminals = terminals.map(terminal => terminal.id === path.split("/").pop() ? item : terminal);
+      result = { ...item, ...(request.method === "POST" ? { url: "https://checkout.example/terminal#fixture-only" } : {}) };
+    } else if (path === "/api/core/webhooks" && request.method === "POST") {
+      mutationCount++;
+      const hook = { id: "created-hook", ...JSON.parse(body), active: true, created_at: new Date().toISOString() };
+      hooks.push(hook); result = hook;
+    } else if (path.startsWith("/api/core/webhooks/") && request.method === "DELETE") {
+      mutationCount++;
+      hooks = hooks.filter(hook => hook.id !== path.split("/").pop()); status = 204;
+    } else if (path.startsWith("/api/core/invoices/") && request.method === "DELETE") {
+      mutationCount++;
+      archived.add(path.split("/").pop()); status = 204;
     } else if (path === "/api/core/payment-links/status") {
       result = { supported_currencies: ["USD", "EUR", "GBP"], daily_limit: 10, used: 0, remaining: 10, window_hours: 24, retrieved_at: new Date().toISOString() };
     } else if (path === "/api/core/payment-links" && request.method === "GET") {
@@ -139,7 +175,7 @@ const server = http.createServer((request, response) => {
         { metadata: { description: { malformed: true }, posData: "{" } },
         { metadata: { description: "Long description ".repeat(20) } },
         ...(layoutFixture ? [{ metadata: { description: "Invalid fixture invoice" } }] : []),
-      ].map((item, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, address, amount_xmr: layoutFixture ? "123.037683234728" : "0.1", status: layoutFixture ? ["pending", "payment_detected", "confirmed", "expired", "invalid"][index] : "pending", confirmation_target: 2, confirmations: 0, created_at: "2026-10-01T00:00:00Z", expires_at: null, archived_at: null, detected_at: null, confirmed_at: null, ...item })), total: layoutFixture ? 5 : 4 };
+      ].map((item, index) => ({ id: `00000000-0000-4000-8000-00000000000${index}`, address, amount_xmr: layoutFixture ? "123.037683234728" : "0.1", status: layoutFixture ? ["pending", "payment_detected", "confirmed", "expired", "invalid"][index] : "pending", confirmation_target: 2, confirmations: 0, created_at: "2026-10-01T00:00:00Z", expires_at: null, archived_at: null, detected_at: null, confirmed_at: null, ...item })).filter(item => !archived.has(item.id)), total: (layoutFixture ? 5 : 4) - archived.size };
     } else if (path === "/api/core/invoices" && request.method === "POST") {
       if (JSON.parse(body).amount_xmr === "0.2") {
         availabilityState = "recovered";
@@ -159,6 +195,8 @@ const server = http.createServer((request, response) => {
       result = transferMode === "error" ? { detail: "Unavailable" } : transferMode === "empty" ? [] : [{ txid: (path.includes("000000000001/") ? "b" : "a").repeat(64), amount_xmr: "0.1", confirmations: 3, timestamp: 1790000000 }];
     } else if (path === "/api/core/webhooks/history") {
       result = webhookDeliveries;
+    } else if (path === "/api/core/webhooks") {
+      result = hooks;
     } else if (path.includes("webhooks")) {
       result = [];
     } else if (path === "/api/core/system/status") {

@@ -36,20 +36,28 @@ function NewLink({ url }: { url: string }) {
 export default function TerminalEditor({ terminal, currencies, mode = "live" }: { terminal?: TerminalData; currencies: string[]; mode?: "live" | "tour" }) {
   const save = mode === "tour" ? saveTerminalTourAction : saveTerminal;
   const { t } = useI18n();
-  const [state, action] = useFormState<TerminalState, FormData>(save, { error: "", success: "", url: "" });
+  const empty = { name: "", default_currency: "XMR", confirmation_target: "0", expiry_minutes: "15" };
+  const [values, setValues] = useState(terminal ? { name: terminal.name, default_currency: terminal.default_currency, confirmation_target: String(terminal.confirmation_target), expiry_minutes: String(terminal.expiry_minutes) } : empty);
+  const [enabled, setEnabled] = useState(terminal?.enabled ?? true);
+  const field = (name: keyof typeof values) => ({ value: values[name], onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setValues(current => ({ ...current, [name]: event.target.value })) });
+  const [state, action] = useFormState<TerminalState, FormData>(async (previous, data) => {
+    const result = await save(previous, data);
+    if (result.success && !terminal) { setValues(empty); setEnabled(true); }
+    return result;
+  }, { error: "", success: "", url: "" });
   const [rotated, rotate] = useFormState<TerminalState, FormData>(save, { error: "", success: "", url: "" });
   const prefix = useId();
-  return <div className="grid min-w-0 gap-6"><form action={action} className="grid min-w-0 gap-4">
+  return <div className="grid min-w-0 gap-6"><form action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={terminal?.id ?? ""} />
-    <div><label htmlFor={`${prefix}-name`}>{t("terminals.name")}</label><input id={`${prefix}-name`} name="name" defaultValue={terminal?.name ?? ""} required maxLength={100} placeholder={t("terminals.namePlaceholder")} className={inputClass} /></div>
+    <div><label htmlFor={`${prefix}-name`}>{t("terminals.name")}</label><input id={`${prefix}-name`} name="name" {...field("name")} required maxLength={100} placeholder={t("terminals.namePlaceholder")} className={inputClass} /></div>
     <div className="grid gap-4 sm:grid-cols-3">
-      <div><label htmlFor={`${prefix}-currency`}>{t("terminals.defaultCurrency")}</label><select id={`${prefix}-currency`} name="default_currency" defaultValue={terminal?.default_currency ?? "XMR"} className={inputClass}>
+      <div><label htmlFor={`${prefix}-currency`}>{t("terminals.defaultCurrency")}</label><select id={`${prefix}-currency`} name="default_currency" {...field("default_currency")} className={inputClass}>
         <option>XMR</option>{currencies.map(code => <option key={code}>{code}</option>)}</select></div>
-      <div><label htmlFor={`${prefix}-target`}>{t("settings.requiredConfirmations")}</label><input id={`${prefix}-target`} name="confirmation_target" type="number" min={0} max={10} defaultValue={terminal?.confirmation_target ?? 0} required className={inputClass} /></div>
-      <div><label htmlFor={`${prefix}-expiry`}>{t("terminals.expiryMinutes")}</label><input id={`${prefix}-expiry`} name="expiry_minutes" type="number" min={2} max={60} defaultValue={terminal?.expiry_minutes ?? 15} required className={inputClass} /></div>
+      <div><label htmlFor={`${prefix}-target`}>{t("settings.requiredConfirmations")}</label><input id={`${prefix}-target`} name="confirmation_target" type="number" min={0} max={10} {...field("confirmation_target")} required className={inputClass} /></div>
+      <div><label htmlFor={`${prefix}-expiry`}>{t("terminals.expiryMinutes")}</label><input id={`${prefix}-expiry`} name="expiry_minutes" type="number" min={2} max={60} {...field("expiry_minutes")} required className={inputClass} /></div>
     </div>
     <p className="text-sm text-ink-soft">{t("terminals.zeroConfNote")}</p>
-    <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="enabled" defaultChecked={terminal?.enabled ?? true} />{t("terminals.enabled")}</label>
+    <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="enabled" checked={enabled} onChange={event => setEnabled(event.target.checked)} />{t("terminals.enabled")}</label>
     <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
     {state.url ? <NewLink url={state.url} /> : null}
     <SaveButton existing={!!terminal} />
@@ -58,7 +66,7 @@ export default function TerminalEditor({ terminal, currencies, mode = "live" }: 
     <input type="hidden" name="id" value={terminal.id} />
     <input type="hidden" name="mode" value="rotate" />
     <p className="text-sm text-ink-soft">{t("terminals.lostDevice")}</p>
-    <ConfirmSubmitButton label={t("terminals.newLink")} confirmLabel={t("terminals.replaceLink")} description={t("terminals.replaceDescription")} />
+    <ConfirmSubmitButton pendingLabel={t("terminals.replacing")} label={t("terminals.newLink")} confirmLabel={t("terminals.replaceLink")} description={t("terminals.replaceDescription")} />
     <p role="status" className={rotated.error ? "text-red-700" : "text-ink"}>{rotated.error || rotated.success}</p>
     {rotated.url ? <NewLink url={rotated.url} /> : null}
   </form> : null}</div>;

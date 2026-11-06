@@ -578,7 +578,9 @@
       "archived": "Factura archivada.",
       "deliveryIdMissing": "Falta el ID del envío.",
       "redeliverFailed": "No se pudo reenviar el webhook.",
-      "redeliveryQueued": "Reenvío en cola."
+      "redeliveryQueued": "Reenvío en cola.",
+      "authExpired": "Tu sesión ha vencido. Vuelve a iniciar sesión.",
+      "changeNotConfirmed": "No se pudo confirmar este cambio. Revisa la lista o la configuración correspondiente antes de intentarlo de nuevo."
     },
     "page": {
       "createdAt": "Creada {date}",
@@ -787,7 +789,8 @@
       "next": "Siguiente",
       "archiveTitle": "¿Archivar esta factura?",
       "archiveHelp": "Las facturas archivadas se ocultan de la lista; selecciona Mostrar archivadas para verlas. Archivarlas no detiene la detección de pagos.",
-      "demoNoChanges": "Modo de demostración: no se guarda ningún cambio."
+      "demoNoChanges": "Modo de demostración: no se guarda ningún cambio.",
+      "archiving": "Archivando…"
     }
   },
   "terminals": {
@@ -834,7 +837,8 @@
     "manageLabel": "Gestionar {name}",
     "back": "Todas las terminales",
     "settings": "Configuración",
-    "aboutAddresses": "Sobre las direcciones de factura"
+    "aboutAddresses": "Sobre las direcciones de factura",
+    "replacing": "Reemplazando enlace…"
   },
   "settings": {
     "requiredConfirmations": "Confirmaciones requeridas",
@@ -1040,7 +1044,9 @@
     "active": "Activo",
     "paused": "En pausa",
     "perEventOnly": "Solo URL por evento",
-    "remove": "Quitar"
+    "remove": "Quitar",
+    "removing": "Eliminando…",
+    "removeConfirm": "¿Eliminar este webhook? Ya no se le enviarán eventos futuros."
   },
   "home": {
     "metaTitle": "Acepta Monero directamente en tu billetera | XMR Checkout",

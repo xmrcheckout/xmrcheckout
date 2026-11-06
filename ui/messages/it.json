@@ -578,7 +578,9 @@
       "archived": "Richiesta di pagamento archiviata.",
       "deliveryIdMissing": "ID della consegna mancante.",
       "redeliverFailed": "Impossibile reinviare il webhook.",
-      "redeliveryQueued": "Reinvio messo in coda."
+      "redeliveryQueued": "Reinvio messo in coda.",
+      "authExpired": "La sessione è scaduta. Accedi di nuovo.",
+      "changeNotConfirmed": "Impossibile confermare questa modifica. Controlla l’elenco o le impostazioni pertinenti prima di riprovare."
     },
     "page": {
       "createdAt": "Creato il {date}",
@@ -787,7 +789,8 @@
       "next": "Successiva",
       "archiveTitle": "Archiviare questa richiesta di pagamento?",
       "archiveHelp": "Le richieste di pagamento archiviate sono nascoste nell'elenco; seleziona Mostra archiviate per vederle. L'archiviazione non interrompe il rilevamento dei pagamenti.",
-      "demoNoChanges": "Modalità demo: nessuna modifica viene salvata."
+      "demoNoChanges": "Modalità demo: nessuna modifica viene salvata.",
+      "archiving": "Archiviazione…"
     }
   },
   "terminals": {
@@ -834,7 +837,8 @@
     "manageLabel": "Gestisci {name}",
     "back": "Tutti i terminali",
     "settings": "Impostazioni",
-    "aboutAddresses": "Indirizzi di pagamento"
+    "aboutAddresses": "Indirizzi di pagamento",
+    "replacing": "Sostituzione del link…"
   },
   "settings": {
     "requiredConfirmations": "Conferme richieste",
@@ -1040,7 +1044,9 @@
     "active": "Attivo",
     "paused": "In pausa",
     "perEventOnly": "Solo URL per evento",
-    "remove": "Rimuovi"
+    "remove": "Rimuovi",
+    "removing": "Rimozione…",
+    "removeConfirm": "Rimuovere questo webhook? Gli eventi futuri non gli verranno più inviati."
   },
   "home": {
     "metaTitle": "Accetta Monero direttamente nel tuo portafoglio | XMR Checkout",

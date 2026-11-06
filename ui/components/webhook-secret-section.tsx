@@ -48,6 +48,7 @@ export default function WebhookSecretSection({
       ) : null}
       <form action={formAction} className="flex justify-end">
         <ConfirmSubmitButton
+          pendingLabel={t("common.resetting")}
           label={t("credentials.resetWebhookSecret")}
           confirmLabel={t("credentials.resetWebhookSecretConfirm")}
           description={t("credentials.resetWebhookSecretDescription")}

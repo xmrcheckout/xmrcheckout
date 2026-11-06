@@ -30,6 +30,8 @@ export async function saveTerminal(_state: TerminalState, form: FormData): Promi
         expiry_minutes: Number(form.get("expiry_minutes")), enabled: form.get("enabled") === "on",
       }),
     });
+    if (response.status === 401) return { error: t("dashboard.actions.authExpired"), success: "", url: "" };
+    if (response.status >= 500) return { error: t("dashboard.terminalActions.notConfirmed"), success: "", url: "" };
     if (!response.ok) return { error: await detail(response, t("dashboard.terminalActions.checkSettings")), success: "", url: "" };
     const data = await response.json();
     revalidatePath("/dashboard");

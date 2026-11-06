@@ -584,7 +584,9 @@
       "archived": "Platební výzva archivována.",
       "deliveryIdMissing": "Chybí ID doručení.",
       "redeliverFailed": "Webhook nelze doručit znovu.",
-      "redeliveryQueued": "Opětovné doručení zařazeno do fronty."
+      "redeliveryQueued": "Opětovné doručení zařazeno do fronty.",
+      "authExpired": "Vaše přihlášení vypršelo. Přihlaste se znovu.",
+      "changeNotConfirmed": "Tuto změnu se nepodařilo potvrdit. Před dalším pokusem zkontrolujte příslušný seznam nebo nastavení."
     },
     "page": {
       "createdAt": "Vytvořeno {date}",
@@ -799,7 +801,8 @@
       "next": "Další",
       "archiveTitle": "Archivovat tuto platební výzvu?",
       "archiveHelp": "Archivované platební výzvy jsou v seznamu skryté; zobrazíte je volbou „Zobrazit archivované“. Archivace nezastavuje zjišťování plateb.",
-      "demoNoChanges": "Režim dema: žádné změny se neukládají."
+      "demoNoChanges": "Režim dema: žádné změny se neukládají.",
+      "archiving": "Archivace…"
     }
   },
   "terminals": {
@@ -848,7 +851,8 @@
     "manageLabel": "Spravovat {name}",
     "back": "Všechny terminály",
     "settings": "Nastavení",
-    "aboutAddresses": "O adresách pro platební výzvy"
+    "aboutAddresses": "O adresách pro platební výzvy",
+    "replacing": "Nahrazování odkazu…"
   },
   "settings": {
     "requiredConfirmations": "Požadovaná potvrzení",
@@ -1058,7 +1062,9 @@
     "active": "Aktivní",
     "paused": "Pozastaveno",
     "perEventOnly": "Pouze URL pro jednotlivé události",
-    "remove": "Odebrat"
+    "remove": "Odebrat",
+    "removing": "Odebírání…",
+    "removeConfirm": "Odebrat tento webhook? Budoucí události už na něj nebudou odesílány."
   },
   "home": {
     "metaTitle": "Přijímejte Monero přímo do své peněženky | XMR Checkout",

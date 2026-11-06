@@ -575,7 +575,9 @@
       "archived": "账单已归档。",
       "deliveryIdMissing": "缺少投递 ID。",
       "redeliverFailed": "无法重新投递 Webhook。",
-      "redeliveryQueued": "已加入重新投递队列。"
+      "redeliveryQueued": "已加入重新投递队列。",
+      "authExpired": "登录已过期。请重新登录。",
+      "changeNotConfirmed": "无法确认此更改。请先检查相关列表或设置，再重试。"
     },
     "page": {
       "createdAt": "创建于 {date}",
@@ -781,7 +783,8 @@
       "next": "下一页",
       "archiveTitle": "要归档此账单吗？",
       "archiveHelp": "已归档的账单会从列表中隐藏；选择“显示已归档”即可查看。归档不会停止付款检测。",
-      "demoNoChanges": "演示模式：不会保存任何更改。"
+      "demoNoChanges": "演示模式：不会保存任何更改。",
+      "archiving": "正在归档…"
     }
   },
   "terminals": {
@@ -827,7 +830,8 @@
     "manageLabel": "管理 {name}",
     "back": "全部终端",
     "settings": "设置",
-    "aboutAddresses": "关于账单地址"
+    "aboutAddresses": "关于账单地址",
+    "replacing": "正在替换链接…"
   },
   "settings": {
     "requiredConfirmations": "所需确认数",
@@ -1031,7 +1035,9 @@
     "active": "已启用",
     "paused": "已暂停",
     "perEventOnly": "仅按事件指定 URL",
-    "remove": "移除"
+    "remove": "移除",
+    "removing": "正在移除…",
+    "removeConfirm": "移除此 Webhook？后续事件将不再发送至此端点。"
   },
   "home": {
     "metaTitle": "将门罗币直接收入你的钱包 | XMR Checkout",

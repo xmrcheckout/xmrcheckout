@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useFormState } from "react-dom";
 
 import {
@@ -9,6 +10,8 @@ import {
   deleteWebhookTourAction,
   type WebhookFormState,
 } from "../app/(app)/dashboard/actions";
+import ConfirmSubmitButton from "./confirm-submit-button";
+import PendingSubmitButton from "./pending-submit-button";
 import StatusBadge from "./status-badge";
 import { fill } from "../lib/i18n/rich";
 import { useI18n } from "./i18n-provider";
@@ -62,8 +65,15 @@ export default function WebhookSection({
   webhooks,
 }: WebhookSectionProps) {
   const { t } = useI18n();
+  const emptyEvents = () => Object.fromEntries(webhookEvents.map(({ key }) => [key, { checked: true, url: "" }]));
+  const [defaultUrl, setDefaultUrl] = useState("");
+  const [events, setEvents] = useState(emptyEvents);
   const [createState, createAction] = useFormState(
-    mode === "tour" ? createWebhookTourAction : createWebhookAction,
+    async (previous: WebhookFormState, data: FormData) => {
+      const result = await (mode === "tour" ? createWebhookTourAction : createWebhookAction)(previous, data);
+      if (result.success) { setDefaultUrl(""); setEvents(emptyEvents()); }
+      return result;
+    },
     initialState,
   );
   const [deleteState, deleteAction] = useFormState(
@@ -81,6 +91,7 @@ export default function WebhookSection({
       <form
         className="grid min-w-0 grid-cols-1 gap-6 rounded-surface border border-stroke bg-card p-5 shadow-soft sm:p-6"
         action={createAction}
+        onReset={event => event.preventDefault()}
       >
         <div>
           <h2 className="font-sans text-xl font-semibold">{t("webhooks.addEndpoint")}</h2>
@@ -102,6 +113,8 @@ export default function WebhookSection({
             className="w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
             id="default_url"
             name="default_url"
+            value={defaultUrl}
+            onChange={event => setDefaultUrl(event.target.value)}
             type="url"
             placeholder="https://xmrcheckout.com/webhooks"
           />
@@ -121,7 +134,8 @@ export default function WebhookSection({
                   className="h-4 w-4 shrink-0 rounded border-stroke text-ink focus:ring-ink/20"
                   type="checkbox"
                   name={`event_${key}`}
-                  defaultChecked
+                  checked={events[key].checked}
+                  onChange={event => setEvents(current => ({ ...current, [key]: { ...current[key], checked: event.target.checked } }))}
                 />
                 <span className="min-w-0 break-all">{label}</span>
               </label>
@@ -129,6 +143,9 @@ export default function WebhookSection({
                 className="mt-3 w-full rounded-xl border border-stroke bg-white/80 px-3 py-2 text-sm text-ink outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
                 id={`event_url_${key}`}
                 name={`event_url_${key}`}
+                aria-label={`${label}: ${t("webhooks.overridePlaceholder")}`}
+                value={events[key].url}
+                onChange={event => setEvents(current => ({ ...current, [key]: { ...current[key], url: event.target.value } }))}
                 type="url"
                 placeholder={t("webhooks.overridePlaceholder")}
               />
@@ -136,22 +153,22 @@ export default function WebhookSection({
           ))}
         </fieldset>
         {createState.error ? (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+          <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
             {createState.error}
           </p>
         ) : null}
         {createState.success ? (
-          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
+          <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
             {createState.success}
           </p>
         ) : null}
         <div className="flex justify-end">
-          <button
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
-            type="submit"
+          <PendingSubmitButton
+            pendingLabel={t("common.saving")}
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           >
             {t("webhooks.save")}
-          </button>
+          </PendingSubmitButton>
         </div>
       </form>
       <div className="border-l-2 border-sage pl-4">
@@ -172,12 +189,12 @@ export default function WebhookSection({
           </p>
         </div>
         {deleteState.error ? (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+          <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
             {deleteState.error}
           </p>
         ) : null}
         {deleteState.success ? (
-          <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
+          <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
             {deleteState.success}
           </p>
         ) : null}
@@ -186,7 +203,7 @@ export default function WebhookSection({
             {t("webhooks.none")}
           </p>
         ) : (
-          <form className="grid gap-4" action={deleteAction}>
+          <div className="grid gap-4">
             {webhooks.map((hook) => (
               <div
                 key={hook.id}
@@ -218,19 +235,13 @@ export default function WebhookSection({
                     ))}
                   </div>
                 </div>
-                <div className="flex">
-                  <button
-                    className="inline-flex items-center justify-center rounded-full border border-stroke bg-white/60 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
-                    type="submit"
-                    name="webhook_id"
-                    value={hook.id}
-                  >
-                    {t("webhooks.remove")}
-                  </button>
-                </div>
+                <form action={deleteAction}>
+                  <input type="hidden" name="webhook_id" value={hook.id} />
+                  <ConfirmSubmitButton label={t("webhooks.remove")} confirmLabel={t("webhooks.remove")} pendingLabel={t("webhooks.removing")} description={t("webhooks.removeConfirm")} />
+                </form>
               </div>
             ))}
-          </form>
+          </div>
         )}
       </div>
     </div>

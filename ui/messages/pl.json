@@ -584,7 +584,9 @@
       "archived": "Prośba o płatność zarchiwizowana.",
       "deliveryIdMissing": "Brak identyfikatora dostarczenia.",
       "redeliverFailed": "Nie można ponownie dostarczyć webhooka.",
-      "redeliveryQueued": "Ponowne dostarczenie dodano do kolejki."
+      "redeliveryQueued": "Ponowne dostarczenie dodano do kolejki.",
+      "authExpired": "Sesja wygasła. Zaloguj się ponownie.",
+      "changeNotConfirmed": "Nie udało się potwierdzić tej zmiany. Przed ponowną próbą sprawdź odpowiednią listę lub ustawienia."
     },
     "page": {
       "createdAt": "Utworzono {date}",
@@ -799,7 +801,8 @@
       "next": "Następna",
       "archiveTitle": "Zarchiwizować tę prośbę o płatność?",
       "archiveHelp": "Zarchiwizowane prośby o płatność są ukryte na liście; wybierz „Pokaż zarchiwizowane”, aby je zobaczyć. Archiwizacja nie zatrzymuje wykrywania płatności.",
-      "demoNoChanges": "Tryb demo: zmiany nie są zapisywane."
+      "demoNoChanges": "Tryb demo: zmiany nie są zapisywane.",
+      "archiving": "Archiwizowanie…"
     }
   },
   "terminals": {
@@ -848,7 +851,8 @@
     "manageLabel": "Zarządzaj: {name}",
     "back": "Wszystkie terminale",
     "settings": "Ustawienia",
-    "aboutAddresses": "O adresach płatności"
+    "aboutAddresses": "O adresach płatności",
+    "replacing": "Zastępowanie linku…"
   },
   "settings": {
     "requiredConfirmations": "Wymagane potwierdzenia",
@@ -1058,7 +1062,9 @@
     "active": "Aktywny",
     "paused": "Wstrzymany",
     "perEventOnly": "Tylko adresy URL dla zdarzeń",
-    "remove": "Usuń"
+    "remove": "Usuń",
+    "removing": "Usuwanie…",
+    "removeConfirm": "Usunąć ten webhook? Kolejne zdarzenia nie będą już do niego wysyłane."
   },
   "home": {
     "metaTitle": "Przyjmuj Monero bezpośrednio na swój portfel | XMR Checkout",

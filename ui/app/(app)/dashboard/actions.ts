@@ -1,5 +1,7 @@
 "use server";
 
+import { dashboardMutationError } from "../../../lib/dashboard-request";
+
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -346,7 +348,7 @@ export async function createInvoiceAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = typeof detail?.detail === "string" ? detail.detail : t("dashboard.actions.invoiceNotConfirmed");
+    const message = response.status === 401 ? t("dashboard.actions.authExpired") : response.status >= 500 && !detail?.code ? t("dashboard.actions.invoiceNotConfirmed") : typeof detail?.detail === "string" ? detail.detail : t("dashboard.actions.invoiceNotConfirmed");
     revalidatePath("/dashboard");
     return {
       code: typeof detail?.code === "string" ? detail.code : null,
@@ -364,13 +366,10 @@ export async function createInvoiceAction(
     };
   }
 
-  const data = (await response.json()) as {
-    id: string;
-    address: string;
-    subaddress_index?: number | null;
-    amount_xmr: string;
-    warnings?: string[] | null;
-  };
+  const data = await response.json().catch(() => null) as { id: string; address: string; amount_xmr: string; subaddress_index?: number | null; warnings?: string[] | null } | null;
+  if (!data || typeof data.id !== "string" || typeof data.address !== "string" || typeof data.amount_xmr !== "string") {
+    return { error: t("dashboard.actions.invoiceNotConfirmed"), invoiceId: null, address: null, amount: null, recipientName: null, description: null, subaddressIndex: null, warnings: null };
+  }
   revalidatePath("/dashboard");
   return {
     error: null,
@@ -504,34 +503,37 @@ export async function updateBtcpayCheckoutStyleAction(
     };
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `ApiKey ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ btcpay_checkout_style: nextStyle }),
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `ApiKey ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ btcpay_checkout_style: nextStyle }),
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.layoutFailed");
-    return { style: _prevState.style, error: message, success: null };
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.layoutFailed"), t);
+      return { style: _prevState.style, error: message, success: null };
+    }
+
+    const data = (await response.json()) as { btcpay_checkout_style?: string | null };
+    const resolvedStyle =
+      data.btcpay_checkout_style === "btcpay_classic" ||
+      data.btcpay_checkout_style === "standard"
+        ? data.btcpay_checkout_style
+        : nextStyle;
+    revalidatePath("/dashboard");
+    return {
+      style: resolvedStyle as "standard" | "btcpay_classic",
+      error: null,
+      success: t("dashboard.actions.preferenceSaved"),
+    };
+  } catch {
+    return { style: _prevState.style, error: t("dashboard.actions.changeNotConfirmed"), success: null };
   }
-
-  const data = (await response.json()) as { btcpay_checkout_style?: string | null };
-  const resolvedStyle =
-    data.btcpay_checkout_style === "btcpay_classic" ||
-    data.btcpay_checkout_style === "standard"
-      ? data.btcpay_checkout_style
-      : nextStyle;
-  revalidatePath("/dashboard");
-  return {
-    style: resolvedStyle as "standard" | "btcpay_classic",
-    error: null,
-    success: t("dashboard.actions.preferenceSaved"),
-  };
 }
 
 export async function updateDefaultConfirmationTargetAction(
@@ -558,29 +560,32 @@ export async function updateDefaultConfirmationTargetAction(
     };
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `ApiKey ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ default_confirmation_target: parsed }),
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `ApiKey ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ default_confirmation_target: parsed }),
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.defaultTargetFailed");
-    return { value: _prevState.value, error: message, success: null };
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.defaultTargetFailed"), t);
+      return { value: _prevState.value, error: message, success: null };
+    }
+
+    const data = (await response.json()) as { default_confirmation_target?: number | null };
+    const resolvedValue =
+      typeof data.default_confirmation_target === "number"
+        ? data.default_confirmation_target
+        : parsed;
+    revalidatePath("/dashboard");
+    return { value: resolvedValue, error: null, success: t("dashboard.actions.defaultUpdated") };
+  } catch {
+    return { value: _prevState.value, error: t("dashboard.actions.changeNotConfirmed"), success: null };
   }
-
-  const data = (await response.json()) as { default_confirmation_target?: number | null };
-  const resolvedValue =
-    typeof data.default_confirmation_target === "number"
-      ? data.default_confirmation_target
-      : parsed;
-  revalidatePath("/dashboard");
-  return { value: resolvedValue, error: null, success: t("dashboard.actions.defaultUpdated") };
 }
 
 export async function updateDefaultQrLogoAction(
@@ -622,49 +627,52 @@ export async function updateDefaultQrLogoAction(
     };
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `ApiKey ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      default_qr_logo: normalizedLogo,
-      default_qr_logo_data_url: logoDataUrl,
-    }),
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/core/profile`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `ApiKey ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        default_qr_logo: normalizedLogo,
+        default_qr_logo_data_url: logoDataUrl,
+      }),
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.qrFailed");
-    return {
-      logo: _prevState.logo,
-      logoDataUrl: _prevState.logoDataUrl,
-      error: message,
-      success: null,
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.qrFailed"), t);
+      return {
+        logo: _prevState.logo,
+        logoDataUrl: _prevState.logoDataUrl,
+        error: message,
+        success: null,
+      };
+    }
+
+    const data = (await response.json()) as {
+      default_qr_logo?: string | null;
+      default_qr_logo_data_url?: string | null;
     };
+    const resolvedLogo =
+      data.default_qr_logo === "none" ||
+      data.default_qr_logo === "custom" ||
+      data.default_qr_logo === "monero"
+        ? data.default_qr_logo
+        : normalizedLogo;
+    const resolvedDataUrl =
+      resolvedLogo === "custom" ? data.default_qr_logo_data_url ?? logoDataUrl : null;
+    revalidatePath("/dashboard");
+    return {
+      logo: resolvedLogo as "monero" | "none" | "custom",
+      logoDataUrl: resolvedDataUrl ?? null,
+      error: null,
+      success: t("dashboard.actions.qrSaved"),
+    };
+  } catch {
+    return { logo: _prevState.logo, logoDataUrl: _prevState.logoDataUrl, error: t("dashboard.actions.changeNotConfirmed"), success: null };
   }
-
-  const data = (await response.json()) as {
-    default_qr_logo?: string | null;
-    default_qr_logo_data_url?: string | null;
-  };
-  const resolvedLogo =
-    data.default_qr_logo === "none" ||
-    data.default_qr_logo === "custom" ||
-    data.default_qr_logo === "monero"
-      ? data.default_qr_logo
-      : normalizedLogo;
-  const resolvedDataUrl =
-    resolvedLogo === "custom" ? data.default_qr_logo_data_url ?? logoDataUrl : null;
-  revalidatePath("/dashboard");
-  return {
-    logo: resolvedLogo as "monero" | "none" | "custom",
-    logoDataUrl: resolvedDataUrl ?? null,
-    error: null,
-    success: t("dashboard.actions.qrSaved"),
-  };
 }
 
 export async function createWebhookAction(
@@ -722,24 +730,27 @@ export async function createWebhookAction(
     payload.event_urls = eventUrls;
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/webhooks`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `ApiKey ${apiKey}`,
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/core/webhooks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `ApiKey ${apiKey}`,
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.webhookCreateFailed");
-    return { error: message, success: null };
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.webhookCreateFailed"), t);
+      return { error: message, success: null };
+    }
+
+    revalidatePath("/dashboard");
+    return { error: null, success: t("dashboard.actions.webhookSaved") };
+  } catch {
+    return { error: t("dashboard.actions.changeNotConfirmed"), success: null };
   }
-
-  revalidatePath("/dashboard");
-  return { error: null, success: t("dashboard.actions.webhookSaved") };
 }
 
 export async function deleteWebhookAction(
@@ -757,22 +768,25 @@ export async function deleteWebhookAction(
     return { error: t("dashboard.actions.webhookIdMissing"), success: null };
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/webhooks/${webhookId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `ApiKey ${apiKey}`,
-    },
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/core/webhooks/${webhookId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `ApiKey ${apiKey}`,
+      },
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.webhookRemoveFailed");
-    return { error: message, success: null };
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.webhookRemoveFailed"), t);
+      return { error: message, success: null };
+    }
+
+    revalidatePath("/dashboard");
+    return { error: null, success: t("dashboard.actions.webhookRemoved") };
+  } catch {
+    return { error: t("dashboard.actions.changeNotConfirmed"), success: null };
   }
-
-  revalidatePath("/dashboard");
-  return { error: null, success: t("dashboard.actions.webhookRemoved") };
 }
 
 export async function archiveInvoiceAction(
@@ -794,22 +808,25 @@ export async function archiveInvoiceAction(
     return { error: t("dashboard.actions.invoiceIdMissing"), success: null, archivedId: null };
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/core/invoices/${invoiceId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `ApiKey ${apiKey}`,
-    },
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/core/invoices/${invoiceId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `ApiKey ${apiKey}`,
+      },
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.archiveFailed");
-    return { error: message, success: null, archivedId: null };
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.archiveFailed"), t);
+      return { error: message, success: null, archivedId: null };
+    }
+
+    revalidatePath("/dashboard");
+    return { error: null, success: t("dashboard.actions.archived"), archivedId: invoiceId };
+  } catch {
+    return { error: t("dashboard.actions.changeNotConfirmed"), success: null, archivedId: null };
   }
-
-  revalidatePath("/dashboard");
-  return { error: null, success: t("dashboard.actions.archived"), archivedId: invoiceId };
 }
 
 export async function loadInvoiceTransfersAction(
@@ -820,20 +837,24 @@ export async function loadInvoiceTransfersAction(
   if (!apiKey) {
     return { transfers: [], error: t("dashboard.actions.noApiKey") };
   }
-  const response = await fetch(
-    `${apiBaseUrl}/api/core/invoices/${encodeURIComponent(invoiceId)}/transfers`,
-    {
-      headers: { Authorization: `ApiKey ${apiKey}` },
-      cache: "no-store",
-    },
-  );
-  if (!response.ok) {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/api/core/invoices/${encodeURIComponent(invoiceId)}/transfers`,
+      {
+        headers: { Authorization: `ApiKey ${apiKey}` },
+        cache: "no-store",
+      },
+    );
+    if (!response.ok) {
+      return { transfers: [], error: response.status === 401 ? t("dashboard.actions.authExpired") : t("transactions.loadFailed") };
+    }
+    return {
+      transfers: (await response.json()) as InvoiceTransfersState["transfers"],
+      error: null,
+    };
+  } catch {
     return { transfers: [], error: t("transactions.loadFailed") };
   }
-  return {
-    transfers: (await response.json()) as InvoiceTransfersState["transfers"],
-    error: null,
-  };
 }
 
 export async function logoutAction() {
@@ -871,21 +892,24 @@ export async function redeliverWebhookDeliveryAction(
     return { error: t("dashboard.actions.deliveryIdMissing"), success: null };
   }
 
-  const response = await fetch(
-    `${apiBaseUrl}/api/core/webhooks/deliveries/${encodeURIComponent(deliveryId)}/redeliver`,
-    {
-      method: "POST",
-      headers: { Authorization: `ApiKey ${apiKey}` },
-      cache: "no-store",
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/api/core/webhooks/deliveries/${encodeURIComponent(deliveryId)}/redeliver`,
+      {
+        method: "POST",
+        headers: { Authorization: `ApiKey ${apiKey}` },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const message = await dashboardMutationError(response, t("dashboard.actions.redeliverFailed"), t);
+      return { error: message, success: null };
     }
-  );
 
-  if (!response.ok) {
-    const detail = await response.json().catch(() => null);
-    const message = detail?.detail ?? t("dashboard.actions.redeliverFailed");
-    return { error: message, success: null };
+    revalidatePath("/dashboard");
+    return { error: null, success: t("dashboard.actions.redeliveryQueued") };
+  } catch {
+    return { error: t("dashboard.actions.changeNotConfirmed"), success: null };
   }
-
-  revalidatePath("/dashboard");
-  return { error: null, success: t("dashboard.actions.redeliveryQueued") };
 }

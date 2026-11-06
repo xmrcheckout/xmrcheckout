@@ -36,6 +36,7 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
       ) : null}
       <form action={formAction} className="flex justify-end">
         <ConfirmSubmitButton
+          pendingLabel={t("common.resetting")}
           label={t("credentials.resetApiKey")}
           confirmLabel={t("credentials.resetApiKeyConfirm")}
           description={t("credentials.resetApiKeyDescription")}

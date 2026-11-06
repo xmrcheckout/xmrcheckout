@@ -31,6 +31,8 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
         auto_create_invoice: !customerAmount && form.get("auto_create_invoice") === "on",
         enabled: form.get("enabled") === "on" }),
     });
+    if (response.status === 401) return { error: t("dashboard.actions.authExpired"), success: "", fieldErrors };
+    if (response.status >= 500) return { error: t("dashboard.paymentLinkActions.notConfirmed"), success: "", fieldErrors };
     if (!response.ok) {
       const data = await response.json().catch(() => null);
       if (Array.isArray(data?.detail)) for (const issue of data.detail) {

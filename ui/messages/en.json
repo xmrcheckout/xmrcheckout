@@ -578,7 +578,9 @@
       "archived": "Invoice archived.",
       "deliveryIdMissing": "Delivery id missing.",
       "redeliverFailed": "Unable to redeliver the webhook.",
-      "redeliveryQueued": "Redelivery queued."
+      "redeliveryQueued": "Redelivery queued.",
+      "authExpired": "Your sign-in has expired. Sign in again.",
+      "changeNotConfirmed": "Could not confirm this change. Check the relevant list or settings before trying again."
     },
     "page": {
       "createdAt": "Created {date}",
@@ -787,7 +789,8 @@
       "next": "Next",
       "archiveTitle": "Archive this invoice?",
       "archiveHelp": "Archived invoices are hidden from the list; select Show archived to see them. Archiving does not stop payment detection.",
-      "demoNoChanges": "Demo mode: no changes are saved."
+      "demoNoChanges": "Demo mode: no changes are saved.",
+      "archiving": "Archiving…"
     }
   },
   "terminals": {
@@ -834,7 +837,8 @@
     "manageLabel": "Manage {name}",
     "back": "All terminals",
     "settings": "Settings",
-    "aboutAddresses": "About invoice addresses"
+    "aboutAddresses": "About invoice addresses",
+    "replacing": "Replacing link…"
   },
   "settings": {
     "requiredConfirmations": "Required confirmations",
@@ -1040,7 +1044,9 @@
     "active": "Active",
     "paused": "Paused",
     "perEventOnly": "Per-event URLs only",
-    "remove": "Remove"
+    "remove": "Remove",
+    "removing": "Removing…",
+    "removeConfirm": "Remove this webhook? Future events will no longer be sent to it."
   },
   "home": {
     "metaTitle": "Accept Monero Directly into Your Wallet | XMR Checkout",

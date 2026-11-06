@@ -1361,7 +1361,7 @@
       },
       "confirmations": {
         "title": "Bestätigungen wählen",
-        "p1": "Bei null Bestätigungen – dem Standard für Terminals – zeigt der Bildschirm „Zahlung gesehen“, sobald die Transaktion das Netzwerk erreicht. Sie ist dann noch in keinem Block. In seltenen Fällen wird eine so gesehene Transaktion nie bestätigt. Bei kleinen Alltagsbeträgen ist dieses Risiko meist vertretbar.",
+        "p1": "Bei null Bestätigungen – dem Standard für Terminals – zeigt der Bildschirm „Zahlung gesehen“, sobald die Transaktion das Netzwerk erreicht. Sie ist dann noch in keinem Block. In seltenen Fällen wird eine so gesehene Transaktion nie bestätigt. XMR Checkout prüft eine Zahlung nicht mehr, sobald das Bestätigungsziel erreicht ist, und warnt Sie in diesem Fall daher nicht. Bei kleinen Alltagsbeträgen ist dieses Risiko meist vertretbar.",
         "p2": "Legen Sie für größere Beträge eine oder mehrere Bestätigungen fest. Jede Bestätigung dauert etwa zwei Minuten. Der Bildschirm zeigt den Fortschritt, bis das Ziel erreicht ist."
       },
       "security": {
@@ -1571,7 +1571,7 @@
       "statusEyebrow": "03 · Status lesen",
       "statusTitle": "Verwenden Sie den öffentlichen Rechnungsendpunkt als einfache Rückfallebene.",
       "statusBody": "Der öffentliche Endpunkt benötigt keinen API-Schlüssel und liefert Rechnungsstatus und Zahlungsdetails. Nutzen Sie ihn für Aktualisierungen auf Kundenseiten oder als Abfrage-Rückfallebene, während Ihr Server auf einen Webhook wartet.",
-      "statusNote": "Betrachten Sie das Bestätigungsziel als Teil Ihrer Bestellrichtlinie. Eine erkannte Zahlung und eine bestätigte Rechnung sind unterschiedliche Zustände; Ihr Bestellablauf sollte den Zustand verwenden, der Ihren Anforderungen entspricht.",
+      "statusNote": "Betrachten Sie das Bestätigungsziel als Teil Ihrer Bestellrichtlinie. Eine erkannte Zahlung und eine bestätigte Rechnung sind unterschiedliche Zustände; Ihr Bestellablauf sollte den Zustand verwenden, der Ihren Anforderungen entspricht. Sobald eine Rechnung ihr Ziel erreicht, prüft XMR Checkout sie nicht mehr und sendet keine weiteren Ereignisse. Bei 0 oder 1 Bestätigung wird eine Zahlung, die später doch nicht bestätigt oder durch eine Reorganisation der Blockchain entfernt wird, weiterhin als bestätigt angezeigt. Legen Sie für größere Beträge daher ein höheres Ziel fest.",
       "webhooksEyebrow": "04 · Webhooks empfangen",
       "webhooksTitle": "Abonnieren Sie die Ereignisse, die Ihr Server braucht.",
       "verifyTitle": "Header überprüfen",

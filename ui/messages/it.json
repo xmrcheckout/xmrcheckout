@@ -1361,7 +1361,7 @@
       },
       "confirmations": {
         "title": "Scegli le conferme",
-        "p1": "Con zero conferme, l'impostazione predefinita dei terminali, lo schermo mostra “Pagamento visto” non appena la transazione raggiunge la rete. Non è ancora in un blocco. In rari casi una transazione vista in questo modo non viene mai confermata. Per piccoli importi quotidiani questo rischio è di solito accettabile.",
+        "p1": "Con zero conferme, l'impostazione predefinita dei terminali, lo schermo mostra “Pagamento visto” non appena la transazione raggiunge la rete. Non è ancora in un blocco. In rari casi una transazione vista in questo modo non viene mai confermata. XMR Checkout smette di controllare un pagamento appena si raggiunge l'obiettivo di conferme, quindi non ti avviserà se succede. Per piccoli importi quotidiani questo rischio è di solito accettabile.",
         "p2": "Per importi più alti, imposta una o più conferme. Ogni conferma richiede circa due minuti. Lo schermo mostra l'avanzamento finché non si raggiunge l'obiettivo."
       },
       "security": {
@@ -1571,7 +1571,7 @@
       "statusEyebrow": "03 · Leggi lo stato",
       "statusTitle": "Usa l'endpoint pubblico della richiesta di pagamento come semplice alternativa.",
       "statusBody": "L'endpoint pubblico non richiede una chiave API e restituisce lo stato della richiesta di pagamento e i dati di pagamento. Usalo per gli aggiornamenti rivolti al cliente o come polling di riserva mentre il tuo server attende un webhook.",
-      "statusNote": "Considera l'obiettivo di conferme come parte della tua politica sugli ordini. Un pagamento rilevato e una richiesta di pagamento confermata sono stati diversi; il tuo flusso degli ordini dovrebbe usare lo stato che corrisponde a ciò che ti serve.",
+      "statusNote": "Considera l'obiettivo di conferme come parte della tua politica sugli ordini. Un pagamento rilevato e una richiesta di pagamento confermata sono stati diversi; il tuo flusso degli ordini dovrebbe usare lo stato che corrisponde a ciò che ti serve. Quando una richiesta di pagamento raggiunge il suo obiettivo, XMR Checkout smette di controllarla e non invia altri eventi. Con 0 o 1 conferma, un pagamento che poi non viene confermato o che viene rimosso da una riorganizzazione della blockchain risulta comunque confermato, quindi usa un obiettivo più alto per gli importi maggiori.",
       "webhooksEyebrow": "04 · Ricevi i webhook",
       "webhooksTitle": "Iscriviti agli eventi che servono al tuo server.",
       "verifyTitle": "Verifica l'intestazione",

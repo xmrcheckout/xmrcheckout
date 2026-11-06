@@ -1361,7 +1361,7 @@
       },
       "confirmations": {
         "title": "Escolha as confirmações",
-        "p1": "Com zero confirmações, o padrão dos terminais, a tela mostra “Pagamento visto” assim que a transação chega à rede. Ela ainda não está em um bloco. Em casos raros, uma transação vista dessa forma nunca é confirmada. Para valores pequenos do dia a dia, esse risco costuma ser aceitável.",
+        "p1": "Com zero confirmações, o padrão dos terminais, a tela mostra “Pagamento visto” assim que a transação chega à rede. Ela ainda não está em um bloco. Em casos raros, uma transação vista dessa forma nunca é confirmada. O XMR Checkout para de verificar um pagamento assim que a meta de confirmações é atingida, então não vai avisar você se isso acontecer. Para valores pequenos do dia a dia, esse risco costuma ser aceitável.",
         "p2": "Para valores maiores, defina uma ou mais confirmações. Cada confirmação leva cerca de dois minutos. A tela mostra o progresso até a meta ser atingida."
       },
       "security": {
@@ -1571,7 +1571,7 @@
       "statusEyebrow": "03 · Leia o status",
       "statusTitle": "Use o endpoint público da fatura como alternativa simples.",
       "statusBody": "O endpoint público não precisa de chave de API e retorna o status da fatura e os dados de pagamento. Use-o para atualizações voltadas ao cliente ou como consulta periódica de reserva enquanto o seu servidor aguarda um webhook.",
-      "statusNote": "Trate a meta de confirmações como parte da sua política de pedidos. Um pagamento detectado e uma fatura confirmada são estados diferentes; o seu fluxo de pedidos deve usar o estado que corresponde ao que você precisa.",
+      "statusNote": "Trate a meta de confirmações como parte da sua política de pedidos. Um pagamento detectado e uma fatura confirmada são estados diferentes; o seu fluxo de pedidos deve usar o estado que corresponde ao que você precisa. Quando uma fatura atinge a meta, o XMR Checkout para de verificá-la e não envia mais eventos. Com 0 ou 1 confirmação, um pagamento que depois não for confirmado ou for removido por uma reorganização da blockchain continua aparecendo como confirmado, então use uma meta maior para valores mais altos.",
       "webhooksEyebrow": "04 · Receba webhooks",
       "webhooksTitle": "Assine os eventos de que o seu servidor precisa.",
       "verifyTitle": "Verifique o cabeçalho",

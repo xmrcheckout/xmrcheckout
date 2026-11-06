@@ -1361,7 +1361,7 @@
       },
       "confirmations": {
         "title": "Choisir les confirmations",
-        "p1": "Avec zéro confirmation, la valeur par défaut des terminaux, l’écran affiche « Paiement repéré » dès que la transaction atteint le réseau. Elle n’est pas encore incluse dans un bloc. Dans de rares cas, une transaction ainsi repérée n’est jamais confirmée. Pour de petits montants du quotidien, ce risque est généralement acceptable.",
+        "p1": "Avec zéro confirmation, la valeur par défaut des terminaux, l’écran affiche « Paiement repéré » dès que la transaction atteint le réseau. Elle n’est pas encore incluse dans un bloc. Dans de rares cas, une transaction ainsi repérée n’est jamais confirmée. XMR Checkout cesse de vérifier un paiement dès que l’objectif de confirmations est atteint, et ne vous avertira donc pas si cela se produit. Pour de petits montants du quotidien, ce risque est généralement acceptable.",
         "p2": "Pour les montants plus importants, définissez une ou plusieurs confirmations. Chaque confirmation prend environ deux minutes. L’écran affiche la progression jusqu’à ce que l’objectif soit atteint."
       },
       "security": {
@@ -1571,7 +1571,7 @@
       "statusEyebrow": "03 · Lire le statut",
       "statusTitle": "Utilisez le point de terminaison public des factures comme solution de repli simple.",
       "statusBody": "Le point de terminaison public ne nécessite pas de clé API et renvoie le statut de la facture ainsi que les informations de paiement. Utilisez-le pour les actualisations côté client ou comme solution d’interrogation de repli pendant que votre serveur attend un webhook.",
-      "statusNote": "Considérez l’objectif de confirmations comme faisant partie de votre politique de commande. Un paiement détecté et une facture confirmée sont deux états différents ; votre processus de commande doit utiliser l’état qui correspond à votre besoin.",
+      "statusNote": "Considérez l’objectif de confirmations comme faisant partie de votre politique de commande. Un paiement détecté et une facture confirmée sont deux états différents ; votre processus de commande doit utiliser l’état qui correspond à votre besoin. Dès qu’une facture atteint son objectif, XMR Checkout cesse de la vérifier et n’envoie plus d’événements. Avec 0 ou 1 confirmation, un paiement qui n’est finalement jamais confirmé ou qui est retiré par une réorganisation de la blockchain reste affiché comme confirmé. Pour les montants plus importants, choisissez donc un objectif plus élevé.",
       "webhooksEyebrow": "04 · Recevoir les webhooks",
       "webhooksTitle": "Abonnez-vous aux événements dont votre serveur a besoin.",
       "verifyTitle": "Vérifier l’en-tête",

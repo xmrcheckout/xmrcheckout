@@ -1381,7 +1381,7 @@
       },
       "confirmations": {
         "title": "Volba počtu potvrzení",
-        "p1": "Při nule potvrzení, což je výchozí nastavení terminálů, se „Platba zachycena“ zobrazí, jakmile transakce dorazí do sítě. Ještě není v bloku. Ve vzácných případech se takto zachycená transakce nikdy nepotvrdí. U malých běžných částek je toto riziko obvykle přijatelné.",
+        "p1": "Při nule potvrzení, což je výchozí nastavení terminálů, se „Platba zachycena“ zobrazí, jakmile transakce dorazí do sítě. Ještě není v bloku. Ve vzácných případech se takto zachycená transakce nikdy nepotvrdí. XMR Checkout přestane platbu kontrolovat, jakmile je dosaženo požadovaného počtu potvrzení, takže vás v takovém případě neupozorní. U malých běžných částek je toto riziko obvykle přijatelné.",
         "p2": "U vyšších částek nastavte jedno nebo více potvrzení. Každé potvrzení trvá zhruba dvě minuty. Obrazovka zobrazuje průběh, dokud není dosaženo požadovaného počtu."
       },
       "security": {
@@ -1591,7 +1591,7 @@
       "statusEyebrow": "03 · Čtení stavu",
       "statusTitle": "Jako jednoduchou zálohu použijte veřejný endpoint platebních výzev.",
       "statusBody": "Veřejný endpoint nepotřebuje API klíč a vrací stav platební výzvy a platební údaje. Použijte ho pro obnovování stránek pro zákazníky nebo jako záložní dotazování, zatímco váš server čeká na webhook.",
-      "statusNote": "Požadovaný počet potvrzení považujte za součást pravidel pro objednávky. Zjištěná platba a potvrzená platební výzva jsou různé stavy; váš tok objednávek by měl použít ten stav, který odpovídá vašim potřebám.",
+      "statusNote": "Požadovaný počet potvrzení považujte za součást pravidel pro objednávky. Zjištěná platba a potvrzená platební výzva jsou různé stavy; váš tok objednávek by měl použít ten stav, který odpovídá vašim potřebám. Jakmile platební výzva dosáhne požadovaného počtu potvrzení, XMR Checkout ji přestane kontrolovat a už nepošle žádné další události. Při 0 nebo 1 potvrzení se platba, která se později nepotvrdí nebo kterou odstraní reorganizace blockchainu, bude dál zobrazovat jako potvrzená, proto u vyšších částek nastavte vyšší počet potvrzení.",
       "webhooksEyebrow": "04 · Příjem webhooků",
       "webhooksTitle": "Přihlaste se k odběru událostí, které váš server potřebuje.",
       "verifyTitle": "Ověřte hlavičku",

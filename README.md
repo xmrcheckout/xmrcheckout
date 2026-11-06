@@ -237,6 +237,13 @@ HTTPS `WEBHOOK_RELAY_URL`, and a `WEBHOOK_RELAY_TOKEN` of at least 32 characters
 the API then POSTs each delivery to the relay as a JSON envelope (target URL,
 base64 body, selected headers, timeout) with the token as a bearer credential.
 
+An invoice is checked until it reaches its confirmation target. `invoice.confirmed`
+is then sent once and the invoice is not checked again. With a target of 0 or 1,
+a payment that later fails to confirm (for example, a double-spend) or is removed
+by a chain reorganization still shows as confirmed, and no further event is sent.
+Use a higher target for amounts you can't afford to lose; Monero outputs become
+spendable after 10 confirmations.
+
 ### Troubleshooting first payment detection
 
 If an invoice stays at `0` confirmations or never moves out of `Awaiting payment`, check these in order:
@@ -583,6 +590,11 @@ and checks open terminal invoices every `TERMINAL_RECONCILE_INTERVAL_SECONDS`
 (default 5), so unconfirmed payments are reported within seconds. Each refresh
 is a wallet-rpc call per merchant with an open terminal sale; raise the interval
 if wallet-rpc load matters more than speed.
+
+With the default target of 0, a sale is confirmed as soon as its payment is seen
+on the network, before it is in a block, and is not checked again. A payment
+that never confirms still shows as paid, so set a higher target on terminals
+that take larger amounts.
 
 Management API: authenticated GET/POST `/api/core/terminals`, PATCH
 `/api/core/terminals/{id}`, and POST `/api/core/terminals/{id}/rotate`.

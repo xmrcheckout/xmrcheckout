@@ -1361,7 +1361,7 @@
       },
       "confirmations": {
         "title": "Elige las confirmaciones",
-        "p1": "Con cero confirmaciones, el valor predeterminado de los terminales, la pantalla muestra «Pago visto» en cuanto la transacción llega a la red. Todavía no está en un bloque. En casos poco frecuentes, una transacción vista así nunca se confirma. Para importes pequeños y cotidianos, ese riesgo suele ser aceptable.",
+        "p1": "Con cero confirmaciones, el valor predeterminado de los terminales, la pantalla muestra «Pago visto» en cuanto la transacción llega a la red. Todavía no está en un bloque. En casos poco frecuentes, una transacción vista así nunca se confirma. XMR Checkout deja de comprobar un pago en cuanto se alcanza el objetivo de confirmaciones, así que no te avisará si eso ocurre. Para importes pequeños y cotidianos, ese riesgo suele ser aceptable.",
         "p2": "Para importes mayores, define una o más confirmaciones. Cada confirmación tarda unos dos minutos. La pantalla muestra el avance hasta alcanzar el objetivo."
       },
       "security": {
@@ -1571,7 +1571,7 @@
       "statusEyebrow": "03 · Consulta el estado",
       "statusTitle": "Usa el endpoint público de la factura como alternativa sencilla.",
       "statusBody": "El endpoint público no necesita clave de API y devuelve el estado de la factura y los datos de pago. Úsalo para actualizar las páginas que ve el cliente o como consulta periódica de respaldo mientras tu servidor espera un webhook.",
-      "statusNote": "Trata el objetivo de confirmaciones como parte de tu política de pedidos. Un pago detectado y una factura confirmada son estados distintos; tu flujo de pedidos debe usar el estado que se ajuste a lo que necesitas.",
+      "statusNote": "Trata el objetivo de confirmaciones como parte de tu política de pedidos. Un pago detectado y una factura confirmada son estados distintos; tu flujo de pedidos debe usar el estado que se ajuste a lo que necesitas. Cuando una factura alcanza su objetivo, XMR Checkout deja de comprobarla y no envía más eventos. Con 0 o 1 confirmaciones, un pago que después no llega a confirmarse o que queda eliminado por una reorganización de la cadena de bloques sigue apareciendo como confirmado, así que usa un objetivo más alto para importes mayores.",
       "webhooksEyebrow": "04 · Recibe webhooks",
       "webhooksTitle": "Suscríbete a los eventos que necesita tu servidor.",
       "verifyTitle": "Verifica el encabezado",

@@ -1381,7 +1381,7 @@
       },
       "confirmations": {
         "title": "Wybierz liczbę potwierdzeń",
-        "p1": "Przy zerze potwierdzeń, czyli domyślnie dla terminali, ekran pokazuje „Płatność zauważona”, gdy tylko transakcja dotrze do sieci. Nie jest ona jeszcze w bloku. W rzadkich przypadkach tak zauważona transakcja nigdy nie zostaje potwierdzona. Przy małych, codziennych kwotach to ryzyko jest zwykle akceptowalne.",
+        "p1": "Przy zerze potwierdzeń, czyli domyślnie dla terminali, ekran pokazuje „Płatność zauważona”, gdy tylko transakcja dotrze do sieci. Nie jest ona jeszcze w bloku. W rzadkich przypadkach tak zauważona transakcja nigdy nie zostaje potwierdzona. XMR Checkout przestaje sprawdzać płatność, gdy tylko zostanie osiągnięta wymagana liczba potwierdzeń, więc w takiej sytuacji nie dostaniesz ostrzeżenia. Przy małych, codziennych kwotach to ryzyko jest zwykle akceptowalne.",
         "p2": "Przy wyższych kwotach ustaw co najmniej jedno potwierdzenie. Każde potwierdzenie trwa około dwóch minut. Ekran pokazuje postęp, dopóki wymagana liczba nie zostanie osiągnięta."
       },
       "security": {
@@ -1591,7 +1591,7 @@
       "statusEyebrow": "03 · Odczytaj status",
       "statusTitle": "Używaj publicznego endpointu jako prostego rozwiązania zapasowego.",
       "statusBody": "Publiczny endpoint nie wymaga klucza API i zwraca status prośby o płatność oraz dane płatności. Używaj go do odświeżania widoku klienta lub jako zapasowego odpytywania, gdy serwer czeka na webhook.",
-      "statusNote": "Traktuj liczbę potwierdzeń jako część swojej polityki zamówień. Wykryta płatność i potwierdzona prośba o płatność to różne stany; proces zamówień powinien opierać się na stanie, którego faktycznie potrzebujesz.",
+      "statusNote": "Traktuj liczbę potwierdzeń jako część swojej polityki zamówień. Wykryta płatność i potwierdzona prośba o płatność to różne stany; proces zamówień powinien opierać się na stanie, którego faktycznie potrzebujesz. Gdy prośba o płatność osiągnie wymaganą liczbę potwierdzeń, XMR Checkout przestaje ją sprawdzać i nie wysyła już kolejnych zdarzeń. Przy 0 lub 1 potwierdzeniu płatność, która później nie zostanie potwierdzona lub zostanie usunięta przez reorganizację blockchaina, nadal będzie widoczna jako potwierdzona, dlatego przy wyższych kwotach ustaw większą liczbę potwierdzeń.",
       "webhooksEyebrow": "04 · Odbieraj webhooki",
       "webhooksTitle": "Subskrybuj zdarzenia, których potrzebuje twój serwer.",
       "verifyTitle": "Zweryfikuj nagłówek",

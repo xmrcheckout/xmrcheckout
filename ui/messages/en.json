@@ -1361,7 +1361,7 @@
       },
       "confirmations": {
         "title": "Choose confirmations",
-        "p1": "With zero confirmations, which is the default for terminals, the screen shows “Payment seen” as soon as the transaction reaches the network. It is not yet in a block. In rare cases a transaction seen this way never confirms. For small, everyday amounts that risk is usually acceptable.",
+        "p1": "With zero confirmations, which is the default for terminals, the screen shows “Payment seen” as soon as the transaction reaches the network. It is not yet in a block. In rare cases a transaction seen this way never confirms. XMR Checkout stops checking a payment once the confirmation target is reached, so it will not warn you if that happens. For small, everyday amounts that risk is usually acceptable.",
         "p2": "For larger amounts, set one or more confirmations. Each confirmation takes about two minutes. The screen shows progress until the target is reached."
       },
       "security": {
@@ -1571,7 +1571,7 @@
       "statusEyebrow": "03 · Read status",
       "statusTitle": "Use the public invoice endpoint for a simple fallback.",
       "statusBody": "The public endpoint does not need an API key and returns the invoice status and payment details. Use it for customer-facing refreshes or as a polling fallback while your server waits for a webhook.",
-      "statusNote": "Treat the confirmation target as part of your order policy. A detected payment and a confirmed invoice are different states; your order flow should use the state that matches what you need.",
+      "statusNote": "Treat the confirmation target as part of your order policy. A detected payment and a confirmed invoice are different states; your order flow should use the state that matches what you need. Once an invoice reaches its target, XMR Checkout stops checking it and sends no further events. At 0 or 1 confirmations, a payment that later fails to confirm or is removed by a chain reorganization still shows as confirmed, so use a higher target for larger amounts.",
       "webhooksEyebrow": "04 · Receive webhooks",
       "webhooksTitle": "Subscribe to the events your server needs.",
       "verifyTitle": "Verify the header",

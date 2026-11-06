@@ -52,8 +52,6 @@
     "statusPending": "Čeká se na zjištění platby na blockchainu.",
     "statusPartial": "Byla přijata část částky. Pro dokončení této platební výzvy pošlete zbývající částku.",
     "statusExpiredPartial": "Platnost této platební výzvy vypršela dříve, než byla přijata celá částka. Kontaktujte obchodníka.",
-    "statusDetected": "Platba zjištěna. Potvrzení: {confirmations}/{target}.",
-    "statusConfirmed": "Platba potvrzena na blockchainu při {target} potvrzeních.",
     "lookupEyebrow": "Vyhledání platební výzvy",
     "tryLookupAgain": "Zkusit vyhledat znovu",
     "timelineCreated": "Platební výzva vytvořena",
@@ -145,7 +143,9 @@
     "waitingConfirmations": "Potvrzení: {confirmations}/{target}. Žádná další platba není požadována. Čeká se na potvrzení.",
     "targetReached": "Požadovaného počtu potvrzení bylo dosaženo. Žádná další platba není požadována.",
     "qrFailed": "QR kód se nepodařilo vytvořit. Zkopírujte platební adresu a přesnou částku do peněženky.",
-    "qrLoading": "QR kód se načítá. Platební adresu a přesnou částku můžete také zkopírovat do peněženky."
+    "qrLoading": "QR kód se načítá. Platební adresu a přesnou částku můžete také zkopírovat do peněženky.",
+    "headingSeen": "Platba zaznamenána v síti. Zatím není zahrnuta v bloku.",
+    "invoiceAmount": "Částka platební výzvy"
   },
   "classic": {
     "returnTo": "Zpět na {host}",
@@ -196,7 +196,6 @@
     "orderIdValue": "ID objednávky: {id}",
     "orderId": "ID objednávky",
     "afterConfirmation": "Toto potvrzení o platbě je k dispozici až po potvrzení platby.",
-    "qrAlt": "QR kód platby",
     "copyLink": "Kopírovat odkaz na potvrzení",
     "saveOrPrint": "Uložte si nebo vytiskněte toto potvrzení o platbě. XMR Checkout potvrzení e-mailem neposílá.",
     "date": "Datum",
@@ -302,7 +301,6 @@
     "requestMetaTitle": "Žádost o dar",
     "statusPending": "Čeká se na zjištění vašeho daru na blockchainu.",
     "statusPartial": "Byla přijata část daru. Pro dokončení pošlete zbývající částku.",
-    "statusConfirmed": "Dar potvrzen na blockchainu při {target} potvrzeních.",
     "notFoundHelp": "ID daru neodpovídá žádné známé platební výzvě. Zkontrolujte ID a zkuste to znovu.",
     "lookupEyebrow": "Vyhledání daru",
     "notFound": "Platební výzva pro dar nenalezena",

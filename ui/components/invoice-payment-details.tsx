@@ -182,7 +182,9 @@ export default function InvoicePaymentDetails({
       ? t("pay.headingPartial")
       : hasDetectedPayment
         ? status === "confirmed"
-          ? t("pay.headingConfirmed", { count: confirmationTarget })
+          ? confirmationTarget === 0 && confirmations === 0
+            ? t("pay.headingSeen")
+            : t("pay.headingConfirmed", { count: confirmationTarget === 0 ? confirmations : confirmationTarget })
           : t("pay.headingDetected", { confirmations, target: confirmationTarget })
         : t("pay.headingSend");
   const showCopyActions = canSendPayment;
@@ -222,7 +224,7 @@ export default function InvoicePaymentDetails({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <p className="text-xs font-semibold text-ink-soft">
-                {isPartiallyPaid ? t("pay.remainingAmount") : t("pay.exactAmount")}
+                {isPartiallyPaid ? t("pay.remainingAmount") : canSendPayment ? t("pay.exactAmount") : t("pay.invoiceAmount")}
               </p>
               <p className="mt-2 break-words font-mono text-[clamp(1.8rem,1.55rem+1vw,2.5rem)] font-semibold leading-tight text-ink">
                 {formattedAmount} XMR
@@ -275,7 +277,7 @@ export default function InvoicePaymentDetails({
                 </p>
               </details>
             </div>
-          ) : usdEstimate ? (
+          ) : canSendPayment && usdEstimate ? (
             <div className="mt-3 text-sm text-ink-soft">
               <p>{t("pay.usdReference", { amount: usdEstimate })}</p>
               <details className="mt-1 w-fit text-xs">

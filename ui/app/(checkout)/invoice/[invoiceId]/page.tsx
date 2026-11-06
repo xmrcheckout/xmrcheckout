@@ -40,6 +40,7 @@ type InvoiceStatusResponse = {
   amount_paid_xmr?: string | null;
   amount_remaining_xmr?: string | null;
   status: InvoiceStatus;
+  checking_delayed?: boolean;
   confirmation_target: number;
   confirmations: number;
   checkout_continue_available?: boolean;
@@ -53,8 +54,6 @@ type InvoiceStatusResponse = {
 };
 const statusDescription = (
   status: InvoiceStatus,
-  confirmationTarget: number,
-  confirmations: number,
   hasPartial: boolean,
   t: Translate,
 ) => {
@@ -66,12 +65,6 @@ const statusDescription = (
   }
   if (status === "expired" && hasPartial) {
     return t("invoicePage.statusExpiredPartial");
-  }
-  if (status === "payment_detected") {
-    return t("invoicePage.statusDetected", { confirmations, target: confirmationTarget });
-  }
-  if (status === "confirmed") {
-    return t("invoicePage.statusConfirmed", { target: confirmationTarget });
   }
   if (status === "invalid") {
     return "";
@@ -199,8 +192,6 @@ export default async function InvoiceStatusDetailPage({
       <PageIntroBand
         description={statusDescription(
           invoice.status,
-          confirmationTarget,
-          confirmations,
           hasPartialAmount(invoice.amount_paid_xmr, invoice.amount_remaining_xmr),
           t,
         )}
@@ -214,6 +205,11 @@ export default async function InvoiceStatusDetailPage({
       />
 
       {invoice.product_description ? <p className="mt-4 whitespace-pre-wrap break-words">{invoice.product_description}</p> : null}
+      {invoice.checking_delayed ? (
+        <p className="mt-4 border-l-2 border-clay pl-4 text-sm text-ink-soft">
+          {t("checkout.checkingDelayed")}
+        </p>
+      ) : null}
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
         <InvoicePaymentDetails
           address={invoice.address}

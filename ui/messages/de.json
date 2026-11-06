@@ -52,8 +52,6 @@
     "statusPending": "Warte darauf, dass eine Zahlung in der Blockchain erkannt wird.",
     "statusPartial": "Ein Teil des Betrags ist eingegangen. Senden Sie den Restbetrag, um diese Rechnung abzuschließen.",
     "statusExpiredPartial": "Diese Rechnung ist abgelaufen, bevor der volle Betrag eingegangen ist. Wenden Sie sich an den Händler.",
-    "statusDetected": "Zahlung erkannt. {confirmations}/{target} Bestätigungen.",
-    "statusConfirmed": "Zahlung in der Blockchain mit {target} Bestätigungen bestätigt.",
     "lookupEyebrow": "Rechnungssuche",
     "tryLookupAgain": "Suche erneut versuchen",
     "timelineCreated": "Rechnung erstellt",
@@ -143,7 +141,9 @@
     "waitingConfirmations": "{confirmations}/{target} Bestätigungen. Es wird keine weitere Zahlung angefordert. Warte auf Bestätigungen.",
     "targetReached": "Das Bestätigungsziel ist erreicht. Es wird keine weitere Zahlung angefordert.",
     "qrFailed": "Der QR-Code konnte nicht erzeugt werden. Kopieren Sie die Zahlungsadresse und den genauen Betrag in Ihre Wallet.",
-    "qrLoading": "Der QR-Code wird geladen. Sie können die Zahlungsadresse und den genauen Betrag auch in Ihre Wallet kopieren."
+    "qrLoading": "Der QR-Code wird geladen. Sie können die Zahlungsadresse und den genauen Betrag auch in Ihre Wallet kopieren.",
+    "headingSeen": "Zahlung im Netzwerk gesehen. Sie ist noch nicht in einem Block.",
+    "invoiceAmount": "Rechnungsbetrag"
   },
   "classic": {
     "returnTo": "Zurück zu {host}",
@@ -192,7 +192,6 @@
     "orderIdValue": "Bestell-ID: {id}",
     "orderId": "Bestell-ID",
     "afterConfirmation": "Dieser Beleg ist verfügbar, sobald die Zahlung bestätigt ist.",
-    "qrAlt": "Zahlungs-QR-Code",
     "copyLink": "Beleglink kopieren",
     "saveOrPrint": "Speichern oder drucken Sie diesen Beleg. XMR Checkout versendet keine Belege per E-Mail.",
     "date": "Datum",
@@ -298,7 +297,6 @@
     "requestMetaTitle": "Spendenanforderung",
     "statusPending": "Warte auf die Erkennung Ihrer Spende in der Blockchain.",
     "statusPartial": "Ein Teil der Spende ist eingegangen. Senden Sie den Restbetrag, um sie abzuschließen.",
-    "statusConfirmed": "Spende in der Blockchain mit {target} Bestätigungen bestätigt.",
     "notFoundHelp": "Die Spenden-ID passt zu keiner bekannten Rechnung. Prüfen Sie die ID und versuchen Sie es erneut.",
     "lookupEyebrow": "Spendensuche",
     "notFound": "Spendenrechnung nicht gefunden",

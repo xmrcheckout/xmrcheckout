@@ -52,8 +52,6 @@
     "statusPending": "Esperando a que se detecte un pago en la cadena de bloques.",
     "statusPartial": "Se recibió parte del importe. Envía el importe restante para completar esta factura.",
     "statusExpiredPartial": "Esta factura venció antes de recibir el importe completo. Ponte en contacto con el comercio.",
-    "statusDetected": "Pago detectado. {confirmations}/{target} confirmaciones.",
-    "statusConfirmed": "Pago confirmado en la cadena de bloques con {target} confirmaciones.",
     "lookupEyebrow": "Consulta de factura",
     "tryLookupAgain": "Vuelve a intentar la consulta",
     "timelineCreated": "Factura creada",
@@ -143,7 +141,9 @@
     "waitingConfirmations": "{confirmations}/{target} confirmaciones. No se solicita ningún pago más. Esperando confirmaciones.",
     "targetReached": "Se alcanzó el número de confirmaciones requerido. No se solicita ningún pago más.",
     "qrFailed": "No se pudo generar el código QR. Copia la dirección de pago y el importe exacto en tu billetera.",
-    "qrLoading": "El código QR se está cargando. También puedes copiar la dirección de pago y el importe exacto en tu billetera."
+    "qrLoading": "El código QR se está cargando. También puedes copiar la dirección de pago y el importe exacto en tu billetera.",
+    "headingSeen": "Pago visto en la red. Todavía no está en un bloque.",
+    "invoiceAmount": "Importe de la factura"
   },
   "classic": {
     "returnTo": "Volver a {host}",
@@ -192,7 +192,6 @@
     "orderIdValue": "ID del pedido: {id}",
     "orderId": "ID del pedido",
     "afterConfirmation": "Este recibo estará disponible cuando se confirme el pago.",
-    "qrAlt": "QR del pago",
     "copyLink": "Copiar enlace del recibo",
     "saveOrPrint": "Guarda o imprime este recibo. XMR Checkout no envía recibos por correo electrónico.",
     "date": "Fecha",
@@ -298,7 +297,6 @@
     "requestMetaTitle": "Solicitud de donación",
     "statusPending": "Esperando a que se detecte tu donación en la cadena de bloques.",
     "statusPartial": "Se recibió parte de la donación. Envía el importe restante para completarla.",
-    "statusConfirmed": "Donación confirmada en la cadena de bloques con {target} confirmaciones.",
     "notFoundHelp": "El ID de la donación no corresponde a ninguna factura conocida. Comprueba el ID e inténtalo de nuevo.",
     "lookupEyebrow": "Consulta de donación",
     "notFound": "Factura de donación no encontrada",

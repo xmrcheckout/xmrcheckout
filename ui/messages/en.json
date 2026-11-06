@@ -52,8 +52,6 @@
     "statusPending": "Waiting for a payment to be detected on-chain.",
     "statusPartial": "Part of the amount was received. Send the remaining amount to complete this invoice.",
     "statusExpiredPartial": "This invoice expired before the full amount was received. Contact the merchant.",
-    "statusDetected": "Payment detected. {confirmations}/{target} confirmations.",
-    "statusConfirmed": "Payment confirmed on-chain at {target} confirmations.",
     "lookupEyebrow": "Invoice lookup",
     "tryLookupAgain": "Try the lookup again",
     "timelineCreated": "Invoice created",
@@ -143,7 +141,9 @@
     "waitingConfirmations": "{confirmations}/{target} confirmations. No further payment is requested. Waiting for confirmations.",
     "targetReached": "The confirmation target has been reached. No further payment is requested.",
     "qrFailed": "QR code could not be generated. Copy the payment address and exact amount into your wallet.",
-    "qrLoading": "QR code is loading. You can also copy the payment address and exact amount into your wallet."
+    "qrLoading": "QR code is loading. You can also copy the payment address and exact amount into your wallet.",
+    "headingSeen": "Payment seen on the network. It is not yet in a block.",
+    "invoiceAmount": "Invoice amount"
   },
   "classic": {
     "returnTo": "Return to {host}",
@@ -192,7 +192,6 @@
     "orderIdValue": "Order ID: {id}",
     "orderId": "Order ID",
     "afterConfirmation": "This receipt is available after the payment is confirmed.",
-    "qrAlt": "Payment QR",
     "copyLink": "Copy receipt link",
     "saveOrPrint": "Save or print this receipt. XMR Checkout does not email receipts.",
     "date": "Date",
@@ -298,7 +297,6 @@
     "requestMetaTitle": "Donation Request",
     "statusPending": "Awaiting on-chain detection of your donation.",
     "statusPartial": "Part of the donation was received. Send the remaining amount to complete it.",
-    "statusConfirmed": "Donation confirmed on-chain at {target} confirmations.",
     "notFoundHelp": "The donation id does not match a known invoice. Check the id and try again.",
     "lookupEyebrow": "Donation lookup",
     "notFound": "Donation invoice not found",

@@ -52,8 +52,6 @@
     "statusPending": "In attesa che un pagamento venga rilevato sulla blockchain.",
     "statusPartial": "È stata ricevuta una parte dell'importo. Invia l'importo rimanente per completare questa richiesta di pagamento.",
     "statusExpiredPartial": "Questa richiesta di pagamento è scaduta prima che fosse ricevuto l'intero importo. Contatta l'esercente.",
-    "statusDetected": "Pagamento rilevato. {confirmations}/{target} conferme.",
-    "statusConfirmed": "Pagamento confermato sulla blockchain con {target} conferme.",
     "lookupEyebrow": "Ricerca richiesta di pagamento",
     "tryLookupAgain": "Riprova la ricerca",
     "timelineCreated": "Richiesta di pagamento creata",
@@ -143,7 +141,9 @@
     "waitingConfirmations": "{confirmations}/{target} conferme. Non sono richiesti altri pagamenti. In attesa delle conferme.",
     "targetReached": "L'obiettivo di conferme è stato raggiunto. Non sono richiesti altri pagamenti.",
     "qrFailed": "Non è stato possibile generare il codice QR. Copia l'indirizzo di pagamento e l'importo esatto nel tuo portafoglio.",
-    "qrLoading": "Il codice QR è in caricamento. Puoi anche copiare l'indirizzo di pagamento e l'importo esatto nel tuo portafoglio."
+    "qrLoading": "Il codice QR è in caricamento. Puoi anche copiare l'indirizzo di pagamento e l'importo esatto nel tuo portafoglio.",
+    "headingSeen": "Pagamento rilevato sulla rete. Non è ancora incluso in un blocco.",
+    "invoiceAmount": "Importo della richiesta di pagamento"
   },
   "classic": {
     "returnTo": "Torna a {host}",
@@ -192,7 +192,6 @@
     "orderIdValue": "ID ordine: {id}",
     "orderId": "ID ordine",
     "afterConfirmation": "Questa ricevuta è disponibile dopo la conferma del pagamento.",
-    "qrAlt": "QR del pagamento",
     "copyLink": "Copia il link della ricevuta",
     "saveOrPrint": "Salva o stampa questa ricevuta. XMR Checkout non invia ricevute via email.",
     "date": "Data",
@@ -298,7 +297,6 @@
     "requestMetaTitle": "Richiesta di donazione",
     "statusPending": "In attesa del rilevamento della tua donazione sulla blockchain.",
     "statusPartial": "È stata ricevuta una parte della donazione. Invia l'importo rimanente per completarla.",
-    "statusConfirmed": "Donazione confermata sulla blockchain con {target} conferme.",
     "notFoundHelp": "L'ID della donazione non corrisponde a nessuna richiesta di pagamento nota. Controlla l'ID e riprova.",
     "lookupEyebrow": "Ricerca donazione",
     "notFound": "Richiesta di donazione non trovata",

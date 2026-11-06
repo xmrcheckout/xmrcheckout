@@ -51,7 +51,6 @@ type InvoiceStatusResponse = {
     source: string;
     quoted_at: string;
   } | null;
-  qr_url?: string | null;
 };
 
 const formatFiatAmount = (value: string, currency: string, locale: string) => {
@@ -90,24 +89,6 @@ const receiptTitle = (
   }
 };
 
-const resolveQrSrc = (invoiceId: string, qrUrl: string | null | undefined) => {
-  if (!qrUrl) {
-    return `/qr/${encodeURIComponent(invoiceId)}.png`;
-  }
-  if (qrUrl.startsWith("/qr/")) {
-    return qrUrl;
-  }
-  try {
-    const parsed = new URL(qrUrl);
-    if (parsed.pathname.startsWith("/qr/")) {
-      return parsed.pathname;
-    }
-  } catch {
-    // Ignore malformed URLs and fall back to the provided value.
-  }
-  return qrUrl;
-};
-
 const closeLinkClassName =
   "inline-flex items-center justify-center rounded-full border border-stroke bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden";
 
@@ -131,7 +112,7 @@ export default async function BtcpayReceiptPage({
         ...(forwardedHost ? { "x-forwarded-host": forwardedHost } : {}),
       },
     },
-  );
+  ).catch(() => new Response(null, { status: 503 }));
 
   if (response.status === 404) {
     return (
@@ -165,7 +146,6 @@ export default async function BtcpayReceiptPage({
   if (!response.ok) {
     return (
       <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
-        <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
           <header className="bg-ink px-6 py-5 text-cream">
             <p className="text-sm font-semibold text-cream/70">
@@ -204,7 +184,6 @@ export default async function BtcpayReceiptPage({
         ? `${invoice.btcpay_amount} ${invoice.btcpay_currency}`
         : null;
   const paidXmr = invoice.amount_paid_xmr ?? invoice.amount_xmr;
-  const qrSrc = resolveQrSrc(invoiceId, invoice.qr_url);
   const redirectUrl = safeHttpUrl(invoice.btcpay_redirect_url);
   const storeTitle = receiptTitle(invoice.product_title, redirectUrl, t);
   const amountPaidLabel = totalFiat ? totalFiat : `${paidXmr} XMR`;
@@ -254,20 +233,7 @@ export default async function BtcpayReceiptPage({
           </section>
         ) : (
           <>
-            <section className="grid border-b border-stroke md:grid-cols-[280px_minmax(0,1fr)] print:grid-cols-[220px_minmax(0,1fr)]">
-              <div className="grid place-items-center bg-sand/60 p-6 print:bg-white">
-                <div className="border border-stroke bg-white p-3">
-                  {qrSrc ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      alt={t("receipt.qrAlt")}
-                      src={qrSrc}
-                      className="h-52 w-52 print:h-44 print:w-44"
-                    />
-                  ) : null}
-                </div>
-              </div>
-
+            <section className="border-b border-stroke">
               <div className="flex flex-col justify-between px-6 py-7 sm:px-8">
                 <div className="flex flex-col items-start gap-5 sm:flex-row sm:justify-between sm:gap-4">
                   <div>

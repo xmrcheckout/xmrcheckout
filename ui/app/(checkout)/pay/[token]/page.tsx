@@ -20,7 +20,7 @@ export default async function PaymentLinkPage({ params }: { params: Promise<{ to
     <h1 className="break-words text-3xl font-semibold">{link.title}</h1>
     <p className="whitespace-pre-wrap break-words">{link.description}</p>
     {link.customer_amount ? <CustomerAmountForm link={link} t={t} /> : <>
-    <p className="text-xl">{link.amount_xmr ? `${link.amount_xmr} XMR` : t("pay.merchantPrice", { price: formatFiatAmount(link.amount_fiat, link.currency, locale) })}</p>
+    <p className="text-xl">{link.amount_xmr ? `${formatXmrAmount(link.amount_xmr)} XMR` : t("pay.merchantPrice", { price: formatFiatAmount(link.amount_fiat, link.currency, locale) })}</p>
     {link.amount_fiat ? <p>{t("paymentLink.fiatNote")}</p> : null}
     <p>{t("paymentLink.directToWallet", { target: link.confirmation_target })}</p>
     {link.auto_create_invoice ? <AutomaticPaymentLink token={token} actionUrl={link.action_url} /> : null}

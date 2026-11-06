@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import InvoicePaymentDetails from "../../../../components/invoice-payment-details";
 import InvoiceStatusAutoRefresh, { InvoiceRefreshFeedback } from "../../../../components/invoice-status-auto-refresh";
 import DonationStatusActions from "../../../../components/donation-status-actions";
-import InvoiceStatusLookup from "../../../../components/invoice-status-lookup";
 import PageIntroBand from "../../../../components/page-intro-band";
 import Timestamp from "../../../../components/timestamp";
 import StatusRefreshButton from "../../../../components/status-refresh-button";
@@ -33,6 +32,7 @@ type InvoiceStatusResponse = {
   amount_paid_xmr?: string | null;
   amount_remaining_xmr?: string | null;
   status: InvoiceStatus;
+  checking_delayed?: boolean;
   confirmation_target: number;
   confirmations: number;
   created_at: string;
@@ -43,8 +43,6 @@ type InvoiceStatusResponse = {
 
 const statusDescription = (
   status: InvoiceStatus,
-  confirmationTarget: number,
-  confirmations: number,
   t: Translate,
 ) => {
   if (status === "pending") {
@@ -52,12 +50,6 @@ const statusDescription = (
   }
   if (status === "partially_paid") {
     return t("donate.statusPartial");
-  }
-  if (status === "payment_detected") {
-    return t("invoicePage.statusDetected", { confirmations, target: confirmationTarget });
-  }
-  if (status === "confirmed") {
-    return t("donate.statusConfirmed", { target: confirmationTarget });
   }
   if (status === "invalid") {
     return "";
@@ -109,12 +101,6 @@ export default async function DonateStatusDetailPage({
           id="donation-not-found"
           title={t("donate.notFound")}
         />
-        <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 className="text-lg font-semibold">{t("invoicePage.checkAnother")}</h2>
-          <div className="mt-4 max-w-2xl">
-            <InvoiceStatusLookup initialValue={invoiceId} compact />
-          </div>
-        </section>
       </main>
     </InvoiceStatusAutoRefresh>
     );
@@ -137,12 +123,6 @@ export default async function DonateStatusDetailPage({
           id="donation-unavailable"
           title={t("checkout.statusUnavailable")}
         />
-        <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
-          <h2 className="text-lg font-semibold">{t("invoicePage.tryLookupAgain")}</h2>
-          <div className="mt-4 max-w-2xl">
-            <InvoiceStatusLookup initialValue={invoiceId} compact />
-          </div>
-        </section>
       </main>
     </InvoiceStatusAutoRefresh>
     );
@@ -204,8 +184,6 @@ export default async function DonateStatusDetailPage({
       <PageIntroBand
         description={statusDescription(
           invoice.status,
-          confirmationTarget,
-          confirmations,
           t,
         )}
         eyebrow={t("donate.eyebrow")}
@@ -213,6 +191,11 @@ export default async function DonateStatusDetailPage({
         title={t("donate.title")}
       />
 
+      {invoice.checking_delayed ? (
+        <p className="mt-4 border-l-2 border-clay pl-4 text-sm text-ink-soft">
+          {t("checkout.checkingDelayed")}
+        </p>
+      ) : null}
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(290px,0.65fr)] xl:items-start">
         <InvoicePaymentDetails
           address={invoice.address}

@@ -24,7 +24,7 @@ const detailHref = (mode: Mode, id: string) => `${listHref(mode)}&link=${encodeU
 
 const priceLabel = (link: PaymentLinkData, t: Translate) => link.customer_amount
   ? `${t("paymentLinks.customerAmount")}${link.minimum_amount_xmr ? ` · ${t("paymentLinks.minimum", { amount: formatXmrAmount(link.minimum_amount_xmr) })}` : ""}`
-  : link.amount_xmr ? `${link.amount_xmr} XMR` : t("paymentLink.fiatReference", { amount: link.amount_fiat ?? "", currency: link.currency ?? "" });
+  : link.amount_xmr ? `${formatXmrAmount(link.amount_xmr)} XMR` : t("paymentLink.fiatReference", { amount: link.amount_fiat ?? "", currency: link.currency ?? "" });
 
 const statusBadge = (link: PaymentLinkData, t: Translate) =>
   <StatusBadge label={link.enabled ? t("terminals.enabled") : t("terminals.disabled")} tone={link.enabled ? "success" : "neutral"} />;

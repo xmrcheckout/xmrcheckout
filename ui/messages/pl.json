@@ -52,8 +52,6 @@
     "statusPending": "Oczekiwanie na wykrycie płatności w blockchainie.",
     "statusPartial": "Otrzymano część kwoty. Wyślij pozostałą kwotę, aby dokończyć tę prośbę o płatność.",
     "statusExpiredPartial": "Ta prośba o płatność wygasła, zanim otrzymano pełną kwotę. Skontaktuj się ze sprzedawcą.",
-    "statusDetected": "Wykryto płatność. Potwierdzenia: {confirmations}/{target}.",
-    "statusConfirmed": "Płatność potwierdzona w blockchainie (potwierdzenia: {target}).",
     "lookupEyebrow": "Wyszukiwanie prośby o płatność",
     "tryLookupAgain": "Wyszukaj ponownie",
     "timelineCreated": "Utworzono prośbę o płatność",
@@ -145,7 +143,9 @@
     "waitingConfirmations": "Potwierdzenia: {confirmations}/{target}. Dalsza płatność nie jest wymagana. Oczekiwanie na potwierdzenia.",
     "targetReached": "Osiągnięto wymaganą liczbę potwierdzeń. Dalsza płatność nie jest wymagana.",
     "qrFailed": "Nie udało się wygenerować kodu QR. Skopiuj adres płatności i dokładną kwotę do swojego portfela.",
-    "qrLoading": "Kod QR się wczytuje. Możesz też skopiować adres płatności i dokładną kwotę do swojego portfela."
+    "qrLoading": "Kod QR się wczytuje. Możesz też skopiować adres płatności i dokładną kwotę do swojego portfela.",
+    "headingSeen": "Płatność zauważona w sieci. Nie jest jeszcze w bloku.",
+    "invoiceAmount": "Kwota prośby o płatność"
   },
   "classic": {
     "returnTo": "Wróć do {host}",
@@ -196,7 +196,6 @@
     "orderIdValue": "Identyfikator zamówienia: {id}",
     "orderId": "Identyfikator zamówienia",
     "afterConfirmation": "Potwierdzenie płatności jest dostępne, gdy płatność zostanie potwierdzona.",
-    "qrAlt": "Kod QR płatności",
     "copyLink": "Kopiuj link do potwierdzenia",
     "saveOrPrint": "Zapisz lub wydrukuj to potwierdzenie. XMR Checkout nie wysyła potwierdzeń e-mailem.",
     "date": "Data",
@@ -302,7 +301,6 @@
     "requestMetaTitle": "Prośba o darowiznę",
     "statusPending": "Oczekiwanie na wykrycie twojej darowizny w blockchainie.",
     "statusPartial": "Otrzymano część darowizny. Wyślij pozostałą kwotę, aby ją dokończyć.",
-    "statusConfirmed": "Darowizna potwierdzona w blockchainie (potwierdzenia: {target}).",
     "notFoundHelp": "Identyfikator darowizny nie pasuje do żadnej znanej prośby o płatność. Sprawdź identyfikator i spróbuj ponownie.",
     "lookupEyebrow": "Wyszukiwanie darowizny",
     "notFound": "Nie znaleziono prośby o darowiznę",

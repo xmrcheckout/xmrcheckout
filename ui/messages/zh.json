@@ -52,8 +52,6 @@
     "statusPending": "正在等待在链上检测到付款。",
     "statusPartial": "已收到部分金额。请发送剩余金额以完成此账单。",
     "statusExpiredPartial": "此账单在收到全部金额之前已过期。请联系商家。",
-    "statusDetected": "已检测到付款。{confirmations}/{target} 个确认。",
-    "statusConfirmed": "付款已在链上获得 {target} 个确认。",
     "lookupEyebrow": "账单查询",
     "tryLookupAgain": "重新查询",
     "timelineCreated": "账单已创建",
@@ -142,7 +140,9 @@
     "waitingConfirmations": "{confirmations}/{target} 个确认。无需再付款。正在等待确认。",
     "targetReached": "已达到确认目标。无需再付款。",
     "qrFailed": "无法生成二维码。请将付款地址和准确金额复制到你的钱包中。",
-    "qrLoading": "二维码正在加载。你也可以将付款地址和准确金额复制到你的钱包中。"
+    "qrLoading": "二维码正在加载。你也可以将付款地址和准确金额复制到你的钱包中。",
+    "headingSeen": "已在网络上看到付款。它尚未被打包进区块。",
+    "invoiceAmount": "账单金额"
   },
   "classic": {
     "returnTo": "返回 {host}",
@@ -190,7 +190,6 @@
     "orderIdValue": "订单 ID：{id}",
     "orderId": "订单 ID",
     "afterConfirmation": "付款确认后即可查看此收据。",
-    "qrAlt": "付款二维码",
     "copyLink": "复制收据链接",
     "saveOrPrint": "请保存或打印此收据。XMR Checkout 不会通过电子邮件发送收据。",
     "date": "日期",
@@ -296,7 +295,6 @@
     "requestMetaTitle": "捐赠请求",
     "statusPending": "正在等待在链上检测到你的捐赠。",
     "statusPartial": "已收到部分捐赠。请发送剩余金额以完成捐赠。",
-    "statusConfirmed": "捐赠已在链上获得 {target} 个确认。",
     "notFoundHelp": "该捐赠 ID 与任何已知账单都不匹配。请检查 ID 后重试。",
     "lookupEyebrow": "捐赠查询",
     "notFound": "未找到捐赠账单",

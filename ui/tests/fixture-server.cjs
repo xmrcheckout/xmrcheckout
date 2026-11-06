@@ -14,6 +14,14 @@ let availabilityState = "ready";
 let invoiceStatus = "pending";
 let invoiceResponseStatus = 200;
 let invoiceExpiry;
+let confirmationTarget = 2;
+let confirmations = null;
+let checkingDelayed = false;
+const defaultInvoiceQuote = { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" };
+let invoiceQuote = defaultInvoiceQuote;
+let amountPaid = null;
+let amountRemaining = null;
+let invoiceTransportFailure = false;
 let checkoutStyle = "standard";
 let layoutFixture = false;
 let availabilityDelay = 0;
@@ -62,6 +70,13 @@ const server = http.createServer((request, response) => {
       invoiceStatus = options.invoiceStatus ?? invoiceStatus;
       invoiceResponseStatus = options.invoiceResponseStatus ?? invoiceResponseStatus;
       if (Object.hasOwn(options, "invoiceExpiry")) invoiceExpiry = options.invoiceExpiry === "soon" ? new Date(Date.now() + 2500).toISOString() : options.invoiceExpiry;
+      confirmationTarget = options.confirmationTarget ?? confirmationTarget;
+      if (Object.hasOwn(options, "confirmations")) confirmations = options.confirmations;
+      checkingDelayed = options.checkingDelayed ?? checkingDelayed;
+      if (Object.hasOwn(options, "invoiceQuote")) invoiceQuote = options.invoiceQuote === "default" ? defaultInvoiceQuote : options.invoiceQuote;
+      if (Object.hasOwn(options, "amountPaid")) amountPaid = options.amountPaid;
+      if (Object.hasOwn(options, "amountRemaining")) amountRemaining = options.amountRemaining;
+      invoiceTransportFailure = options.invoiceTransportFailure ?? invoiceTransportFailure;
       checkoutStyle = options.checkoutStyle ?? checkoutStyle;
       layoutFixture = options.layoutFixture ?? layoutFixture;
       availabilityDelay = options.delay ?? 0;
@@ -85,8 +100,13 @@ const server = http.createServer((request, response) => {
       }
       status = 405;
     } else if ([`/api/core/public/invoice/${fixtureInvoice}`, `/api/core/public/donation/${fixtureInvoice}`].includes(path)) {
+      if (invoiceTransportFailure) {
+        console.log("fixture", request.method, path, "disconnected");
+        request.socket.destroy();
+        return;
+      }
       status = invoiceResponseStatus;
-      result = { id: fixtureInvoice, address, amount_xmr: "0.1", status: invoiceStatus, confirmation_target: 2, confirmations: invoiceStatus === "confirmed" ? 2 : invoiceStatus === "payment_detected" ? 1 : 0, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", recipient_name: "Fixture shop", quote: { fiat_amount: "20", fiat_currency: "EUR", rate: "200", source: "fixture", quoted_at: "2026-10-30T12:00:00Z" } };
+      result = { id: fixtureInvoice, address, amount_xmr: "0.1", amount_paid_xmr: amountPaid, amount_remaining_xmr: amountRemaining, status: invoiceStatus, confirmation_target: confirmationTarget, confirmations: confirmations ?? (invoiceStatus === "confirmed" ? confirmationTarget : invoiceStatus === "payment_detected" ? Math.max(0, confirmationTarget - 1) : 0), checking_delayed: checkingDelayed, created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 3600000).toISOString(), product_title: "Fixture product", product_description: "Manual delivery", recipient_name: "Fixture shop", quote: invoiceQuote };
       if (invoiceExpiry !== undefined && invoiceExpiry !== "default") {
         result.expires_at = invoiceExpiry;
       }

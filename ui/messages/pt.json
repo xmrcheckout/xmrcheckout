@@ -52,8 +52,6 @@
     "statusPending": "Aguardando a detecção de um pagamento na blockchain.",
     "statusPartial": "Parte do valor foi recebida. Envie o valor restante para concluir esta fatura.",
     "statusExpiredPartial": "Esta fatura expirou antes de o valor total ser recebido. Entre em contato com o comerciante.",
-    "statusDetected": "Pagamento detectado. {confirmations}/{target} confirmações.",
-    "statusConfirmed": "Pagamento confirmado na blockchain com {target} confirmações.",
     "lookupEyebrow": "Consulta de fatura",
     "tryLookupAgain": "Tentar a consulta novamente",
     "timelineCreated": "Fatura criada",
@@ -143,7 +141,9 @@
     "waitingConfirmations": "{confirmations}/{target} confirmações. Nenhum pagamento adicional é solicitado. Aguardando confirmações.",
     "targetReached": "A meta de confirmações foi atingida. Nenhum pagamento adicional é solicitado.",
     "qrFailed": "Não foi possível gerar o QR code. Copie o endereço de pagamento e o valor exato para a sua carteira.",
-    "qrLoading": "O QR code está carregando. Você também pode copiar o endereço de pagamento e o valor exato para a sua carteira."
+    "qrLoading": "O QR code está carregando. Você também pode copiar o endereço de pagamento e o valor exato para a sua carteira.",
+    "headingSeen": "Pagamento visto na rede. Ele ainda não está em um bloco.",
+    "invoiceAmount": "Valor da fatura"
   },
   "classic": {
     "returnTo": "Voltar para {host}",
@@ -192,7 +192,6 @@
     "orderIdValue": "ID do pedido: {id}",
     "orderId": "ID do pedido",
     "afterConfirmation": "Este recibo fica disponível depois que o pagamento é confirmado.",
-    "qrAlt": "QR do pagamento",
     "copyLink": "Copiar link do recibo",
     "saveOrPrint": "Salve ou imprima este recibo. O XMR Checkout não envia recibos por e-mail.",
     "date": "Data",
@@ -298,7 +297,6 @@
     "requestMetaTitle": "Solicitação de doação",
     "statusPending": "Aguardando a detecção da sua doação na blockchain.",
     "statusPartial": "Parte da doação foi recebida. Envie o valor restante para concluí-la.",
-    "statusConfirmed": "Doação confirmada na blockchain com {target} confirmações.",
     "notFoundHelp": "O ID da doação não corresponde a nenhuma fatura conhecida. Verifique o ID e tente novamente.",
     "lookupEyebrow": "Consulta de doação",
     "notFound": "Fatura de doação não encontrada",

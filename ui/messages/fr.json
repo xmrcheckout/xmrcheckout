@@ -52,8 +52,6 @@
     "statusPending": "En attente de la détection d’un paiement sur la blockchain.",
     "statusPartial": "Une partie du montant a été reçue. Envoyez le montant restant pour compléter cette facture.",
     "statusExpiredPartial": "Cette facture a expiré avant la réception du montant total. Contactez le commerçant.",
-    "statusDetected": "Paiement détecté. {confirmations}/{target} confirmations.",
-    "statusConfirmed": "Paiement confirmé sur la blockchain après {target} confirmations.",
     "lookupEyebrow": "Recherche de facture",
     "tryLookupAgain": "Relancer la recherche",
     "timelineCreated": "Facture créée",
@@ -143,7 +141,9 @@
     "waitingConfirmations": "{confirmations}/{target} confirmations. Aucun autre paiement n’est demandé. En attente des confirmations.",
     "targetReached": "L’objectif de confirmations est atteint. Aucun autre paiement n’est demandé.",
     "qrFailed": "Le QR code n’a pas pu être généré. Copiez l’adresse de paiement et le montant exact dans votre portefeuille.",
-    "qrLoading": "Le QR code est en cours de chargement. Vous pouvez aussi copier l’adresse de paiement et le montant exact dans votre portefeuille."
+    "qrLoading": "Le QR code est en cours de chargement. Vous pouvez aussi copier l’adresse de paiement et le montant exact dans votre portefeuille.",
+    "headingSeen": "Paiement vu sur le réseau. Il n’est pas encore dans un bloc.",
+    "invoiceAmount": "Montant de la facture"
   },
   "classic": {
     "returnTo": "Retour à {host}",
@@ -192,7 +192,6 @@
     "orderIdValue": "N° de commande : {id}",
     "orderId": "N° de commande",
     "afterConfirmation": "Ce reçu est disponible une fois le paiement confirmé.",
-    "qrAlt": "QR code de paiement",
     "copyLink": "Copier le lien du reçu",
     "saveOrPrint": "Enregistrez ou imprimez ce reçu. XMR Checkout n’envoie pas de reçus par e-mail.",
     "date": "Date",
@@ -298,7 +297,6 @@
     "requestMetaTitle": "Demande de don",
     "statusPending": "En attente de la détection de votre don sur la blockchain.",
     "statusPartial": "Une partie du don a été reçue. Envoyez le montant restant pour le compléter.",
-    "statusConfirmed": "Don confirmé sur la blockchain après {target} confirmations.",
     "notFoundHelp": "L’identifiant du don ne correspond à aucune facture connue. Vérifiez l’identifiant et réessayez.",
     "lookupEyebrow": "Recherche de don",
     "notFound": "Facture de don introuvable",

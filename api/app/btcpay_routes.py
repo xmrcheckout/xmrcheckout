@@ -22,6 +22,7 @@ from .formatting import format_xmr_amount
 from .invoice_limits import reserve_invoice_creation
 from .models import BtcpayWebhook, Invoice, InvoiceTransfer, User
 from .payment_timing import is_payment_after_expiry
+from .public_origin import public_origin
 from .rates import get_xmr_rate
 from .security import (
     decrypt_api_key,
@@ -105,11 +106,7 @@ def _store_payload(user: User) -> dict[str, Any]:
 
 
 def _invoice_checkout_link(invoice: Invoice, request: Request) -> str:
-    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-    host = request.headers.get("x-forwarded-host", request.headers.get("host", ""))
-    if not host:
-        return f"/i/{invoice.id}"
-    return f"{proto}://{host}/i/{invoice.id}"
+    return f"{public_origin(request)}/i/{invoice.id}"
 
 
 def _normalize_btcpay_payment_method(value: str) -> str:

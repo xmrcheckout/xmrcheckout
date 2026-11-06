@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import "../(marketing)/marketing.css";
@@ -6,6 +7,8 @@ import LanguageSwitcher from "../../components/language-switcher";
 import SourceLinks from "../../components/source-links";
 import { areDonationsEnabled } from "../../lib/donations";
 import { getI18n } from "../../lib/i18n/server";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function AppLayout({
   children,

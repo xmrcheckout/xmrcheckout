@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -7,8 +8,8 @@ import { areDonationsEnabled } from "../../../lib/donations";
 import { getI18n } from "../../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  return { title: t("donate.metaTitle"), description: t("donate.metaDescription") };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("donate.metaTitle"), description: t("donate.metaDescription"), path: "/donate", locale });
 }
 
 export default async function DonatePage() {

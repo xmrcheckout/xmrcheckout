@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../../lib/site-metadata";
 import GuideContents from "../../../../components/guide-contents";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -10,15 +11,8 @@ import { paymentButtonHtml } from "../../../../lib/payment-button";
 
 const k = "guides.buttons";
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  const title = t(`${k}.title`);
-  const description = t(`${k}.metaDescription`);
-  return {
-    title, description,
-    alternates: { canonical: "/guides/monero-payment-buttons" },
-    openGraph: { type: "article", url: "/guides/monero-payment-buttons", siteName: "XMR Checkout", title, description },
-    twitter: { card: "summary", title, description },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("guides.buttons.title"), description: t("guides.buttons.metaDescription"), path: "/guides/monero-payment-buttons", locale, type: "article" });
 }
 const sectionClass = "min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
 const codeClass = "mt-4 max-w-full overflow-x-auto rounded-xl bg-ink px-5 pb-5 pt-16 font-mono text-sm text-cream";

@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../../lib/site-metadata";
 import GuideContents from "../../../../components/guide-contents";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -6,15 +7,8 @@ import { rich } from "../../../../lib/i18n/rich";
 import { getI18n } from "../../../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  const title = t("guides.inPerson.title");
-  const description = t("guides.inPerson.metaDescription");
-  return {
-    title, description,
-    alternates: { canonical: "/guides/in-person-monero-checkout" },
-    openGraph: { type: "article", url: "/guides/in-person-monero-checkout", siteName: "XMR Checkout", title, description },
-    twitter: { card: "summary", title, description },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("guides.inPerson.title"), description: t("guides.inPerson.metaDescription"), path: "/guides/in-person-monero-checkout", locale, type: "article" });
 }
 const sectionClass = "min-w-0 scroll-mt-24 rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-8";
 // Section ids with the number of ordered steps and paragraphs each has in the catalog.

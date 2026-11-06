@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../../lib/site-metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -9,19 +10,8 @@ import { getI18n } from "../../../../lib/i18n/server";
 import type { Translate } from "../../../../lib/i18n/translate";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  return {
-    title: t("docs.integrations.metaTitleShort"),
-    description: t("docs.integrations.metaDescription"),
-    alternates: { canonical: "/docs/integrations" },
-    openGraph: {
-      type: "website",
-      url: "/docs/integrations",
-      siteName: "XMR Checkout",
-      title: t("docs.integrations.metaTitle"),
-      description: t("docs.integrations.metaDescription"),
-    },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("docs.integrations.metaTitle"), description: t("docs.integrations.metaDescription"), path: "/docs/integrations", locale });
 }
 
 const mono = (text: string) => <span className="font-mono text-ink">{text}</span>;

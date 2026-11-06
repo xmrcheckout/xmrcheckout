@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
 
 import InvoiceStatusLookup from "../../../components/invoice-status-lookup";
@@ -5,22 +6,8 @@ import PageIntroBand from "../../../components/page-intro-band";
 import { getI18n } from "../../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  const description = t("lookupPage.metaDescription");
-  return {
-    title: t("lookupPage.metaTitle"),
-    description,
-    alternates: {
-      canonical: "/invoice",
-    },
-    openGraph: {
-      type: "website",
-      url: "/invoice",
-      siteName: "XMR Checkout",
-      title: t("lookupPage.ogTitle"),
-      description,
-    },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("lookupPage.ogTitle"), description: t("lookupPage.metaDescription"), path: "/invoice", locale });
 }
 
 const statusPath = [

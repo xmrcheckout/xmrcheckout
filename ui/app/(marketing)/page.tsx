@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../lib/site-metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -8,19 +9,8 @@ import { LoginTrigger } from "../../components/login-modal";
 import { getI18n } from "../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  return {
-    title: { absolute: t("home.metaTitle") },
-    description: t("home.metaDescription"),
-    alternates: { canonical: "/" },
-    openGraph: {
-      type: "website",
-      url: "/",
-      siteName: "XMR Checkout",
-      title: t("home.metaTitle"),
-      description: t("home.metaDescription"),
-    },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("home.metaTitle"), description: t("home.metaDescription"), path: "/", locale });
 }
 
 export default async function MarketingHomePage({

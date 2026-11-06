@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
 import { invoiceContext } from "../../../lib/invoice-display";
 import Link from "next/link";
@@ -21,19 +22,8 @@ import { utcTimestamp } from "../../../lib/timestamps";
 import type { Translate } from "../../../lib/i18n/translate";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  return {
-    title: t("nav.demo"),
-    description: t("tour.metaDescription"),
-    alternates: { canonical: "/tour" },
-    openGraph: {
-      type: "website",
-      url: "/tour",
-      siteName: "XMR Checkout",
-      title: t("tour.metaTitle"),
-      description: t("tour.metaDescription"),
-    },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("tour.metaTitle"), description: t("tour.metaDescription"), path: "/tour", locale });
 }
 
 const tabs = ["overview", "invoices", "invoice", "payment-links", "terminals", "webhooks"] as const;

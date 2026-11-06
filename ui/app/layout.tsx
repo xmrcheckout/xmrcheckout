@@ -1,3 +1,4 @@
+import { siteOrigin, siteName, openGraphLocales } from "../lib/site-metadata";
 import type { Metadata } from "next";
 import { Crimson_Pro, Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -17,11 +18,7 @@ const crimsonPro = Crimson_Pro({
   variable: "--font-serif",
 });
 
-const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost"
-).replace(/\/+$/, "");
-const siteName = "XMR Checkout";
-const openGraphLocales = { en: "en_US", es: "es_ES", ru: "ru_RU", de: "de_DE", fr: "fr_FR", pt: "pt_BR", it: "it_IT", pl: "pl_PL", zh: "zh_CN", uk: "uk_UA", cs: "cs_CZ" } as const;
+const siteUrl = siteOrigin;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();

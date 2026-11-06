@@ -4,24 +4,25 @@
 
 Payments go directly from the customer to the merchant's wallet. Merchants retain control of their funds. Wallet access is limited to a wallet address and private view key; XMR Checkout never requests private spend keys, signs transactions, or moves funds.
 
-Invoices are defined in XMR. Any fiat-denominated inputs or reference rates provide non-binding estimates only, with no rate locks or guaranteed fiat outcomes. Payment detection and confirmation tracking depend on wallet and daemon availability and synchronization.
+Invoices are defined in XMR. Any fiat-denominated inputs or reference rates provide non-binding estimates only, with no rate locks or guaranteed fiat outcomes. Payment detection and confirmation tracking depend on wallet and daemon availability and synchronization. Checking stops when an invoice reaches its confirmation target; later chain changes are not reported for that invoice.
 
 ## Documentation
 
 - [Overview](https://xmrcheckout.com/): Product capabilities and the checkout workflow.
 - [API documentation](https://xmrcheckout.com/docs): Authentication, payment-link management and public form submission, invoice creation, public invoice status, confirmation tracking, and webhooks.
 - [Integration recipes](https://xmrcheckout.com/docs/integrations): Examples for connecting checkout to merchant applications.
+- [Invoice lookup](https://xmrcheckout.com/invoice): Look up the current state of a public invoice using its ID or link.
 - [FAQ](https://xmrcheckout.com/faq): Wallet access, payment detection, confirmations, and self-hosting.
 
 ## Guides
 
 - [Monero payment and donation links](https://xmrcheckout.com/guides/monero-payment-buttons): Accept payments or donations directly to your own wallet, with a fixed amount or one the customer enters, embed an HTML button or share a reusable link, and review separate XMR invoices. Recurring collection is not supported. Includes "Monero accepted here" badges, printable QR signs, capacity limits, and manual fulfillment.
-- [In-person Monero checkout](https://xmrcheckout.com/guides/in-person-monero-checkout): Turn a tablet or phone into a till with a terminal link. Type the amount, show a QR code, and see the payment in seconds. Covers confirmations, link safety, and address capacity.
+- [In-person Monero checkout](https://xmrcheckout.com/guides/in-person-monero-checkout): Turn a tablet or phone into a till with a terminal link. Type the amount, show a QR code, and observe the reported payment status. Covers confirmations, link safety, and address capacity.
 
 - [Self-hosted Monero checkout](https://xmrcheckout.com/guides/self-hosted-monero-checkout): Deployment, view-only wallet setup, invoice pages, and payment detection.
 - [Monero payment API and webhooks](https://xmrcheckout.com/guides/monero-payment-api-webhooks): Invoice creation, public status polling, and webhook verification.
 
 ## Optional
 
-- [Interactive tour](https://xmrcheckout.com/tour): A simulated checkout walkthrough.
+- [Interactive demo](https://xmrcheckout.com/tour): A simulated checkout walkthrough.
 - [Source code and deployment instructions](https://github.com/xmrcheckout/xmrcheckout): Repository, setup requirements, and operational documentation.

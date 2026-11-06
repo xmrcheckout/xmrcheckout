@@ -19,7 +19,7 @@ import type { Translate } from "../../../../lib/i18n/translate";
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
-  return { title: t("donate.requestMetaTitle") };
+  return { title: t("donate.requestMetaTitle"), robots: { index: false, follow: false } };
 }
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";

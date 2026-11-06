@@ -46,6 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
     },
   ];
+  entries.push({ url: `${normalizedSiteUrl}/tour`, lastModified });
   if (areDonationsEnabled()) {
     entries.push({
       url: `${normalizedSiteUrl}/donate`,

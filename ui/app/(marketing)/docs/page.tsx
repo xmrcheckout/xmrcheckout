@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
@@ -10,19 +11,8 @@ import { getI18n } from "../../../lib/i18n/server";
 import type { Translate } from "../../../lib/i18n/translate";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  return {
-    title: t("nav.docs"),
-    description: t("docs.metaDescription"),
-    alternates: { canonical: "/docs" },
-    openGraph: {
-      type: "website",
-      url: "/docs",
-      siteName: "XMR Checkout",
-      title: t("docs.metaTitle"),
-      description: t("docs.metaDescription"),
-    },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("docs.metaTitle"), description: t("docs.metaDescription"), path: "/docs", locale });
 }
 
 const apiBaseUrl =

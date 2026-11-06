@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../../lib/site-metadata";
 import GuideContents from "../../../../components/guide-contents";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -7,16 +8,8 @@ import { getI18n } from "../../../../lib/i18n/server";
 import type { Translate } from "../../../../lib/i18n/translate";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  const title = t("guides.selfHost.metaTitle");
-  const description = t("guides.selfHost.metaDescription");
-  return {
-    title: t("guides.selfHost.metaTitleShort"),
-    description,
-    alternates: { canonical: "/guides/self-hosted-monero-checkout" },
-    openGraph: { type: "article", url: "/guides/self-hosted-monero-checkout", siteName: "XMR Checkout", title, description },
-    twitter: { card: "summary", title, description },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("guides.selfHost.metaTitle"), description: t("guides.selfHost.metaDescription"), path: "/guides/self-hosted-monero-checkout", locale, type: "article" });
 }
 
 const sectionClass =

@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -5,16 +6,8 @@ import PageIntroBand from "../../../components/page-intro-band";
 import { getI18n } from "../../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getI18n();
-  const title = t("guides.metaTitle");
-  const description = t("guides.metaDescription");
-  return {
-    title: t("nav.guides"),
-    description,
-    alternates: { canonical: "/guides" },
-    openGraph: { type: "website", url: "/guides", siteName: "XMR Checkout", title, description },
-    twitter: { card: "summary", title, description },
-  };
+  const { locale, t } = await getI18n();
+  return publicPageMetadata({ title: t("guides.metaTitle"), description: t("guides.metaDescription"), path: "/guides", locale });
 }
 
 const cardClass =

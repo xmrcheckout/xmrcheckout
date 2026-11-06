@@ -197,7 +197,7 @@ def _overlay_logo(qr_image: Image.Image, logo: Image.Image) -> Image.Image:
     if target_logo_size < 24:
         return qr_image
     logo = logo.copy()
-    logo.thumbnail((target_logo_size, target_logo_size), Image.LANCZOS)
+    logo.thumbnail((target_logo_size, target_logo_size), Image.Resampling.LANCZOS)
 
     overlay = Image.new("RGBA", qr_image.size, (255, 255, 255, 0))
     box_size = int(size * 0.28)

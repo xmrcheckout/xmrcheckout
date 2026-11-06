@@ -12,4 +12,4 @@ cryptography==50.0.1
 email-validator==2.2.0
 monero==1.1.1
 qrcode==7.4.2
-Pillow==12.3.0
+Pillow==13.0.0

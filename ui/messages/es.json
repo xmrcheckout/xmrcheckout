@@ -912,9 +912,11 @@
     },
     "walletConnection": "Conexión de billetera",
     "modalTitle": "Conecta tu billetera para crear facturas.",
+    "returning": "¿Ya te conectaste antes? Introduce la misma dirección y clave de visualización para iniciar sesión.",
     "closeModal": "Cerrar la ventana de inicio de sesión",
     "beforeContinue": "Antes de continuar",
-    "disclosure": "Esta instancia recibe tu dirección principal y tu clave privada de visualización para observar los pagos entrantes, incluida la actividad entrante ajena a las facturas. Compártelas solo con una instancia de confianza. La clave se guarda cifrada. Este acceso no puede gastar fondos."
+    "disclosure": "Esta instancia recibe tu dirección principal y tu clave privada de visualización para detectar los pagos entrantes. Puede ver todos los pagos que llegan a esta billetera, no solo los de las facturas, pero no puede gastar fondos. La clave se guarda cifrada. Comparte estos datos solo con una instancia de confianza.",
+    "separateWallet": "Consejo: usa una billetera aparte para tu tienda, así este acceso solo cubre los pagos de tu tienda."
   },
   "addresses": {
     "title": "Disponibilidad de direcciones de factura",

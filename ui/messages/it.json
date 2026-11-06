@@ -912,9 +912,11 @@
     },
     "walletConnection": "Collegamento del portafoglio",
     "modalTitle": "Collega il tuo portafoglio per creare richieste di pagamento.",
+    "returning": "Hai già collegato questo portafoglio? Inserisci lo stesso indirizzo e la stessa chiave di visualizzazione per accedere.",
     "closeModal": "Chiudi la finestra di accesso",
     "beforeContinue": "Prima di continuare",
-    "disclosure": "Questa istanza riceve il tuo indirizzo principale e la tua chiave di visualizzazione privata per osservare i pagamenti in arrivo, comprese le attività in entrata non legate alle richieste di pagamento del checkout. Condividili solo con un'istanza di cui ti fidi. La chiave è cifrata a riposo. Questo accesso non può spendere fondi."
+    "disclosure": "Questa istanza riceve il tuo indirizzo principale e la tua chiave di visualizzazione privata per rilevare i pagamenti in arrivo. Vede ogni pagamento in arrivo su questo portafoglio, non solo quelli delle richieste di pagamento, ma non può spendere fondi. La chiave è cifrata a riposo. Condividi questi dati solo con un'istanza di cui ti fidi.",
+    "separateWallet": "Suggerimento: usa un portafoglio separato per il tuo negozio, così questo accesso riguarda solo i pagamenti del negozio."
   },
   "addresses": {
     "title": "Disponibilità degli indirizzi di pagamento",

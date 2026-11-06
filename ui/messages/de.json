@@ -912,9 +912,11 @@
     },
     "walletConnection": "Wallet-Verbindung",
     "modalTitle": "Verbinden Sie Ihre Wallet, um Rechnungen zu erstellen.",
+    "returning": "Schon einmal verbunden? Geben Sie dieselbe Adresse und denselben View-Key ein, um sich anzumelden.",
     "closeModal": "Anmeldedialog schließen",
     "beforeContinue": "Bevor Sie fortfahren",
-    "disclosure": "Diese Instanz erhält Ihre Hauptadresse und Ihren privaten View-Key, um eingehende Zahlungen zu beobachten – einschließlich eingehender Aktivität außerhalb von Checkout-Rechnungen. Teilen Sie diese nur mit einer Instanz, der Sie vertrauen. Der Schlüssel wird verschlüsselt gespeichert. Dieser Zugriff kann keine Gelder ausgeben."
+    "disclosure": "Diese Instanz erhält Ihre Hauptadresse und Ihren privaten View-Key, um eingehende Zahlungen zu erkennen. Sie sieht jede eingehende Zahlung an diese Wallet, nicht nur Checkout-Rechnungen, kann aber keine Gelder ausgeben. Der Schlüssel wird verschlüsselt gespeichert. Teilen Sie diese Daten nur mit einer Instanz, der Sie vertrauen.",
+    "separateWallet": "Tipp: Verwenden Sie für Ihren Shop eine eigene Wallet, damit dieser Zugriff nur die Zahlungen Ihres Shops umfasst."
   },
   "addresses": {
     "title": "Verfügbarkeit der Rechnungsadressen",

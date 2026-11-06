@@ -928,9 +928,11 @@
     },
     "walletConnection": "Połączenie portfela",
     "modalTitle": "Połącz portfel, aby tworzyć prośby o płatność.",
+    "returning": "Łączysz się ponownie? Wpisz ten sam adres i klucz widoku, aby się zalogować.",
     "closeModal": "Zamknij okno logowania",
     "beforeContinue": "Zanim przejdziesz dalej",
-    "disclosure": "Ta instancja otrzymuje twój adres główny i prywatny klucz widoku, aby obserwować płatności przychodzące, w tym aktywność przychodzącą niezwiązaną z prośbami o płatność. Udostępniaj je tylko instancji, której ufasz. Klucz jest szyfrowany w spoczynku. Ten dostęp nie pozwala wydawać środków."
+    "disclosure": "Ta instancja otrzymuje twój adres główny i prywatny klucz widoku, aby wykrywać płatności przychodzące. Widzi każdą płatność przychodzącą do tego portfela, nie tylko te związane z prośbami o płatność, ale nie może wydawać środków. Klucz jest szyfrowany w spoczynku. Udostępniaj te dane tylko instancji, której ufasz.",
+    "separateWallet": "Wskazówka: używaj osobnego portfela dla sklepu, aby ten dostęp obejmował tylko płatności sklepu."
   },
   "addresses": {
     "title": "Dostępność adresów płatności",

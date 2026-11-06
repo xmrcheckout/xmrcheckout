@@ -912,9 +912,11 @@
     },
     "walletConnection": "Conexão da carteira",
     "modalTitle": "Conecte a sua carteira para criar faturas.",
+    "returning": "Já se conectou antes? Digite o mesmo endereço e a mesma chave de visualização para entrar.",
     "closeModal": "Fechar janela de login",
     "beforeContinue": "Antes de continuar",
-    "disclosure": "Esta instância recebe o seu endereço principal e a sua chave de visualização privada para observar pagamentos recebidos, incluindo atividades de entrada além das faturas do checkout. Compartilhe-os apenas com uma instância em que você confia. A chave é criptografada em repouso. Este acesso não pode gastar fundos."
+    "disclosure": "Esta instância recebe o seu endereço principal e a sua chave de visualização privada para acompanhar os pagamentos recebidos. Ela vê todos os pagamentos recebidos nesta carteira, não apenas os das faturas, mas não pode gastar fundos. A chave é criptografada em repouso. Compartilhe esses dados apenas com uma instância em que você confia.",
+    "separateWallet": "Dica: use uma carteira separada para a sua loja, assim este acesso cobre apenas os pagamentos da loja."
   },
   "addresses": {
     "title": "Disponibilidade de endereços de fatura",

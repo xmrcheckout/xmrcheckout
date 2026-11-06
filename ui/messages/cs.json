@@ -928,9 +928,11 @@
     },
     "walletConnection": "Připojení peněženky",
     "modalTitle": "Připojte peněženku a vytvářejte platební výzvy.",
+    "returning": "Připojujete se znovu? Zadejte stejnou adresu a klíč pro prohlížení a přihlaste se.",
     "closeModal": "Zavřít přihlašovací okno",
     "beforeContinue": "Než budete pokračovat",
-    "disclosure": "Tato instance obdrží vaši primární adresu a soukromý klíč pro prohlížení, aby mohla sledovat příchozí platby, včetně příchozí aktivity mimo platební výzvy. Sdílejte je pouze s instancí, které důvěřujete. Klíč je uložen šifrovaně. Tento přístup nemůže prostředky utratit."
+    "disclosure": "Tato instance obdrží vaši primární adresu a soukromý klíč pro prohlížení, aby mohla sledovat příchozí platby. Vidí každou příchozí platbu do této peněženky, nejen platby platebních výzev, ale nemůže prostředky utratit. Klíč je uložen šifrovaně. Sdílejte tyto údaje pouze s instancí, které důvěřujete.",
+    "separateWallet": "Tip: pro obchod používejte samostatnou peněženku, aby se tento přístup týkal jen plateb obchodu."
   },
   "addresses": {
     "title": "Dostupnost adres pro platební výzvy",

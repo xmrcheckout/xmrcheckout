@@ -166,7 +166,8 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
         <p id="address-help" className="text-xs leading-relaxed text-ink-soft">
           {t("login.addressHelp")}
         </p>
-        <p id="address-format" className="text-sm text-ink-soft">{formatErrors.address}</p>
+        {/* Format problems show once the field has content; an empty field needs no warning. */}
+        <p id="address-format" className="text-sm text-red-700">{paymentAddress.trim() ? formatErrors.address : null}</p>
       </div>
       <div className="grid gap-1.5">
         <div className="flex items-center justify-between gap-3">
@@ -220,7 +221,7 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
         <p id="view-key-help" className="text-xs leading-relaxed text-ink-soft">
           {t("login.viewKeyHelp")}
         </p>
-        <p id="view-key-format" className="text-sm text-ink-soft">{formatErrors.viewKey}</p>
+        <p id="view-key-format" className="text-sm text-red-700">{viewKey.trim() ? formatErrors.viewKey : null}</p>
         <p className="text-xs text-ink-soft">{t("login.formatOnly")}</p>
       </div>
       <div id="login-feedback" role="status" aria-live="polite" aria-atomic="true">

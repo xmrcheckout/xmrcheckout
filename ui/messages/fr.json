@@ -912,9 +912,11 @@
     },
     "walletConnection": "Connexion du portefeuille",
     "modalTitle": "Connectez votre portefeuille pour créer des factures.",
+    "returning": "Portefeuille déjà connecté ? Saisissez la même adresse et la même clé de visualisation pour vous reconnecter.",
     "closeModal": "Fermer la fenêtre de connexion",
     "beforeContinue": "Avant de continuer",
-    "disclosure": "Cette instance reçoit votre adresse principale et votre clé de visualisation privée afin d’observer les paiements entrants, y compris l’activité entrante sans rapport avec les factures de paiement. Ne les partagez qu’avec une instance de confiance. La clé est chiffrée au repos. Cet accès ne permet pas de dépenser des fonds."
+    "disclosure": "Cette instance reçoit votre adresse principale et votre clé de visualisation privée pour détecter les paiements entrants. Elle voit tous les paiements entrants vers ce portefeuille, pas seulement ceux des factures, mais ne peut pas dépenser de fonds. La clé est chiffrée au repos. Ne partagez ces informations qu’avec une instance de confiance.",
+    "separateWallet": "Conseil : utilisez un portefeuille distinct pour votre boutique afin que cet accès ne couvre que les paiements de votre boutique."
   },
   "addresses": {
     "title": "Disponibilité des adresses de facture",

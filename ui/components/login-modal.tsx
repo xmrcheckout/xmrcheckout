@@ -82,6 +82,7 @@ export default function LoginModal() {
           >
             {t("login.modalTitle")}
           </h3>
+          <p className="mt-1 text-xs text-cream/80">{t("login.returning")}</p>
         </div>
         <button
           className="min-h-11 min-w-11 shrink-0 rounded-full border border-cream/30 bg-cream/10 px-2.5 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-cream/20"
@@ -101,6 +102,7 @@ export default function LoginModal() {
           <p className="mt-1">
             {t("login.disclosure")}
           </p>
+          <p className="mt-1">{t("login.separateWallet")}</p>
         </div>
         <LoginForm nextDestination={searchParams.get("next") ?? undefined} />
       </div>

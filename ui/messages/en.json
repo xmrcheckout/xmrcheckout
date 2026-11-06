@@ -912,9 +912,11 @@
     },
     "walletConnection": "Wallet connection",
     "modalTitle": "Connect your wallet to create invoices.",
+    "returning": "Connected before? Enter the same address and view key to sign in.",
     "closeModal": "Close login modal",
     "beforeContinue": "Before you continue",
-    "disclosure": "This instance receives your primary address and private view key to observe incoming payments, including incoming activity beyond checkout invoices. Share it only with an instance you trust. The key is encrypted at rest. This access cannot spend funds."
+    "disclosure": "This instance receives your primary address and private view key to watch for incoming payments. It can see every incoming payment to this wallet, not only checkout invoices, but it cannot spend funds. The key is encrypted at rest. Share these details only with an instance you trust.",
+    "separateWallet": "Tip: use a separate wallet for your shop so this access covers only your shop’s payments."
   },
   "addresses": {
     "title": "Invoice address availability",

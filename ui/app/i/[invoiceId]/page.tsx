@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import MissingBuyerLink from "../../../components/missing-buyer-link";
 
 import BtcpayModalBridge from "../../../components/btcpay-modal-bridge";
 import BtcpayClassicCheckout from "../../../components/btcpay-classic-checkout";
@@ -14,7 +14,6 @@ import {
   invoiceStatusTones,
   type InvoiceStatus,
 } from "../../../lib/invoice-status";
-import LanguageSwitcher from "../../../components/language-switcher";
 import { safeHttpUrl } from "../../../lib/linkify";
 import { getI18n } from "../../../lib/i18n/server";
 import type { Translate } from "../../../lib/i18n/translate";
@@ -132,19 +131,7 @@ export default async function BtcpayModalInvoicePage({
     : "";
 
   if (response.status === 404 || response.status === 422) {
-    return (
-      <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-3 py-6 text-ink sm:px-6">
-        <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
-        <section className="w-full max-w-lg rounded-surface border border-stroke bg-card p-6 shadow-card">
-          <h1 className="font-sans text-2xl font-semibold">{response.status === 422 ? t("checkout.invalidId") : t("checkout.notFound")}</h1>
-          <p className="mt-3 text-sm text-ink-soft">
-            {response.status === 422 ? t("checkout.invalidIdHelp") : t("checkout.notFoundHelp")}
-            {" "}{t("checkout.doNotPay")}
-          </p>
-          <Link className="mt-5 inline-flex min-h-11 items-center underline" href="/invoice">{t("checkout.lookUp")}</Link>
-        </section>
-      </main>
-    );
+    return <><BtcpayModalBridge invoiceId={invoiceId} status="invalid" /><MissingBuyerLink kind="compact" invalid={response.status === 422} /></>;
   }
 
   if (!response.ok || !invoice) {
@@ -384,7 +371,6 @@ export default async function BtcpayModalInvoicePage({
           ) : null}
         </div>
       )}
-      <LanguageSwitcher className="mx-auto mt-8 w-full max-w-4xl justify-center px-1 text-ink-soft" />
     </main>
     </InvoiceStatusAutoRefresh>
   );

@@ -17,17 +17,17 @@ export default async function MarketingShell({
   children: React.ReactNode;
   // "checkout" pages are for the merchant's customers: keep the branding,
   // but no site navigation, wallet connection or donation prompts.
-  variant?: "site" | "checkout";
+  variant?: "site" | "checkout" | "compact";
 }) {
   const cookieStore = await cookies();
   const apiKey = cookieStore.get("xmrcheckout_api_key")?.value;
   const isAuthenticated = Boolean(apiKey);
-  const isCheckout = variant === "checkout";
+  const isCheckout = variant !== "site";
   const donationsEnabled = !isCheckout && areDonationsEnabled();
   const { t } = await getI18n();
 
   return (
-    <div className="marketing-shell">
+    <div className={`marketing-shell${variant === "compact" ? " checkout-compact" : ""}`}>
       <div className="ambient">
         <span className="orb orb-a"></span>
         <span className="orb orb-b"></span>

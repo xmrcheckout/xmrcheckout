@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MissingBuyerLink from "../../../../components/missing-buyer-link";
 import { notFound } from "next/navigation";
 
 import InvoicePaymentDetails from "../../../../components/invoice-payment-details";
@@ -84,26 +85,8 @@ export default async function DonateStatusDetailPage({
       })
     : "";
 
-  if (response.status === 404) {
-    return (
-      <InvoiceStatusAutoRefresh
-      key={invoiceId}
-      retrievedAt={retrievedAt}
-      error={!invoice}
-      statusMessage={statusMessage}
-      status={invoice?.status}
-    >
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
-        <InvoiceRefreshFeedback />
-        <PageIntroBand
-          description={t("donate.notFoundHelp")}
-          eyebrow={t("donate.lookupEyebrow")}
-          id="donation-not-found"
-          title={t("donate.notFound")}
-        />
-      </main>
-    </InvoiceStatusAutoRefresh>
-    );
+  if (response.status === 404 || response.status === 422) {
+    return <MissingBuyerLink kind="donation" />;
   }
 
   if (!response.ok || !invoice) {

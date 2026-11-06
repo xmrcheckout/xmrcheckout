@@ -15,8 +15,10 @@ const assertBranded = async (page,label) => {
       const page = await browser.newPage({viewport:{width,height:844},reducedMotion:'reduce'});
       await page.clock.install();
       for (const [path,heading,code] of [
-        ['/i/bad-id','Invalid invoice ID',200],
-        ['/i/00000000-0000-4000-8000-000000000999','Invoice not found',200],
+        ['/i/bad-id','Invalid invoice ID',404],
+        ['/i/00000000-0000-4000-8000-000000000999','Invoice not found',404],
+        ['/i/bad-id/receipt','Invalid invoice ID',404],
+        ['/i/00000000-0000-4000-8000-000000000999/receipt','Invoice not found',404],
         ['/invoice/bad-id','Invoice link unavailable',404],
         ['/invoice/00000000-0000-4000-8000-000000000999','Invoice link unavailable',404],
         ['/pay/dead-token','Payment link unavailable',404],
@@ -74,6 +76,11 @@ const assertBranded = async (page,label) => {
     await page.close();
     const noScript = await browser.newContext({javaScriptEnabled:false});
     const staticPage = await noScript.newPage();
+    for (const path of ['/i/bad-id', '/i/bad-id/receipt', '/i/00000000-0000-4000-8000-000000000999', '/i/00000000-0000-4000-8000-000000000999/receipt']) {
+      assert.equal((await staticPage.goto(base+path)).status(),404);
+      await staticPage.getByRole('heading',{name:path.includes('bad-id')?'Invalid invoice ID':'Invoice not found',exact:true}).waitFor();
+      await assertBranded(staticPage,path+' without JavaScript');
+    }
     assert.equal((await staticPage.goto(base+'/invoice/bad-id')).status(),404);
     await staticPage.getByRole('heading',{name:'Invoice link unavailable',exact:true}).waitFor();
     assert.equal((await staticPage.goto(base+'/missing-page')).status(),404);

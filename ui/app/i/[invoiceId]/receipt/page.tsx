@@ -6,7 +6,8 @@ import CopyIconButton from "../../../../components/copy-icon-button";
 import PrintButton from "../../../../components/print-button";
 import Timestamp from "../../../../components/timestamp";
 import StatusBadge from "../../../../components/status-badge";
-import LanguageSwitcher from "../../../../components/language-switcher";
+import MissingBuyerLink from "../../../../components/missing-buyer-link";
+import StatusRefreshButton from "../../../../components/status-refresh-button";
 import { safeHttpUrl } from "../../../../lib/linkify";
 import {
   invoiceStatusName,
@@ -114,33 +115,8 @@ export default async function BtcpayReceiptPage({
     },
   ).catch(() => new Response(null, { status: 503 }));
 
-  if (response.status === 404) {
-    return (
-      <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
-        <BtcpayModalBridge invoiceId={invoiceId} status="invalid" />
-        <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
-          <header className="bg-ink px-6 py-5 text-cream">
-            <p className="text-sm font-semibold text-cream/70">
-              {t("receipt.eyebrow")}
-            </p>
-            <h1 className="mt-2 text-2xl font-semibold">{t("checkout.notFound")}</h1>
-          </header>
-          <div className="px-6 py-5">
-            <p className="text-sm leading-relaxed text-ink-soft">
-              {t("receipt.notFoundHelp")}
-            </p>
-            <div className="mt-5">
-              <a
-                className={closeLinkClassName}
-                href={`/i/${encodeURIComponent(invoiceId)}`}
-              >
-                {t("receipt.close")}
-              </a>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
+  if (response.status === 404 || response.status === 422) {
+    return <><BtcpayModalBridge invoiceId={invoiceId} status="invalid" /><MissingBuyerLink kind="receipt" invalid={response.status === 422} /></>;
   }
 
   if (!response.ok) {
@@ -157,7 +133,8 @@ export default async function BtcpayReceiptPage({
             <p className="text-sm leading-relaxed text-ink-soft">
               {t("checkout.loadFailed")}
             </p>
-            <div className="mt-5">
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <StatusRefreshButton label={t("refresh.retry")} />
               <a
                 className={closeLinkClassName}
                 href={`/i/${encodeURIComponent(invoiceId)}`}
@@ -336,7 +313,6 @@ export default async function BtcpayReceiptPage({
           </>
         )}
       </article>
-      <LanguageSwitcher className="mx-auto mt-6 w-full max-w-3xl justify-center text-ink-soft print:hidden" />
     </main>
   );
 }

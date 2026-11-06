@@ -2302,3 +2302,43 @@ summary:focus-visible {
   min-width: 0;
   flex-wrap: wrap;
 }
+
+/* Compact buyer documents share branding while retaining their card widths. */
+.checkout-compact .site-header {
+  max-width: 60rem;
+  padding: 1rem 1.5rem 0;
+}
+
+.checkout-compact .brand-logo {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.checkout-compact > main,
+.checkout-compact main {
+  min-height: auto;
+}
+
+.checkout-compact main h1,
+.checkout-compact main h2,
+.checkout-compact main h3 {
+  font-family: var(--font-sans), sans-serif;
+}
+
+.checkout-compact .site-footer {
+  margin-top: auto;
+  padding: 1.25rem 1.5rem;
+}
+
+@media print {
+  .checkout-compact .ambient,
+  .checkout-compact > .site-header,
+  .checkout-compact > .site-footer,
+  body:has(.checkout-compact) > .skip-link {
+    display: none !important;
+  }
+
+  body:has(.checkout-compact) {
+    background: white;
+  }
+}

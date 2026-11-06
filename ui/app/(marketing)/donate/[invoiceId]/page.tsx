@@ -98,7 +98,7 @@ export default async function DonateStatusDetailPage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl px-[6vw] pb-20 pt-8 text-ink">
         <InvoiceRefreshFeedback />
         <PageIntroBand
           description={t("donate.loadFailed")}
@@ -162,7 +162,7 @@ export default async function DonateStatusDetailPage({
       statusMessage={statusMessage}
       status={invoice?.status}
     >
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-8 text-ink">
 
       <PageIntroBand
         description={statusDescription(

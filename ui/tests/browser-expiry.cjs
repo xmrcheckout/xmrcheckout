@@ -82,7 +82,7 @@ async function noOverflow(page, label) {
     await fixture({ invoiceStatus: 'expired', invoiceExpiry: '2020-01-01T00:00:00Z' });
     await page.reload({ waitUntil: 'domcontentloaded' });
     assert.equal(await page.locator('[data-invoice-expiry]').count(), 0);
-    assert.ok(await page.getByText('Invoice expired. Do not send payment.', { exact: true }).count());
+    assert.ok(await page.getByText('Invoice expired. Do not send payment', { exact: true }).count());
     console.log('PASS countdown crosses zero without inventing state; server expiry removes countdown');
     await page.close();
   } finally {

@@ -47,7 +47,7 @@ export default function CopyIconButton({
         onClick={handleCopy}
         className={
           className ??
-          "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-stroke bg-white/80 text-ink-soft transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden"
+          "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-stroke bg-white/80 text-ink-soft transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden"
         }
       >
         {copied ? (

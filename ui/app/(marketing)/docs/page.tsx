@@ -859,7 +859,7 @@ export default async function DocsPage() {
             { href: "#api-reference", label: t("docs.apiReference") },
           ].map((item, index) => (
             <a
-              className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
               key={item.href}
               href={item.href}
             >
@@ -926,13 +926,13 @@ export default async function DocsPage() {
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <Link
-                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href="/docs/integrations"
                 >
                   {t("docs.seeRecipes")}
                 </Link>
                 <a
-                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href={`${normalizedSiteUrl}/openapi.json`}
                   rel="noreferrer"
                   target="_blank"
@@ -1350,7 +1350,7 @@ Content-Type: application/json
               {t("docs.schema")}
             </span>
             <a
-              className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream/25 bg-cream/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/60"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-cream/25 bg-cream/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/60"
               href={`${normalizedSiteUrl}/openapi.json`}
               rel="noreferrer"
               target="_blank"

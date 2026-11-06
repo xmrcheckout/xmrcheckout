@@ -1,3 +1,4 @@
+import GuideContents from "../../../../components/guide-contents";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -47,21 +48,7 @@ export default async function SelfHostedGuidePage() {
           }
         />
 
-        <nav
-          className="mt-6 grid gap-1.5 rounded-surface border border-stroke bg-card p-2 shadow-soft sm:grid-cols-2"
-          aria-label={t("guides.selfHost.sectionsLabel")}
-        >
-          {sectionsFor(t).map(([href, label], index) => (
-            <a
-              className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
-              href={href}
-              key={href}
-            >
-              <span className="font-mono text-xs text-ink-soft">0{index + 1}</span>
-              {label}
-            </a>
-          ))}
-        </nav>
+        <GuideContents label={t("guides.selfHost.sectionsLabel")} entries={sectionsFor(t).map(([href, label]) => ({ href, label }))} />
 
         <div className="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
           <section className={sectionClass} id="architecture" aria-labelledby="architecture-title">
@@ -177,13 +164,13 @@ docker compose up --build -d`}</code>
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link
-                className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                 href="/faq#operations"
               >
                 {t("guides.selfHost.opsFaq")}
               </Link>
               <Link
-                className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                 href="/tour"
               >
                 {t("guides.selfHost.exploreDemo")}

@@ -13,7 +13,7 @@ export type TerminalData = {
   id: string; name: string; default_currency: string; confirmation_target: number;
   expiry_minutes: number; enabled: boolean; created_at: string | null; last_used_at: string | null;
 };
-const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-3 py-2 text-ink";
+const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-4 py-3 text-ink";
 
 function SaveButton({ existing }: { existing: boolean }) {
   const { t } = useI18n();

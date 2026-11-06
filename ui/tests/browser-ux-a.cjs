@@ -13,7 +13,7 @@ const defaultState = {
   invoiceTransportFailure: false, checkoutStyle: "standard",
 };
 const delayedText = "Payment checking is delayed right now. Payments sent to this address still go directly to the merchant's wallet and will appear here once checking resumes.";
-const seenHeading = "Payment seen on the network. It is not yet in a block.";
+const seenHeading = "Payment seen on the network. It is not yet in a block";
 
 async function state(options = {}) {
   const response = await fetch(fixture + "/__fixture", {
@@ -74,13 +74,13 @@ async function main() {
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     for (const route of buyerRoutes) {
-      for (const [count, heading] of [[0, seenHeading], [1, "Payment confirmed on-chain at 1 confirmation."], [3, "Payment confirmed on-chain at 3 confirmations."]]) {
+      for (const [count, heading] of [[0, seenHeading], [1, "Payment confirmed on-chain at 1 confirmation"], [3, "Payment confirmed on-chain at 3 confirmations"]]) {
         await state({ invoiceStatus: "confirmed", confirmationTarget: 0, confirmations: count });
         await goto(page, route + id);
         await page.getByRole("heading", { name: heading, exact: true }).waitFor();
         assert.equal(await page.getByRole("heading", { name: heading, exact: true }).count(), 1, route + " zero-target heading appears once");
       }
-      for (const [invoiceStatus, heading] of [["payment_detected", "Payment detected. 1/2 confirmations."], ["confirmed", "Payment confirmed on-chain at 2 confirmations."]]) {
+      for (const [invoiceStatus, heading] of [["payment_detected", "Payment detected. 1/2 confirmations"], ["confirmed", "Payment confirmed on-chain at 2 confirmations"]]) {
         await state({ invoiceStatus });
         await goto(page, route + id);
         await page.getByRole("heading", { name: heading, exact: true }).waitFor();

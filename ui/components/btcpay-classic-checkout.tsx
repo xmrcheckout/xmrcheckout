@@ -347,7 +347,7 @@ export default function BtcpayClassicCheckout({
           </p>
           {canSendPayment ? (
             <CopyIconButton
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cream/25 bg-cream/10 text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-cream/25 bg-cream/10 text-cream transition hover:bg-cream/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
               value={formattedRequestedAmount}
               label={isPartiallyPaid ? t("pay.copyRemaining") : t("pay.copyExact")}
             />

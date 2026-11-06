@@ -18,7 +18,8 @@ export default async function DonatePage() {
   const { t } = await getI18n();
 
   return (
-    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-[6vw] pb-20 pt-10 text-ink">
+    <main id="main-content" tabIndex={-1} className="px-[6vw] pb-20 pt-8 text-ink">
+      <div className="mx-auto w-full max-w-7xl">
       <PageIntroBand
         description={t("donate.introDescription")}
         eyebrow={t("donate.introEyebrow")}
@@ -43,6 +44,7 @@ export default async function DonatePage() {
           </div>
         </div>
       </section>
+      </div>
     </main>
   );
 }

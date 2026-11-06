@@ -30,7 +30,7 @@ export default function StatusRefreshButton({
   return (
     <>
     <button
-      className={`inline-flex min-h-8 items-center justify-center gap-2 rounded-full border border-stroke bg-white/80 px-3 py-1 text-xs font-semibold text-ink transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-stroke bg-white/80 px-3 py-1 text-xs font-semibold text-ink transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       type="button"
       onClick={handleRefresh}
       disabled={isRefreshing}

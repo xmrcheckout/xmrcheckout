@@ -1,3 +1,4 @@
+import GuideContents from "../../../../components/guide-contents";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -54,9 +55,7 @@ export default async function PaymentButtonsGuide() {
   });
   return <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
     <PageIntroBand eyebrow={t(`${k}.eyebrow`)} id="payment-buttons-title" title={t(`${k}.title`)} description={<p>{t(`${k}.intro`)}</p>} />
-    <nav aria-label={t(`${k}.sectionsLabel`)} className="mt-6 grid gap-2 rounded-surface border border-stroke bg-card p-3 sm:grid-cols-2">
-      {sections.map((id) => <a key={id} href={`#${id}`} className="inline-flex min-h-11 items-center rounded-xl px-3 py-2 font-semibold hover:bg-white/70">{t(`${k}.nav.${id}`)}</a>)}
-    </nav>
+    <GuideContents label={t(`${k}.sectionsLabel`)} entries={sections.map((id) => ({ href: `#${id}`, label: t(`${k}.nav.${id}`) }))} />
     <div className="mt-8 grid gap-6">
       {sections.map((id) => (
         <section key={id} id={id} aria-labelledby={`${id}-title`} className={sectionClass}>

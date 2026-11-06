@@ -21,7 +21,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
         name="locale"
         defaultValue={locale}
         onChange={(event) => event.currentTarget.form?.requestSubmit()}
-        className="min-h-9 max-w-full rounded-lg border border-[#71716c] bg-white px-2 py-1 text-ink"
+        className="min-h-11 max-w-full rounded-xl border border-[#71716c] bg-white px-3 py-2 text-ink"
       >
         {locales.map((code) => (
           <option key={code} value={code} lang={code}>
@@ -30,7 +30,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
         ))}
       </select>
       <noscript>
-        <button type="submit" className="underline underline-offset-4">
+        <button type="submit" className="min-h-11 px-3 py-2 underline underline-offset-4">
           {t("language.apply")}
         </button>
       </noscript>

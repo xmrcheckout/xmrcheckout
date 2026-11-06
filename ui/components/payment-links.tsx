@@ -100,7 +100,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
             <td data-label={t("paymentLinks.colLink")} className={cell}>
               <span className="inline-flex items-center gap-2 align-middle">
                 <CopyIconButton value={link.url} label={t("paymentLinks.copyLink", { title: link.title })} />
-                <a href={tour ? "/tour?tab=invoice" : link.url} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-stroke bg-white/80 text-ink-soft transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2" aria-label={t("paymentLinks.openLink", { title: link.title })} title={t("paymentLinks.openLink", { title: link.title })}>
+                <a href={tour ? "/tour?tab=invoice" : link.url} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-stroke bg-white/80 text-ink-soft transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2" aria-label={t("paymentLinks.openLink", { title: link.title })} title={t("paymentLinks.openLink", { title: link.title })}>
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </a>
               </span>

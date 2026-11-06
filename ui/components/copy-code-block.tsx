@@ -43,7 +43,7 @@ export default function CopyCodeBlock({
         {children}
       </pre>
       <button
-        className="absolute right-3 top-3 inline-flex min-h-9 items-center justify-center rounded-full border border-cream/25 bg-ink/80 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+        className="absolute right-3 top-3 inline-flex min-h-11 items-center justify-center rounded-full border border-cream/25 bg-ink/80 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.06em] text-cream transition hover:bg-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
         type="button"
         onClick={handleCopy}
       >

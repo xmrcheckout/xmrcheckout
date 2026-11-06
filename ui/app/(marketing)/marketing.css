@@ -8,6 +8,9 @@
   --sage: #5d7a6a;
   --fog: rgba(16, 18, 23, 0.08);
   --card: rgba(248, 242, 233, 0.88);
+  --radius-xl: 0.75rem;
+  --radius-2xl: 0.95rem;
+  --radius-surface: 1.2rem;
   --stroke: rgba(16, 18, 23, 0.18);
 }
 
@@ -342,7 +345,7 @@ summary:focus-visible {
   overflow-wrap: anywhere;
   gap: 0.35rem;
   border: 1px solid var(--stroke);
-  border-radius: 0.9rem;
+  border-radius: var(--radius-2xl);
   background: rgba(248, 242, 233, 0.96);
   box-shadow: 0 14px 32px rgba(16, 18, 23, 0.16);
   padding: 0.75rem;
@@ -353,7 +356,7 @@ summary:focus-visible {
 .mobile-nav-panel button {
   width: 100%;
   border: 0;
-  border-radius: 0.9rem;
+  border-radius: var(--radius-xl);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
@@ -556,7 +559,7 @@ summary:focus-visible {
 .step,
 .trust-card {
   padding: 1.6rem;
-  border-radius: 0.85rem;
+  border-radius: var(--radius-2xl);
   background: rgba(248, 242, 233, 0.72);
   border: 1px solid var(--stroke);
   box-shadow: none;
@@ -2341,4 +2344,12 @@ summary:focus-visible {
   body:has(.checkout-compact) {
     background: white;
   }
+}
+
+/* Navigation and standalone controls use the same comfortable touch height. */
+.nav a,
+.nav button,
+.home-button,
+.donate-link {
+  min-height: 44px;
 }

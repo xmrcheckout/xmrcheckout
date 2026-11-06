@@ -14,7 +14,7 @@ export default function PrintButton({ className }: PrintButtonProps) {
       onClick={() => window.print()}
       className={
         className ??
-        "inline-flex items-center justify-center gap-2 rounded-full border border-stroke bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden"
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-stroke bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden"
       }
     >
       <svg

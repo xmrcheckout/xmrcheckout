@@ -92,13 +92,13 @@ export default async function GuidesPage() {
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
-              className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream bg-cream px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-cream bg-cream px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
               href="/docs"
             >
               {t("guides.apiDocs")}
             </Link>
             <Link
-              className="inline-flex min-h-10 items-center justify-center rounded-full border border-cream/40 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition hover:border-cream hover:bg-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-cream/40 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-cream transition hover:border-cream hover:bg-cream/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
               href="/docs/integrations"
             >
               {t("guides.recipes")}

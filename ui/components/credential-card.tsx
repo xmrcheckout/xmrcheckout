@@ -53,7 +53,7 @@ export default function CredentialCard({
       </div>
       <div className="flex flex-wrap justify-end gap-2">
         <button
-          className="inline-flex min-h-10 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-ink transition hover:border-ink/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="button"
           aria-pressed={revealed}
           onClick={() => setRevealed((current) => !current)}
@@ -61,7 +61,7 @@ export default function CredentialCard({
           {revealed ? t("credentials.hide") : t("credentials.reveal")}
         </button>
         <button
-          className="inline-flex min-h-10 items-center justify-center rounded-full bg-ink px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
+          className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-4 py-2 text-xs font-semibold uppercase tracking-[0.06em] text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)] transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2"
           type="button"
           onClick={handleCopy}
         >

@@ -129,7 +129,7 @@ export default function WebhookSection({
               key={event}
               className="min-w-0 border-t-2 border-clay/40 bg-white/60 p-4"
             >
-              <label className="flex items-center gap-3 text-sm font-semibold text-ink">
+              <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-ink">
                 <input
                   className="h-4 w-4 shrink-0 rounded border-stroke text-ink focus:ring-ink/20"
                   type="checkbox"
@@ -140,7 +140,7 @@ export default function WebhookSection({
                 <span className="min-w-0 break-all">{label}</span>
               </label>
               <input
-                className="mt-3 w-full rounded-xl border border-stroke bg-white/80 px-3 py-2 text-sm text-ink outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
+                className="mt-3 w-full rounded-xl border border-stroke bg-white/80 px-4 py-3 text-sm text-ink outline-none transition focus:border-ink/40 focus:ring-2 focus:ring-ink/10"
                 id={`event_url_${key}`}
                 name={`event_url_${key}`}
                 aria-label={`${label}: ${t("webhooks.overridePlaceholder")}`}

@@ -12,7 +12,7 @@ export type PaymentLinkData = {
   auto_create_invoice: boolean; checkout_continue_url: string | null; confirmation_message: string | null; enabled: boolean; url: string; action_url: string;
   customer_amount: boolean; minimum_amount_xmr: string | null;
 };
-const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-3 py-2 text-ink";
+const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-4 py-3 text-ink";
 function Buttons({ canDisable }: { canDisable: boolean }) {
   const { t } = useI18n();
   const { pending } = useFormStatus();

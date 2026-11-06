@@ -800,7 +800,7 @@
     "namePlaceholder": "Vordere Theke",
     "defaultCurrency": "Standardwährung",
     "expiryMinutes": "Rechnungsablauf (Minuten)",
-    "zeroConfNote": "Bei null Bestätigungen wird „Zahlung gesehen“ angezeigt, sobald die Zahlung das Netzwerk erreicht, meist innerhalb von Sekunden. Sie ist dann noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden. Verwenden Sie für größere Beträge eine oder mehrere Bestätigungen (jeweils etwa zwei Minuten).",
+    "zeroConfNote": "Bei null Bestätigungen wird „Zahlung gesehen“ angezeigt, sobald die Zahlung das Netzwerk erreicht, meist innerhalb von Sekunden. Sie ist dann noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden. Verlangen Sie für größere Beträge mehr Bestätigungen (jeweils etwa zwei Minuten).",
     "enabled": "Aktiviert",
     "lostDevice": "Gerät oder Link verloren? Erstellen Sie einen neuen Link. Der aktuelle Link funktioniert dann sofort nicht mehr.",
     "newLink": "Neuen Link erstellen",
@@ -1005,7 +1005,7 @@
   "webhooks": {
     "history": {
       "title": "Webhook-Zustellversuche",
-      "intro": "Prüfen Sie Antworten. Fehlgeschlagene Zustellungen werden etwa einen Tag lang automatisch wiederholt, und Sie können sie jederzeit erneut zustellen.",
+      "intro": "Prüfen Sie Antworten. Nach dem ersten Versuch werden fehlgeschlagene Zustellungen innerhalb von etwa 33 Stunden bis zu sechs Mal automatisch wiederholt, und Sie können sie jederzeit erneut zustellen.",
       "recordedCount": "{count} erfasst",
       "needReviewCount": "{count} zu prüfen",
       "none": "Noch keine Webhook-Aufrufe erfasst.",
@@ -1202,7 +1202,7 @@
       "inPerson": {
         "q": "Kann ich Monero vor Ort im Laden oder am Marktstand annehmen?",
         "p1": "Ja. Erstellen Sie im Dashboard ein Terminal und öffnen Sie seinen Link auf einem Tablet oder Smartphone an Ihrer Kasse. Tippen Sie den Betrag ein, der Kunde scannt den QR-Code mit seiner Wallet, und der Bildschirm zeigt „Zahlung gesehen“, sobald die Zahlung das Netzwerk erreicht – meist innerhalb von Sekunden. Die Gelder gehen direkt an Ihre Wallet.",
-        "p2": "Bei null Bestätigungen ist die Zahlung noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden; verlangen Sie für größere Beträge Bestätigungen. Jeder Verkauf verwendet eine Ihrer Rechnungsadressen, und unbezahlte oder stornierte Verkäufe belegen ihre Adresse drei Tage lang.",
+        "p2": "Bei null Bestätigungen ist die Zahlung noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden; verlangen Sie für größere Beträge mehr Bestätigungen. Jeder Verkauf verwendet eine Ihrer Rechnungsadressen, und unbezahlte oder stornierte Verkäufe belegen ihre Adresse drei Tage lang.",
         "cta": "Terminal einrichten"
       },
       "donations": {
@@ -1218,12 +1218,12 @@
       },
       "noWoo": {
         "q": "Kann ich eine Zahlungsschaltfläche ohne WooCommerce hinzufügen?",
-        "p1": "Ja. Legen Sie unter Dashboard → Zahlungslinks einen festen XMR-Betrag oder einen unterstützten Fiat-Richtwert fest und kopieren Sie dann eine HTML-Schaltfläche in Ihre Website. Entfernt Ihr Editor Formulare, verwenden Sie die wiederverwendbare URL. Es sind weder Programmierung noch eine WooCommerce-Integration nötig.",
+        "p1": "Ja. Legen Sie unter Dashboard → Zahlungslinks einen festen XMR-Betrag oder einen unterstützten Fiat-Richtwert fest und kopieren Sie dann eine HTML-Schaltfläche in Ihre Website. Akzeptiert Ihr Editor kein HTML, verwenden Sie die wiederverwendbare URL. Es sind weder Programmierung noch eine WooCommerce-Integration nötig.",
         "cta": "Anleitung zur Zahlungsschaltfläche lesen"
       },
       "vsQr": {
         "q": "Worin unterscheidet sich ein wiederverwendbarer Zahlungslink von einem Wallet-QR-Code?",
-        "p1": "Ein statischer Wallet-QR-Code erstellt nicht für jeden Kauf eine eigene Rechnung. Eine Zahlungsschaltfläche fordert beim Absenden eine neue Rechnung an. Das Öffnen der wiederverwendbaren URL zeigt zunächst eine Übersichtsseite; erst das Absenden dort fordert die Rechnung an. Die Rechnung hat eine eigene ID und einen eigenen Zahlungsstatus für den Abgleich.",
+        "p1": "Ein statischer Wallet-QR-Code erstellt nicht für jeden Kauf eine eigene Rechnung. Eine Zahlungsschaltfläche öffnet die Seite des wiederverwendbaren Zahlungslinks, die für jeden Kauf eine eigene Rechnung anfordert. Je nach Einstellungen des Links fordert die Seite die Rechnung automatisch an oder nachdem der Kunde „Weiter zur Zahlung“ auswählt. Die Rechnung hat eine eigene ID und einen eigenen Zahlungsstatus für den Abgleich.",
         "cta": "Anleitung zur Zahlungsschaltfläche lesen"
       },
       "repeat": {
@@ -1360,7 +1360,7 @@
       "confirmations": {
         "title": "Bestätigungen wählen",
         "p1": "Bei null Bestätigungen – dem Standard für Terminals – zeigt der Bildschirm „Zahlung gesehen“, sobald die Transaktion das Netzwerk erreicht. Sie ist dann noch in keinem Block. In seltenen Fällen wird eine so gesehene Transaktion nie bestätigt. XMR Checkout prüft eine Zahlung nicht mehr, sobald das Bestätigungsziel erreicht ist, und warnt Sie in diesem Fall daher nicht. Bei kleinen Alltagsbeträgen ist dieses Risiko meist vertretbar.",
-        "p2": "Legen Sie für größere Beträge eine oder mehrere Bestätigungen fest. Jede Bestätigung dauert etwa zwei Minuten. Der Bildschirm zeigt den Fortschritt, bis das Ziel erreicht ist."
+        "p2": "Verlangen Sie für größere Beträge mehr Bestätigungen. Jede Bestätigung dauert etwa zwei Minuten. Der Bildschirm zeigt den Fortschritt, bis das Ziel erreicht ist."
       },
       "security": {
         "title": "Den Link sicher aufbewahren",
@@ -1369,7 +1369,7 @@
       },
       "limits": {
         "title": "Adresskapazität",
-        "p1": "Jede Rechnung verwendet eine Ihrer 199 Rechnungsadressen. Nach dem Schließen einer Rechnung wird ihre Adresse drei Tage lang zurückgehalten, damit eine verspätete Zahlung nie einem anderen Kunden zugeordnet wird. Auch stornierte und unbezahlte Verkäufe belegen eine Adresse.",
+        "p1": "Jede Rechnung verwendet eine Ihrer 199 Rechnungsadressen. Nach dem Schließen einer Rechnung wird ihre Adresse drei Tage lang zurückgehalten, um das Risiko zu verringern, dass eine verspätete Zahlung einem anderen Kunden zugeordnet wird. Auch stornierte und unbezahlte Verkäufe belegen eine Adresse.",
         "p2": "Das erlaubt im Schnitt etwa 66 Verkäufe pro Tag. Das Terminal zeigt eine Warnung, wenn weniger als 20 Adressen frei sind. Das Dashboard zeigt, wann zurückgehaltene Adressen wieder verfügbar werden."
       }
     },
@@ -1445,7 +1445,7 @@
       "manage": {
         "title": "Künftige Käufe bearbeiten oder deaktivieren",
         "body": {
-          "1": "Öffnen Sie beim Link <strong>Einstellungen bearbeiten</strong>, um Produktdetails oder Betrag zu ändern. Gespeicherte Änderungen gelten für künftige Rechnungen, bestehende Rechnungen behalten ihre ursprünglichen Einstellungen. Die wiederverwendbare URL und die Schaltfläche verweisen weiterhin auf denselben Link.",
+          "1": "Öffnen Sie beim Link <strong>Verwalten</strong> und dann Einstellungen, um Produktdetails oder Betrag zu ändern. Gespeicherte Änderungen gelten für künftige Rechnungen, bestehende Rechnungen behalten ihre ursprünglichen Einstellungen. Die wiederverwendbare URL und die Schaltfläche verweisen weiterhin auf denselben Link.",
           "2": "Verwenden Sie <strong>Zahlungslink deaktivieren</strong>, um neue Käufe zu stoppen. Bestehende Rechnungen bleiben gültig und werden weiter erkannt. Aktivieren Sie einen Link über seine Einstellungen wieder, nachdem Sie eine nicht unterstützte gespeicherte Währung oder andere ungültige Einstellungen korrigiert haben."
         }
       },
@@ -1736,7 +1736,7 @@
       "r146": "Setzen Sie btcpay_checkout_style auf standard oder btcpay_classic.",
       "r147": "Gilt für gehostete Rechnungsseiten, die für die BTCPay-Kompatibilität ausgeliefert werden.",
       "r148": "amount_xmr oder amount_fiat + currency",
-      "r149": "confirmation_target (Standard 2, 0-10)",
+      "r149": "confirmation_target (0-10; standardmäßig gilt das Bestätigungsziel des Kontos, 1, sofern nicht geändert)",
       "r150": "checkout_continue_url (https-URL, optionale Weiter-Schaltfläche nach der Bestätigung)",
       "r151": "expires_at (ISO 8601)",
       "r152": "Die Fiat-Umrechnung ist unverbindlich und legt keinen Kurs fest.",
@@ -1901,7 +1901,7 @@
       "backToDocs": "Zurück zur API-Dokumentation",
       "navButtons": "Zahlungsschaltflächen",
       "buttonsTitle": "Ohne Programmierung: Zahlungsschaltflächen",
-      "buttonsBody": "Für eine unabhängige Website oder eine freiberufliche Dienstleistung legen Sie unter Dashboard → Zahlungslinks einen festen Betrag fest und kopieren dann ein HTML-Formular oder eine wiederverwendbare URL. Jede erfolgreiche Übermittlung erstellt eine eigene XMR-Rechnung. Ein Händler-API-Schlüssel gehört nicht in das Snippet.",
+      "buttonsBody": "Für eine unabhängige Website oder eine freiberufliche Dienstleistung legen Sie unter Dashboard → Zahlungslinks einen festen Betrag fest und kopieren dann eine HTML-Schaltfläche oder eine wiederverwendbare URL. Jede erfolgreiche Übermittlung erstellt eine eigene XMR-Rechnung. Ein Händler-API-Schlüssel gehört nicht in das Snippet.",
       "requestPath": "Anfrageweg",
       "flowTitle": "Konzeptioneller Ablauf",
       "whatToStore": "Was Sie speichern sollten",

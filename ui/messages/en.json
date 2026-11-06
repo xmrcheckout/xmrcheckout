@@ -800,7 +800,7 @@
     "namePlaceholder": "Front counter",
     "defaultCurrency": "Default currency",
     "expiryMinutes": "Invoice expiry (minutes)",
-    "zeroConfNote": "Zero confirmations shows “Payment seen” as soon as the payment reaches the network, usually within seconds. It is not yet in a block and could in rare cases fail to confirm. Use one or more confirmations (about two minutes each) for larger amounts.",
+    "zeroConfNote": "Zero confirmations shows “Payment seen” as soon as the payment reaches the network, usually within seconds. It is not yet in a block and could in rare cases fail to confirm. Require more confirmations (about two minutes each) for larger amounts.",
     "enabled": "Enabled",
     "lostDevice": "Lost the device or the link? Create a new link. The current link stops working immediately.",
     "newLink": "Create new link",
@@ -1005,7 +1005,7 @@
   "webhooks": {
     "history": {
       "title": "Webhook delivery attempts",
-      "intro": "Inspect responses. Failed deliveries are retried automatically for about a day, and you can redeliver them at any time.",
+      "intro": "Inspect responses. After the initial attempt, failed deliveries are retried automatically up to six times over about 33 hours, and you can redeliver them at any time.",
       "recordedCount": "{count} recorded",
       "needReviewCount": "{count} need review",
       "none": "No webhook calls recorded yet.",
@@ -1202,7 +1202,7 @@
       "inPerson": {
         "q": "Can I accept Monero in person at a shop or market stall?",
         "p1": "Yes. Create a terminal in the dashboard and open its link on a tablet or phone at your till. Type the amount, the customer scans the QR code with their wallet, and the screen shows “Payment seen” once the payment reaches the network, usually within seconds. Funds go directly to your wallet.",
-        "p2": "With zero confirmations the payment is not yet in a block and could in rare cases fail to confirm; require confirmations for larger amounts. Each sale uses one of your invoice addresses, and unpaid or cancelled sales hold theirs for three days.",
+        "p2": "With zero confirmations the payment is not yet in a block and could in rare cases fail to confirm; require more confirmations for larger amounts. Each sale uses one of your invoice addresses, and unpaid or cancelled sales hold theirs for three days.",
         "cta": "Set up a terminal"
       },
       "donations": {
@@ -1218,12 +1218,12 @@
       },
       "noWoo": {
         "q": "Can I add a payment button without WooCommerce?",
-        "p1": "Yes. Configure a fixed XMR amount or a supported fiat-reference amount in Dashboard → Payment links, then copy an HTML button into your website. If your editor removes forms, use the reusable URL. No programming or WooCommerce integration is required.",
+        "p1": "Yes. Configure a fixed XMR amount or a supported fiat-reference amount in Dashboard → Payment links, then copy an HTML button into your website. If your editor does not accept HTML, use the reusable URL. No programming or WooCommerce integration is required.",
         "cta": "Read the payment button guide"
       },
       "vsQr": {
         "q": "How is a reusable payment link different from a wallet QR code?",
-        "p1": "A static wallet QR code does not create a separate invoice for each purchase. A payment button requests a new invoice on submission. Opening the reusable URL first shows a review page; submitting there requests the invoice. The invoice has its own ID and payment status for reconciliation.",
+        "p1": "A static wallet QR code does not create a separate invoice for each purchase. A payment button opens the reusable payment-link page, which requests a separate invoice for each purchase. Depending on the link's settings, the page requests the invoice automatically or after the buyer selects Continue to payment. The invoice has its own ID and payment status for reconciliation.",
         "cta": "Read the payment button guide"
       },
       "repeat": {
@@ -1360,7 +1360,7 @@
       "confirmations": {
         "title": "Choose confirmations",
         "p1": "With zero confirmations, which is the default for terminals, the screen shows “Payment seen” as soon as the transaction reaches the network. It is not yet in a block. In rare cases a transaction seen this way never confirms. XMR Checkout stops checking a payment once the confirmation target is reached, so it will not warn you if that happens. For small, everyday amounts that risk is usually acceptable.",
-        "p2": "For larger amounts, set one or more confirmations. Each confirmation takes about two minutes. The screen shows progress until the target is reached."
+        "p2": "For larger amounts, require more confirmations. Each confirmation takes about two minutes. The screen shows progress until the target is reached."
       },
       "security": {
         "title": "Keep the link safe",
@@ -1369,7 +1369,7 @@
       },
       "limits": {
         "title": "Address capacity",
-        "p1": "Every invoice uses one of your 199 invoice addresses. After an invoice closes, its address is held for three days so a late payment is never credited to a different customer. Cancelled and unpaid sales hold an address too.",
+        "p1": "Every invoice uses one of your 199 invoice addresses. After an invoice closes, its address is held for three days to reduce the chance of a late payment being attributed to a different customer. Cancelled and unpaid sales hold an address too.",
         "p2": "This allows about 66 sales a day on average. The terminal shows a warning when fewer than 20 addresses are free. The dashboard shows when held addresses become available again."
       }
     },
@@ -1445,7 +1445,7 @@
       "manage": {
         "title": "Edit or disable future purchases",
         "body": {
-          "1": "Open <strong>Edit settings</strong> on the link to change its product details or amount. Saved changes apply to future invoices, while existing invoices keep their original settings. The reusable URL and button continue to identify the same link.",
+          "1": "Open <strong>Manage</strong>, then Settings on the link to change its product details or amount. Saved changes apply to future invoices, while existing invoices keep their original settings. The reusable URL and button continue to identify the same link.",
           "2": "Use <strong>Disable payment link</strong> to stop new purchases. Existing invoices remain valid and continue detection. Re-enable a link through its settings after correcting any unsupported saved currency or other invalid settings."
         }
       },
@@ -1736,7 +1736,7 @@
       "r146": "Set btcpay_checkout_style to standard or btcpay_classic.",
       "r147": "Applies to hosted invoice pages served for BTCPay compatibility.",
       "r148": "amount_xmr or amount_fiat + currency",
-      "r149": "confirmation_target (default 2, 0-10)",
+      "r149": "confirmation_target (0-10; defaults to the account's default target, 1 unless changed)",
       "r150": "checkout_continue_url (https URL, optional post-confirmation Continue button)",
       "r151": "expires_at (ISO 8601)",
       "r152": "Fiat conversion is non-binding and does not lock a rate.",
@@ -1901,7 +1901,7 @@
       "backToDocs": "Back to API docs",
       "navButtons": "Payment buttons",
       "buttonsTitle": "Without programming: payment buttons",
-      "buttonsBody": "For an independent website or freelance service, configure a fixed amount in Dashboard → Payment links, then copy an HTML form or reusable URL. Each successful submission creates a separate XMR invoice. No merchant API key belongs in the snippet.",
+      "buttonsBody": "For an independent website or freelance service, configure a fixed amount in Dashboard → Payment links, then copy an HTML button or reusable URL. Each successful submission creates a separate XMR invoice. No merchant API key belongs in the snippet.",
       "requestPath": "Request path",
       "flowTitle": "Conceptual flow",
       "whatToStore": "What to store",

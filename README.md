@@ -50,8 +50,10 @@ Configure the app with a wallet address and private view key only.
 
 The [XMR Checkout website](https://xmrcheckout.com) includes the [interactive tour](https://xmrcheckout.com/tour), [API documentation](https://xmrcheckout.com/docs), [integration recipes](https://xmrcheckout.com/docs/integrations), [guides](https://xmrcheckout.com/guides), and [FAQ](https://xmrcheckout.com/faq).
 
-The guides cover the two common paths into the project:
+The guides cover four common paths into the project:
 
+- [Monero Payment Buttons](https://xmrcheckout.com/guides/monero-payment-buttons): reusable payment links, website buttons, and invoice tracking without an API integration.
+- [In-Person Monero Checkout](https://xmrcheckout.com/guides/in-person-monero-checkout): terminal setup, customer payment screens, and confirmation policies.
 - [How to Run a Self-Hosted Monero Checkout](https://xmrcheckout.com/guides/self-hosted-monero-checkout): deployment, view-only wallet setup, invoice pages, and safe payment detection.
 - [Integrating the Monero Payment API and Webhooks](https://xmrcheckout.com/guides/monero-payment-api-webhooks): invoice creation, public status polling, webhook verification, and integration examples.
 

@@ -800,7 +800,7 @@
     "namePlaceholder": "Mostrador principal",
     "defaultCurrency": "Moneda predeterminada",
     "expiryMinutes": "Vencimiento de la factura (minutos)",
-    "zeroConfNote": "Con cero confirmaciones se muestra «Pago visto» en cuanto el pago llega a la red, normalmente en segundos. Todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse. Usa una o más confirmaciones (unos dos minutos cada una) para importes mayores.",
+    "zeroConfNote": "Con cero confirmaciones se muestra «Pago visto» en cuanto el pago llega a la red, normalmente en segundos. Todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse. Exige más confirmaciones (unos dos minutos cada una) para importes mayores.",
     "enabled": "Activado",
     "lostDevice": "¿Perdiste el dispositivo o el enlace? Crea un enlace nuevo. El enlace actual deja de funcionar de inmediato.",
     "newLink": "Crear enlace nuevo",
@@ -1005,7 +1005,7 @@
   "webhooks": {
     "history": {
       "title": "Intentos de envío de webhooks",
-      "intro": "Revisa las respuestas. Los envíos fallidos se reintentan automáticamente durante aproximadamente un día, y puedes reenviarlos en cualquier momento.",
+      "intro": "Revisa las respuestas. Tras el primer intento, los envíos fallidos se reintentan automáticamente hasta seis veces durante unas 33 horas, y puedes reenviarlos en cualquier momento.",
       "recordedCount": "{count} registrados",
       "needReviewCount": "{count} requieren revisión",
       "none": "Todavía no hay llamadas de webhook registradas.",
@@ -1202,7 +1202,7 @@
       "inPerson": {
         "q": "¿Puedo aceptar Monero en persona en una tienda o un puesto de mercado?",
         "p1": "Sí. Crea un terminal en el panel y abre su enlace en una tableta o un teléfono en tu caja. Escribe el importe, el cliente escanea el código QR con su billetera y la pantalla muestra «Pago visto» en cuanto el pago llega a la red, normalmente en segundos. Los fondos van directamente a tu billetera.",
-        "p2": "Con cero confirmaciones el pago todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse; exige confirmaciones para importes mayores. Cada venta usa una de tus direcciones de factura, y las ventas sin pagar o canceladas reservan la suya durante tres días.",
+        "p2": "Con cero confirmaciones el pago todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse; exige más confirmaciones para importes mayores. Cada venta usa una de tus direcciones de factura, y las ventas sin pagar o canceladas reservan la suya durante tres días.",
         "cta": "Configura un terminal"
       },
       "donations": {
@@ -1218,12 +1218,12 @@
       },
       "noWoo": {
         "q": "¿Puedo añadir un botón de pago sin WooCommerce?",
-        "p1": "Sí. Configura un importe fijo en XMR o un importe de referencia en moneda fiduciaria admitida en Panel → Enlaces de pago y copia un botón HTML en tu sitio web. Si tu editor elimina los formularios, usa la URL reutilizable. No hace falta programar ni integrar WooCommerce.",
+        "p1": "Sí. Configura un importe fijo en XMR o un importe de referencia en moneda fiduciaria admitida en Panel → Enlaces de pago y copia un botón HTML en tu sitio web. Si tu editor no admite HTML, usa la URL reutilizable. No hace falta programar ni integrar WooCommerce.",
         "cta": "Lee la guía de botones de pago"
       },
       "vsQr": {
         "q": "¿En qué se diferencia un enlace de pago reutilizable del código QR de una billetera?",
-        "p1": "Un código QR estático de billetera no crea una factura distinta para cada compra. Un botón de pago solicita una factura nueva al enviarse. Al abrir la URL reutilizable primero se muestra una página de revisión; al enviarla se solicita la factura. La factura tiene su propio ID y su propio estado de pago para la conciliación.",
+        "p1": "Un código QR estático de billetera no crea una factura distinta para cada compra. Un botón de pago abre la página del enlace de pago reutilizable, que solicita una factura distinta para cada compra. Según la configuración del enlace, la página solicita la factura automáticamente o cuando el comprador selecciona Continuar al pago. La factura tiene su propio ID y su propio estado de pago para la conciliación.",
         "cta": "Lee la guía de botones de pago"
       },
       "repeat": {
@@ -1360,7 +1360,7 @@
       "confirmations": {
         "title": "Elige las confirmaciones",
         "p1": "Con cero confirmaciones, el valor predeterminado de los terminales, la pantalla muestra «Pago visto» en cuanto la transacción llega a la red. Todavía no está en un bloque. En casos poco frecuentes, una transacción vista así nunca se confirma. XMR Checkout deja de comprobar un pago en cuanto se alcanza el objetivo de confirmaciones, así que no te avisará si eso ocurre. Para importes pequeños y cotidianos, ese riesgo suele ser aceptable.",
-        "p2": "Para importes mayores, define una o más confirmaciones. Cada confirmación tarda unos dos minutos. La pantalla muestra el avance hasta alcanzar el objetivo."
+        "p2": "Para importes mayores, exige más confirmaciones. Cada confirmación tarda unos dos minutos. La pantalla muestra el avance hasta alcanzar el objetivo."
       },
       "security": {
         "title": "Mantén seguro el enlace",
@@ -1369,7 +1369,7 @@
       },
       "limits": {
         "title": "Capacidad de direcciones",
-        "p1": "Cada factura usa una de tus 199 direcciones de factura. Cuando una factura se cierra, su dirección se reserva durante tres días para que un pago tardío nunca se atribuya a otro cliente. Las ventas canceladas y sin pagar también reservan una dirección.",
+        "p1": "Cada factura usa una de tus 199 direcciones de factura. Cuando una factura se cierra, su dirección se reserva durante tres días para reducir la posibilidad de que un pago tardío se atribuya a otro cliente. Las ventas canceladas y sin pagar también reservan una dirección.",
         "p2": "Esto permite unas 66 ventas al día de media. El terminal muestra un aviso cuando quedan menos de 20 direcciones libres. El panel muestra cuándo vuelven a estar disponibles las direcciones reservadas."
       }
     },
@@ -1445,7 +1445,7 @@
       "manage": {
         "title": "Edita o desactiva las compras futuras",
         "body": {
-          "1": "Abre <strong>Editar la configuración</strong> en el enlace para cambiar los datos del producto o el importe. Los cambios guardados se aplican a las facturas futuras, mientras que las existentes conservan su configuración original. La URL reutilizable y el botón siguen identificando el mismo enlace.",
+          "1": "Abre <strong>Gestionar</strong> y luego Configuración en el enlace para cambiar los datos del producto o el importe. Los cambios guardados se aplican a las facturas futuras, mientras que las existentes conservan su configuración original. La URL reutilizable y el botón siguen identificando el mismo enlace.",
           "2": "Usa <strong>Desactivar enlace de pago</strong> para detener las compras nuevas. Las facturas existentes siguen siendo válidas y se siguen detectando. Vuelve a activar un enlace desde su configuración después de corregir cualquier moneda guardada no admitida u otro ajuste no válido."
         }
       },
@@ -1736,7 +1736,7 @@
       "r146": "Define btcpay_checkout_style como standard o btcpay_classic.",
       "r147": "Se aplica a las páginas de factura alojadas que se sirven por compatibilidad con BTCPay.",
       "r148": "amount_xmr o amount_fiat + currency",
-      "r149": "confirmation_target (por defecto 2, 0-10)",
+      "r149": "confirmation_target (0-10; usa por defecto el objetivo de la cuenta, 1 salvo que lo cambies)",
       "r150": "checkout_continue_url (URL https; botón Continuar opcional tras la confirmación)",
       "r151": "expires_at (ISO 8601)",
       "r152": "La conversión desde moneda fiduciaria no es vinculante y no bloquea ninguna tasa.",
@@ -1901,7 +1901,7 @@
       "backToDocs": "Volver a la documentación de la API",
       "navButtons": "Botones de pago",
       "buttonsTitle": "Sin programar: botones de pago",
-      "buttonsBody": "Para un sitio web independiente o un servicio como autónomo, configura un importe fijo en Panel → Enlaces de pago y copia un formulario HTML o una URL reutilizable. Cada envío correcto crea una factura en XMR independiente. La clave de API del comercio no debe ir en el fragmento.",
+      "buttonsBody": "Para un sitio web independiente o un servicio como autónomo, configura un importe fijo en Panel → Enlaces de pago y copia un botón HTML o una URL reutilizable. Cada envío correcto crea una factura en XMR independiente. La clave de API del comercio no debe ir en el fragmento.",
       "requestPath": "Recorrido de la solicitud",
       "flowTitle": "Flujo conceptual",
       "whatToStore": "Qué guardar",

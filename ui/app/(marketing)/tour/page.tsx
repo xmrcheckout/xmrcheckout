@@ -13,6 +13,7 @@ import TourInvoicePreview from "../../../components/tour-invoice-preview";
 import WebhookHistoryPanel from "../../../components/webhook-history-panel";
 import WebhookSection from "../../../components/webhook-section";
 import WorkspaceNav from "../../../components/workspace-nav";
+import { FIAT_CURRENCY_SUGGESTIONS } from "../../../lib/fiat-currencies";
 import { invoiceStatusName } from "../../../lib/invoice-status";
 import { rich } from "../../../lib/i18n/rich";
 import { getI18n } from "../../../lib/i18n/server";
@@ -296,12 +297,12 @@ const buildNowFixture = (t: Translate) => {
     },
   ];
   const paymentLinkUsage = {
-    remaining: 47,
+    remaining: 7,
     used: 3,
-    daily_limit: 50,
+    daily_limit: 10,
     window_hours: 24,
     retrieved_at: iso(-60 * 1000),
-    supported_currencies: ["USD", "EUR", "GBP"],
+    supported_currencies: FIAT_CURRENCY_SUGGESTIONS,
   };
   const terminals: TerminalData[] = [
     {
@@ -327,7 +328,7 @@ const buildNowFixture = (t: Translate) => {
   ];
 
   return {
-    defaultConfirmationTarget: 2,
+    defaultConfirmationTarget: 1,
     invoices,
     webhooks,
     deliveries,

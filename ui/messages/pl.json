@@ -812,7 +812,7 @@
     "namePlaceholder": "Kasa przy wejściu",
     "defaultCurrency": "Domyślna waluta",
     "expiryMinutes": "Ważność prośby o płatność (minuty)",
-    "zeroConfNote": "Przy zerze potwierdzeń ekran pokazuje „Płatność zauważona”, gdy tylko płatność dotrze do sieci, zwykle w ciągu kilku sekund. Nie jest ona jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona. Przy wyższych kwotach wymagaj co najmniej jednego potwierdzenia (każde trwa około dwóch minut).",
+    "zeroConfNote": "Przy zerze potwierdzeń ekran pokazuje „Płatność zauważona”, gdy tylko płatność dotrze do sieci, zwykle w ciągu kilku sekund. Nie jest ona jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona. Przy wyższych kwotach wymagaj większej liczby potwierdzeń (każde trwa około dwóch minut).",
     "enabled": "Włączony",
     "lostDevice": "Urządzenie lub link zginęły? Utwórz nowy link. Bieżący link natychmiast przestanie działać.",
     "newLink": "Utwórz nowy link",
@@ -1023,7 +1023,7 @@
   "webhooks": {
     "history": {
       "title": "Próby dostarczenia webhooków",
-      "intro": "Sprawdzaj odpowiedzi. Nieudane dostarczenia są automatycznie ponawiane przez około dobę, a w każdej chwili możesz dostarczyć je ponownie.",
+      "intro": "Sprawdzaj odpowiedzi. Po pierwszej próbie nieudane dostarczenia są automatycznie ponawiane do sześciu razy w ciągu około 33 godzin, a w każdej chwili możesz dostarczyć je ponownie.",
       "recordedCount": "Zarejestrowane: {count}",
       "needReviewCount": "Do przeglądu: {count}",
       "none": "Nie zarejestrowano jeszcze wywołań webhooków.",
@@ -1220,7 +1220,7 @@
       "inPerson": {
         "q": "Czy mogę przyjmować Monero na miejscu, w sklepie lub na stoisku?",
         "p1": "Tak. Utwórz terminal w panelu i otwórz jego link na tablecie lub telefonie przy kasie. Wpisz kwotę, klient skanuje kod QR swoim portfelem, a ekran pokazuje „Płatność zauważona”, gdy płatność dotrze do sieci, zwykle w ciągu kilku sekund. Środki trafiają bezpośrednio do twojego portfela.",
-        "p2": "Przy zerze potwierdzeń płatność nie jest jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona; przy wyższych kwotach wymagaj potwierdzeń. Każda sprzedaż używa jednego z twoich adresów płatności, a nieopłacone lub anulowane sprzedaże blokują swój adres na trzy dni.",
+        "p2": "Przy zerze potwierdzeń płatność nie jest jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona; przy wyższych kwotach wymagaj większej liczby potwierdzeń. Każda sprzedaż używa jednego z twoich adresów płatności, a nieopłacone lub anulowane sprzedaże blokują swój adres na trzy dni.",
         "cta": "Skonfiguruj terminal"
       },
       "donations": {
@@ -1236,12 +1236,12 @@
       },
       "noWoo": {
         "q": "Czy mogę dodać przycisk płatności bez WooCommerce?",
-        "p1": "Tak. Ustaw stałą kwotę w XMR lub kwotę orientacyjną w obsługiwanej walucie fiat w Panel → Linki płatności, a potem skopiuj przycisk HTML na swoją stronę. Jeśli edytor usuwa formularze, użyj adresu wielokrotnego użytku. Nie potrzeba programowania ani integracji z WooCommerce.",
+        "p1": "Tak. Ustaw stałą kwotę w XMR lub kwotę orientacyjną w obsługiwanej walucie fiat w Panel → Linki płatności, a potem skopiuj przycisk HTML na swoją stronę. Jeśli edytor nie obsługuje HTML, użyj adresu wielokrotnego użytku. Nie potrzeba programowania ani integracji z WooCommerce.",
         "cta": "Przeczytaj poradnik przycisku płatności"
       },
       "vsQr": {
         "q": "Czym link płatności wielokrotnego użytku różni się od kodu QR portfela?",
-        "p1": "Statyczny kod QR portfela nie tworzy osobnej prośby o płatność dla każdego zakupu. Przycisk płatności tworzy nową prośbę przy każdym wysłaniu. Otwarcie adresu wielokrotnego użytku najpierw pokazuje stronę podsumowania; dopiero wysłanie z niej tworzy prośbę o płatność. Prośba ma własny identyfikator i status płatności, co ułatwia uzgadnianie.",
+        "p1": "Statyczny kod QR portfela nie tworzy osobnej prośby o płatność dla każdego zakupu. Przycisk płatności otwiera stronę linku płatności wielokrotnego użytku, która tworzy osobną prośbę o płatność dla każdego zakupu. Zależnie od ustawień linku strona tworzy prośbę automatycznie lub gdy klient wybierze Przejdź do płatności. Prośba ma własny identyfikator i status płatności, co ułatwia uzgadnianie.",
         "cta": "Przeczytaj poradnik przycisku płatności"
       },
       "repeat": {
@@ -1380,7 +1380,7 @@
       "confirmations": {
         "title": "Wybierz liczbę potwierdzeń",
         "p1": "Przy zerze potwierdzeń, czyli domyślnie dla terminali, ekran pokazuje „Płatność zauważona”, gdy tylko transakcja dotrze do sieci. Nie jest ona jeszcze w bloku. W rzadkich przypadkach tak zauważona transakcja nigdy nie zostaje potwierdzona. XMR Checkout przestaje sprawdzać płatność, gdy tylko zostanie osiągnięta wymagana liczba potwierdzeń, więc w takiej sytuacji nie dostaniesz ostrzeżenia. Przy małych, codziennych kwotach to ryzyko jest zwykle akceptowalne.",
-        "p2": "Przy wyższych kwotach ustaw co najmniej jedno potwierdzenie. Każde potwierdzenie trwa około dwóch minut. Ekran pokazuje postęp, dopóki wymagana liczba nie zostanie osiągnięta."
+        "p2": "Przy wyższych kwotach wymagaj większej liczby potwierdzeń. Każde potwierdzenie trwa około dwóch minut. Ekran pokazuje postęp, dopóki wymagana liczba nie zostanie osiągnięta."
       },
       "security": {
         "title": "Chroń link",
@@ -1389,7 +1389,7 @@
       },
       "limits": {
         "title": "Pula adresów",
-        "p1": "Każda prośba o płatność używa jednego z twoich 199 adresów płatności. Po zamknięciu prośby jej adres jest blokowany na trzy dni, aby spóźniona płatność nigdy nie została przypisana innemu klientowi. Anulowane i nieopłacone sprzedaże również blokują adres.",
+        "p1": "Każda prośba o płatność używa jednego z twoich 199 adresów płatności. Po zamknięciu prośby jej adres jest blokowany na trzy dni, aby zmniejszyć ryzyko przypisania spóźnionej płatności innemu klientowi. Anulowane i nieopłacone sprzedaże również blokują adres.",
         "p2": "Daje to średnio około 66 sprzedaży dziennie. Terminal wyświetla ostrzeżenie, gdy wolnych zostaje mniej niż 20 adresów. Panel pokazuje, kiedy zablokowane adresy znów będą dostępne."
       }
     },
@@ -1465,7 +1465,7 @@
       "manage": {
         "title": "Edytuj lub wyłącz przyszłe zakupy",
         "body": {
-          "1": "Otwórz <strong>Edytuj ustawienia</strong> przy linku, aby zmienić szczegóły produktu lub kwotę. Zapisane zmiany dotyczą przyszłych próśb o płatność, a istniejące zachowują pierwotne ustawienia. Adres wielokrotnego użytku i przycisk nadal wskazują ten sam link.",
+          "1": "Otwórz <strong>Zarządzaj</strong>, a następnie Ustawienia przy linku, aby zmienić szczegóły produktu lub kwotę. Zapisane zmiany dotyczą przyszłych próśb o płatność, a istniejące zachowują pierwotne ustawienia. Adres wielokrotnego użytku i przycisk nadal wskazują ten sam link.",
           "2": "Użyj <strong>Wyłącz link płatności</strong>, aby zablokować nowe zakupy. Istniejące prośby o płatność pozostają ważne, a ich wykrywanie trwa nadal. Link możesz ponownie włączyć w jego ustawieniach po poprawieniu nieobsługiwanej zapisanej waluty lub innych nieprawidłowych ustawień."
         }
       },
@@ -1756,7 +1756,7 @@
       "r146": "Ustaw btcpay_checkout_style na standard lub btcpay_classic.",
       "r147": "Dotyczy hostowanych stron próśb o płatność serwowanych na potrzeby zgodności z BTCPay.",
       "r148": "amount_xmr lub amount_fiat + currency",
-      "r149": "confirmation_target (domyślnie 2, 0-10)",
+      "r149": "confirmation_target (0-10; domyślnie używa ustawienia konta, 1, o ile go nie zmieniono)",
       "r150": "checkout_continue_url (adres https, opcjonalny przycisk Kontynuuj po potwierdzeniu)",
       "r151": "expires_at (ISO 8601)",
       "r152": "Przeliczenie z waluty fiat jest niewiążące i nie blokuje kursu.",
@@ -1925,7 +1925,7 @@
       "backToDocs": "Wróć do dokumentacji API",
       "navButtons": "Przyciski płatności",
       "buttonsTitle": "Bez programowania: przyciski płatności",
-      "buttonsBody": "Na niezależnej stronie lub przy usługach freelance ustaw stałą kwotę w Panel → Linki płatności, a następnie skopiuj formularz HTML lub adres wielokrotnego użytku. Każde udane wysłanie tworzy osobną prośbę o płatność w XMR. Klucz API sprzedawcy nie należy do tego fragmentu.",
+      "buttonsBody": "Na niezależnej stronie lub przy usługach freelance ustaw stałą kwotę w Panel → Linki płatności, a następnie skopiuj przycisk HTML lub adres wielokrotnego użytku. Każde udane wysłanie tworzy osobną prośbę o płatność w XMR. Klucz API sprzedawcy nie należy do tego fragmentu.",
       "requestPath": "Ścieżka wywołania",
       "flowTitle": "Przepływ koncepcyjny",
       "whatToStore": "Co zapisać",

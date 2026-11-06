@@ -800,7 +800,7 @@
     "namePlaceholder": "Comptoir principal",
     "defaultCurrency": "Devise par défaut",
     "expiryMinutes": "Expiration de la facture (minutes)",
-    "zeroConfNote": "Zéro confirmation affiche « Paiement repéré » dès que le paiement atteint le réseau, généralement en quelques secondes. Il n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé. Utilisez une ou plusieurs confirmations (environ deux minutes chacune) pour les montants plus importants.",
+    "zeroConfNote": "Zéro confirmation affiche « Paiement repéré » dès que le paiement atteint le réseau, généralement en quelques secondes. Il n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé. Exigez davantage de confirmations (environ deux minutes chacune) pour les montants plus importants.",
     "enabled": "Activé",
     "lostDevice": "Appareil ou lien perdu ? Créez un nouveau lien. Le lien actuel cesse immédiatement de fonctionner.",
     "newLink": "Créer un nouveau lien",
@@ -1005,7 +1005,7 @@
   "webhooks": {
     "history": {
       "title": "Tentatives d’envoi de webhooks",
-      "intro": "Examinez les réponses. Les envois échoués sont relancés automatiquement pendant environ un jour, et vous pouvez les renvoyer à tout moment.",
+      "intro": "Examinez les réponses. Après la tentative initiale, les envois échoués sont relancés automatiquement jusqu’à six fois sur environ 33 heures, et vous pouvez les renvoyer à tout moment.",
       "recordedCount": "{count} enregistrés",
       "needReviewCount": "{count} à examiner",
       "none": "Aucun appel de webhook enregistré pour l’instant.",
@@ -1202,7 +1202,7 @@
       "inPerson": {
         "q": "Puis-je accepter Monero en personne, dans une boutique ou sur un stand de marché ?",
         "p1": "Oui. Créez un terminal dans le tableau de bord et ouvrez son lien sur une tablette ou un téléphone à votre caisse. Saisissez le montant, le client scanne le QR code avec son portefeuille, et l’écran affiche « Paiement repéré » dès que le paiement atteint le réseau, généralement en quelques secondes. Les fonds vont directement à votre portefeuille.",
-        "p2": "Avec zéro confirmation, le paiement n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé ; exigez des confirmations pour les montants plus importants. Chaque vente utilise l’une de vos adresses de facture, et les ventes impayées ou annulées réservent la leur pendant trois jours.",
+        "p2": "Avec zéro confirmation, le paiement n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé ; exigez davantage de confirmations pour les montants plus importants. Chaque vente utilise l’une de vos adresses de facture, et les ventes impayées ou annulées réservent la leur pendant trois jours.",
         "cta": "Configurer un terminal"
       },
       "donations": {
@@ -1218,12 +1218,12 @@
       },
       "noWoo": {
         "q": "Puis-je ajouter un bouton de paiement sans WooCommerce ?",
-        "p1": "Oui. Configurez un montant fixe en XMR ou un montant de référence en monnaie fiduciaire prise en charge dans Tableau de bord → Liens de paiement, puis copiez un bouton HTML sur votre site web. Si votre éditeur supprime les formulaires, utilisez l’URL réutilisable. Aucune programmation ni intégration WooCommerce n’est nécessaire.",
+        "p1": "Oui. Configurez un montant fixe en XMR ou un montant de référence en monnaie fiduciaire prise en charge dans Tableau de bord → Liens de paiement, puis copiez un bouton HTML sur votre site web. Si votre éditeur n’accepte pas le HTML, utilisez l’URL réutilisable. Aucune programmation ni intégration WooCommerce n’est nécessaire.",
         "cta": "Lire le guide du bouton de paiement"
       },
       "vsQr": {
         "q": "En quoi un lien de paiement réutilisable diffère-t-il du QR code d’un portefeuille ?",
-        "p1": "Un QR code de portefeuille statique ne crée pas de facture distincte pour chaque achat. Un bouton de paiement demande une nouvelle facture lors de l’envoi. L’ouverture de l’URL réutilisable affiche d’abord une page de vérification ; c’est l’envoi depuis cette page qui demande la facture. La facture possède son propre identifiant et son propre statut de paiement pour le rapprochement.",
+        "p1": "Un QR code de portefeuille statique ne crée pas de facture distincte pour chaque achat. Un bouton de paiement ouvre la page du lien de paiement réutilisable, qui demande une facture distincte pour chaque achat. Selon les paramètres du lien, la page demande la facture automatiquement ou lorsque le client sélectionne « Continuer vers le paiement ». La facture possède son propre identifiant et son propre statut de paiement pour le rapprochement.",
         "cta": "Lire le guide du bouton de paiement"
       },
       "repeat": {
@@ -1360,7 +1360,7 @@
       "confirmations": {
         "title": "Choisir les confirmations",
         "p1": "Avec zéro confirmation, la valeur par défaut des terminaux, l’écran affiche « Paiement repéré » dès que la transaction atteint le réseau. Elle n’est pas encore incluse dans un bloc. Dans de rares cas, une transaction ainsi repérée n’est jamais confirmée. XMR Checkout cesse de vérifier un paiement dès que l’objectif de confirmations est atteint, et ne vous avertira donc pas si cela se produit. Pour de petits montants du quotidien, ce risque est généralement acceptable.",
-        "p2": "Pour les montants plus importants, définissez une ou plusieurs confirmations. Chaque confirmation prend environ deux minutes. L’écran affiche la progression jusqu’à ce que l’objectif soit atteint."
+        "p2": "Pour les montants plus importants, exigez davantage de confirmations. Chaque confirmation prend environ deux minutes. L’écran affiche la progression jusqu’à ce que l’objectif soit atteint."
       },
       "security": {
         "title": "Protéger le lien",
@@ -1369,7 +1369,7 @@
       },
       "limits": {
         "title": "Capacité d’adresses",
-        "p1": "Chaque facture utilise l’une de vos 199 adresses de facture. Après la clôture d’une facture, son adresse est réservée pendant trois jours afin qu’un paiement tardif ne soit jamais attribué à un autre client. Les ventes annulées et impayées réservent aussi une adresse.",
+        "p1": "Chaque facture utilise l’une de vos 199 adresses de facture. Après la clôture d’une facture, son adresse est réservée pendant trois jours afin de réduire le risque qu’un paiement tardif soit attribué à un autre client. Les ventes annulées et impayées réservent aussi une adresse.",
         "p2": "Cela permet en moyenne environ 66 ventes par jour. Le terminal affiche un avertissement lorsqu’il reste moins de 20 adresses libres. Le tableau de bord indique quand les adresses réservées redeviennent disponibles."
       }
     },
@@ -1445,7 +1445,7 @@
       "manage": {
         "title": "Modifier ou désactiver les futurs achats",
         "body": {
-          "1": "Ouvrez <strong>Modifier les paramètres</strong> sur le lien pour changer les détails du produit ou le montant. Les modifications enregistrées s’appliquent aux factures futures, tandis que les factures existantes conservent leurs paramètres d’origine. L’URL réutilisable et le bouton continuent d’identifier le même lien.",
+          "1": "Ouvrez <strong>Gérer</strong>, puis Paramètres sur le lien pour changer les détails du produit ou le montant. Les modifications enregistrées s’appliquent aux factures futures, tandis que les factures existantes conservent leurs paramètres d’origine. L’URL réutilisable et le bouton continuent d’identifier le même lien.",
           "2": "Utilisez <strong>Désactiver le lien de paiement</strong> pour arrêter les nouveaux achats. Les factures existantes restent valides et leur détection se poursuit. Réactivez un lien depuis ses paramètres après avoir corrigé une devise enregistrée non prise en charge ou tout autre paramètre invalide."
         }
       },
@@ -1736,7 +1736,7 @@
       "r146": "Définissez btcpay_checkout_style sur standard ou btcpay_classic.",
       "r147": "S’applique aux pages de facture hébergées servies pour la compatibilité BTCPay.",
       "r148": "amount_xmr ou amount_fiat + currency",
-      "r149": "confirmation_target (2 par défaut, 0-10)",
+      "r149": "confirmation_target (0-10 ; utilise par défaut l’objectif du compte, 1 sauf modification)",
       "r150": "checkout_continue_url (URL https, bouton Continuer facultatif après confirmation)",
       "r151": "expires_at (ISO 8601)",
       "r152": "La conversion de la monnaie fiduciaire n’est pas contraignante et ne bloque aucun cours.",
@@ -1901,7 +1901,7 @@
       "backToDocs": "Retour à la documentation de l’API",
       "navButtons": "Boutons de paiement",
       "buttonsTitle": "Sans programmation : les boutons de paiement",
-      "buttonsBody": "Pour un site web indépendant ou un service en freelance, définissez un montant fixe dans Tableau de bord → Liens de paiement, puis copiez un formulaire HTML ou une URL réutilisable. Chaque envoi réussi crée une facture XMR distincte. Aucune clé API de commerçant n’a sa place dans l’extrait.",
+      "buttonsBody": "Pour un site web indépendant ou un service en freelance, définissez un montant fixe dans Tableau de bord → Liens de paiement, puis copiez un bouton HTML ou une URL réutilisable. Chaque envoi réussi crée une facture XMR distincte. Aucune clé API de commerçant n’a sa place dans l’extrait.",
       "requestPath": "Parcours de la requête",
       "flowTitle": "Flux conceptuel",
       "whatToStore": "Ce qu’il faut enregistrer",

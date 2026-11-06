@@ -812,7 +812,7 @@
     "namePlaceholder": "Přední pult",
     "defaultCurrency": "Výchozí měna",
     "expiryMinutes": "Platnost platební výzvy (minuty)",
-    "zeroConfNote": "Při nule potvrzení se „Platba zachycena“ zobrazí, jakmile platba dorazí do sítě, obvykle během několika sekund. Platba ještě není v bloku a ve vzácných případech nemusí být potvrzena. U vyšších částek použijte jedno nebo více potvrzení (každé zhruba dvě minuty).",
+    "zeroConfNote": "Při nule potvrzení se „Platba zachycena“ zobrazí, jakmile platba dorazí do sítě, obvykle během několika sekund. Platba ještě není v bloku a ve vzácných případech nemusí být potvrzena. U vyšších částek vyžadujte více potvrzení (každé zhruba dvě minuty).",
     "enabled": "Povoleno",
     "lostDevice": "Ztracené zařízení nebo odkaz? Vytvořte nový odkaz. Současný odkaz okamžitě přestane fungovat.",
     "newLink": "Vytvořit nový odkaz",
@@ -1023,7 +1023,7 @@
   "webhooks": {
     "history": {
       "title": "Pokusy o doručení webhooků",
-      "intro": "Prohlédněte si odpovědi. Neúspěšná doručení se automaticky opakují přibližně jeden den a kdykoli je můžete doručit znovu.",
+      "intro": "Prohlédněte si odpovědi. Po prvním pokusu se neúspěšná doručení automaticky opakují až šestkrát během přibližně 33 hodin a kdykoli je můžete doručit znovu.",
       "recordedCount": "Zaznamenáno: {count}",
       "needReviewCount": "Ke kontrole: {count}",
       "none": "Zatím nejsou zaznamenána žádná volání webhooků.",
@@ -1220,7 +1220,7 @@
       "inPerson": {
         "q": "Mohu přijímat Monero osobně v obchodě nebo na stánku?",
         "p1": "Ano. Vytvořte v panelu terminál a otevřete jeho odkaz na tabletu nebo telefonu u pokladny. Zadejte částku, zákazník naskenuje QR kód svou peněženkou a jakmile platba dorazí do sítě, obvykle během několika sekund, zobrazí se „Platba zachycena“. Prostředky jdou přímo do vaší peněženky.",
-        "p2": "Při nule potvrzení platba ještě není v bloku a ve vzácných případech nemusí být potvrzena; u vyšších částek vyžadujte potvrzení. Každý prodej využívá jednu z vašich adres pro platební výzvy a nezaplacené nebo zrušené prodeje drží svou adresu tři dny.",
+        "p2": "Při nule potvrzení platba ještě není v bloku a ve vzácných případech nemusí být potvrzena; u vyšších částek vyžadujte více potvrzení. Každý prodej využívá jednu z vašich adres pro platební výzvy a nezaplacené nebo zrušené prodeje drží svou adresu tři dny.",
         "cta": "Nastavit terminál"
       },
       "donations": {
@@ -1236,12 +1236,12 @@
       },
       "noWoo": {
         "q": "Mohu přidat platební tlačítko bez WooCommerce?",
-        "p1": "Ano. Nastavte pevnou částku v XMR nebo částku v podporované orientační fiat měně v Panel → Platební odkazy a pak zkopírujte HTML tlačítko na svůj web. Pokud váš editor odstraňuje formuláře, použijte opakovaně použitelnou URL. Není potřeba programování ani integrace s WooCommerce.",
+        "p1": "Ano. Nastavte pevnou částku v XMR nebo částku v podporované orientační fiat měně v Panel → Platební odkazy a pak zkopírujte HTML tlačítko na svůj web. Pokud váš editor nepodporuje HTML, použijte opakovaně použitelnou URL. Není potřeba programování ani integrace s WooCommerce.",
         "cta": "Přečíst návod k platebnímu tlačítku"
       },
       "vsQr": {
         "q": "Čím se opakovaně použitelný platební odkaz liší od QR kódu peněženky?",
-        "p1": "Statický QR kód peněženky nevytváří pro každý nákup samostatnou platební výzvu. Platební tlačítko si při odeslání vyžádá novou platební výzvu. Otevření opakovaně použitelné URL nejprve zobrazí stránku s kontrolou; teprve odeslání tam platební výzvu vyžádá. Platební výzva má vlastní ID a stav platby pro párování plateb.",
+        "p1": "Statický QR kód peněženky nevytváří pro každý nákup samostatnou platební výzvu. Platební tlačítko otevře stránku opakovaně použitelného platebního odkazu, která pro každý nákup vyžádá samostatnou platební výzvu. Podle nastavení odkazu stránka vyžádá výzvu automaticky, nebo když zákazník zvolí Pokračovat k platbě. Platební výzva má vlastní ID a stav platby pro párování plateb.",
         "cta": "Přečíst návod k platebnímu tlačítku"
       },
       "repeat": {
@@ -1380,7 +1380,7 @@
       "confirmations": {
         "title": "Volba počtu potvrzení",
         "p1": "Při nule potvrzení, což je výchozí nastavení terminálů, se „Platba zachycena“ zobrazí, jakmile transakce dorazí do sítě. Ještě není v bloku. Ve vzácných případech se takto zachycená transakce nikdy nepotvrdí. XMR Checkout přestane platbu kontrolovat, jakmile je dosaženo požadovaného počtu potvrzení, takže vás v takovém případě neupozorní. U malých běžných částek je toto riziko obvykle přijatelné.",
-        "p2": "U vyšších částek nastavte jedno nebo více potvrzení. Každé potvrzení trvá zhruba dvě minuty. Obrazovka zobrazuje průběh, dokud není dosaženo požadovaného počtu."
+        "p2": "U vyšších částek vyžadujte více potvrzení. Každé potvrzení trvá zhruba dvě minuty. Obrazovka zobrazuje průběh, dokud není dosaženo požadovaného počtu."
       },
       "security": {
         "title": "Chraňte odkaz",
@@ -1389,7 +1389,7 @@
       },
       "limits": {
         "title": "Zásoba adres",
-        "p1": "Každá platební výzva využívá jednu z vašich 199 adres pro platební výzvy. Po uzavření platební výzvy je její adresa tři dny držena, aby pozdní platba nikdy nebyla přiřazena jinému zákazníkovi. Adresu drží i zrušené a nezaplacené prodeje.",
+        "p1": "Každá platební výzva využívá jednu z vašich 199 adres pro platební výzvy. Po uzavření platební výzvy je její adresa tři dny držena, aby se snížilo riziko přiřazení pozdní platby jinému zákazníkovi. Adresu drží i zrušené a nezaplacené prodeje.",
         "p2": "To v průměru umožňuje zhruba 66 prodejů denně. Terminál zobrazí upozornění, když je volných méně než 20 adres. Panel ukazuje, kdy budou držené adresy znovu k dispozici."
       }
     },
@@ -1465,7 +1465,7 @@
       "manage": {
         "title": "Úprava nebo vypnutí budoucích nákupů",
         "body": {
-          "1": "U odkazu otevřete <strong>Upravit nastavení</strong> a změňte údaje o produktu nebo částku. Uložené změny platí pro budoucí platební výzvy, stávající platební výzvy si ponechávají původní nastavení. Opakovaně použitelná URL i tlačítko dál označují stejný odkaz.",
+          "1": "U odkazu otevřete <strong>Spravovat</strong> a pak Nastavení a změňte údaje o produktu nebo částku. Uložené změny platí pro budoucí platební výzvy, stávající platební výzvy si ponechávají původní nastavení. Opakovaně použitelná URL i tlačítko dál označují stejný odkaz.",
           "2": "Pomocí <strong>Vypnout platební odkaz</strong> zastavíte nové nákupy. Stávající platební výzvy zůstávají platné a jejich detekce pokračuje. Odkaz znovu povolíte v jeho nastavení poté, co opravíte nepodporovanou uloženou měnu nebo jiná neplatná nastavení."
         }
       },
@@ -1756,7 +1756,7 @@
       "r146": "Nastavte btcpay_checkout_style na standard nebo btcpay_classic.",
       "r147": "Platí pro hostované stránky platebních výzev poskytované kvůli kompatibilitě s BTCPay.",
       "r148": "amount_xmr nebo amount_fiat + currency",
-      "r149": "confirmation_target (výchozí 2, 0-10)",
+      "r149": "confirmation_target (0-10; používá výchozí počet potvrzení účtu, 1, pokud nebyl změněn)",
       "r150": "checkout_continue_url (https URL, volitelné tlačítko Pokračovat po potvrzení)",
       "r151": "expires_at (ISO 8601)",
       "r152": "Převod z fiat měny je nezávazný a kurz nefixuje.",
@@ -1925,7 +1925,7 @@
       "backToDocs": "Zpět na dokumentaci API",
       "navButtons": "Platební tlačítka",
       "buttonsTitle": "Bez programování: platební tlačítka",
-      "buttonsBody": "Pro nezávislý web nebo službu na volné noze nastavte pevnou částku v Panel → Platební odkazy a pak zkopírujte HTML formulář nebo opakovaně použitelnou URL. Každé úspěšné odeslání vytvoří samostatnou platební výzvu v XMR. API klíč obchodníka do fragmentu nepatří.",
+      "buttonsBody": "Pro nezávislý web nebo službu na volné noze nastavte pevnou částku v Panel → Platební odkazy a pak zkopírujte HTML tlačítko nebo opakovaně použitelnou URL. Každé úspěšné odeslání vytvoří samostatnou platební výzvu v XMR. API klíč obchodníka do fragmentu nepatří.",
       "requestPath": "Cesta požadavku",
       "flowTitle": "Koncepční postup",
       "whatToStore": "Co uložit",

@@ -800,7 +800,7 @@
     "namePlaceholder": "Bancone principale",
     "defaultCurrency": "Valuta predefinita",
     "expiryMinutes": "Scadenza della richiesta di pagamento (minuti)",
-    "zeroConfNote": "Con zero conferme compare “Pagamento visto” non appena il pagamento raggiunge la rete, di solito in pochi secondi. Non è ancora in un blocco e, in rari casi, potrebbe non essere confermato. Usa una o più conferme (circa due minuti ciascuna) per importi più alti.",
+    "zeroConfNote": "Con zero conferme compare “Pagamento visto” non appena il pagamento raggiunge la rete, di solito in pochi secondi. Non è ancora in un blocco e, in rari casi, potrebbe non essere confermato. Richiedi più conferme (circa due minuti ciascuna) per importi più alti.",
     "enabled": "Attivo",
     "lostDevice": "Hai perso il dispositivo o il link? Crea un nuovo link. Il link attuale smette subito di funzionare.",
     "newLink": "Crea un nuovo link",
@@ -1005,7 +1005,7 @@
   "webhooks": {
     "history": {
       "title": "Tentativi di consegna dei webhook",
-      "intro": "Esamina le risposte. Le consegne non riuscite vengono ripetute automaticamente per circa un giorno e puoi reinviarle in qualsiasi momento.",
+      "intro": "Esamina le risposte. Dopo il tentativo iniziale, le consegne non riuscite vengono ripetute automaticamente fino a sei volte nell’arco di circa 33 ore e puoi reinviarle in qualsiasi momento.",
       "recordedCount": "{count} registrati",
       "needReviewCount": "{count} da controllare",
       "none": "Nessuna chiamata webhook registrata finora.",
@@ -1202,7 +1202,7 @@
       "inPerson": {
         "q": "Posso accettare Monero in presenza, in un negozio o a una bancarella?",
         "p1": "Sì. Crea un terminale nella dashboard e apri il suo link su un tablet o uno smartphone alla tua cassa. Digita l'importo, il cliente scansiona il codice QR con il suo portafoglio e lo schermo mostra “Pagamento visto” non appena il pagamento raggiunge la rete, di solito in pochi secondi. I fondi vanno direttamente al tuo portafoglio.",
-        "p2": "Con zero conferme il pagamento non è ancora in un blocco e, in rari casi, potrebbe non essere confermato; richiedi delle conferme per importi più alti. Ogni vendita usa uno dei tuoi indirizzi di pagamento, e le vendite non pagate o annullate tengono occupato il loro per tre giorni.",
+        "p2": "Con zero conferme il pagamento non è ancora in un blocco e, in rari casi, potrebbe non essere confermato; richiedi più conferme per importi più alti. Ogni vendita usa uno dei tuoi indirizzi di pagamento, e le vendite non pagate o annullate tengono occupato il loro per tre giorni.",
         "cta": "Configura un terminale"
       },
       "donations": {
@@ -1218,12 +1218,12 @@
       },
       "noWoo": {
         "q": "Posso aggiungere un pulsante di pagamento senza WooCommerce?",
-        "p1": "Sì. Configura un importo fisso in XMR o un importo di riferimento in una valuta fiat supportata in Dashboard → Link di pagamento, poi copia un pulsante HTML nel tuo sito web. Se il tuo editor rimuove i moduli, usa l'URL riutilizzabile. Non servono programmazione né integrazione con WooCommerce.",
+        "p1": "Sì. Configura un importo fisso in XMR o un importo di riferimento in una valuta fiat supportata in Dashboard → Link di pagamento, poi copia un pulsante HTML nel tuo sito web. Se il tuo editor non accetta HTML, usa l'URL riutilizzabile. Non servono programmazione né integrazione con WooCommerce.",
         "cta": "Leggi la guida al pulsante di pagamento"
       },
       "vsQr": {
         "q": "In cosa differisce un link di pagamento riutilizzabile dal codice QR di un portafoglio?",
-        "p1": "Un codice QR statico del portafoglio non crea una richiesta di pagamento separata per ogni acquisto. Un pulsante di pagamento genera una nuova richiesta di pagamento a ogni invio. Aprire l'URL riutilizzabile mostra prima una pagina di riepilogo; l'invio da lì genera la richiesta di pagamento, che ha il proprio ID e il proprio stato di pagamento per la riconciliazione.",
+        "p1": "Un codice QR statico del portafoglio non crea una richiesta di pagamento separata per ogni acquisto. Un pulsante di pagamento apre la pagina del link di pagamento riutilizzabile, che genera una richiesta di pagamento separata per ogni acquisto. In base alle impostazioni del link, la pagina genera la richiesta automaticamente o quando il cliente seleziona Continua al pagamento. La richiesta ha il proprio ID e il proprio stato di pagamento per la riconciliazione.",
         "cta": "Leggi la guida al pulsante di pagamento"
       },
       "repeat": {
@@ -1360,7 +1360,7 @@
       "confirmations": {
         "title": "Scegli le conferme",
         "p1": "Con zero conferme, l'impostazione predefinita dei terminali, lo schermo mostra “Pagamento visto” non appena la transazione raggiunge la rete. Non è ancora in un blocco. In rari casi una transazione vista in questo modo non viene mai confermata. XMR Checkout smette di controllare un pagamento appena si raggiunge l'obiettivo di conferme, quindi non ti avviserà se succede. Per piccoli importi quotidiani questo rischio è di solito accettabile.",
-        "p2": "Per importi più alti, imposta una o più conferme. Ogni conferma richiede circa due minuti. Lo schermo mostra l'avanzamento finché non si raggiunge l'obiettivo."
+        "p2": "Per importi più alti, richiedi più conferme. Ogni conferma richiede circa due minuti. Lo schermo mostra l'avanzamento finché non si raggiunge l'obiettivo."
       },
       "security": {
         "title": "Tieni al sicuro il link",
@@ -1369,7 +1369,7 @@
       },
       "limits": {
         "title": "Capacità di indirizzi",
-        "p1": "Ogni richiesta di pagamento usa uno dei tuoi 199 indirizzi di pagamento. Dopo la chiusura di una richiesta di pagamento, il suo indirizzo resta occupato per tre giorni così che un pagamento tardivo non venga mai attribuito a un altro cliente. Anche le vendite annullate e non pagate tengono occupato un indirizzo.",
+        "p1": "Ogni richiesta di pagamento usa uno dei tuoi 199 indirizzi di pagamento. Dopo la chiusura di una richiesta di pagamento, il suo indirizzo resta occupato per tre giorni per ridurre il rischio che un pagamento tardivo venga attribuito a un altro cliente. Anche le vendite annullate e non pagate tengono occupato un indirizzo.",
         "p2": "Questo consente in media circa 66 vendite al giorno. Il terminale mostra un avviso quando restano liberi meno di 20 indirizzi. La dashboard mostra quando gli indirizzi occupati tornano disponibili."
       }
     },
@@ -1445,7 +1445,7 @@
       "manage": {
         "title": "Modifica o disattiva gli acquisti futuri",
         "body": {
-          "1": "Apri <strong>Modifica le impostazioni</strong> sul link per cambiare i dettagli del prodotto o l'importo. Le modifiche salvate si applicano alle richieste di pagamento future, mentre le richieste di pagamento esistenti mantengono le impostazioni originali. L'URL riutilizzabile e il pulsante continuano a identificare lo stesso link.",
+          "1": "Apri <strong>Gestisci</strong>, poi Impostazioni sul link per cambiare i dettagli del prodotto o l'importo. Le modifiche salvate si applicano alle richieste di pagamento future, mentre le richieste di pagamento esistenti mantengono le impostazioni originali. L'URL riutilizzabile e il pulsante continuano a identificare lo stesso link.",
           "2": "Usa <strong>Disattiva il link di pagamento</strong> per bloccare i nuovi acquisti. Le richieste di pagamento esistenti restano valide e il rilevamento continua. Riattiva un link dalle sue impostazioni dopo aver corretto un'eventuale valuta salvata non supportata o altre impostazioni non valide."
         }
       },
@@ -1736,7 +1736,7 @@
       "r146": "Imposta btcpay_checkout_style su standard o btcpay_classic.",
       "r147": "Si applica alle pagine ospitate delle richieste di pagamento servite per la compatibilità BTCPay.",
       "r148": "amount_xmr oppure amount_fiat + currency",
-      "r149": "confirmation_target (predefinito 2, 0-10)",
+      "r149": "confirmation_target (0-10; usa l'obiettivo predefinito dell'account, 1 se non modificato)",
       "r150": "checkout_continue_url (URL https, pulsante Continua facoltativo dopo la conferma)",
       "r151": "expires_at (ISO 8601)",
       "r152": "La conversione da valuta fiat non è vincolante e non blocca un tasso.",
@@ -1901,7 +1901,7 @@
       "backToDocs": "Torna alla documentazione API",
       "navButtons": "Pulsanti di pagamento",
       "buttonsTitle": "Senza programmare: pulsanti di pagamento",
-      "buttonsBody": "Per un sito web indipendente o un servizio freelance, configura un importo fisso in Dashboard → Link di pagamento, poi copia un modulo HTML o un URL riutilizzabile. Ogni invio riuscito crea una richiesta di pagamento in XMR separata. Nello snippet non va inserita alcuna chiave API dell'esercente.",
+      "buttonsBody": "Per un sito web indipendente o un servizio freelance, configura un importo fisso in Dashboard → Link di pagamento, poi copia un pulsante HTML o un URL riutilizzabile. Ogni invio riuscito crea una richiesta di pagamento in XMR separata. Nello snippet non va inserita alcuna chiave API dell'esercente.",
       "requestPath": "Percorso della chiamata",
       "flowTitle": "Flusso concettuale",
       "whatToStore": "Cosa memorizzare",

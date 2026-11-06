@@ -30,6 +30,8 @@ COPY --chown=node:node --from=builder /app/.next ./.next
 COPY --chown=node:node --from=builder /app/public ./public
 COPY --chown=node:node --from=production-deps /app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /app/package.json /app/package-lock.json ./
+# next start reads runtime settings such as poweredByHeader from this file.
+COPY --chown=node:node --from=builder /app/next.config.mjs ./
 EXPOSE 3000
 USER node
 CMD ["npm", "start"]

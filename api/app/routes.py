@@ -7,6 +7,7 @@ from decimal import Decimal, ROUND_DOWN, InvalidOperation
 import csv
 import io
 import json
+import re
 from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -43,6 +44,7 @@ from .models import (
     WebhookDelivery,
 )
 from monero.address import Address, IntegratedAddress, SubAddress
+from monero.ed25519 import scalar_reduce
 from .monero_service import MoneroWalletService
 from .rates import UnsupportedCurrencyError, get_xmr_rate
 from .subaddress_allocator import MAX_SUBADDRESS_INDEX, create_subaddress_for_user
@@ -277,7 +279,9 @@ def _get_founder_user(db: Session) -> User:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Donations are not configured",
         )
-    _validate_payment_address_and_view_key(FOUNDER_PAYMENT_ADDRESS, FOUNDER_VIEW_KEY)
+    founder_view_key = _validate_payment_address_and_view_key(
+        FOUNDER_PAYMENT_ADDRESS, FOUNDER_VIEW_KEY
+    )
     user = (
         db.query(User)
         .filter(User.payment_address == FOUNDER_PAYMENT_ADDRESS)
@@ -288,7 +292,7 @@ def _get_founder_user(db: Session) -> User:
         webhook_secret = generate_webhook_secret()
         user = User(
             payment_address=FOUNDER_PAYMENT_ADDRESS,
-            view_key_encrypted=encrypt_secret(FOUNDER_VIEW_KEY),
+            view_key_encrypted=encrypt_secret(founder_view_key),
             api_key_hash=hash_api_key(api_key),
             api_key_encrypted=encrypt_api_key(api_key),
             webhook_secret_encrypted=encrypt_secret(webhook_secret),
@@ -297,8 +301,8 @@ def _get_founder_user(db: Session) -> User:
         db.commit()
         db.refresh(user)
         return user
-    if decrypt_secret(user.view_key_encrypted) != FOUNDER_VIEW_KEY:
-        user.view_key_encrypted = encrypt_secret(FOUNDER_VIEW_KEY)
+    if decrypt_secret(user.view_key_encrypted).lower() != founder_view_key:
+        user.view_key_encrypted = encrypt_secret(founder_view_key)
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -627,7 +631,13 @@ def _resolve_invoice_amount(
     return amount_xmr, warnings, quote_payload
 
 
-def _validate_payment_address_and_view_key(payment_address: str, view_key: str) -> None:
+def _validate_payment_address_and_view_key(payment_address: str, view_key: str) -> str:
+    """Check the primary address and secret view key; return the key in lowercase.
+
+    check_private_view_key also accepts the key written as itself plus a multiple of
+    the group order, or with its top bit set. Those forms derive different
+    subaddresses, so only the reduced form that wallets export is accepted.
+    """
     try:
         address = Address(payment_address)
     except ValueError as exc:
@@ -649,11 +659,17 @@ def _validate_payment_address_and_view_key(payment_address: str, view_key: str) 
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Subaddresses are not supported. Use the primary address.",
         ) from exc
-    if not address.check_private_view_key(view_key):
+    normalized = view_key.strip().lower()
+    if (
+        not re.fullmatch(r"[0-9a-f]{64}", normalized)
+        or scalar_reduce(bytes.fromhex(normalized)) != bytes.fromhex(normalized)
+        or not address.check_private_view_key(normalized)
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Secret view key does not match the primary address",
         )
+    return normalized
 
 
 @router.post(
@@ -1062,8 +1078,7 @@ def delete_webhook(
 @router.post("/api/core/auth/login", response_model=LoginResponse)
 def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
     payment_address = payload.payment_address.strip()
-    view_key = payload.view_key.strip()
-    _validate_payment_address_and_view_key(payment_address, view_key)
+    view_key = _validate_payment_address_and_view_key(payment_address, payload.view_key)
     user = db.query(User).filter(User.payment_address == payment_address).first()
     if user is None:
         if not SIGNUP_ENABLED:
@@ -1088,8 +1103,10 @@ def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
             "webhook_secret": webhook_secret,
             "store_id": user.id,
         }
+    # The stored text also names the merchant's wallet file, so a key that differs
+    # only in letter case is kept as it is. A different key replaces it.
     current_view_key = decrypt_secret(user.view_key_encrypted)
-    if current_view_key != view_key:
+    if current_view_key.lower() != view_key:
         history_entry = ProfileHistory(
             user_id=user.id,
             field_name="view_key",
@@ -1112,8 +1129,7 @@ def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
 @router.post("/api/core/auth/validate", status_code=status.HTTP_204_NO_CONTENT)
 def validate_login(payload: LoginRequest) -> Response:
     payment_address = payload.payment_address.strip()
-    view_key = payload.view_key.strip()
-    _validate_payment_address_and_view_key(payment_address, view_key)
+    _validate_payment_address_and_view_key(payment_address, payload.view_key)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

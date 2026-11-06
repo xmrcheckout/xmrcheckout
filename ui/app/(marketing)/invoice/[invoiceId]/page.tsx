@@ -330,6 +330,18 @@ export default async function InvoiceStatusDetailPage({
             {t("checkout.continueToMerchant")}
           </a>
         ) : null}
+        {invoice.status === "confirmed" ? (
+          <a
+            className={
+              checkoutContinueAvailable
+                ? "inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white/75 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                : "inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+            }
+            href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
+          >
+            {t("checkout.viewReceipt")}
+          </a>
+        ) : null}
         {invoice.payment_link_url ? <a href={invoice.payment_link_url} className="inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold">{t("invoicePage.startAnother")}</a> : null}
         <InvoiceStatusActions />
       </section>

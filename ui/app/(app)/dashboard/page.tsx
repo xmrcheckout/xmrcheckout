@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { dashboardDestination } from "../../../lib/wallet-connection";
 import { getI18n } from "../../../lib/i18n/server";
+import { utcTimestamp } from "../../../lib/timestamps";
 import {
   invoiceStatusLabel,
   invoiceStatuses,
@@ -148,7 +149,7 @@ export default async function DashboardPage({
   searchParams: Promise<DashboardSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const { locale, t } = await getI18n();
+  const { t } = await getI18n();
   const destinationParams = new URLSearchParams();
   for (const [key, value] of Object.entries(resolvedSearchParams)) {
     if (typeof value === "string") destinationParams.set(key, value);
@@ -268,7 +269,11 @@ export default async function DashboardPage({
   } while (activeTab !== "invoices" && offset < total);
   invoicesData = { items, total };
 
-  if (activeTab === "webhooks" && activeWebhookTab === "settings") {
+  // The overview shows the endpoint count, so it needs the list too.
+  if (
+    activeTab === "overview" ||
+    (activeTab === "webhooks" && activeWebhookTab === "settings")
+  ) {
     const response = await fetch(`${apiBaseUrl}/api/core/webhooks`, {
       headers: {
         Authorization: `ApiKey ${apiKey}`,
@@ -372,7 +377,7 @@ export default async function DashboardPage({
   const recentInvoiceItems = allInvoices.slice(0, 5).map((invoice) => ({
     title: invoiceContext(invoice.metadata).title ?? invoice.id,
     invoiceId: invoice.id,
-    detail: t("dashboard.page.createdAt", { date: new Date(invoice.created_at).toLocaleString(locale) }),
+    detail: t("dashboard.page.createdAt", { date: utcTimestamp(invoice.created_at, t) }),
     href: `/invoice/${invoice.id}`,
     status: invoiceStatusLabel(
       invoice.status,
@@ -463,7 +468,7 @@ export default async function DashboardPage({
         className="mx-auto w-full max-w-7xl border-b border-stroke pb-5"
         aria-label={t("dashboard.page.headerLabel")}
       >
-        <p className="text-sm font-semibold text-ink-soft">Dashboard</p>
+        <p className="text-sm font-semibold text-ink-soft">{t("nav.dashboard")}</p>
         <p className="mt-1 font-sans text-2xl font-semibold leading-tight sm:text-3xl">
           {t("dashboard.page.workspace")}
         </p>

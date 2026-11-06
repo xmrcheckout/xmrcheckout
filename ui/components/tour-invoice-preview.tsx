@@ -4,6 +4,8 @@ import Link from "next/link";
 
 import { SimulatedCheckoutDetails, useSimulatedInvoice } from "./simulated-checkout-preview";
 import { useI18n } from "./i18n-provider";
+import type { Translate } from "../lib/i18n/translate";
+import { utcTimestamp } from "../lib/timestamps";
 
 type TourInvoicePreviewProps = {
   invoice: {
@@ -22,14 +24,14 @@ type TourInvoicePreviewProps = {
   };
 };
 
-const formatTimestampFor = (value: string | null, locale: string) =>
-  value ? `${new Date(value).toLocaleString(locale, { timeZone: "UTC" })} UTC` : "-";
+const formatTimestampFor = (value: string | null, t: Translate) =>
+  value ? utcTimestamp(value, t) : "-";
 
 export default function TourInvoicePreview({
   invoice,
 }: TourInvoicePreviewProps) {
-  const { locale, t } = useI18n();
-  const formatTimestamp = (value: string | null) => formatTimestampFor(value, locale);
+  const { t } = useI18n();
+  const formatTimestamp = (value: string | null) => formatTimestampFor(value, t);
   const { snapshot, setStatus } = useSimulatedInvoice(invoice.confirmation_target, invoice.status, invoice.created_at, invoice.expires_at);
   const { confirmations, timeline: timelineItems } = snapshot;
 

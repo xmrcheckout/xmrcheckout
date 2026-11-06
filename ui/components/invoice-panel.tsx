@@ -11,6 +11,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
+import { utcTimestamp } from "../lib/timestamps";
 import type { Translate } from "../lib/i18n/translate";
 import { useI18n } from "./i18n-provider";
 import {
@@ -101,16 +102,8 @@ const formatStatus = (invoice: InvoiceItem, t: Translate) =>
     t,
   );
 
-const formatTimestampFor = (value: string | null, locale: string) => {
-  if (!value) {
-    return "-";
-  }
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "UTC",
-  }).format(new Date(value));
-};
+const formatTimestampFor = (value: string | null, t: Translate) =>
+  value ? utcTimestamp(value, t) : "-";
 
 const invoiceStatusOptions = (t: Translate): {
   value: InvoiceItem["status"] | "active" | "all";
@@ -258,14 +251,14 @@ function CreateInvoiceModal({
       ? t("dashboard.invoices.coingeckoRate")
       : t("dashboard.invoices.externalRate");
   const usdEstimateTime = usdRateUpdatedAt
-    ? new Date(usdRateUpdatedAt).toLocaleString(locale)
+    ? utcTimestamp(new Date(usdRateUpdatedAt).toISOString(), t)
     : null;
   const fiatEstimateMeta = mode === "tour" ? t("dashboard.invoices.demoRate") :
     fiatRateSource === "coingecko"
       ? t("dashboard.invoices.coingeckoRate")
       : t("dashboard.invoices.externalRate");
   const fiatEstimateTime = fiatRateUpdatedAt
-    ? new Date(fiatRateUpdatedAt).toLocaleString(locale)
+    ? utcTimestamp(new Date(fiatRateUpdatedAt).toISOString(), t)
     : null;
   const fiatCurrencyFlag = getCurrencyFlag(fiatCurrency);
   const fiatCurrencyLabel = fiatCurrencyFlag
@@ -938,7 +931,7 @@ export default function InvoicePanel({
   total = activeInvoices.length,
 }: InvoicePanelProps) {
   const { locale, t } = useI18n();
-  const formatTimestamp = (value: string | null) => formatTimestampFor(value, locale);
+  const formatTimestamp = (value: string | null) => formatTimestampFor(value, t);
   const router = useRouter();
   const normalizedBasePath = basePath.replace(/\/+$/, "") || "/";
   const [archiveState, archiveAction] = useFormState(

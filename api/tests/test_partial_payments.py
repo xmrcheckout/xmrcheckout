@@ -152,6 +152,20 @@ class PartialPaymentPayloadTests(unittest.TestCase):
             payload = webhooks.build_webhook_payload("invoice.confirmed", invoice)
         self.assertEqual(
             payload["invoice"]["invoice_url"],
+            f"https://shop.example/invoice/{invoice.id}",
+        )
+        self.assertEqual(
+            payload["invoice"]["receipt_url"],
+            f"https://shop.example/i/{invoice.id}/receipt",
+        )
+
+    def test_btcpay_payload_links_to_btcpay_payment_page(self):
+        invoice = _invoice(XMR, "confirmed")
+        invoice.metadata_json = {"btcpay": {"amount": "10", "currency": "EUR"}}
+        with patch.dict(os.environ, {"SITE_URL": "https://shop.example/"}):
+            payload = webhooks.build_webhook_payload("invoice.confirmed", invoice)
+        self.assertEqual(
+            payload["invoice"]["invoice_url"],
             f"https://shop.example/i/{invoice.id}",
         )
         self.assertEqual(

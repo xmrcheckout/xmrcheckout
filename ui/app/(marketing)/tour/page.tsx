@@ -16,6 +16,7 @@ import WorkspaceNav from "../../../components/workspace-nav";
 import { invoiceStatusName } from "../../../lib/invoice-status";
 import { rich } from "../../../lib/i18n/rich";
 import { getI18n } from "../../../lib/i18n/server";
+import { utcTimestamp } from "../../../lib/timestamps";
 import type { Translate } from "../../../lib/i18n/translate";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -342,7 +343,7 @@ export default async function TourPage({
   searchParams: Promise<TourSearchParams>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const { locale, t } = await getI18n();
+  const { t } = await getI18n();
   const tabParam = resolvedSearchParams?.tab;
   const activeTabValue = Array.isArray(tabParam) ? tabParam[0] : tabParam;
   const activeTab: TourTab = tabs.includes(activeTabValue as TourTab)
@@ -422,7 +423,7 @@ export default async function TourPage({
   const recentInvoiceItems = invoices.slice(0, 5).map((invoice) => ({
     title: invoiceContext(invoice.metadata).title ?? invoice.id,
     invoiceId: invoice.id,
-    detail: t("dashboard.page.createdAt", { date: new Date(invoice.created_at).toLocaleString(locale) }),
+    detail: t("dashboard.page.createdAt", { date: utcTimestamp(invoice.created_at, t) }),
     status: invoiceStatusName(invoice.status, t),
     tone:
       invoice.status === "confirmed"

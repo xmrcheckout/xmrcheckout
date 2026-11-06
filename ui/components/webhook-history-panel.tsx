@@ -10,6 +10,7 @@ import {
   type WebhookRedeliverState,
 } from "../app/(app)/dashboard/actions";
 import StatusBadge from "./status-badge";
+import { utcTimestamp } from "../lib/timestamps";
 import type { InvoiceStatus } from "../lib/invoice-status";
 import { useI18n } from "./i18n-provider";
 
@@ -39,7 +40,7 @@ export default function WebhookHistoryPanel({
   mode?: "live" | "tour";
   deliveries: WebhookDeliverySummary[];
 }) {
-  const { locale, t } = useI18n();
+  const { t } = useI18n();
   const router = useRouter();
   const [state, formAction] = useFormState(
     mode === "tour"
@@ -54,7 +55,7 @@ export default function WebhookHistoryPanel({
     }
   }, [mode, router, state.success]);
 
-  const formatTimestamp = (value: string) => new Date(value).toLocaleString(locale);
+  const formatTimestamp = (value: string) => utcTimestamp(value, t);
   // Attempt 0 means the delivery is queued and has not been sent yet.
   const isQueued = (delivery: WebhookDeliverySummary) => delivery.attempt === 0;
   const failedCount = deliveries.filter(

@@ -34,7 +34,11 @@ _overdue_sends: dict[str, Future] = {}
 
 def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
     amount_paid_xmr, amount_remaining_xmr = invoice_amounts(invoice)
-    invoice_url = f"{public_origin(None)}/i/{invoice.id}"
+    origin = public_origin(None)
+    metadata = invoice.metadata_json if isinstance(invoice.metadata_json, dict) else {}
+    # The same payment page the create response links to: BTCPay invoices use
+    # /i/, every other invoice /invoice/. The receipt only exists under /i/.
+    page = "i" if "btcpay" in metadata else "invoice"
     return {
         "event": event,
         "invoice": {
@@ -54,8 +58,8 @@ def build_webhook_payload(event: str, invoice: Invoice) -> dict[str, object]:
             "expires_at": _isoformat(invoice.expires_at),
             "detected_at": _isoformat(invoice.detected_at),
             "confirmed_at": _isoformat(invoice.confirmed_at),
-            "invoice_url": invoice_url,
-            "receipt_url": f"{invoice_url}/receipt",
+            "invoice_url": f"{origin}/{page}/{invoice.id}",
+            "receipt_url": f"{origin}/i/{invoice.id}/receipt",
         },
     }
 

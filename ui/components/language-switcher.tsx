@@ -10,7 +10,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
   const { locale, t } = useI18n();
   const id = useId();
   return (
-    <form action={setLocaleAction} className={`flex items-center gap-2 text-sm ${className}`}>
+    <form action={setLocaleAction} className={`flex flex-wrap items-center gap-2 text-sm ${className}`}>
       <label htmlFor={id}>{t("language.label")}</label>
       {/* React resets a form after its action runs, restoring each field's
           initial default. Remounting on locale change makes that default the
@@ -21,7 +21,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
         name="locale"
         defaultValue={locale}
         onChange={(event) => event.currentTarget.form?.requestSubmit()}
-        className="min-h-9 rounded-lg border border-stroke bg-white px-2 py-1 text-ink"
+        className="min-h-9 max-w-full rounded-lg border border-[#71716c] bg-white px-2 py-1 text-ink"
       >
         {locales.map((code) => (
           <option key={code} value={code} lang={code}>

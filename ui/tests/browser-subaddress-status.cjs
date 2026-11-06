@@ -42,7 +42,7 @@ async function main() {
           await setState("snapshot_failed", 600);
           await refresh.focus();
           await page.keyboard.press("Enter");
-          await panel.getByRole("button", { name: "Refreshing..." }).waitFor();
+          await panel.getByRole("button", { name: "Refreshing…" }).waitFor();
           await panel.getByText("The view-only wallet is still syncing.", { exact: false }).waitFor();
           await panel.getByRole("button", { name: "Copy reference ID" }).click();
           await panel.getByRole("status").filter({ hasText: /Reference ID copied|Could not copy/ }).waitFor();

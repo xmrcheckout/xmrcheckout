@@ -18,7 +18,7 @@ async function state(invoiceStatus,checkoutStyle='standard') {
         assert.ok((await wallet.boundingBox()).y<844,'wallet action before fold');
         await page.getByText(/Status retrieved:/).first().waitFor();
         await page.getByAltText('Payment request QR',{exact:true}).waitFor();
-        if(route==='/invoice/') assert.match(await page.getByText(/Informational rate:/).innerText(),/Quoted at:.*UTC/);
+        if(route==='/invoice/') { await page.getByText(/^Merchant price: /).waitFor(); assert.match(await page.getByText(/Converted to XMR at/).textContent(),/ at \d{4}-\d\d-\d\d \d\d:\d\d:\d\d UTC\./); }
       }
       await page.close();
     }

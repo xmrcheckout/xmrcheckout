@@ -7,6 +7,7 @@ import PrintButton from "../../../../components/print-button";
 import Timestamp from "../../../../components/timestamp";
 import StatusBadge from "../../../../components/status-badge";
 import LanguageSwitcher from "../../../../components/language-switcher";
+import { safeHttpUrl } from "../../../../lib/linkify";
 import {
   invoiceStatusName,
   invoiceStatusTones as statusTones,
@@ -204,15 +205,16 @@ export default async function BtcpayReceiptPage({
         : null;
   const paidXmr = invoice.amount_paid_xmr ?? invoice.amount_xmr;
   const qrSrc = resolveQrSrc(invoiceId, invoice.qr_url);
-  const storeTitle = receiptTitle(invoice.product_title, invoice.btcpay_redirect_url, t);
+  const redirectUrl = safeHttpUrl(invoice.btcpay_redirect_url);
+  const storeTitle = receiptTitle(invoice.product_title, redirectUrl, t);
   const amountPaidLabel = totalFiat ? totalFiat : `${paidXmr} XMR`;
-  const returnLabel = invoice.btcpay_redirect_url
+  const returnLabel = redirectUrl
     ? t("classic.returnTo", { host: storeTitle })
     : t("receipt.returnToInvoice");
   // BTCPay invoices are paid on /i/; every other invoice on /invoice/.
   const isBtcpayInvoice = Boolean(invoice.btcpay_amount && invoice.btcpay_currency);
   const returnHref =
-    invoice.btcpay_redirect_url ??
+    redirectUrl ??
     `/${isBtcpayInvoice ? "i" : "invoice"}/${encodeURIComponent(invoiceId)}`;
 
   return (
@@ -359,8 +361,8 @@ export default async function BtcpayReceiptPage({
               <a
                 className="inline-flex items-center justify-center rounded-full bg-ink px-8 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
                 href={returnHref}
-                target={invoice.btcpay_redirect_url ? "_top" : undefined}
-                rel={invoice.btcpay_redirect_url ? "noreferrer" : undefined}
+                target={redirectUrl ? "_top" : undefined}
+                rel={redirectUrl ? "noreferrer" : undefined}
               >
                 {returnLabel}
               </a>

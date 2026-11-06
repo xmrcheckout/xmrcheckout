@@ -9,6 +9,7 @@ import { InvoiceRefreshFeedback } from "./invoice-status-auto-refresh";
 import CopyIconButton from "./copy-icon-button";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import { formatXmrAmount } from "../lib/formatting";
+import { safeHttpUrl } from "../lib/linkify";
 import {
   hasPartialAmount,
   invoiceStatusLabel,
@@ -124,7 +125,7 @@ export default function BtcpayClassicCheckout({
   expiryRetrievedAt,
   confirmationTarget,
   confirmations,
-  redirectUrl,
+  redirectUrl: storedRedirectUrl,
   redirectAutomatically,
   orderId,
   orderNumber,
@@ -132,6 +133,8 @@ export default function BtcpayClassicCheckout({
   qrLogoDataUrl,
 }: BtcpayClassicCheckoutProps) {
   const { locale, t } = useI18n();
+  // The link comes from invoice metadata: only a plain web link may leave this page.
+  const redirectUrl = safeHttpUrl(storedRedirectUrl);
   const [qrFailed, setQrFailed] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const hasPartial = hasPartialAmount(amountPaidXmr, amountRemainingXmr);

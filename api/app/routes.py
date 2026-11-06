@@ -7,6 +7,7 @@ from decimal import Decimal, ROUND_DOWN, InvalidOperation
 import csv
 import io
 import json
+from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import RedirectResponse, StreamingResponse
@@ -348,6 +349,33 @@ def _get_confirmation_message(invoice: Invoice) -> str | None:
     return value.strip() or None
 
 
+def _web_url(value: Any, *, https_only: bool = False) -> str | None:
+    """Return a link from invoice metadata only when it is a plain web address.
+
+    Metadata is supplied by API clients and these links are handed to the buyer's
+    browser, so anything other than an http(s) URL with a host (javascript:, data:,
+    ...) is dropped. With https_only, http is accepted only for localhost, the same
+    rule as checkout_continue_url.
+    """
+    if not isinstance(value, str):
+        return None
+    url = value.strip()
+    if not url or "\\" in url or any(ch.isspace() or not ch.isprintable() for ch in url):
+        return None
+    try:
+        parts = urlsplit(url)
+        host = parts.hostname
+    except ValueError:
+        return None
+    if not host:
+        return None
+    if parts.scheme == "https":
+        return url
+    if parts.scheme == "http" and (not https_only or host in ("localhost", "127.0.0.1")):
+        return url
+    return None
+
+
 def _get_checkout_continue_url(invoice: Invoice) -> str | None:
     metadata = invoice.metadata_json or {}
     if not isinstance(metadata, dict):
@@ -355,11 +383,7 @@ def _get_checkout_continue_url(invoice: Invoice) -> str | None:
     checkout = metadata.get("checkout")
     if not isinstance(checkout, dict):
         return None
-    value = checkout.get("continue_url")
-    if not isinstance(value, str):
-        return None
-    trimmed = value.strip()
-    return trimmed or None
+    return _web_url(checkout.get("continue_url"), https_only=True)
 
 
 def _ensure_webhook_secret(db: Session, user: User) -> str:
@@ -499,9 +523,9 @@ def _public_invoice_status_response(
                     update["btcpay_checkout_style"] = user.btcpay_checkout_style
         checkout = btcpay_data.get("checkout")
         if isinstance(checkout, dict):
-            redirect_url = checkout.get("redirectURL")
-            if isinstance(redirect_url, str) and redirect_url.strip():
-                update["btcpay_redirect_url"] = redirect_url.strip()
+            redirect_url = _web_url(checkout.get("redirectURL"))
+            if redirect_url:
+                update["btcpay_redirect_url"] = redirect_url
             redirect_auto = checkout.get("redirectAutomatically")
             if isinstance(redirect_auto, bool):
                 update["btcpay_redirect_automatically"] = redirect_auto

@@ -25,6 +25,14 @@ class BtcpayCheckout(BaseModel):
     redirectAutomatically: bool | None = None
     defaultLanguage: str | None = None
 
+    @field_validator("redirectURL")
+    @classmethod
+    def _web_redirect_url(cls, value: AnyUrl | None) -> AnyUrl | None:
+        # The checkout page sends the buyer's browser to this address.
+        if value is None or (value.scheme in ("http", "https") and value.host):
+            return value
+        raise ValueError("redirectURL must be an http or https URL")
+
 
 class BtcpayInvoiceCreate(BaseModel):
     amount: Decimal = Field(gt=0)

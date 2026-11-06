@@ -5,6 +5,18 @@ export type MessageSegment =
 const URL_PATTERN = /\bhttps?:\/\/[^\s<>"']+/gi;
 const TRAILING_PUNCTUATION = /[.,;:!?'")\]}]+$/;
 
+/** The parsed link when the value is an http(s) URL with a host; null for anything else. */
+export function safeHttpUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const parsed = new URL(value);
+    if ((parsed.protocol === "http:" || parsed.protocol === "https:") && parsed.hostname) return parsed.href;
+  } catch {
+    // Not an absolute URL.
+  }
+  return null;
+}
+
 /** Split merchant plain text into text and http(s) link segments; never emits HTML. */
 export function linkifyMessage(message: string): MessageSegment[] {
   const segments: MessageSegment[] = [];
@@ -29,13 +41,7 @@ export function linkifyMessage(message: string): MessageSegment[] {
     }
     candidate = candidate.slice(0, candidate.length - trailing.length) + kept;
     pushText(message.slice(cursor, start));
-    let href: string | null = null;
-    try {
-      const parsed = new URL(candidate);
-      if ((parsed.protocol === "http:" || parsed.protocol === "https:") && parsed.hostname) href = parsed.href;
-    } catch {
-      href = null;
-    }
+    const href = safeHttpUrl(candidate);
     if (href) segments.push({ kind: "link", text: candidate, href });
     else pushText(candidate);
     cursor = start + candidate.length;

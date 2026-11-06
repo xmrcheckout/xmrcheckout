@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { linkifyMessage } from '../lib/linkify.ts';
+import { linkifyMessage, safeHttpUrl } from '../lib/linkify.ts';
 
 const links = (message) => linkifyMessage(message).filter(s => s.kind === 'link').map(s => s.href);
 const joined = (message) => linkifyMessage(message).map(s => s.text).join('');
@@ -30,4 +30,12 @@ test('non-http schemes and markup are never linked', () => {
   }
   assert.deepEqual(links('<a href="https://evil.example">x</a>'), ['https://evil.example/']);
   assert.deepEqual(links('https://'), []);
+});
+
+test('safeHttpUrl keeps only http(s) links with a host', () => {
+  assert.equal(safeHttpUrl('https://shop.example/thanks?order=1'), 'https://shop.example/thanks?order=1');
+  assert.equal(safeHttpUrl('http://localhost:3000/done'), 'http://localhost:3000/done');
+  for (const value of ['javascript:alert(1)', ' JavaScript:alert(1)', 'java\tscript:alert(1)', 'data:text/html,<script>alert(1)</script>', 'vbscript:msgbox(1)', 'https://', '/relative/path', '', null, undefined]) {
+    assert.equal(safeHttpUrl(value), null, String(value));
+  }
 });

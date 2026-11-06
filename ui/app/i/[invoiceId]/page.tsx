@@ -15,6 +15,7 @@ import {
   type InvoiceStatus,
 } from "../../../lib/invoice-status";
 import LanguageSwitcher from "../../../components/language-switcher";
+import { safeHttpUrl } from "../../../lib/linkify";
 import { getI18n } from "../../../lib/i18n/server";
 import type { Translate } from "../../../lib/i18n/translate";
 
@@ -201,6 +202,7 @@ export default async function BtcpayModalInvoicePage({
   const useClassicCheckout =
     isBtcpayInvoice && invoice.btcpay_checkout_style === "btcpay_classic";
   const isConfirmed = invoice.status === "confirmed";
+  const returnUrl = safeHttpUrl(invoice.btcpay_redirect_url);
   const receiptHref = `/i/${encodeURIComponent(invoiceId)}/receipt`;
   const invoicePageUrl = `${siteUrl}/i/${encodeURIComponent(invoiceId)}`;
   const checkoutContinueAvailable =
@@ -250,7 +252,7 @@ export default async function BtcpayModalInvoicePage({
             status={invoice.status}
             confirmationTarget={confirmationTarget}
             confirmations={confirmations}
-            redirectUrl={invoice.btcpay_redirect_url ?? null}
+            redirectUrl={returnUrl}
             redirectAutomatically={
               invoice.btcpay_redirect_automatically ?? null
             }
@@ -368,10 +370,10 @@ export default async function BtcpayModalInvoicePage({
               >
                 {t("checkout.viewReceipt")}
               </a>
-              {isBtcpayInvoice && invoice.btcpay_redirect_url ? (
+              {isBtcpayInvoice && returnUrl ? (
                 <a
                   className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
-                  href={invoice.btcpay_redirect_url}
+                  href={returnUrl}
                   target="_top"
                   rel="noreferrer"
                 >

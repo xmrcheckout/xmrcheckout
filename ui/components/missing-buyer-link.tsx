@@ -17,6 +17,6 @@ export default async function MissingBuyerLink({ kind, invalid = false }: {
     {lookup ? <section className="mt-6 border-y border-stroke bg-sand/40 px-5 py-6 sm:px-7">
       <h2 className="text-lg font-semibold">{t("invoicePage.checkAnother")}</h2>
       <div className="mt-4 max-w-2xl"><InvoiceStatusLookup compact /></div>
-    </section> : <Link className="mt-6 inline-flex min-h-11 items-center underline" href={kind === "donation" ? "/donate" : "/"}>{t("common.returnHome")}</Link>}
+    </section> : <Link className="mt-6 inline-flex min-h-11 items-center underline" href="/">{t("common.returnHome")}</Link>}
   </main>;
 }

@@ -831,9 +831,9 @@ function CreateInvoiceModal({
                           <option value="account_default">
                             {t("dashboard.invoices.accountDefault")}
                           </option>
-                          <option value="monero">{t("dashboard.invoices.moneroLogo")}</option>
+                          <option value="monero">{t("settings.moneroLogo")}</option>
                           <option value="none">{t("dashboard.invoices.noLogo")}</option>
-                          <option value="custom">{t("dashboard.invoices.customImage")}</option>
+                          <option value="custom">{t("settings.customImage")}</option>
                         </select>
                         <input
                           type="hidden"
@@ -1498,7 +1498,7 @@ export default function InvoicePanel({
                             </p>
                           </div>
                           <div className="grid gap-2">
-                            <p className={labelClass}>{t("dashboard.invoices.confirmationTarget")}</p>
+                            <p className={labelClass}>{t("settings.confirmationTarget")}</p>
                             <p className="text-sm font-semibold text-ink">
                               {invoice.confirmation_target}
                             </p>
@@ -1777,7 +1777,7 @@ export default function InvoicePanel({
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   <div className="grid gap-2">
                                     <p className={labelClass}>
-                                      {t("dashboard.invoices.confirmationTarget")}
+                                      {t("settings.confirmationTarget")}
                                     </p>
                                     <p className="text-sm font-semibold text-ink">
                                       {invoice.confirmation_target}

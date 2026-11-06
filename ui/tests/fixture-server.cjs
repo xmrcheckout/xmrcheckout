@@ -74,7 +74,7 @@ const server = http.createServer((request, response) => {
     if (path === "/__fixture" && request.method === "POST") {
       const options = JSON.parse(body);
       if (Object.hasOwn(options, "dashboardFailure")) dashboardFailure = options.dashboardFailure;
-      if (options.resetDashboard) { mutationCount = 0; archived.clear(); hooks = [{ id: "fixture-hook", url: "https://merchant.example/events", active: true, events: ["invoice.created"], created_at: "2026-10-01T00:00:00Z" }]; }
+      if (options.resetDashboard) { mutationCount = 0; archived.clear(); terminals = [{ id: "fixture-terminal", name: "Fixture terminal", default_currency: "XMR", confirmation_target: 0, expiry_minutes: 15, enabled: true, created_at: null, last_used_at: null }]; hooks = [{ id: "fixture-hook", url: "https://merchant.example/events", active: true, events: ["invoice.created"], created_at: "2026-10-01T00:00:00Z" }]; }
       result = { mutationCount };
       availabilityState = options.state ?? availabilityState;
       invoiceStatus = options.invoiceStatus ?? invoiceStatus;

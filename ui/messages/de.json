@@ -83,7 +83,6 @@
     "notFoundHelp": "Prüfen Sie, ob Sie den vollständigen Rechnungslink haben.",
     "doNotPay": "Senden Sie keine Zahlung. Fordern Sie beim Händler einen gültigen Rechnungslink an.",
     "lookUp": "Rechnung suchen",
-    "checkingWorks": "Diese Seite aktualisiert sich automatisch, sobald Ihre Zahlung erkannt wird. Sie können sie geöffnet lassen oder später zurückkehren.",
     "checkingDelayed": "Die Zahlungsprüfung ist derzeit verzögert. An diese Adresse gesendete Zahlungen gehen weiterhin direkt an die Wallet des Händlers und erscheinen hier, sobald die Prüfung fortgesetzt wird.",
     "status": "Status",
     "confirmations": "Bestätigungen",
@@ -247,7 +246,6 @@
     "note": "Statusansicht nur zum Lesen. Die Rechnungsseite prüft alle 30 Sekunden auf Aktualisierungen."
   },
   "lookupPage": {
-    "metaTitle": "Rechnung prüfen",
     "metaDescription": "Prüfen Sie Erkennung und Bestätigungsfortschritt einer Monero-Rechnung anhand einer öffentlichen Rechnungs-ID.",
     "ogTitle": "Statusabfrage für Monero-Rechnungen | XMR Checkout",
     "eyebrow": "Rechnungsstatus",
@@ -465,7 +463,6 @@
       "help": "Drucken Sie dieses Schild oder speichern Sie es über den Druckdialog als PDF. Kunden scannen den QR-Code, um Ihren Zahlungslink zu öffnen; jede Zahlung geht direkt an Ihre Wallet.",
       "disabled": "Dieser Zahlungslink ist deaktiviert. Der QR-Code funktioniert erst wieder, wenn Sie den Link erneut aktivieren.",
       "preview": "Vorschau des Schilds",
-      "badgeAlt": "Monero wird hier akzeptiert",
       "scan": "Scannen, um mit Monero zu bezahlen"
     },
     "allowanceNoteDetail": "Wiederholte Übermittlungen können separate Rechnungen erstellen. Es werden keine Käuferdaten erfasst; vereinbaren Sie die Abwicklung der Bestellung mit Ihrem Kunden anhand der Rechnungs-ID. Rücksprung-URLs schützen keine Downloads.",
@@ -738,9 +735,7 @@
       "continueHelp": "Nach der Bestätigung kann die gehostete Rechnungsseite eine Schaltfläche „Weiter“ anzeigen.",
       "qrLogo": "QR-Logo",
       "accountDefault": "Standard des Kontos",
-      "moneroLogo": "Monero-Logo",
       "noLogo": "Kein Logo",
-      "customImage": "Eigenes Bild",
       "removeCustomImage": "Eigenes Bild entfernen",
       "summary": "Zusammenfassung",
       "creating": "Rechnung wird erstellt…",
@@ -775,13 +770,11 @@
       "detectedAt": "Erkannt am",
       "confirmedAt": "Bestätigt am",
       "expiresAt": "Läuft ab am",
-      "confirmationTarget": "Bestätigungsziel",
       "subaddressIndex": "Subadress-Index",
       "archivedAt": "Archiviert am",
       "paidAfterExpiryAt": "Nach Ablauf bezahlt am",
       "viewTransactions": "Transaktionen anzeigen",
       "archiveInvoice": "Rechnung archivieren",
-      "archivedDone": "Rechnung archiviert.",
       "invoice": "Rechnung",
       "actions": "Aktionen",
       "pages": "Rechnungsseiten",
@@ -1494,7 +1487,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "Einen selbst gehosteten Monero-Checkout betreiben",
       "metaTitle": "Einen selbst gehosteten Monero-Checkout betreiben | XMR Checkout",
       "metaDescription": "Richten Sie XMR Checkout mit Docker Compose, einer Wallet mit Lesezugriff, einem Monero-Daemon und zuverlässiger Rechnungserkennung ein.",
       "navFlow": "Den Ablauf verstehen",
@@ -1544,7 +1536,6 @@
       "continueApi": "Weiter zur API- und Webhook-Integration →"
     },
     "api": {
-      "metaTitleShort": "Monero-Zahlungs-API und Webhooks integrieren",
       "metaTitle": "Monero-Zahlungs-API und Webhooks integrieren | XMR Checkout",
       "metaDescription": "Verbinden Sie einen Shop mit XMR Checkout – mit Rechnungserstellung, gehosteten Zahlungsseiten, öffentlichen Statusabfragen und Webhook-Ereignissen.",
       "webhooksBody": "Registrieren Sie über das Dashboard oder die API einen öffentlichen HTTPS-Endpunkt und wählen Sie die Ereignisse, die Sie empfangen möchten. Native Ereignisse sind <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> und <code>invoice.expired</code>.",

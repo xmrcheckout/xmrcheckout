@@ -92,7 +92,7 @@ const paymentCheckNotice = (
   if (checkingWorks) {
     return {
       delayed: false,
-      text: t("checkout.checkingWorks"),
+      text: "",
     };
   }
   return {
@@ -311,7 +311,7 @@ export default async function BtcpayModalInvoicePage({
               </div>
             </div>
             <div className="grid gap-2 border-t border-stroke px-5 py-4">
-              {checkNotice ? (
+              {checkNotice?.delayed ? (
                 <p
                   className={
                     checkNotice.delayed

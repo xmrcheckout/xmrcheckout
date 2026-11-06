@@ -33,6 +33,14 @@ const configure = options => fetch(fixture + '/__fixture', { method: 'POST', bod
       }
       console.log('Compact branding, widths, language selection and print passed:', width);
     }
+    for (const failure of [{ status: 503 }, { disconnect: true }, { status: 200, malformed: true }]) {
+      await configure({ dashboardFailure: { path: '/api/core/public/invoice/' + id, method: 'GET', ...failure } });
+      await page.goto(base + '/i/' + id + '/receipt', { waitUntil: 'networkidle' });
+      await page.getByRole('heading', { name: 'Status unavailable', exact: true }).waitFor();
+      await configure({ dashboardFailure: null });
+      await page.getByRole('button', { name: 'Retry', exact: true }).click();
+      await page.getByRole('button', { name: 'Print', exact: true }).waitFor();
+    }
     await page.goto(base + '/tour');
     await page.evaluate(() => { window.checkoutMessages = []; addEventListener('message', event => window.checkoutMessages.push(event.data)); });
     await configure({ invoiceStatus: 'pending' });
@@ -46,5 +54,5 @@ const configure = options => fetch(fixture + '/__fixture', { method: 'POST', bod
     await frame.getByRole('heading', { name: 'Status unavailable', exact: true }).waitFor();
     await frame.getByRole('button', { name: 'Retry', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => window.checkoutMessages.some(message => message?.status)), false, 'An outage invents no BTCPay invoice state');
-  } finally { await configure({ invoiceStatus: 'pending', invoiceResponseStatus: 200 }); await browser.close(); }
+  } finally { await configure({ invoiceStatus: 'pending', invoiceResponseStatus: 200, dashboardFailure: null }); await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

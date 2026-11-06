@@ -21,7 +21,7 @@ export async function proxy(request: NextRequest) {
   }
   const publicLink = request.nextUrl.pathname.match(/^\/(invoice|pay|i)\/([^/]+)(\/receipt)?\/?$/);
   // Data requests use Next's native error flow; only documents need HTML.
-  if (request.method === "GET" && !request.headers.has("rsc") && publicLink) {
+  if (["GET", "HEAD"].includes(request.method) && !request.headers.has("rsc") && publicLink) {
     const [, kind, id, receipt] = publicLink;
     if (receipt && kind !== "i") return NextResponse.next();
     let decodedId = id;

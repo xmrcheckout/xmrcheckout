@@ -77,6 +77,7 @@ const assertBranded = async (page,label) => {
     const noScript = await browser.newContext({javaScriptEnabled:false});
     const staticPage = await noScript.newPage();
     for (const path of ['/i/bad-id', '/i/bad-id/receipt', '/i/00000000-0000-4000-8000-000000000999', '/i/00000000-0000-4000-8000-000000000999/receipt']) {
+      assert.equal((await noScript.request.head(base+path)).status(),404);
       assert.equal((await staticPage.goto(base+path)).status(),404);
       await staticPage.getByRole('heading',{name:path.includes('bad-id')?'Invalid invoice ID':'Invoice not found',exact:true}).waitFor();
       await assertBranded(staticPage,path+' without JavaScript');

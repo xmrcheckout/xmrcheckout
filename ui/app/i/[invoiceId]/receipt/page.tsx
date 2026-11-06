@@ -115,11 +115,13 @@ export default async function BtcpayReceiptPage({
     },
   ).catch(() => new Response(null, { status: 503 }));
 
+  const invoice = response.ok ? await response.json().catch(() => null) as InvoiceStatusResponse | null : null;
+
   if (response.status === 404 || response.status === 422) {
     return <><BtcpayModalBridge invoiceId={invoiceId} status="invalid" /><MissingBuyerLink kind="receipt" invalid={response.status === 422} /></>;
   }
 
-  if (!response.ok) {
+  if (!response.ok || !invoice) {
     return (
       <main id="main-content" tabIndex={-1} className="grid min-h-screen place-items-center bg-cream px-4 py-10 text-ink">
         <section className="w-full max-w-lg overflow-hidden rounded-surface border border-stroke bg-card shadow-card">
@@ -148,7 +150,6 @@ export default async function BtcpayReceiptPage({
     );
   }
 
-  const invoice = (await response.json()) as InvoiceStatusResponse;
   const orderId =
     invoice.btcpay_order_number ?? invoice.btcpay_order_id ?? null;
   const receiptTimestamp = invoice.confirmed_at ?? invoice.created_at;
@@ -233,18 +234,7 @@ export default async function BtcpayReceiptPage({
                   {t("receipt.saveOrPrint")}
                 </p>
 
-                <dl className="mt-8 grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <dt className="text-xs font-semibold text-ink-soft">
-                      {t("receipt.date")}
-                    </dt>
-                    <dd
-                      className="mt-1 text-sm font-semibold"
-                    >
-                      <Timestamp value={receiptTimestamp} />
-                    </dd>
-                  </div>
-                  {orderId ? (
+                {orderId ? <dl className="mt-8">
                     <div>
                       <dt className="text-xs font-semibold text-ink-soft">
                         {t("receipt.orderId")}
@@ -253,8 +243,7 @@ export default async function BtcpayReceiptPage({
                         {orderId}
                       </dd>
                     </div>
-                  ) : null}
-                </dl>
+                </dl> : null}
               </div>
             </section>
 

@@ -83,7 +83,6 @@
     "notFoundHelp": "Verifique se você tem o link completo da fatura.",
     "doNotPay": "Não envie o pagamento. Peça ao comerciante um link de fatura válido.",
     "lookUp": "Consultar uma fatura",
-    "checkingWorks": "Esta página é atualizada automaticamente quando o seu pagamento é visto. Você pode mantê-la aberta ou voltar mais tarde.",
     "checkingDelayed": "A verificação de pagamentos está atrasada no momento. Os pagamentos enviados para este endereço continuam indo diretamente para a carteira do comerciante e aparecerão aqui quando a verificação for retomada.",
     "status": "Status",
     "confirmations": "Confirmações",
@@ -247,7 +246,6 @@
     "note": "Visualização de status somente leitura. A página da fatura verifica atualizações a cada 30 segundos."
   },
   "lookupPage": {
-    "metaTitle": "Verificar fatura",
     "metaDescription": "Verifique a detecção e o progresso das confirmações de uma fatura Monero usando um ID de fatura público.",
     "ogTitle": "Consulta de status de fatura Monero | XMR Checkout",
     "eyebrow": "Status da fatura",
@@ -465,7 +463,6 @@
       "help": "Imprima este cartaz ou salve-o como PDF pela janela de impressão. Os clientes escaneiam o QR code para abrir o seu link de pagamento; cada pagamento vai diretamente para a sua carteira.",
       "disabled": "Este link de pagamento está desativado. O QR code não funcionará até que você ative o link novamente.",
       "preview": "Prévia do cartaz",
-      "badgeAlt": "Aceitamos Monero",
       "scan": "Escaneie para pagar com Monero"
     },
     "allowanceNoteDetail": "Envios repetidos podem criar faturas separadas. Nenhum dado do comprador é coletado; combine a entrega com o seu cliente usando o ID da fatura. URLs de retorno não protegem downloads.",
@@ -738,9 +735,7 @@
       "continueHelp": "Após a confirmação, a página hospedada da fatura pode mostrar um botão Continuar.",
       "qrLogo": "Logo do QR",
       "accountDefault": "Padrão da conta",
-      "moneroLogo": "Logo do Monero",
       "noLogo": "Sem logo",
-      "customImage": "Imagem personalizada",
       "removeCustomImage": "Remover imagem personalizada",
       "summary": "Resumo",
       "creating": "Criando fatura…",
@@ -775,13 +770,11 @@
       "detectedAt": "Detectada em",
       "confirmedAt": "Confirmada em",
       "expiresAt": "Expira em",
-      "confirmationTarget": "Meta de confirmações",
       "subaddressIndex": "Índice do subendereço",
       "archivedAt": "Arquivada em",
       "paidAfterExpiryAt": "Paga após a expiração em",
       "viewTransactions": "Ver transações",
       "archiveInvoice": "Arquivar fatura",
-      "archivedDone": "Fatura arquivada.",
       "invoice": "Fatura",
       "actions": "Ações",
       "pages": "Páginas de faturas",
@@ -1494,7 +1487,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "Como rodar um checkout Monero auto-hospedado",
       "metaTitle": "Como rodar um checkout Monero auto-hospedado | XMR Checkout",
       "metaDescription": "Configure o XMR Checkout com Docker Compose, uma carteira somente leitura, um daemon Monero e detecção confiável de faturas.",
       "navFlow": "Entenda o fluxo",
@@ -1544,7 +1536,6 @@
       "continueApi": "Continuar para a integração de API e webhooks →"
     },
     "api": {
-      "metaTitleShort": "Integração com a API de pagamentos Monero e webhooks",
       "metaTitle": "Integração com a API de pagamentos Monero e webhooks | XMR Checkout",
       "metaDescription": "Conecte uma loja ao XMR Checkout com criação de faturas, páginas de pagamento hospedadas, consultas públicas de status e eventos de webhook.",
       "webhooksBody": "Registre um endpoint HTTPS público pelo painel ou pela API e selecione os eventos que deseja receber. Os eventos nativos incluem <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> e <code>invoice.expired</code>.",

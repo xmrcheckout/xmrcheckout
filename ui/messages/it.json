@@ -83,7 +83,6 @@
     "notFoundHelp": "Verifica di avere il link completo della richiesta di pagamento.",
     "doNotPay": "Non inviare il pagamento. Chiedi all'esercente un link valido a una richiesta di pagamento.",
     "lookUp": "Cerca una richiesta di pagamento",
-    "checkingWorks": "Questa pagina si aggiorna automaticamente quando il tuo pagamento viene visto. Puoi tenerla aperta o tornare più tardi.",
     "checkingDelayed": "Al momento il controllo dei pagamenti è in ritardo. I pagamenti inviati a questo indirizzo vanno comunque direttamente al portafoglio dell'esercente e compariranno qui quando il controllo riprenderà.",
     "status": "Stato",
     "confirmations": "Conferme",
@@ -247,7 +246,6 @@
     "note": "Vista dello stato in sola lettura. La pagina della richiesta di pagamento controlla gli aggiornamenti ogni 30 secondi."
   },
   "lookupPage": {
-    "metaTitle": "Verifica pagamento",
     "metaDescription": "Controlla il rilevamento e l'avanzamento delle conferme di una richiesta di pagamento Monero usando il suo ID pubblico.",
     "ogTitle": "Ricerca dello stato di una richiesta di pagamento Monero | XMR Checkout",
     "eyebrow": "Stato della richiesta di pagamento",
@@ -465,7 +463,6 @@
       "help": "Stampa questo cartello o salvalo come PDF dalla finestra di stampa. I clienti scansionano il codice QR per aprire il tuo link di pagamento; ogni pagamento va direttamente al tuo portafoglio.",
       "disabled": "Questo link di pagamento è disattivato. Il codice QR non funzionerà finché non riattivi il link.",
       "preview": "Anteprima del cartello",
-      "badgeAlt": "Qui si accetta Monero",
       "scan": "Scansiona per pagare con Monero"
     },
     "allowanceNoteDetail": "Invii ripetuti possono creare richieste di pagamento separate. Non vengono raccolti dati dell'acquirente; organizza l'evasione con il tuo cliente usando l'ID della richiesta di pagamento. Gli URL di ritorno non proteggono i download.",
@@ -738,9 +735,7 @@
       "continueHelp": "Dopo la conferma, la pagina ospitata della richiesta di pagamento può mostrare un pulsante Continua.",
       "qrLogo": "Logo del QR",
       "accountDefault": "Predefinito dell'account",
-      "moneroLogo": "Logo Monero",
       "noLogo": "Nessun logo",
-      "customImage": "Immagine personalizzata",
       "removeCustomImage": "Rimuovi l'immagine personalizzata",
       "summary": "Riepilogo",
       "creating": "Creazione della richiesta di pagamento…",
@@ -775,13 +770,11 @@
       "detectedAt": "Rilevata il",
       "confirmedAt": "Confermata il",
       "expiresAt": "Scade il",
-      "confirmationTarget": "Obiettivo di conferme",
       "subaddressIndex": "Indice del sottoindirizzo",
       "archivedAt": "Archiviata il",
       "paidAfterExpiryAt": "Pagata dopo la scadenza il",
       "viewTransactions": "Visualizza le transazioni",
       "archiveInvoice": "Archivia la richiesta di pagamento",
-      "archivedDone": "Richiesta di pagamento archiviata.",
       "invoice": "Richiesta di pagamento",
       "actions": "Azioni",
       "pages": "Pagine delle richieste di pagamento",
@@ -1494,7 +1487,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "Come gestire un checkout Monero in self-hosting",
       "metaTitle": "Come gestire un checkout Monero in self-hosting | XMR Checkout",
       "metaDescription": "Configura XMR Checkout con Docker Compose, un portafoglio in sola lettura, un daemon Monero e un rilevamento affidabile delle richieste di pagamento.",
       "navFlow": "Comprendi il flusso",
@@ -1544,7 +1536,6 @@
       "continueApi": "Continua con l'integrazione di API e webhook →"
     },
     "api": {
-      "metaTitleShort": "Integrare l'API di pagamento Monero e i webhook",
       "metaTitle": "Integrare l'API di pagamento Monero e i webhook | XMR Checkout",
       "metaDescription": "Collega un negozio a XMR Checkout con creazione di richieste di pagamento, pagine di pagamento ospitate, controlli di stato pubblici ed eventi webhook.",
       "webhooksBody": "Registra un endpoint HTTPS pubblico dalla dashboard o tramite API, poi seleziona gli eventi che vuoi ricevere. Gli eventi nativi includono <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> e <code>invoice.expired</code>.",

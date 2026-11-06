@@ -83,7 +83,6 @@
     "notFoundHelp": "Zkontrolujte, že máte celý odkaz na platební výzvu.",
     "doNotPay": "Neposílejte platbu. Vyžádejte si od obchodníka platný odkaz na platební výzvu.",
     "lookUp": "Vyhledat platební výzvu",
-    "checkingWorks": "Tato stránka se automaticky aktualizuje, jakmile bude vaše platba zjištěna. Můžete ji nechat otevřenou nebo se vrátit později.",
     "checkingDelayed": "Kontrola plateb je momentálně zpožděná. Platby odeslané na tuto adresu stále jdou přímo do peněženky obchodníka a zobrazí se zde, jakmile se kontrola obnoví.",
     "status": "Stav",
     "confirmations": "Potvrzení",
@@ -251,7 +250,6 @@
     "note": "Zobrazení stavu pouze pro čtení. Stránka platební výzvy kontroluje aktualizace každých 30 sekund."
   },
   "lookupPage": {
-    "metaTitle": "Kontrola platební výzvy",
     "metaDescription": "Zkontrolujte detekci a průběh potvrzování platební výzvy v Monero pomocí veřejného ID.",
     "ogTitle": "Kontrola stavu platební výzvy v Monero | XMR Checkout",
     "eyebrow": "Stav platební výzvy",
@@ -471,7 +469,6 @@
       "help": "Vytiskněte tuto cedulku nebo ji v dialogu tisku uložte jako PDF. Zákazníci naskenují QR kód a otevřou váš platební odkaz; každá platba jde přímo do vaší peněženky.",
       "disabled": "Tento platební odkaz je vypnutý. QR kód nebude fungovat, dokud odkaz znovu nepovolíte.",
       "preview": "Náhled cedulky",
-      "badgeAlt": "Zde přijímáme Monero",
       "scan": "Naskenujte a zaplaťte v Monero"
     },
     "allowanceNoteDetail": "Opakovaná odeslání mohou vytvořit samostatné platební výzvy. Neshromažďují se žádné údaje o kupujícím; vyřízení domluvte se zákazníkem pomocí ID platební výzvy. Návratové URL nechrání stahování.",
@@ -750,9 +747,7 @@
       "continueHelp": "Po potvrzení může hostovaná stránka platební výzvy zobrazit tlačítko Pokračovat.",
       "qrLogo": "Logo v QR kódu",
       "accountDefault": "Výchozí pro účet",
-      "moneroLogo": "Logo Monero",
       "noLogo": "Bez loga",
-      "customImage": "Vlastní obrázek",
       "removeCustomImage": "Odebrat vlastní obrázek",
       "summary": "Souhrn",
       "creating": "Vytváří se platební výzva…",
@@ -787,13 +782,11 @@
       "detectedAt": "Zjištěno",
       "confirmedAt": "Potvrzeno",
       "expiresAt": "Platnost do",
-      "confirmationTarget": "Požadovaný počet potvrzení",
       "subaddressIndex": "Index podadresy",
       "archivedAt": "Archivováno",
       "paidAfterExpiryAt": "Zaplaceno po vypršení",
       "viewTransactions": "Zobrazit transakce",
       "archiveInvoice": "Archivovat platební výzvu",
-      "archivedDone": "Platební výzva archivována.",
       "invoice": "Platební výzva",
       "actions": "Akce",
       "pages": "Stránky platebních výzev",
@@ -1514,7 +1507,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "Jak provozovat samostatně hostované platby v Monero",
       "metaTitle": "Jak provozovat samostatně hostované platby v Monero | XMR Checkout",
       "metaDescription": "Nastavte XMR Checkout s Docker Compose, peněženkou pouze pro prohlížení, daemonem Monero a spolehlivou detekcí platebních výzev.",
       "navFlow": "Pochopte tok",
@@ -1564,7 +1556,6 @@
       "continueApi": "Pokračovat k integraci API a webhooků →"
     },
     "api": {
-      "metaTitleShort": "Integrace platebního API Monero a webhooků",
       "metaTitle": "Integrace platebního API Monero a webhooků | XMR Checkout",
       "metaDescription": "Propojte obchod s XMR Checkout: vytváření platebních výzev, hostované platební stránky, veřejné kontroly stavu a události webhooků.",
       "webhooksBody": "Zaregistrujte veřejný HTTPS endpoint v panelu nebo přes API a pak zvolte události, které chcete přijímat. Nativní události zahrnují <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> a <code>invoice.expired</code>.",

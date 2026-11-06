@@ -83,7 +83,6 @@
     "notFoundHelp": "Vérifiez que vous disposez du lien complet de la facture.",
     "doNotPay": "N’envoyez pas de paiement. Demandez un lien de facture valide au commerçant.",
     "lookUp": "Rechercher une facture",
-    "checkingWorks": "Cette page se met à jour automatiquement lorsque votre paiement est repéré. Vous pouvez la laisser ouverte ou revenir plus tard.",
     "checkingDelayed": "La vérification des paiements est actuellement retardée. Les paiements envoyés à cette adresse vont toujours directement au portefeuille du commerçant et apparaîtront ici dès la reprise de la vérification.",
     "status": "Statut",
     "confirmations": "Confirmations",
@@ -247,7 +246,6 @@
     "note": "Affichage du statut en lecture seule. La page de la facture vérifie les mises à jour toutes les 30 secondes."
   },
   "lookupPage": {
-    "metaTitle": "Vérifier une facture",
     "metaDescription": "Suivez la détection et la progression des confirmations d’une facture Monero grâce à son identifiant public.",
     "ogTitle": "Recherche du statut d’une facture Monero | XMR Checkout",
     "eyebrow": "Statut de la facture",
@@ -465,7 +463,6 @@
       "help": "Imprimez cette affiche ou enregistrez-la en PDF depuis la boîte de dialogue d’impression. Les clients scannent le QR code pour ouvrir votre lien de paiement ; chaque paiement va directement à votre portefeuille.",
       "disabled": "Ce lien de paiement est désactivé. Le QR code ne fonctionnera pas tant que vous n’aurez pas réactivé le lien.",
       "preview": "Aperçu de l’affiche",
-      "badgeAlt": "Monero accepté ici",
       "scan": "Scannez pour payer en Monero"
     },
     "allowanceNoteDetail": "Des envois répétés peuvent créer des factures distinctes. Aucune donnée de l’acheteur n’est collectée ; organisez la livraison avec votre client à l’aide de l’identifiant de facture. Les URL de retour ne protègent pas les téléchargements.",
@@ -738,9 +735,7 @@
       "continueHelp": "Après confirmation, la page de facture hébergée peut afficher un bouton Continuer.",
       "qrLogo": "Logo du QR code",
       "accountDefault": "Valeur par défaut du compte",
-      "moneroLogo": "Logo Monero",
       "noLogo": "Aucun logo",
-      "customImage": "Image personnalisée",
       "removeCustomImage": "Supprimer l’image personnalisée",
       "summary": "Récapitulatif",
       "creating": "Création de la facture…",
@@ -775,13 +770,11 @@
       "detectedAt": "Détectée le",
       "confirmedAt": "Confirmée le",
       "expiresAt": "Expire le",
-      "confirmationTarget": "Objectif de confirmations",
       "subaddressIndex": "Index de sous-adresse",
       "archivedAt": "Archivée le",
       "paidAfterExpiryAt": "Payée après expiration le",
       "viewTransactions": "Voir les transactions",
       "archiveInvoice": "Archiver la facture",
-      "archivedDone": "Facture archivée.",
       "invoice": "Facture",
       "actions": "Actions",
       "pages": "Pages de factures",
@@ -1494,7 +1487,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "Comment exploiter un paiement Monero auto-hébergé",
       "metaTitle": "Comment exploiter un paiement Monero auto-hébergé | XMR Checkout",
       "metaDescription": "Installez XMR Checkout avec Docker Compose, un portefeuille en lecture seule, un démon Monero et une détection fiable des factures.",
       "navFlow": "Comprendre le flux",
@@ -1544,7 +1536,6 @@
       "continueApi": "Continuer vers l’intégration de l’API et des webhooks →"
     },
     "api": {
-      "metaTitleShort": "Intégrer l’API de paiement Monero et les webhooks",
       "metaTitle": "Intégrer l’API de paiement Monero et les webhooks | XMR Checkout",
       "metaDescription": "Connectez une boutique à XMR Checkout grâce à la création de factures, aux pages de paiement hébergées, aux vérifications de statut publiques et aux événements de webhook.",
       "webhooksBody": "Enregistrez un point de terminaison public en HTTPS via le tableau de bord ou l’API, puis sélectionnez les événements que vous souhaitez recevoir. Les événements natifs comprennent <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> et <code>invoice.expired</code>.",

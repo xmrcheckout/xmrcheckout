@@ -83,7 +83,6 @@
     "notFoundHelp": "请确认你拥有完整的账单链接。",
     "doNotPay": "请勿付款。请联系商家获取有效的账单链接。",
     "lookUp": "查询账单",
-    "checkingWorks": "检测到你的付款后，此页面会自动更新。你可以保持页面打开，也可以稍后再回来。",
     "checkingDelayed": "付款检查目前有延迟。发送到此地址的付款仍会直接进入商家的钱包，并会在检查恢复后显示在这里。",
     "status": "状态",
     "confirmations": "确认数",
@@ -245,7 +244,6 @@
     "note": "只读状态视图。账单页面每 30 秒检查一次更新。"
   },
   "lookupPage": {
-    "metaTitle": "查询账单",
     "metaDescription": "使用公开的账单 ID 查看门罗币账单的检测和确认进度。",
     "ogTitle": "门罗币账单状态查询 | XMR Checkout",
     "eyebrow": "账单状态",
@@ -462,7 +460,6 @@
       "help": "打印此标牌，或在打印对话框中将其另存为 PDF。顾客扫描二维码即可打开你的付款链接；每笔付款都会直接进入你的钱包。",
       "disabled": "此付款链接已停用。在你重新启用链接之前，二维码将无法使用。",
       "preview": "标牌预览",
-      "badgeAlt": "此处接受门罗币",
       "scan": "扫码用门罗币付款"
     },
     "allowanceNoteDetail": "重复提交可能会创建多张单独的账单。系统不收集买家信息；请凭账单 ID 与顾客商定交付事宜。返回 URL 无法保护下载内容。",
@@ -732,9 +729,7 @@
       "continueHelp": "确认后，托管的账单页面可以显示“继续”按钮。",
       "qrLogo": "二维码标志",
       "accountDefault": "账户默认值",
-      "moneroLogo": "门罗币标志",
       "noLogo": "无标志",
-      "customImage": "自定义图片",
       "removeCustomImage": "移除自定义图片",
       "summary": "摘要",
       "creating": "正在创建账单…",
@@ -769,13 +764,11 @@
       "detectedAt": "检测时间",
       "confirmedAt": "确认时间",
       "expiresAt": "过期时间",
-      "confirmationTarget": "确认目标",
       "subaddressIndex": "子地址索引",
       "archivedAt": "归档时间",
       "paidAfterExpiryAt": "过期后付款时间",
       "viewTransactions": "查看交易",
       "archiveInvoice": "归档账单",
-      "archivedDone": "账单已归档。",
       "invoice": "账单",
       "actions": "操作",
       "pages": "账单分页",
@@ -1484,7 +1477,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "如何运行自托管的门罗币结账",
       "metaTitle": "如何运行自托管的门罗币结账 | XMR Checkout",
       "metaDescription": "使用 Docker Compose、只读钱包、门罗币守护进程设置 XMR Checkout，实现可靠的账单检测。",
       "navFlow": "了解流程",
@@ -1534,7 +1526,6 @@
       "continueApi": "继续阅读 API 和 Webhook 集成 →"
     },
     "api": {
-      "metaTitleShort": "集成门罗币付款 API 和 Webhook",
       "metaTitle": "集成门罗币付款 API 和 Webhook | XMR Checkout",
       "metaDescription": "通过账单创建、托管付款页面、公开状态检查和 Webhook 事件，将商店连接到 XMR Checkout。",
       "webhooksBody": "通过控制台或 API 注册一个公开的 HTTPS 端点，然后选择你想接收的事件。原生事件包括 <code>invoice.created</code>、<code>invoice.partially_paid</code>、<code>invoice.payment_detected</code>、<code>invoice.confirmed</code> 和 <code>invoice.expired</code>。",

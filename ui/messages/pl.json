@@ -83,7 +83,6 @@
     "notFoundHelp": "Sprawdź, czy masz pełny link do prośby o płatność.",
     "doNotPay": "Nie wysyłaj płatności. Poproś sprzedawcę o prawidłowy link do prośby o płatność.",
     "lookUp": "Wyszukaj prośbę o płatność",
-    "checkingWorks": "Ta strona aktualizuje się automatycznie, gdy twoja płatność zostanie zauważona. Możesz zostawić ją otwartą lub wrócić później.",
     "checkingDelayed": "Sprawdzanie płatności jest obecnie opóźnione. Płatności wysłane na ten adres nadal trafiają bezpośrednio do portfela sprzedawcy i pojawią się tutaj po wznowieniu sprawdzania.",
     "status": "Status",
     "confirmations": "Potwierdzenia",
@@ -251,7 +250,6 @@
     "note": "Podgląd statusu tylko do odczytu. Strona prośby o płatność sprawdza aktualizacje co 30 sekund."
   },
   "lookupPage": {
-    "metaTitle": "Sprawdź płatność",
     "metaDescription": "Sprawdź wykrycie i postęp potwierdzeń prośby o płatność w Monero za pomocą jej publicznego identyfikatora.",
     "ogTitle": "Sprawdzanie statusu prośby o płatność Monero | XMR Checkout",
     "eyebrow": "Status prośby o płatność",
@@ -471,7 +469,6 @@
       "help": "Wydrukuj ten plakat lub zapisz go jako PDF w oknie drukowania. Klienci skanują kod QR, aby otworzyć twój link płatności; każda płatność trafia bezpośrednio do twojego portfela.",
       "disabled": "Ten link płatności jest wyłączony. Kod QR nie zadziała, dopóki ponownie nie włączysz linku.",
       "preview": "Podgląd plakatu",
-      "badgeAlt": "Tu przyjmujemy Monero",
       "scan": "Zeskanuj, aby zapłacić w Monero"
     },
     "allowanceNoteDetail": "Powtarzane wysłania mogą tworzyć osobne prośby. Dane kupującego nie są zbierane; realizację ustal z klientem na podstawie identyfikatora prośby o płatność. Adresy powrotne nie chronią pobierania plików.",
@@ -750,9 +747,7 @@
       "continueHelp": "Po potwierdzeniu hostowana strona prośby o płatność może pokazać przycisk Kontynuuj.",
       "qrLogo": "Logo kodu QR",
       "accountDefault": "Domyślne dla konta",
-      "moneroLogo": "Logo Monero",
       "noLogo": "Bez logo",
-      "customImage": "Własny obraz",
       "removeCustomImage": "Usuń własny obraz",
       "summary": "Podsumowanie",
       "creating": "Tworzenie prośby o płatność…",
@@ -787,13 +782,11 @@
       "detectedAt": "Wykryto",
       "confirmedAt": "Potwierdzono",
       "expiresAt": "Wygasa",
-      "confirmationTarget": "Wymagane potwierdzenia",
       "subaddressIndex": "Indeks podadresu",
       "archivedAt": "Zarchiwizowano",
       "paidAfterExpiryAt": "Opłacono po wygaśnięciu",
       "viewTransactions": "Zobacz transakcje",
       "archiveInvoice": "Zarchiwizuj prośbę o płatność",
-      "archivedDone": "Prośba o płatność zarchiwizowana.",
       "invoice": "Prośba o płatność",
       "actions": "Działania",
       "pages": "Strony próśb o płatność",
@@ -1514,7 +1507,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "Jak uruchomić samodzielnie hostowany checkout Monero",
       "metaTitle": "Jak uruchomić samodzielnie hostowany checkout Monero | XMR Checkout",
       "metaDescription": "Skonfiguruj XMR Checkout z Docker Compose, portfelem tylko do odczytu, demonem Monero i niezawodnym wykrywaniem płatności.",
       "navFlow": "Zrozum przepływ",
@@ -1564,7 +1556,6 @@
       "continueApi": "Przejdź do integracji API i webhooków →"
     },
     "api": {
-      "metaTitleShort": "Integracja API płatności Monero i webhooków",
       "metaTitle": "Integracja API płatności Monero i webhooków | XMR Checkout",
       "metaDescription": "Połącz sklep z XMR Checkout: tworzenie próśb o płatność, hostowane strony płatności, publiczne sprawdzanie statusu i zdarzenia webhooków.",
       "webhooksBody": "Zarejestruj publiczny endpoint HTTPS w panelu lub przez API, a następnie wybierz zdarzenia, które chcesz otrzymywać. Wbudowane zdarzenia to m.in. <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code> i <code>invoice.expired</code>.",

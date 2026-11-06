@@ -45,7 +45,7 @@ export default async function PaymentLinkSignPage({ params }: { params: Promise<
       <div className="flex flex-wrap items-center gap-4"><PrintSignButton />{back}</div>
     </div>
     <article aria-label={t("paymentLinks.signPage.preview")} className="print-sign mx-auto mt-8 grid max-w-2xl justify-items-center gap-5 rounded-2xl border border-stroke bg-white p-8 text-center">
-      <Image src="/badges/monero-accepted-here.svg" alt={t("paymentLinks.signPage.badgeAlt")} width={320} height={80} unoptimized className="h-auto max-w-full" />
+      <Image src="/badges/monero-accepted-here.svg" alt={t("paymentLinks.badgeAlt")} width={320} height={80} unoptimized className="h-auto max-w-full" />
       <h2 className="break-words font-sans text-3xl font-semibold">{link.title}</h2>
       {fixedXmr ? <p className="text-2xl font-semibold">{fixedXmr}</p> : null}
       <SignQrCode url={link.url} />

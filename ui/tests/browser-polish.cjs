@@ -36,7 +36,7 @@ const { contrast } = require('./browser-contrast.cjs');
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path+' enlarged overflow');
       }
       if(width===1440) {
-        for (const [path,label] of [['/docs','Documentation'],['/docs/integrations','Integration Recipes'],['/faq','FAQ'],['/guides','Guides'],['/tour','Demo'],['/invoice','Check invoice']]) {
+        for (const [path,label] of [['/docs','Monero Payment API Documentation'],['/docs/integrations','Monero Checkout Integration Recipes'],['/faq','Monero Checkout FAQ'],['/guides','Monero Checkout Guides'],['/tour','Monero Checkout Demo'],['/invoice','Monero Invoice Status Lookup']]) {
           await page.goto(base+path,{waitUntil:'networkidle'});
           assert.equal(await page.title(),label+' | XMR Checkout',path+' title');
         }

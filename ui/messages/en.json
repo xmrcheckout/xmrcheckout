@@ -83,7 +83,6 @@
     "notFoundHelp": "Check that you have the complete invoice link.",
     "doNotPay": "Do not send payment. Contact the merchant for a valid invoice link.",
     "lookUp": "Look up an invoice",
-    "checkingWorks": "This page updates automatically when your payment is seen. You can keep it open or come back later.",
     "checkingDelayed": "Payment checking is delayed right now. Payments sent to this address still go directly to the merchant's wallet and will appear here once checking resumes.",
     "status": "Status",
     "confirmations": "Confirmations",
@@ -247,7 +246,6 @@
     "note": "Read-only status view. The invoice page checks for updates every 30 seconds."
   },
   "lookupPage": {
-    "metaTitle": "Check invoice",
     "metaDescription": "Check Monero invoice detection and confirmation progress using a public invoice ID.",
     "ogTitle": "Monero Invoice Status Lookup | XMR Checkout",
     "eyebrow": "Invoice status",
@@ -465,7 +463,6 @@
       "help": "Print this sign or save it as a PDF from the print dialog. Customers scan the QR code to open your payment link; each payment goes directly to your wallet.",
       "disabled": "This payment link is disabled. The QR code will not work until you enable the link again.",
       "preview": "Sign preview",
-      "badgeAlt": "Monero accepted here",
       "scan": "Scan to pay with Monero"
     },
     "allowanceNoteDetail": "Repeated submissions can create separate invoices. No buyer details are collected; arrange fulfillment with your customer using the invoice ID. Return URLs do not protect downloads.",
@@ -738,9 +735,7 @@
       "continueHelp": "After confirmation, the hosted invoice page can show a Continue button.",
       "qrLogo": "QR logo",
       "accountDefault": "Account default",
-      "moneroLogo": "Monero logo",
       "noLogo": "No logo",
-      "customImage": "Custom image",
       "removeCustomImage": "Remove custom image",
       "summary": "Summary",
       "creating": "Creating invoice…",
@@ -775,13 +770,11 @@
       "detectedAt": "Detected at",
       "confirmedAt": "Confirmed at",
       "expiresAt": "Expires at",
-      "confirmationTarget": "Confirmation target",
       "subaddressIndex": "Subaddress index",
       "archivedAt": "Archived at",
       "paidAfterExpiryAt": "Paid after expiry at",
       "viewTransactions": "View transactions",
       "archiveInvoice": "Archive invoice",
-      "archivedDone": "Invoice archived.",
       "invoice": "Invoice",
       "actions": "Actions",
       "pages": "Invoice pages",
@@ -1494,7 +1487,6 @@
       }
     },
     "selfHost": {
-      "metaTitleShort": "How to Run a Self-Hosted Monero Checkout",
       "metaTitle": "How to Run a Self-Hosted Monero Checkout | XMR Checkout",
       "metaDescription": "Set up XMR Checkout with Docker Compose, a view-only wallet, a Monero daemon, and reliable invoice detection.",
       "navFlow": "Understand the flow",
@@ -1544,7 +1536,6 @@
       "continueApi": "Continue to API and webhook integration →"
     },
     "api": {
-      "metaTitleShort": "Integrating the Monero Payment API and Webhooks",
       "metaTitle": "Integrating the Monero Payment API and Webhooks | XMR Checkout",
       "metaDescription": "Connect a store to XMR Checkout with invoice creation, hosted payment pages, public status checks, and webhook events.",
       "webhooksBody": "Register a public HTTPS endpoint through the dashboard or the API, then select the events you want to receive. Native events include <code>invoice.created</code>, <code>invoice.partially_paid</code>, <code>invoice.payment_detected</code>, <code>invoice.confirmed</code>, and <code>invoice.expired</code>.",

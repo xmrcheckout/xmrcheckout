@@ -1,6 +1,7 @@
 """Set SUBADDRESS_DATABASE_TESTS=1 to exercise isolated PostgreSQL schemas."""
 import os
 import threading
+from time import sleep
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
@@ -211,6 +212,23 @@ class AllocationDatabaseTests(unittest.TestCase):
         finally:
             timer.join()
             conn.close()
+        self.assertEqual(index, 1)
+
+    def test_waiting_allocation_gets_the_lock_before_the_next_reconciler_invoice(self):
+        key = reconciler._invoice_lock_key(f"allocation:{self.user_id}")
+        conn = self.engine.connect().execution_options(isolation_level="AUTOCOMMIT")
+        conn.execute(text("SELECT pg_advisory_lock(:key)"), {"key": key})
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            pending = pool.submit(self.issue)
+            sleep(0.3)
+            # The reconciler releases the lock and immediately tries the next invoice.
+            conn.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": key})
+            retaken = conn.execute(text("SELECT pg_try_advisory_lock(:key)"), {"key": key}).scalar()
+            if retaken:
+                conn.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": key})
+            _, index = pending.result(timeout=5)
+        conn.close()
+        self.assertFalse(retaken)
         self.assertEqual(index, 1)
 
     def test_reconciliation_credits_only_new_payment_and_freezes_old_invoice(self):

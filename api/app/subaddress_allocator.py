@@ -3,10 +3,11 @@ from __future__ import annotations
 import hashlib
 import math
 from datetime import datetime, timezone
-from time import monotonic, sleep
+from time import monotonic
 from uuid import UUID, uuid4
 
 from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from .models import InvoiceTransfer, SubaddressAllocation, User
@@ -17,7 +18,6 @@ from .subaddress_status import MAX_SUBADDRESS_INDEX, load_availability, reuse_re
 # Reconciliation holds the merchant lock for one wallet read per invoice, so a
 # short wait normally succeeds instead of rejecting the sale outright.
 ALLOCATION_LOCK_WAIT_SECONDS = 10.0
-ALLOCATION_LOCK_POLL_SECONDS = 0.1
 
 
 def allocation_lock_key(user_id: object) -> int:
@@ -40,12 +40,19 @@ def create_subaddress_for_user(
     if locked is None:
         raise ValueError("User not found")
     # Coordinate with reconciliation, which commits while holding a session lock.
-    deadline = monotonic() + ALLOCATION_LOCK_WAIT_SECONDS
-    while not db.execute(text("SELECT pg_try_advisory_xact_lock(:key)"),
-                         {"key": allocation_lock_key(user.id)}).scalar():
-        if monotonic() >= deadline:
-            reject(503, "Invoice detection is busy. Try again shortly.", "allocation_contention", 5)
-        sleep(ALLOCATION_LOCK_POLL_SECONDS)
+    # Queue for the lock rather than polling: the reconciler takes it again for
+    # each invoice straight after releasing it, but its pg_try_advisory_lock
+    # gives way while this request is waiting.
+    previous_timeout = db.execute(text("SHOW lock_timeout")).scalar()
+    try:
+        with db.begin_nested():
+            db.execute(text("SELECT set_config('lock_timeout', :timeout, true)"),
+                       {"timeout": f"{int(ALLOCATION_LOCK_WAIT_SECONDS * 1000)}ms"})
+            db.execute(text("SELECT pg_advisory_xact_lock(:key)"), {"key": allocation_lock_key(user.id)})
+            db.execute(text("SELECT set_config('lock_timeout', :timeout, true)"),
+                       {"timeout": previous_timeout})
+    except OperationalError:
+        reject(503, "Invoice detection is busy. Try again shortly.", "allocation_contention", 5)
     now = datetime.now(timezone.utc)
     rows, allocations = load_availability(db, locked, now)
     candidates = [row for row in rows if row.category in ("never_issued", "eligible_for_reuse")]

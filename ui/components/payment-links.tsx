@@ -3,15 +3,14 @@ import { redirect } from "next/navigation";
 import { utcTimestamp } from "../lib/timestamps";
 import { getI18n } from "../lib/i18n/server";
 import { formatXmrAmount } from "../lib/formatting";
-import Image from "next/image";
 import { cookies } from "next/headers";
-import { badgeHtml, badgeImageUrl, paymentButtonHtml, paymentButtonImageUrl } from "../lib/payment-button";
 import InvoiceAddressAvailability, { type SubaddressStatus } from "./invoice-address-availability";
 import StatusRefreshButton from "./status-refresh-button";
 import StatusBadge from "./status-badge";
 import CopyCodeBlock from "./copy-code-block";
 import CopyIconButton from "./copy-icon-button";
 import PaymentLinkEditor, { type PaymentLinkData } from "./payment-link-editor";
+import PaymentButtonEditor from "./payment-button-editor";
 
 export type PaymentLinkUsage = { remaining: number; used: number; daily_limit: number; window_hours: number; retrieved_at: string; supported_currencies?: string[] };
 
@@ -30,7 +29,7 @@ const priceLabel = (link: PaymentLinkData, t: Translate) => link.customer_amount
 const statusBadge = (link: PaymentLinkData, t: Translate) =>
   <StatusBadge label={link.enabled ? t("terminals.enabled") : t("terminals.disabled")} tone={link.enabled ? "success" : "neutral"} />;
 
-export default async function PaymentLinks({ selectedId, deleted, loginUrl }: { selectedId?: string; deleted?: boolean; loginUrl: string }) {
+export default async function PaymentLinks({ selectedId, deleted, saved, loginUrl }: { selectedId?: string; deleted?: boolean; saved?: boolean; loginUrl: string }) {
   const { t } = await getI18n();
   const key = (await cookies()).get("xmrcheckout_api_key")?.value;
   const base = process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -47,11 +46,11 @@ export default async function PaymentLinks({ selectedId, deleted, loginUrl }: { 
   const addressStatus: SubaddressStatus | null = addressResponse?.ok ? await addressResponse.json() : null;
   const links: PaymentLinkData[] = await response.json();
   const target = profile?.ok ? (await profile.json()).default_confirmation_target : 1;
-  return <PaymentLinksView links={links} usage={usage} addressStatus={addressStatus} target={target} selectedId={selectedId} deleted={deleted} />;
+  return <PaymentLinksView links={links} usage={usage} addressStatus={addressStatus} target={target} selectedId={selectedId} deleted={deleted} saved={saved} />;
 }
 
-export async function PaymentLinksView({ links, usage, addressStatus, target, selectedId, deleted = false, mode = "live" }: {
-  links: PaymentLinkData[]; usage: PaymentLinkUsage | null; addressStatus: SubaddressStatus | null; target: number; selectedId?: string; deleted?: boolean; mode?: Mode;
+export async function PaymentLinksView({ links, usage, addressStatus, target, selectedId, deleted = false, saved = false, mode = "live" }: {
+  links: PaymentLinkData[]; usage: PaymentLinkUsage | null; addressStatus: SubaddressStatus | null; target: number; selectedId?: string; deleted?: boolean; saved?: boolean; mode?: Mode;
 }) {
   const { t } = await getI18n();
   const currencies: string[] | null = usage?.supported_currencies ?? null;
@@ -70,6 +69,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
     {tour ? <p className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">{t("paymentLinks.demoNote")}</p> : null}
     {selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("paymentLinks.notFound")}</p> : null}
     {deleted && !selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("dashboard.paymentLinkActions.deleted")}</p> : null}
+    {saved && !selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("dashboard.paymentLinkActions.saved")}</p> : null}
 
     <details className="rounded-2xl open:border open:border-stroke open:p-5">
       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-full bg-ink px-5 py-2 font-semibold text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">{t("paymentLinks.create")}</summary>
@@ -137,16 +137,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
 
 function PaymentLinkDetail({ link, currencies, mode, t }: { link: PaymentLinkData; currencies: string[] | null; mode: Mode; t: Translate }) {
   const tour = mode === "tour";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost";
   const sectionClass = "grid min-w-0 gap-3 rounded-2xl border border-stroke p-5";
-  const badgeVariant = (variant: "dark" | "light") => <div className="grid min-w-0 gap-3">
-    <div className={`grid min-w-0 justify-items-start rounded-xl border border-stroke p-4 ${variant === "dark" ? "bg-white/50" : "bg-ink"}`}>
-      <a href={tour ? "/tour?tab=invoice" : link.url} className="inline-block max-w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay">
-        <Image src={new URL(badgeImageUrl(siteUrl, variant)).pathname} alt={t("paymentLinks.badgeAlt")} width={320} height={80} unoptimized className="h-auto w-64 max-w-full" />
-      </a>
-    </div>
-    <CopyCodeBlock className={codeClass} label={variant === "dark" ? t("paymentLinks.darkBadgeHtml") : t("paymentLinks.lightBadgeHtml")}>{badgeHtml(siteUrl, variant, link.url)}</CopyCodeBlock>
-  </div>;
   return <section className="grid min-w-0 gap-6">
     <div>
       <p><Link className={`inline-flex min-h-11 items-center ${linkClass}`} href={listHref(mode)}><span aria-hidden="true">←&nbsp;</span>{t("paymentLinks.back")}</Link></p>
@@ -167,24 +158,7 @@ function PaymentLinkDetail({ link, currencies, mode, t }: { link: PaymentLinkDat
       </section>
       <section aria-labelledby="share-button-title" className={sectionClass}>
         <h3 id="share-button-title" className="font-sans font-semibold">{t("paymentLinks.shareButton")}</h3>
-        <div className="grid min-w-0 justify-items-start gap-3 rounded-xl border border-stroke bg-white/50 p-4">
-          <p className="text-sm text-ink-soft">{t("paymentLinks.buttonPreview")}</p>
-          <a href={tour ? "/tour?tab=invoice" : link.url} className="inline-block max-w-full rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay">
-            <Image src={paymentButtonImageUrl(link.url, link.button_text)} alt={t("paymentLinks.buttonAlt", { text: link.button_text })} width={280} height={80} unoptimized className="h-auto max-w-full" />
-          </a>
-          <p className="text-sm text-ink-soft">{link.auto_create_invoice ? t("paymentLinks.autoCreates") : t("paymentLinks.opensReview")}</p>
-        </div>
-        <CopyCodeBlock className={codeClass} label={t("paymentLinks.htmlButton")}>{paymentButtonHtml(link.url, link.button_text)}</CopyCodeBlock>
-        <p className="text-sm text-ink-soft">{t("paymentLinks.pasteHtml", { behavior: link.auto_create_invoice ? t("paymentLinks.graphicAuto") : t("paymentLinks.graphicReview") })}</p>
-      </section>
-      <section aria-labelledby="share-badge-title" className={sectionClass}>
-        <h3 id="share-badge-title" className="font-sans font-semibold">{t("paymentLinks.shareBadge")}</h3>
-        <p className="text-sm text-ink-soft">{t("paymentLinks.badgeHelp")}</p>
-        {badgeVariant("dark")}
-        <details>
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50">{t("paymentLinks.lightBadge")}</summary>
-          {badgeVariant("light")}
-        </details>
+        <PaymentButtonEditor url={link.url} initialText={link.button_text} previewHref={tour ? "/tour?tab=invoice" : link.url} autoCreate={link.auto_create_invoice} />
       </section>
       {tour ? null : <section aria-labelledby="share-sign-title" className={sectionClass}>
         <h3 id="share-sign-title" className="font-sans font-semibold">{t("paymentLinks.shareSign")}</h3>

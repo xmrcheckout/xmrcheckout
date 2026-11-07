@@ -404,11 +404,8 @@
     "unavailable": "Platební odkazy nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
     "intro": "Vytvořte opakovaně použitelné HTML tlačítko nebo odkaz pro přijímání darů nebo prodej produktů a služeb. Každé odeslání vytvoří samostatnou platební výzvu v XMR placenou přímo do vaší peněženky.",
     "allowanceNote": "Kdokoli s vaším odkazem může vytvořit platební výzvu, proto mají odkazy denní limit. Díky tomu zůstane dost volných adres pro vaše vlastní platby.",
-    "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“, nastavte Text tlačítka na „Přispět v Monero“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Opakované platby nejsou podporovány.",
+    "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Pak v části Sdílet nastavte první řádek tlačítka na „Přispět v Monero“. Opakované platby nejsou podporovány.",
     "guide": "Návod k nastavení platebních odkazů",
-    "lightBadge": "Světlý odznak (pro tmavé pozadí)",
-    "darkBadgeHtml": "HTML tmavého odznaku",
-    "lightBadgeHtml": "HTML světlého odznaku",
     "badgeAlt": "Zde přijímáme Monero",
     "allowance": "Limit veřejných platebních výzev",
     "allowanceSummary": "Zbývá {remaining} · využito {used} · limit {limit} za posledních {hours} hodin",
@@ -423,6 +420,15 @@
     "htmlButton": "HTML tlačítko",
     "buttonPreview": "Náhled tlačítka",
     "buttonAlt": "{text} přes xmrcheckout",
+    "buttonStyle": "Barva",
+    "themeDark": "Tmavé, pro světlé pozadí",
+    "themeLight": "Světlé, pro tmavé pozadí",
+    "primaryText": "První řádek",
+    "secondaryText": "Druhý řádek",
+    "buttonTextLimit": "1–32 znaků. Například „Přispět v Monero“ nebo „Zde přijímáme Monero“.",
+    "secondaryTextHelp": "Až 32 znaků. Ponechte prázdné pro jediný řádek.",
+    "buttonTextInvalid": "Zadejte 1–32 tisknutelných znaků.",
+    "buttonFixText": "Opravte text tlačítka, aby se zobrazilo HTML.",
     "autoCreates": "Při otevření automaticky vytvoří platební výzvu.",
     "opensReview": "Otevře stránku s kontrolou platby.",
     "pasteHtml": "Vložte do HTML bloku na svém webu. {behavior} Není potřeba žádný formulář ani JavaScript. Opakovaně použitelný odkaz můžete také připojit k vlastnímu tlačítku.",
@@ -435,8 +441,6 @@
       "enable": "Zapnout platební odkaz",
       "defaultButton": "Koupit za Monero",
       "title": "Název",
-      "buttonText": "Text tlačítka",
-      "buttonTextHelp": "Až 32 znaků. Nahradí „Koupit za Monero“ v grafice. Po změně textu zkopírujte aktualizované HTML.",
       "description": "Popis",
       "amount": "Částka",
       "fixedBySeller": "Pevnou částku nastavujete vy",
@@ -498,8 +502,6 @@
     "shareLink": "Odkaz",
     "shareLinkHelp": "Pošlete ho ve zprávě nebo na sociálním profilu, případně ho připojte k vlastnímu tlačítku.",
     "shareButton": "Tlačítko pro váš web",
-    "shareBadge": "Odznak „Zde přijímáme Monero“",
-    "badgeHelp": "Odznak vede na tento platební odkaz, takže přes něj mohou návštěvníci zaplatit. Tmavý odznak používejte na světlém pozadí.",
     "shareSign": "Vytištěná cedulka",
     "shareSignHelp": "Na pult, stánek nebo pokladničku na dary. Zákazníci naskenují QR kód a otevřou tento odkaz.",
     "settings": "Nastavení"
@@ -541,7 +543,7 @@
       "disabled": "Platební odkaz vypnut.",
       "enabled": "Platební odkaz zapnut.",
       "created": "Platební odkaz vytvořen. Najdete ho níže ve svých platebních odkazech.",
-      "saved": "Platební odkaz uložen. Odkaz a tlačítko výše jsou aktuální.",
+      "saved": "Platební odkaz uložen.",
       "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů.",
       "deleted": "Platební odkaz smazán.",
       "deleteNotConfirmed": "Smazání se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů."
@@ -1258,13 +1260,13 @@
       },
       "donations": {
         "q": "Mohu platební odkazy použít k přijímání darů v Monero?",
-        "p1": "Ano. Vytvořte platební odkaz do vlastní peněženky, dejte mu název jako „Podpořte můj projekt“, zvolte Částku zadává zákazník a nastavte Text tlačítka na „Přispět v Monero“. Sdílejte jeho opakovaně použitelnou URL nebo zkopírujte HTML tlačítko na svůj web. Každé úspěšné odeslání vytvoří samostatnou platební výzvu v XMR; prostředky jdou přímo do vaší peněženky.",
+        "p1": "Ano. Vytvořte platební odkaz do vlastní peněženky, dejte mu název jako „Podpořte můj projekt“ a zvolte Částku zadává zákazník. Sdílejte jeho opakovaně použitelnou URL, nebo na stránce odkazu nastavte první řádek tlačítka na „Přispět v Monero“ a zkopírujte HTML na svůj web. Každé úspěšné odeslání vytvoří samostatnou platební výzvu v XMR; prostředky jdou přímo do vaší peněženky.",
         "p2": "Dárci zadají částku v XMR nebo v podporované orientační fiat měně; minimum můžete nastavit v XMR. Pokud chcete nabídnout přednastavené částky, vytvořte pro každou samostatný odkaz s pevnou částkou. Automatické opakované platby nejsou podporovány. Stávající limity platebních výzev a adres platí, i když platební výzva nikdy není zaplacena.",
         "cta": "Nastavit darovací odkaz"
       },
       "badge": {
         "q": "Máte odznak nebo cedulku „Zde přijímáme Monero“?",
-        "p1": "Ano. V Panel → Platební odkazy najdete odznak „Zde přijímáme Monero“ ke zkopírování na váš web a každý platební odkaz má tisknutelnou cedulku s QR kódem pro pult, stánek nebo pokladničku. Odznak je obyčejný obrázek bez sledování.",
+        "p1": "Ano. Na stránce každého platebního odkazu v Panel → Platební odkazy může tlačítko pro váš web nést text „Zde přijímáme Monero“, v tmavé nebo světlé variantě, a vede na tento platební odkaz. Každý platební odkaz má také tisknutelnou cedulku s QR kódem pro pult, stánek nebo pokladničku. Tlačítko je obyčejný obrázek bez sledování.",
         "cta": "Dejte o sobě vědět"
       },
       "noWoo": {
@@ -1400,7 +1402,7 @@
         "step2": "Otevřete <strong>Panel → Terminály</strong> a zvolte <strong>Vytvořit terminál</strong>. Pojmenujte ho, například „Přední pult“, a vyberte výchozí měnu.",
         "step3": "Panel jednou zobrazí odkaz na terminál a QR kód. Naskenujte ho zařízením, které budete používat u pokladny, nebo do něj odkaz zkopírujte.",
         "step4": "Na zařízení přidejte stránku na plochu, abyste měli pokladnu přes celou obrazovku. Zařízení si terminál pamatuje, dokud nezvolíte <strong>Zapomenout tento terminál</strong>.",
-        "p1": "Aby zákazníci věděli, že mohou platit v Monero, vytiskněte odznak <strong>Zde přijímáme Monero</strong> z Panel → Platební odkazy a umístěte ho k pokladně. <link>Další způsoby, jak o sobě dát vědět</link>"
+        "p1": "Aby zákazníci věděli, že mohou platit v Monero, vytiskněte <strong>Tisknutelnou cedulku s QR kódem</strong> platebního odkazu z Panel → Platební odkazy a umístěte ji k pokladně. <link>Další způsoby, jak o sobě dát vědět</link>"
       },
       "sale": {
         "title": "Přijetí platby",
@@ -1451,7 +1453,7 @@
             "2": "Otevřete <dashboard>Panel → Platební odkazy</dashboard> a zvolte <strong>Vytvořit platební odkaz</strong>.",
             "3": "Zadejte název a volitelný popis. Použijte například „Digitální příručka“ s pevnou částkou 20 a měnou EUR. Můžete také zvolit přesnou částku v XMR, nebo vybrat <strong>Částku zadává zákazník</strong>, aby ji zákazník napsal sám (viz <donations>dary</donations>).",
             "4": "Zvolte požadovaný počet potvrzení. Formulář začíná vaší výchozí hodnotou obchodníka; nula přijme detekci bez čekání na potvrzení v bloku. Volitelně přidejte návratovou HTTPS URL obchodníka a <message>zprávu po potvrzení</message> zobrazenou po platbě.",
-            "5": "Uložte odkaz. V poli Text tlačítka můžete upravit popisek grafiky (až 32 znaků). Výchozí je „Koupit za Monero“. Ovládací prvky pro kopírování se zobrazí v seznamu platebních odkazů; po změně popisku zkopírujte aktualizované HTML. Volitelně zapněte „Přeskočit kontrolu a vytvořit platební výzvu automaticky“, aby se platební výzvy otevíraly přímo. Ve výchozím stavu je to vypnuté; návštěvy, včetně automatizovaných prohlížečů, mohou spotřebovávat limit platebních výzev a zásobu adres."
+            "5": "Uložte odkaz. Volitelně zapněte „Přeskočit kontrolu a vytvořit platební výzvu automaticky“, aby se platební výzvy otevíraly přímo. Ve výchozím stavu je to vypnuté; návštěvy, včetně automatizovaných prohlížečů, mohou spotřebovávat limit platebních výzev a zásobu adres."
           },
           "2": "U orientační částky 20 € každý požadavek na nákup vypočítá částku v XMR pomocí dostupné informativní notace. Platební výzva je stanovena v XMR a zobrazuje zdroj notace a časové razítko. Kurz není zafixován a výsledek v EUR není zaručen. Pokud notace není k dispozici, vytvoření selže.",
           "3": "Potřebujete nejprve vlastní nasazení? Postupujte podle <selfhost>návodu k vlastnímu hostingu</selfhost>. Předpokladem je funkční peněženka pouze pro prohlížení a synchronizované služby detekce."
@@ -1460,7 +1462,7 @@
       "embed": {
         "title": "Zkopírujte HTML tlačítko nebo opakovaně použitelnou URL",
         "body": {
-          "1": "Prohlédněte si náhled tlačítka v panelu a pak zkopírujte jeho HTML do vlastního HTML bloku na svém webu. Grafika obsahuje logo xmrcheckout a vede na stránku s kontrolou platby. Ve fragmentu není potřeba žádný formulář, JavaScript ani API klíč obchodníka.",
+          "1": "Otevřete odkaz v panelu. V části Sdílet zvolte tmavé nebo světlé tlačítko a upravte jeho dva řádky textu (každý až 32 znaků; výchozí je „Koupit za Monero“). Náhled i HTML se aktualizují během psaní. Zkopírujte HTML do vlastního HTML bloku na svém webu. Grafika vede na stránku s kontrolou platby. Ve fragmentu není potřeba žádný formulář, JavaScript ani API klíč obchodníka.",
           "2": "Tento příklad používá vyhrazenou ukázkovou doménu a zástupný token. Skutečný fragment zkopírujte z panelu; přístupové údaje k peněžence a API klíč do HTML webu nedávejte.",
           "3": "Můžete také zkopírovat opakovaně použitelnou URL a připojit ji k běžnému odkazu nebo vlastnímu tlačítku na webu. Obě možnosti zobrazí stránku s kontrolou produktu; zákazník pak odešle požadavek na nákup. Se zapnutou kontrolou otevření URL platební výzvu nevytvoří. Se zapnutým automatickým vytvářením si aktivní prohlížeč platební výzvu vyžádá a otevře ji. Stejná karta obnoví svou aktuální nezaplacenou platební výzvu; pro samostatnou objednávku použijte „Zahájit další nákup“. Bez JavaScriptu nebo úložiště prohlížeče použijí zákazníci tlačítko pro ruční vytvoření.",
           "4": "Nákupy používají uloženou přijímající peněženku, částku, požadovaný počet potvrzení a návratovou URL. Úpravou HTML tato nastavení nelze přepsat."
@@ -1507,7 +1509,7 @@
         "body": {
           "1": "Tvůrci, správci projektů a další příjemci mohou pomocí platebních odkazů přijímat dobrovolné příspěvky přímo do vlastní peněženky. Každé úspěšné odeslání vytvoří samostatnou platební výzvu s detekcí platby a průběhem potvrzování.",
           "2": {
-            "1": "Vytvořte platební odkaz s názvem jako „Podpořte můj projekt“ a zvolte <strong>Částku zadává zákazník</strong>. Nastavte <strong>Text tlačítka</strong> na <strong>Přispět v Monero</strong>. Volitelně nastavte minimální částku v XMR, abyste se vyhnuli velmi malým platebním výzvám.",
+            "1": "Vytvořte platební odkaz s názvem jako „Podpořte můj projekt“ a zvolte <strong>Částku zadává zákazník</strong>. Volitelně nastavte minimální částku v XMR, abyste se vyhnuli velmi malým platebním výzvám. V části <strong>Sdílet</strong> nastavte první řádek tlačítka na <strong>Přispět v Monero</strong>.",
             "2": "Sdílejte opakovaně použitelnou URL na svém profilu nebo webu, nebo zkopírujte HTML tlačítko z panelu. URL můžete připojit i k vlastnímu tlačítku „Podpořte tento projekt“.",
             "3": "Dárci na stránce s kontrolou zadají částku, zvolí XMR nebo podporovanou orientační fiat měnu a pak vytvoří svou platební výzvu. Pokud chcete nabídnout přednastavené částky, vytvořte pro každou samostatný odkaz s pevnou částkou.",
             "4": "Odkazy s částkou zadávanou zákazníkem vždy zobrazí stránku s kontrolou. U odkazů s pevnou částkou ponechte krok kontroly zapnutý, pokud otevření sdílené URL nemá vytvořit platební výzvu. Automatické vytváření je volitelné a spotřebovává kapacitu, když si aktivní prohlížeč platební výzvu vyžádá."
@@ -1521,7 +1523,7 @@
         "body": {
           "1": "Lidé, kteří drží Monero, hledají místa, kde ho přijímají. V panelu je k dispozici odznak „Zde přijímáme Monero“ ke zkopírování a tisknutelná cedulka.",
           "2": {
-            "1": "<strong>Přidejte odznak na svůj web.</strong> Otevřete <strong>Panel → Platební odkazy</strong> a zkopírujte odznak <strong>Zde přijímáme Monero</strong> do HTML bloku. K dispozici je tmavý odznak pro světlé pozadí a světlý pro tmavé. Odznak je obyčejný obrázek bez sledování a bez údajů o účtu.",
+            "1": "<strong>Přidejte odznak na svůj web.</strong> Otevřete platební odkaz v <strong>Panel → Platební odkazy</strong>, nastavte první řádek tlačítka na <strong>Zde přijímáme Monero</strong> a druhý na <strong>Plaťte v XMR</strong> a zkopírujte HTML do HTML bloku. Pro světlé pozadí zvolte tmavé, pro tmavé světlé. Tlačítko je obyčejný obrázek bez sledování a bez údajů o účtu.",
             "2": "<strong>Vytiskněte cedulku.</strong> Každý platební odkaz má <strong>Tisknutelnou cedulku s QR kódem</strong>. Zákazníci ji naskenují peněženkou a otevřou odkaz. Použijte ji u pultu, na stánku, na stole při akci nebo na pokladničce. Cedulky zobrazují cenu pouze u odkazů s pevnou částkou v XMR. Pro platby u pokladny podobné platbám kartou použijte <terminal>terminál</terminal> a odznak umístěte vedle něj."
           }
         }

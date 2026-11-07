@@ -404,11 +404,8 @@
     "unavailable": "Linki płatności są niedostępne. Odśwież, aby spróbować ponownie.",
     "intro": "Utwórz przycisk HTML lub link wielokrotnego użytku, aby przyjmować darowizny lub sprzedawać produkty i usługi. Każde wysłanie tworzy osobną prośbę o płatność w XMR, opłacaną bezpośrednio na twój portfel.",
     "allowanceNote": "Każdy, kto ma twój link, może utworzyć prośbę o płatność, dlatego linki mają dzienny limit. Dzięki temu w puli adresów zostaje dość wolnych adresów na twoje własne płatności.",
-    "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt”, ustaw Tekst przycisku na „Wesprzyj w Monero” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Płatności cykliczne nie są obsługiwane.",
+    "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Następnie w sekcji Udostępnij ustaw pierwszy wiersz przycisku na „Wesprzyj w Monero”. Płatności cykliczne nie są obsługiwane.",
     "guide": "Poradnik konfiguracji linków płatności",
-    "lightBadge": "Jasna odznaka (na ciemne tło)",
-    "darkBadgeHtml": "HTML ciemnej odznaki",
-    "lightBadgeHtml": "HTML jasnej odznaki",
     "badgeAlt": "Tu przyjmujemy Monero",
     "allowance": "Publiczny limit próśb o płatność",
     "allowanceSummary": "Pozostało: {remaining} · Wykorzystano: {used} · Limit {limit} w ruchomym oknie {hours} godz.",
@@ -423,6 +420,15 @@
     "htmlButton": "Przycisk HTML",
     "buttonPreview": "Podgląd przycisku",
     "buttonAlt": "{text} przez xmrcheckout",
+    "buttonStyle": "Kolor",
+    "themeDark": "Ciemny, na jasne tło",
+    "themeLight": "Jasny, na ciemne tło",
+    "primaryText": "Pierwszy wiersz",
+    "secondaryText": "Drugi wiersz",
+    "buttonTextLimit": "Od 1 do 32 znaków. Na przykład „Wesprzyj w Monero” lub „Tu przyjmujemy Monero”.",
+    "secondaryTextHelp": "Do 32 znaków. Zostaw puste, aby był jeden wiersz.",
+    "buttonTextInvalid": "Wpisz od 1 do 32 drukowalnych znaków.",
+    "buttonFixText": "Popraw tekst przycisku, aby zobaczyć HTML.",
     "autoCreates": "Po otwarciu automatycznie tworzy prośbę o płatność.",
     "opensReview": "Otwiera stronę podsumowania płatności.",
     "pasteHtml": "Wklej do bloku HTML na swojej stronie. {behavior} Nie potrzeba formularza ani JavaScriptu. Link wielokrotnego użytku możesz też podpiąć pod własny przycisk.",
@@ -435,8 +441,6 @@
       "enable": "Włącz link płatności",
       "defaultButton": "Kup za Monero",
       "title": "Tytuł",
-      "buttonText": "Tekst przycisku",
-      "buttonTextHelp": "Do 32 znaków. Zastępuje „Kup za Monero” na grafice. Po zmianie tekstu skopiuj zaktualizowany HTML.",
       "description": "Opis",
       "amount": "Kwota",
       "fixedBySeller": "Stała kwota ustalona przez ciebie",
@@ -498,8 +502,6 @@
     "shareLink": "Link",
     "shareLinkHelp": "Wyślij go w wiadomości lub na profilu społecznościowym albo podepnij pod własny przycisk.",
     "shareButton": "Przycisk na Twoją stronę",
-    "shareBadge": "Odznaka „Tu przyjmujemy Monero”",
-    "badgeHelp": "Odznaka prowadzi do tego linku płatności, więc odwiedzający mogą przez nią zapłacić. Ciemnej odznaki używaj na jasnym tle.",
     "shareSign": "Wydrukowany plakat",
     "shareSignHelp": "Na ladę, stoisko lub skarbonkę na darowizny. Klienci skanują kod QR, aby otworzyć ten link.",
     "settings": "Ustawienia"
@@ -541,7 +543,7 @@
       "disabled": "Link płatności wyłączony.",
       "enabled": "Link płatności włączony.",
       "created": "Link płatności utworzony. Znajdziesz go poniżej na liście swoich linków płatności.",
-      "saved": "Link płatności zapisany. Link i przycisk powyżej są aktualne.",
+      "saved": "Link płatności zapisany.",
       "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę linków płatności, zanim spróbujesz ponownie.",
       "deleted": "Link płatności usunięty.",
       "deleteNotConfirmed": "Nie udało się potwierdzić usunięcia. Sprawdź listę linków płatności, zanim spróbujesz ponownie."
@@ -1258,13 +1260,13 @@
       },
       "donations": {
         "q": "Czy mogę używać linków płatności do przyjmowania darowizn w Monero?",
-        "p1": "Tak. Utwórz link płatności do własnego portfela, nadaj mu tytuł taki jak „Wesprzyj mój projekt”, wybierz Klient wpisuje kwotę i ustaw Tekst przycisku na „Wesprzyj w Monero”. Udostępnij jego adres wielokrotnego użytku lub skopiuj przycisk HTML na swoją stronę. Każde udane wysłanie tworzy osobną prośbę o płatność w XMR; środki trafiają bezpośrednio do twojego portfela.",
+        "p1": "Tak. Utwórz link płatności do własnego portfela, nadaj mu tytuł taki jak „Wesprzyj mój projekt” i wybierz Klient wpisuje kwotę. Udostępnij jego adres wielokrotnego użytku albo na stronie linku ustaw pierwszy wiersz przycisku na „Wesprzyj w Monero” i skopiuj HTML na swoją stronę. Każde udane wysłanie tworzy osobną prośbę o płatność w XMR; środki trafiają bezpośrednio do twojego portfela.",
         "p2": "Darczyńcy wpisują kwotę w XMR lub w obsługiwanej walucie fiat jako odniesieniu; możesz ustawić minimum w XMR. Aby zaoferować stałe kwoty, utwórz osobny link ze stałą kwotą dla każdej z nich. Automatyczne płatności cykliczne nie są obsługiwane. Limity próśb o płatność i adresów obowiązują nawet wtedy, gdy prośba nigdy nie zostanie opłacona.",
         "cta": "Skonfiguruj link do darowizn"
       },
       "badge": {
         "q": "Czy macie odznakę lub plakat „Tu przyjmujemy Monero”?",
-        "p1": "Tak. W Panel → Linki płatności znajdziesz odznakę „Tu przyjmujemy Monero” do skopiowania na swoją stronę, a każdy link płatności ma plakat do druku z kodem QR na ladę, stoisko lub skarbonkę. Odznaka to zwykły obrazek bez śledzenia.",
+        "p1": "Tak. Na stronie każdego linku płatności w Panel → Linki płatności przycisk na stronę może mieć napis „Tu przyjmujemy Monero”, w wersji ciemnej lub jasnej, i prowadzi do tego linku płatności. Każdy link płatności ma też plakat do druku z kodem QR na ladę, stoisko lub skarbonkę. Przycisk to zwykły obrazek bez śledzenia.",
         "cta": "Daj się znaleźć"
       },
       "noWoo": {
@@ -1400,7 +1402,7 @@
         "step2": "Otwórz <strong>Panel → Terminale</strong> i wybierz <strong>Utwórz terminal</strong>. Nadaj mu nazwę, np. „Kasa przy wejściu”, i wybierz domyślną walutę.",
         "step3": "Panel jednorazowo pokazuje link terminala i kod QR. Zeskanuj go urządzeniem, którego będziesz używać przy kasie, lub skopiuj na nie link.",
         "step4": "Na urządzeniu dodaj stronę do ekranu głównego, aby mieć kasę na pełnym ekranie. Urządzenie pamięta terminal, dopóki nie wybierzesz <strong>Zapomnij ten terminal</strong>.",
-        "p1": "Aby klienci wiedzieli, że mogą zapłacić w Monero, wydrukuj odznakę <strong>Tu przyjmujemy Monero</strong> z Panel → Linki płatności i umieść ją przy kasie. <link>Więcej sposobów, by dać się znaleźć</link>"
+        "p1": "Aby klienci wiedzieli, że mogą zapłacić w Monero, wydrukuj <strong>Plakat do druku z kodem QR</strong> linku płatności z Panel → Linki płatności i umieść go przy kasie. <link>Więcej sposobów, by dać się znaleźć</link>"
       },
       "sale": {
         "title": "Przyjmij płatność",
@@ -1451,7 +1453,7 @@
             "2": "Otwórz <dashboard>Panel → Linki płatności</dashboard>, a następnie wybierz <strong>Utwórz link płatności</strong>.",
             "3": "Wpisz tytuł i opcjonalny opis. Na przykład użyj „Poradnik cyfrowy” ze stałą kwotą 20 w walucie EUR. Możesz też podać dokładną kwotę w XMR albo wybrać <strong>Klient wpisuje kwotę</strong>, aby kwotę wpisał klient (zobacz <donations>darowizny</donations>).",
             "4": "Wybierz wymaganą liczbę potwierdzeń. Formularz zaczyna od twojej wartości domyślnej; zero akceptuje wykrycie bez czekania na potwierdzenie w bloku. Opcjonalnie dodaj adres powrotny HTTPS i <message>wiadomość po potwierdzeniu</message> wyświetlaną po płatności.",
-            "5": "Zapisz link. Ustaw Tekst przycisku, aby zmienić napis na grafice (do 32 znaków). Domyślnie jest to „Kup za Monero”. Przyciski kopiowania pojawiają się na liście linków płatności; po zmianie napisu skopiuj zaktualizowany HTML. Opcjonalnie włącz „Pomiń podsumowanie i twórz prośbę o płatność automatycznie”, aby od razu otwierać prośby. Domyślnie jest to wyłączone; odwiedziny, także zautomatyzowanych przeglądarek, mogą zużywać limit próśb o płatność i pulę adresów."
+            "5": "Zapisz link. Opcjonalnie włącz „Pomiń podsumowanie i twórz prośbę o płatność automatycznie”, aby od razu otwierać prośby. Domyślnie jest to wyłączone; odwiedziny, także zautomatyzowanych przeglądarek, mogą zużywać limit próśb o płatność i pulę adresów."
           },
           "2": "Przy wartości orientacyjnej 20 € każde żądanie zakupu oblicza kwotę w XMR na podstawie dostępnego notowania informacyjnego. Prośba o płatność jest wyrażona w XMR i pokazuje źródło oraz czas notowania. Kurs nie jest blokowany i nie ma gwarancji wyniku w EUR. Jeśli notowanie jest niedostępne, tworzenie się nie powiedzie.",
           "3": "Potrzebujesz najpierw własnego wdrożenia? Skorzystaj z <selfhost>poradnika samodzielnego hostingu</selfhost>. Warunkiem jest działający portfel tylko do odczytu i zsynchronizowane usługi wykrywania."
@@ -1460,7 +1462,7 @@
       "embed": {
         "title": "Skopiuj przycisk HTML lub adres wielokrotnego użytku",
         "body": {
-          "1": "Obejrzyj podgląd przycisku z logo w panelu, a następnie skopiuj jego HTML do własnego bloku HTML na stronie. Grafika zawiera logo xmrcheckout i prowadzi do strony podsumowania płatności. Fragment nie wymaga formularza, JavaScriptu ani klucza API sprzedawcy.",
+          "1": "Otwórz link w panelu. W sekcji Udostępnij wybierz ciemny lub jasny przycisk i edytuj jego dwa wiersze tekstu (do 32 znaków każdy; domyślnie „Kup za Monero”). Podgląd i HTML aktualizują się podczas pisania. Skopiuj HTML do własnego bloku HTML na stronie. Grafika prowadzi do strony podsumowania płatności. Fragment nie wymaga formularza, JavaScriptu ani klucza API sprzedawcy.",
           "2": "Ten przykład używa zarezerwowanej domeny przykładowej i tokenu zastępczego. Skopiuj swój prawdziwy fragment z panelu; nie umieszczaj danych portfela ani klucza API w kodzie HTML strony.",
           "3": "Możesz też skopiować adres wielokrotnego użytku i podpiąć go pod zwykły link lub własny przycisk na stronie. Obie opcje pokazują stronę podsumowania produktu; następnie klient wysyła żądanie zakupu. Przy włączonym podsumowaniu otwarcie adresu nie tworzy prośby o płatność. Przy włączonym automatycznym tworzeniu aktywna przeglądarka tworzy prośbę o płatność i ją otwiera. Ta sama karta wznawia bieżącą nieopłaconą prośbę; użyj „Rozpocznij kolejny zakup”, aby złożyć osobne zamówienie. Bez JavaScriptu lub pamięci przeglądarki klienci używają przycisku ręcznego tworzenia.",
           "4": "Zakupy używają zapisanego portfela odbiorczego, kwoty, liczby potwierdzeń i adresu powrotnego. Edycja kodu HTML nie może zmienić tych ustawień."
@@ -1507,7 +1509,7 @@
         "body": {
           "1": "Twórcy, opiekunowie projektów i inni odbiorcy mogą używać linków płatności, aby otrzymywać dobrowolne wpłaty bezpośrednio na własny portfel. Każde udane wysłanie tworzy osobną prośbę o płatność z wykrywaniem płatności i postępem potwierdzeń.",
           "2": {
-            "1": "Utwórz link płatności z tytułem takim jak „Wesprzyj mój projekt” i wybierz <strong>Klient wpisuje kwotę</strong>. Ustaw <strong>Tekst przycisku</strong> na <strong>Wesprzyj w Monero</strong>. Opcjonalnie ustaw minimalną kwotę w XMR, aby uniknąć bardzo małych próśb o płatność.",
+            "1": "Utwórz link płatności z tytułem takim jak „Wesprzyj mój projekt” i wybierz <strong>Klient wpisuje kwotę</strong>. Opcjonalnie ustaw minimalną kwotę w XMR, aby uniknąć bardzo małych próśb o płatność. W sekcji <strong>Udostępnij</strong> ustaw pierwszy wiersz przycisku na <strong>Wesprzyj w Monero</strong>.",
             "2": "Udostępnij adres wielokrotnego użytku w swoim profilu lub na stronie albo skopiuj przycisk HTML z panelu. Adres możesz też podpiąć pod własny przycisk „Wesprzyj ten projekt”.",
             "3": "Darczyńcy wpisują kwotę i wybierają XMR lub obsługiwaną walutę fiat jako odniesienie na stronie podsumowania, a następnie tworzą prośbę o płatność. Aby zaoferować stałe kwoty, utwórz osobny link ze stałą kwotą dla każdej z nich.",
             "4": "Linki z kwotą wpisywaną przez klienta zawsze pokazują stronę podsumowania. W linkach ze stałą kwotą pozostaw włączone podsumowanie, jeśli otwarcie udostępnionego adresu nie powinno tworzyć prośby o płatność. Automatyczne tworzenie jest opcjonalne i zużywa limit, gdy aktywna przeglądarka tworzy prośbę."
@@ -1521,7 +1523,7 @@
         "body": {
           "1": "Osoby, które mają Monero, szukają miejsc, w których mogą nim zapłacić. W panelu znajdziesz odznakę „Tu przyjmujemy Monero” do skopiowania i plakat do druku.",
           "2": {
-            "1": "<strong>Dodaj odznakę na swoją stronę.</strong> Otwórz <strong>Panel → Linki płatności</strong> i skopiuj odznakę <strong>Tu przyjmujemy Monero</strong> do bloku HTML. Jest ciemna odznaka na jasne tło i jasna na ciemne. Odznaka to zwykły obrazek bez śledzenia i bez danych konta.",
+            "1": "<strong>Dodaj odznakę na swoją stronę.</strong> Otwórz link płatności w <strong>Panel → Linki płatności</strong>, ustaw pierwszy wiersz przycisku na <strong>Tu przyjmujemy Monero</strong>, a drugi na <strong>Zapłać w XMR</strong>, i skopiuj HTML do bloku HTML. Wybierz ciemny na jasne tło i jasny na ciemne. Przycisk to zwykły obrazek bez śledzenia i bez danych konta.",
             "2": "<strong>Wydrukuj plakat.</strong> Każdy link płatności ma <strong>Plakat do druku z kodem QR</strong>. Klienci skanują go portfelem, aby otworzyć link. Używaj go przy ladzie, na stoisku, przy stole na wydarzeniu lub na skarbonce. Plakaty pokazują cenę tylko dla linków ze stałą kwotą w XMR. Do płatności przy kasie w stylu terminala kartowego użyj <terminal>terminala</terminal> i postaw obok niego odznakę."
           }
         }

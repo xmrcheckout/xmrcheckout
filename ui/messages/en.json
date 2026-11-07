@@ -398,11 +398,8 @@
     "unavailable": "Payment links are unavailable. Refresh to try again.",
     "intro": "Create a reusable HTML button or link to accept donations or sell products and services. Each submission creates a separate XMR invoice paid directly to your wallet.",
     "allowanceNote": "Anyone with your link can create an invoice, so links have a daily allowance. This keeps enough invoice addresses free for your own checkout.",
-    "donationTip": "For contributions, use a title such as “Support my project”, set Button text to “Donate with Monero”, and choose “Customer enters the amount” so donors type their own amount. Recurring collection is not supported.",
+    "donationTip": "For contributions, use a title such as “Support my project” and choose “Customer enters the amount” so donors type their own amount. Then set the button's first line to “Donate with Monero” under Share. Recurring collection is not supported.",
     "guide": "Payment link setup guide",
-    "lightBadge": "Light badge (for dark backgrounds)",
-    "darkBadgeHtml": "Dark badge HTML",
-    "lightBadgeHtml": "Light badge HTML",
     "badgeAlt": "Monero accepted here",
     "allowance": "Public invoice allowance",
     "allowanceSummary": "{remaining} remaining · {used} used · Limit {limit} per rolling {hours} hours",
@@ -417,6 +414,15 @@
     "htmlButton": "HTML button",
     "buttonPreview": "Button preview",
     "buttonAlt": "{text} via xmrcheckout",
+    "buttonStyle": "Color",
+    "themeDark": "Dark, for light backgrounds",
+    "themeLight": "Light, for dark backgrounds",
+    "primaryText": "First line",
+    "secondaryText": "Second line",
+    "buttonTextLimit": "1–32 characters. Try “Donate with Monero” or “Monero accepted here”.",
+    "secondaryTextHelp": "Up to 32 characters. Leave empty for a single line.",
+    "buttonTextInvalid": "Enter 1–32 printable characters.",
+    "buttonFixText": "Fix the button text to show the HTML.",
     "autoCreates": "Creates an invoice automatically when opened.",
     "opensReview": "Opens the payment review page.",
     "pasteHtml": "Paste into an HTML block on your website. {behavior} No form or JavaScript is needed. You can also attach the reusable link to your own button.",
@@ -429,8 +435,6 @@
       "enable": "Enable payment link",
       "defaultButton": "Buy with Monero",
       "title": "Title",
-      "buttonText": "Button text",
-      "buttonTextHelp": "Up to 32 characters. Replaces “Buy with Monero” in the graphic. Copy the updated HTML after changing this text.",
       "description": "Description",
       "amount": "Amount",
       "fixedBySeller": "Fixed amount set by you",
@@ -492,8 +496,6 @@
     "shareLink": "Link",
     "shareLinkHelp": "Send it in a message or social profile, or attach it to your own button.",
     "shareButton": "Button for your website",
-    "shareBadge": "“Monero accepted here” badge",
-    "badgeHelp": "The badge links to this payment link, so visitors can pay from it. Use the dark badge on light backgrounds.",
     "shareSign": "Printed sign",
     "shareSignHelp": "For a counter, stall, or donation box. Customers scan the QR code to open this link.",
     "settings": "Settings"
@@ -535,7 +537,7 @@
       "disabled": "Payment link disabled.",
       "enabled": "Payment link enabled.",
       "created": "Payment link created. It is listed in your payment links below.",
-      "saved": "Payment link saved. The link and button above are up to date.",
+      "saved": "Payment link saved.",
       "notConfirmed": "Could not confirm saving. Check the payment-link list before trying again.",
       "deleted": "Payment link deleted.",
       "deleteNotConfirmed": "Could not confirm deleting. Check the payment-link list before trying again."
@@ -1234,13 +1236,13 @@
       },
       "donations": {
         "q": "Can I use payment links to accept Monero donations?",
-        "p1": "Yes. Create a payment link to your own wallet, give it a title such as “Support my project”, choose Customer enters the amount, and set Button text to “Donate with Monero”. Share its reusable URL or copy the HTML button to your website. Each successful submission creates a separate XMR invoice; funds go directly to your wallet.",
+        "p1": "Yes. Create a payment link to your own wallet, give it a title such as “Support my project”, and choose Customer enters the amount. Share its reusable URL, or set the button's first line to “Donate with Monero” on the link's page and copy the HTML to your website. Each successful submission creates a separate XMR invoice; funds go directly to your wallet.",
         "p2": "Donors enter an amount in XMR or a supported fiat-reference currency; you can set a minimum in XMR. To offer preset amounts instead, create a fixed-amount link for each. Automatic recurring collection is not supported. Existing invoice allowances and address limits apply even when an invoice is never paid.",
         "cta": "Set up a donation link"
       },
       "badge": {
         "q": "Do you have a “Monero accepted here” badge or sign?",
-        "p1": "Yes. Dashboard → Payment links has a “Monero accepted here” badge to copy into your website, and each payment link has a printable sign with a QR code for a counter, stall, or donation box. The badge is a plain image with no tracking.",
+        "p1": "Yes. On each payment link's page in Dashboard → Payment links, the website button can read “Monero accepted here”, in dark or light, and it links to that payment link. Each payment link also has a printable sign with a QR code for a counter, stall, or donation box. The button is a plain image with no tracking.",
         "cta": "Let people find you"
       },
       "noWoo": {
@@ -1374,7 +1376,7 @@
         "step2": "Open <strong>Dashboard → Terminals</strong> and choose <strong>Create terminal</strong>. Give it a name such as “Front counter”, and pick a default currency.",
         "step3": "The dashboard shows the terminal link and a QR code once. Scan it with the device you will use at the till, or copy the link to it.",
         "step4": "On the device, add the page to the home screen for a full-screen till. The device remembers the terminal until you choose <strong>Forget this terminal</strong>.",
-        "p1": "To let customers know they can pay with Monero, print the <strong>Monero accepted here</strong> badge from Dashboard → Payment links and place it by the till. <link>More ways to let people find you</link>"
+        "p1": "To let customers know they can pay with Monero, print a payment link's <strong>Printable sign with QR code</strong> from Dashboard → Payment links and place it by the till. <link>More ways to let people find you</link>"
       },
       "sale": {
         "title": "Take a payment",
@@ -1425,7 +1427,7 @@
             "2": "Open <dashboard>Dashboard → Payment links</dashboard>, then choose <strong>Create payment link</strong>.",
             "3": "Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount, or select <strong>Customer enters the amount</strong> to let the customer type it (see <donations>donations</donations>).",
             "4": "Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL and a <message>confirmation message</message> shown after payment.",
-            "5": "Save the link. Set Button text to customize the graphic label (up to 32 characters). The default is “Buy with Monero”. Copy controls appear in the payment-link list; copy the updated HTML after changing the label. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity."
+            "5": "Save the link. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity."
           },
           "2": "For the €20 reference, each purchase request calculates an XMR amount using the available informational quote. The invoice is defined in XMR and displays the quote source and timestamp. There is no rate lock or guaranteed EUR outcome. If the quote is unavailable, creation fails.",
           "3": "Need your own deployment first? Follow the <selfhost>self-hosting guide</selfhost>. A working view-only wallet and synchronized detection services are prerequisites."
@@ -1434,7 +1436,7 @@
       "embed": {
         "title": "Copy your HTML button or reusable URL",
         "body": {
-          "1": "Preview the branded button in the dashboard, then copy its HTML into a custom HTML block on your website. The graphic includes the xmrcheckout logo and links to the payment review page. No form, JavaScript, or merchant API key is needed in the snippet.",
+          "1": "Open the link in the dashboard. Under Share, choose a dark or light button and edit its two lines of text (up to 32 characters each; the default is “Buy with Monero”). The preview and HTML update as you type. Copy the HTML into a custom HTML block on your website. The graphic links to the payment review page. No form, JavaScript, or merchant API key is needed in the snippet.",
           "2": "This example uses a reserved example domain and placeholder token. Copy your actual snippet from the dashboard; keep your wallet credentials and API key out of website HTML.",
           "3": "You can also copy the reusable URL and attach it to a normal link or your own website button. Both options show the product review page; the customer then submits a purchase request. With review enabled, opening a URL does not create an invoice. With automatic creation enabled, an active browser requests an invoice and opens it. The same tab resumes its current unpaid invoice; use “Start another purchase” for a separate order. Without JavaScript or browser storage, customers use the manual creation button.",
           "4": "Purchases use the saved receiving wallet, amount, confirmation target, and return URL. Editing HTML cannot override these settings."
@@ -1481,7 +1483,7 @@
         "body": {
           "1": "Creators, maintainers, and other recipients can use payment links to receive voluntary contributions directly to their own wallet. Each successful submission creates a separate invoice with payment detection and confirmation progress.",
           "2": {
-            "1": "Create a payment link with a title such as “Support my project” and choose <strong>Customer enters the amount</strong>. Set <strong>Button text</strong> to <strong>Donate with Monero</strong>. Optionally set a minimum amount in XMR to avoid very small invoices.",
+            "1": "Create a payment link with a title such as “Support my project” and choose <strong>Customer enters the amount</strong>. Optionally set a minimum amount in XMR to avoid very small invoices. Under <strong>Share</strong>, set the button's first line to <strong>Donate with Monero</strong>.",
             "2": "Share the reusable URL on your profile or website, or copy the HTML button from the dashboard. You can attach the URL to your own “Support this project” button too.",
             "3": "Donors enter an amount and choose XMR or a supported fiat-reference currency on the review page, then create their invoice. To offer preset amounts instead, create a separate fixed-amount link for each.",
             "4": "Customer-entered links always show the review page. For fixed-amount links, keep the review step enabled if opening a shared URL should not create an invoice. Automatic creation is optional and consumes capacity when an active browser requests an invoice."
@@ -1495,7 +1497,7 @@
         "body": {
           "1": "People who hold Monero look for places that accept it. A copyable “Monero accepted here” badge and a printable sign are available in the dashboard.",
           "2": {
-            "1": "<strong>Add a badge to your website.</strong> Open <strong>Dashboard → Payment links</strong> and copy the <strong>Monero accepted here</strong> badge into an HTML block. There is a dark badge for light backgrounds and a light badge for dark ones. The badge is a plain image with no tracking or account details.",
+            "1": "<strong>Add a badge to your website.</strong> Open a payment link in <strong>Dashboard → Payment links</strong>, set the button's first line to <strong>Monero accepted here</strong> and the second to <strong>Pay with XMR</strong>, then copy the HTML into an HTML block. Choose dark for light backgrounds and light for dark ones. The button is a plain image with no tracking or account details.",
             "2": "<strong>Print a sign.</strong> Each payment link has a <strong>Printable sign with QR code</strong>. Customers scan it with their wallet to open the link. Use it at a counter, market stall, event table, or donation box. Signs show a price only for links fixed in XMR. For card-style checkout at a till, use a <terminal>terminal</terminal> and display the badge beside it."
           }
         }

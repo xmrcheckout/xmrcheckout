@@ -398,11 +398,8 @@
     "unavailable": "Los enlaces de pago no están disponibles. Actualiza para volver a intentarlo.",
     "intro": "Crea un botón HTML o enlace reutilizable para recibir donaciones o vender productos y servicios. Cada envío crea una factura en XMR distinta pagada directamente a tu billetera.",
     "allowanceNote": "Cualquiera con tu enlace puede crear una factura, por eso los enlaces tienen un cupo diario. Así quedan suficientes direcciones de factura libres para tu propio pago.",
-    "donationTip": "Para aportaciones, usa un título como «Apoya mi proyecto», pon como texto del botón «Donar con Monero» y elige «El cliente introduce el importe» para que cada donante escriba su propio importe. Los cobros recurrentes no están disponibles.",
+    "donationTip": "Para aportaciones, usa un título como «Apoya mi proyecto» y elige «El cliente introduce el importe» para que cada donante escriba su propio importe. Después, en Compartir, pon «Dona con Monero» en la primera línea del botón. Los cobros recurrentes no están disponibles.",
     "guide": "Guía para configurar enlaces de pago",
-    "lightBadge": "Insignia clara (para fondos oscuros)",
-    "darkBadgeHtml": "HTML de la insignia oscura",
-    "lightBadgeHtml": "HTML de la insignia clara",
     "badgeAlt": "Aquí se acepta Monero",
     "allowance": "Cupo público de facturas",
     "allowanceSummary": "{remaining} disponibles · {used} usadas · Límite de {limit} cada {hours} horas móviles",
@@ -417,6 +414,15 @@
     "htmlButton": "Botón HTML",
     "buttonPreview": "Vista previa del botón",
     "buttonAlt": "{text} mediante xmrcheckout",
+    "buttonStyle": "Color",
+    "themeDark": "Oscuro, para fondos claros",
+    "themeLight": "Claro, para fondos oscuros",
+    "primaryText": "Primera línea",
+    "secondaryText": "Segunda línea",
+    "buttonTextLimit": "De 1 a 32 caracteres. Prueba «Dona con Monero» o «Aceptamos Monero».",
+    "secondaryTextHelp": "Hasta 32 caracteres. Déjala vacía para una sola línea.",
+    "buttonTextInvalid": "Escribe de 1 a 32 caracteres imprimibles.",
+    "buttonFixText": "Corrige el texto del botón para ver el HTML.",
     "autoCreates": "Crea una factura automáticamente al abrirse.",
     "opensReview": "Abre la página de revisión del pago.",
     "pasteHtml": "Pégalo en un bloque HTML de tu web. {behavior} No hace falta ningún formulario ni JavaScript. También puedes asociar el enlace reutilizable a tu propio botón.",
@@ -429,8 +435,6 @@
       "enable": "Activar enlace de pago",
       "defaultButton": "Comprar con Monero",
       "title": "Título",
-      "buttonText": "Texto del botón",
-      "buttonTextHelp": "Hasta 32 caracteres. Sustituye a «Comprar con Monero» en el gráfico. Copia el HTML actualizado después de cambiar este texto.",
       "description": "Descripción",
       "amount": "Importe",
       "fixedBySeller": "Importe fijo que defines tú",
@@ -492,8 +496,6 @@
     "shareLink": "Enlace",
     "shareLinkHelp": "Envíalo en un mensaje o en tu perfil social, o añádelo a tu propio botón.",
     "shareButton": "Botón para tu sitio web",
-    "shareBadge": "Insignia «Aquí se acepta Monero»",
-    "badgeHelp": "La insignia enlaza a este enlace de pago, así que los visitantes pueden pagar desde ella. Usa la insignia oscura sobre fondos claros.",
     "shareSign": "Cartel impreso",
     "shareSignHelp": "Para un mostrador, un puesto o una caja de donativos. Los clientes escanean el código QR para abrir este enlace.",
     "settings": "Configuración"
@@ -535,7 +537,7 @@
       "disabled": "Enlace de pago desactivado.",
       "enabled": "Enlace de pago activado.",
       "created": "Enlace de pago creado. Aparece en tus enlaces de pago, abajo.",
-      "saved": "Enlace de pago guardado. El enlace y el botón de arriba están actualizados.",
+      "saved": "Enlace de pago guardado.",
       "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de enlaces de pago antes de volver a intentarlo.",
       "deleted": "Enlace de pago eliminado.",
       "deleteNotConfirmed": "No se pudo confirmar la eliminación. Revisa la lista de enlaces de pago antes de volver a intentarlo."
@@ -1234,13 +1236,13 @@
       },
       "donations": {
         "q": "¿Puedo usar enlaces de pago para aceptar donaciones en Monero?",
-        "p1": "Sí. Crea un enlace de pago a tu propia billetera, ponle un título como «Apoya mi proyecto», elige que el cliente introduzca el importe y define como texto del botón «Dona con Monero». Comparte su URL reutilizable o copia el botón HTML en tu sitio web. Cada envío correcto crea una factura en XMR independiente; los fondos van directamente a tu billetera.",
+        "p1": "Sí. Crea un enlace de pago a tu propia billetera, ponle un título como «Apoya mi proyecto» y elige que el cliente introduzca el importe. Comparte su URL reutilizable, o pon «Dona con Monero» en la primera línea del botón en la página del enlace y copia el HTML en tu sitio web. Cada envío correcto crea una factura en XMR independiente; los fondos van directamente a tu billetera.",
         "p2": "Los donantes introducen un importe en XMR o en una moneda fiduciaria de referencia admitida; puedes fijar un mínimo en XMR. Para ofrecer importes predefinidos, crea un enlace de importe fijo para cada uno. No se admiten cobros recurrentes automáticos. Los límites de facturas y de direcciones se aplican aunque una factura nunca se pague.",
         "cta": "Configura un enlace de donación"
       },
       "badge": {
         "q": "¿Tienen una insignia o un cartel de «Monero accepted here»?",
-        "p1": "Sí. En Panel → Enlaces de pago hay una insignia «Monero accepted here» para copiar en tu sitio web, y cada enlace de pago tiene un cartel imprimible con un código QR para un mostrador, un puesto o una caja de donaciones. La insignia es una imagen simple sin seguimiento.",
+        "p1": "Sí. En la página de cada enlace de pago, en Panel → Enlaces de pago, el botón para tu sitio web puede decir «Aceptamos Monero», en oscuro o en claro, y enlaza con ese enlace de pago. Cada enlace de pago tiene además un cartel imprimible con un código QR para un mostrador, un puesto o una caja de donaciones. El botón es una imagen simple sin seguimiento.",
         "cta": "Haz que te encuentren"
       },
       "noWoo": {
@@ -1374,7 +1376,7 @@
         "step2": "Abre <strong>Panel → Terminales</strong> y elige <strong>Crear terminal</strong>. Ponle un nombre como «Mostrador principal» y elige una moneda predeterminada.",
         "step3": "El panel muestra el enlace del terminal y un código QR una sola vez. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él.",
         "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal hasta que elijas <strong>Olvidar este terminal</strong>.",
-        "p1": "Para que los clientes sepan que pueden pagar con Monero, imprime la insignia <strong>Monero accepted here</strong> desde Panel → Enlaces de pago y colócala junto a la caja. <link>Más formas de que te encuentren</link>"
+        "p1": "Para que los clientes sepan que pueden pagar con Monero, imprime el <strong>Cartel imprimible con código QR</strong> de un enlace de pago desde Panel → Enlaces de pago y colócalo junto a la caja. <link>Más formas de que te encuentren</link>"
       },
       "sale": {
         "title": "Cobra un pago",
@@ -1425,7 +1427,7 @@
             "2": "Abre <dashboard>Panel → Enlaces de pago</dashboard> y elige <strong>Crear enlace de pago</strong>.",
             "3": "Escribe un título y una descripción opcional. Por ejemplo, usa «Guía digital» con un importe fijo de 20 y la moneda EUR. También puedes elegir un importe exacto en XMR o seleccionar <strong>El cliente introduce el importe</strong> para que el cliente lo escriba (consulta <donations>donaciones</donations>).",
             "4": "Elige las confirmaciones requeridas. El formulario parte de tu valor predeterminado; cero acepta la detección sin esperar la confirmación de un bloque. Si quieres, añade una URL de retorno HTTPS y un <message>mensaje de confirmación</message> que se muestre tras el pago.",
-            "5": "Guarda el enlace. Usa Texto del botón para personalizar la etiqueta del gráfico (hasta 32 caracteres). El valor predeterminado es «Comprar con Monero». Los controles para copiar aparecen en la lista de enlaces de pago; copia el HTML actualizado después de cambiar la etiqueta. Si quieres, activa «Omitir la revisión y crear la factura automáticamente» para abrir las facturas directamente. Está desactivado por defecto; las visitas, incluidos los navegadores automatizados, pueden consumir el límite de facturas y la capacidad de direcciones."
+            "5": "Guarda el enlace. Si quieres, activa «Omitir la revisión y crear la factura automáticamente» para abrir las facturas directamente. Está desactivado por defecto; las visitas, incluidos los navegadores automatizados, pueden consumir el límite de facturas y la capacidad de direcciones."
           },
           "2": "Para la referencia de 20 €, cada solicitud de compra calcula un importe en XMR con la cotización informativa disponible. La factura se define en XMR y muestra la fuente y la hora de la cotización. No hay bloqueo de la tasa ni un resultado garantizado en EUR. Si la cotización no está disponible, la creación falla.",
           "3": "¿Necesitas primero tu propia instalación? Sigue la <selfhost>guía de autoalojamiento</selfhost>. Necesitas una billetera de solo lectura que funcione y servicios de detección sincronizados."
@@ -1434,7 +1436,7 @@
       "embed": {
         "title": "Copia tu botón HTML o tu URL reutilizable",
         "body": {
-          "1": "Previsualiza el botón con marca en el panel y copia su HTML en un bloque HTML personalizado de tu sitio web. El gráfico incluye el logotipo de xmrcheckout y enlaza con la página de revisión del pago. El fragmento no necesita formularios, JavaScript ni la clave de API del comercio.",
+          "1": "Abre el enlace en el panel. En Compartir, elige un botón oscuro o claro y edita sus dos líneas de texto (hasta 32 caracteres cada una; el valor predeterminado es «Comprar con Monero»). La vista previa y el HTML se actualizan mientras escribes. Copia el HTML en un bloque HTML personalizado de tu sitio web. El gráfico enlaza con la página de revisión del pago. El fragmento no necesita formularios, JavaScript ni la clave de API del comercio.",
           "2": "Este ejemplo usa un dominio de ejemplo reservado y un token de muestra. Copia tu fragmento real desde el panel; no pongas las credenciales de tu billetera ni tu clave de API en el HTML del sitio web.",
           "3": "También puedes copiar la URL reutilizable y asociarla a un enlace normal o a un botón propio de tu sitio web. Ambas opciones muestran la página de revisión del producto; después, el cliente envía una solicitud de compra. Con la revisión activada, abrir una URL no crea una factura. Con la creación automática activada, un navegador activo solicita una factura y la abre. La misma pestaña retoma su factura sin pagar actual; usa «Iniciar otra compra» para un pedido aparte. Sin JavaScript ni almacenamiento del navegador, los clientes usan el botón de creación manual.",
           "4": "Las compras usan la billetera receptora, el importe, el objetivo de confirmaciones y la URL de retorno guardados. Editar el HTML no puede cambiar estos ajustes."
@@ -1481,7 +1483,7 @@
         "body": {
           "1": "Creadores, mantenedores y otros destinatarios pueden usar enlaces de pago para recibir aportaciones voluntarias directamente en su propia billetera. Cada envío correcto crea una factura independiente con detección del pago y avance de las confirmaciones.",
           "2": {
-            "1": "Crea un enlace de pago con un título como «Apoya mi proyecto» y elige <strong>El cliente introduce el importe</strong>. Define <strong>Texto del botón</strong> como <strong>Dona con Monero</strong>. Si quieres, fija un importe mínimo en XMR para evitar facturas muy pequeñas.",
+            "1": "Crea un enlace de pago con un título como «Apoya mi proyecto» y elige <strong>El cliente introduce el importe</strong>. Si quieres, fija un importe mínimo en XMR para evitar facturas muy pequeñas. En <strong>Compartir</strong>, pon <strong>Dona con Monero</strong> en la primera línea del botón.",
             "2": "Comparte la URL reutilizable en tu perfil o sitio web, o copia el botón HTML desde el panel. También puedes asociar la URL a tu propio botón «Apoya este proyecto».",
             "3": "Los donantes introducen un importe y eligen XMR o una moneda fiduciaria de referencia admitida en la página de revisión, y después crean su factura. Para ofrecer importes predefinidos, crea un enlace de importe fijo para cada uno.",
             "4": "Los enlaces con importe introducido por el cliente siempre muestran la página de revisión. En los enlaces de importe fijo, mantén activada la revisión si abrir una URL compartida no debe crear una factura. La creación automática es opcional y consume capacidad cuando un navegador activo solicita una factura."
@@ -1495,7 +1497,7 @@
         "body": {
           "1": "Quienes tienen Monero buscan lugares que lo acepten. En el panel tienes una insignia «Monero accepted here» para copiar y un cartel imprimible.",
           "2": {
-            "1": "<strong>Añade una insignia a tu sitio web.</strong> Abre <strong>Panel → Enlaces de pago</strong> y copia la insignia <strong>Monero accepted here</strong> en un bloque HTML. Hay una insignia oscura para fondos claros y una clara para fondos oscuros. La insignia es una imagen simple, sin seguimiento ni datos de la cuenta.",
+            "1": "<strong>Añade una insignia a tu sitio web.</strong> Abre un enlace de pago en <strong>Panel → Enlaces de pago</strong>, pon <strong>Aceptamos Monero</strong> en la primera línea del botón y <strong>Paga con XMR</strong> en la segunda, y copia el HTML en un bloque HTML. Elige oscuro para fondos claros y claro para fondos oscuros. El botón es una imagen simple, sin seguimiento ni datos de la cuenta.",
             "2": "<strong>Imprime un cartel.</strong> Cada enlace de pago tiene un <strong>Cartel imprimible con código QR</strong>. Los clientes lo escanean con su billetera para abrir el enlace. Úsalo en un mostrador, un puesto de mercado, la mesa de un evento o una caja de donaciones. Los carteles solo muestran un precio en los enlaces con importe fijo en XMR. Para cobrar en caja como con una tarjeta, usa un <terminal>terminal</terminal> y coloca la insignia a su lado."
           }
         }

@@ -74,9 +74,8 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies,
     <input type="hidden" name="id" value={link?.id ?? ""} />
     {link && enabled ? <input type="hidden" name="enabled" value="on" /> : null}
     <div><label htmlFor={`${prefix}-title`}>{t("paymentLinks.editor.title")}</label><input {...props("title")} required maxLength={200} />{error("title")}</div>
-    <div><label htmlFor={`${prefix}-button_text`}>{t("paymentLinks.editor.buttonText")}</label><input {...props("button_text")} required maxLength={32} />{error("button_text")}
-      <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.editor.buttonTextHelp")}</p>
-    </div>
+    {/* The API stores every field on save; send the saved text back so it is kept. The Share page edits the button graphic. */}
+    <input type="hidden" name="button_text" value={values.button_text} />
     <div><label htmlFor={`${prefix}-description`}>{t("paymentLinks.editor.description")}</label><textarea {...props("description")} maxLength={2000} />{error("description")}</div>
     <fieldset className="grid gap-2"><legend>{t("paymentLinks.editor.amount")}</legend>
       <label className="flex min-h-11 items-center gap-3"><input type="radio" name="amount_mode" value="fixed" checked={!customerAmount} onChange={() => setCustomerAmount(false)} />{t("paymentLinks.editor.fixedBySeller")}</label>

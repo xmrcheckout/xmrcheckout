@@ -7,7 +7,7 @@ import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
 import { GuideBlocks, type GuideBlock } from "../../../../components/guide-blocks";
 import { getI18n } from "../../../../lib/i18n/server";
-import { paymentButtonHtml } from "../../../../lib/payment-button";
+import { DEFAULT_BUTTON_SUB, paymentButtonHtml } from "../../../../lib/payment-button";
 
 const k = "guides.buttons";
 export async function generateMetadata(): Promise<Metadata> {
@@ -45,7 +45,7 @@ export default async function PaymentButtonsGuide() {
   const { t } = await getI18n();
   const blocks = sectionBlocks({
     buttonCode: <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_PUBLIC_TOKEN")}</CopyCodeBlock>,
-    donationCode: <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_DONATION_LINK_TOKEN", t(`${k}.donateButton`))}</CopyCodeBlock>,
+    donationCode: <CopyCodeBlock className={codeClass}>{paymentButtonHtml("https://checkout.example/pay/YOUR_DONATION_LINK_TOKEN", { text: t(`${k}.donateButton`), sub: DEFAULT_BUTTON_SUB, theme: "dark" })}</CopyCodeBlock>,
   });
   return <main id="main-content" tabIndex={-1} className="reference-page px-[6vw] pb-20 pt-8 text-ink"><div className="mx-auto w-full max-w-5xl">
     <PageIntroBand eyebrow={t(`${k}.eyebrow`)} id="payment-buttons-title" title={t(`${k}.title`)} description={<p>{t(`${k}.intro`)}</p>} />

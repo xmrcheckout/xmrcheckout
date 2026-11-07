@@ -398,11 +398,8 @@
     "unavailable": "Les liens de paiement sont indisponibles. Actualisez pour réessayer.",
     "intro": "Créez un bouton HTML ou lien réutilisable pour recevoir des dons ou vendre des produits et services. Chaque envoi crée une facture XMR distincte, payée directement à votre portefeuille.",
     "allowanceNote": "Toute personne disposant de votre lien peut créer une facture, c’est pourquoi les liens ont un quota quotidien. Il reste ainsi assez d’adresses de facture libres pour votre propre paiement.",
-    "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet », définissez le texte du bouton sur « Faire un don en Monero » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. La collecte récurrente n’est pas prise en charge.",
+    "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. Ensuite, sous Partager, mettez « Faire un don en Monero » sur la première ligne du bouton. La collecte récurrente n’est pas prise en charge.",
     "guide": "Guide de configuration des liens de paiement",
-    "lightBadge": "Badge clair (pour fonds sombres)",
-    "darkBadgeHtml": "HTML du badge sombre",
-    "lightBadgeHtml": "HTML du badge clair",
     "badgeAlt": "Monero accepté ici",
     "allowance": "Quota de factures publiques",
     "allowanceSummary": "{remaining} restantes · {used} utilisées · Limite de {limit} sur {hours} heures glissantes",
@@ -417,6 +414,15 @@
     "htmlButton": "Bouton HTML",
     "buttonPreview": "Aperçu du bouton",
     "buttonAlt": "{text} via xmrcheckout",
+    "buttonStyle": "Couleur",
+    "themeDark": "Sombre, pour les fonds clairs",
+    "themeLight": "Clair, pour les fonds sombres",
+    "primaryText": "Première ligne",
+    "secondaryText": "Deuxième ligne",
+    "buttonTextLimit": "De 1 à 32 caractères. Par exemple « Faire un don en Monero » ou « Monero accepté ici ».",
+    "secondaryTextHelp": "Jusqu’à 32 caractères. Laissez vide pour une seule ligne.",
+    "buttonTextInvalid": "Saisissez de 1 à 32 caractères imprimables.",
+    "buttonFixText": "Corrigez le texte du bouton pour afficher le HTML.",
     "autoCreates": "Crée automatiquement une facture à l’ouverture.",
     "opensReview": "Ouvre la page de vérification du paiement.",
     "pasteHtml": "Collez-le dans un bloc HTML de votre site web. {behavior} Aucun formulaire ni JavaScript n’est nécessaire. Vous pouvez aussi associer le lien réutilisable à votre propre bouton.",
@@ -429,8 +435,6 @@
       "enable": "Activer le lien de paiement",
       "defaultButton": "Acheter avec Monero",
       "title": "Titre",
-      "buttonText": "Texte du bouton",
-      "buttonTextHelp": "Jusqu’à 32 caractères. Remplace « Acheter avec Monero » dans le visuel. Copiez le HTML mis à jour après avoir modifié ce texte.",
       "description": "Description",
       "amount": "Montant",
       "fixedBySeller": "Montant fixe défini par vous",
@@ -492,8 +496,6 @@
     "shareLink": "Lien",
     "shareLinkHelp": "Envoyez-le dans un message ou sur un profil social, ou associez-le à votre propre bouton.",
     "shareButton": "Bouton pour votre site web",
-    "shareBadge": "Badge « Monero accepté ici »",
-    "badgeHelp": "Le badge pointe vers ce lien de paiement, pour que les visiteurs puissent payer depuis celui-ci. Utilisez le badge sombre sur les fonds clairs.",
     "shareSign": "Affiche imprimée",
     "shareSignHelp": "Pour un comptoir, un stand ou une boîte à dons. Les clients scannent le QR code pour ouvrir ce lien.",
     "settings": "Paramètres"
@@ -535,7 +537,7 @@
       "disabled": "Lien de paiement désactivé.",
       "enabled": "Lien de paiement activé.",
       "created": "Lien de paiement créé. Il figure ci-dessous dans vos liens de paiement.",
-      "saved": "Lien de paiement enregistré. Le lien et le bouton ci-dessus sont à jour.",
+      "saved": "Lien de paiement enregistré.",
       "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des liens de paiement avant de réessayer.",
       "deleted": "Lien de paiement supprimé.",
       "deleteNotConfirmed": "Impossible de confirmer la suppression. Vérifiez la liste des liens de paiement avant de réessayer."
@@ -1234,13 +1236,13 @@
       },
       "donations": {
         "q": "Puis-je utiliser des liens de paiement pour accepter des dons en Monero ?",
-        "p1": "Oui. Créez un lien de paiement vers votre propre portefeuille, donnez-lui un titre tel que « Soutenir mon projet », choisissez Le client saisit le montant et définissez le texte du bouton sur « Faire un don en Monero ». Partagez son URL réutilisable ou copiez le bouton HTML sur votre site web. Chaque envoi réussi crée une facture XMR distincte ; les fonds vont directement à votre portefeuille.",
+        "p1": "Oui. Créez un lien de paiement vers votre propre portefeuille, donnez-lui un titre tel que « Soutenir mon projet » et choisissez Le client saisit le montant. Partagez son URL réutilisable, ou mettez « Faire un don en Monero » sur la première ligne du bouton sur la page du lien et copiez le HTML sur votre site web. Chaque envoi réussi crée une facture XMR distincte ; les fonds vont directement à votre portefeuille.",
         "p2": "Les donateurs saisissent un montant en XMR ou dans une monnaie fiduciaire de référence prise en charge ; vous pouvez fixer un minimum en XMR. Pour proposer plutôt des montants prédéfinis, créez un lien à montant fixe pour chacun. La collecte récurrente automatique n’est pas prise en charge. Les quotas de factures et les limites d’adresses existants s’appliquent même lorsqu’une facture n’est jamais payée.",
         "cta": "Configurer un lien de don"
       },
       "badge": {
         "q": "Proposez-vous un badge ou une affiche « Monero accepté ici » ?",
-        "p1": "Oui. Tableau de bord → Liens de paiement propose un badge « Monero accepté ici » à copier sur votre site web, et chaque lien de paiement dispose d’une affiche imprimable avec un QR code pour un comptoir, un stand ou une boîte à dons. Le badge est une simple image, sans aucun pistage.",
+        "p1": "Oui. Sur la page de chaque lien de paiement, dans Tableau de bord → Liens de paiement, le bouton pour votre site web peut afficher « Monero accepté ici », en sombre ou en clair, et renvoie vers ce lien de paiement. Chaque lien de paiement dispose aussi d’une affiche imprimable avec un QR code pour un comptoir, un stand ou une boîte à dons. Le bouton est une simple image, sans aucun pistage.",
         "cta": "Faites-vous connaître"
       },
       "noWoo": {
@@ -1374,7 +1376,7 @@
         "step2": "Ouvrez <strong>Tableau de bord → Terminaux</strong> et choisissez <strong>Créer un terminal</strong>. Donnez-lui un nom tel que « Comptoir principal » et choisissez une devise par défaut.",
         "step3": "Le tableau de bord affiche une seule fois le lien du terminal et un QR code. Scannez-le avec l’appareil que vous utiliserez à la caisse, ou copiez-y le lien.",
         "step4": "Sur l’appareil, ajoutez la page à l’écran d’accueil pour obtenir une caisse en plein écran. L’appareil mémorise le terminal jusqu’à ce que vous choisissiez <strong>Oublier ce terminal</strong>.",
-        "p1": "Pour que vos clients sachent qu’ils peuvent payer en Monero, imprimez le badge <strong>Monero accepté ici</strong> depuis Tableau de bord → Liens de paiement et placez-le près de la caisse. <link>D’autres façons de vous faire connaître</link>"
+        "p1": "Pour que vos clients sachent qu’ils peuvent payer en Monero, imprimez l’<strong>Affiche imprimable avec QR code</strong> d’un lien de paiement depuis Tableau de bord → Liens de paiement et placez-la près de la caisse. <link>D’autres façons de vous faire connaître</link>"
       },
       "sale": {
         "title": "Encaisser un paiement",
@@ -1425,7 +1427,7 @@
             "2": "Ouvrez <dashboard>Tableau de bord → Liens de paiement</dashboard>, puis choisissez <strong>Créer un lien de paiement</strong>.",
             "3": "Saisissez un titre et une description facultative. Par exemple, utilisez « Guide numérique » avec un montant fixe de 20 et la devise EUR. Vous pouvez aussi choisir un montant exact en XMR, ou sélectionner <strong>Le client saisit le montant</strong> pour laisser le client l’indiquer (voir <donations>dons</donations>).",
             "4": "Choisissez le nombre de confirmations requises. Le formulaire reprend votre valeur par défaut de commerçant ; zéro accepte la détection sans attendre la confirmation d’un bloc. Ajoutez éventuellement une URL de retour du commerçant en HTTPS et un <message>message de confirmation</message> affiché après le paiement.",
-            "5": "Enregistrez le lien. Définissez le texte du bouton pour personnaliser le libellé du visuel (jusqu’à 32 caractères). La valeur par défaut est « Acheter avec Monero ». Les boutons de copie apparaissent dans la liste des liens de paiement ; copiez le HTML mis à jour après avoir modifié le libellé. Activez éventuellement « Ignorer la vérification et créer la facture automatiquement » pour ouvrir directement les factures. Cette option est désactivée par défaut ; les visites, y compris celles de navigateurs automatisés, peuvent consommer le quota de factures et la capacité d’adresses."
+            "5": "Enregistrez le lien. Activez éventuellement « Ignorer la vérification et créer la facture automatiquement » pour ouvrir directement les factures. Cette option est désactivée par défaut ; les visites, y compris celles de navigateurs automatisés, peuvent consommer le quota de factures et la capacité d’adresses."
           },
           "2": "Pour la référence de 20 €, chaque demande d’achat calcule un montant en XMR à partir du cours indicatif disponible. La facture est définie en XMR et indique la source du cours et l’horodatage. Le cours n’est pas bloqué et aucun résultat en EUR n’est garanti. Si le cours est indisponible, la création échoue.",
           "3": "Vous avez d’abord besoin de votre propre déploiement ? Suivez le <selfhost>guide d’auto-hébergement</selfhost>. Un portefeuille en lecture seule fonctionnel et des services de détection synchronisés sont indispensables."
@@ -1434,7 +1436,7 @@
       "embed": {
         "title": "Copier votre bouton HTML ou votre URL réutilisable",
         "body": {
-          "1": "Prévisualisez le bouton personnalisé dans le tableau de bord, puis copiez son HTML dans un bloc HTML personnalisé de votre site web. Le visuel comprend le logo xmrcheckout et renvoie vers la page de vérification du paiement. Aucun formulaire, aucun JavaScript ni aucune clé API de commerçant n’est nécessaire dans l’extrait.",
+          "1": "Ouvrez le lien dans le tableau de bord. Sous Partager, choisissez un bouton sombre ou clair et modifiez ses deux lignes de texte (jusqu’à 32 caractères chacune ; la valeur par défaut est « Acheter avec Monero »). L’aperçu et le HTML se mettent à jour pendant la saisie. Copiez le HTML dans un bloc HTML personnalisé de votre site web. Le visuel renvoie vers la page de vérification du paiement. Aucun formulaire, aucun JavaScript ni aucune clé API de commerçant n’est nécessaire dans l’extrait.",
           "2": "Cet exemple utilise un domaine d’exemple réservé et un jeton fictif. Copiez votre véritable extrait depuis le tableau de bord ; ne mettez jamais vos identifiants de portefeuille ni votre clé API dans le HTML de votre site.",
           "3": "Vous pouvez aussi copier l’URL réutilisable et l’associer à un lien ordinaire ou à votre propre bouton. Les deux options affichent la page de vérification du produit ; le client envoie ensuite une demande d’achat. Lorsque la vérification est activée, l’ouverture d’une URL ne crée pas de facture. Lorsque la création automatique est activée, un navigateur actif demande une facture et l’ouvre. Le même onglet reprend sa facture impayée en cours ; utilisez « Commencer un autre achat » pour une commande distincte. Sans JavaScript ni stockage du navigateur, les clients utilisent le bouton de création manuelle.",
           "4": "Les achats utilisent le portefeuille de réception, le montant, l’objectif de confirmations et l’URL de retour enregistrés. Modifier le HTML ne permet pas de contourner ces paramètres."
@@ -1481,7 +1483,7 @@
         "body": {
           "1": "Les créateurs, les mainteneurs et d’autres bénéficiaires peuvent utiliser des liens de paiement pour recevoir des contributions volontaires directement dans leur propre portefeuille. Chaque envoi réussi crée une facture distincte avec détection du paiement et progression des confirmations.",
           "2": {
-            "1": "Créez un lien de paiement avec un titre tel que « Soutenir mon projet » et choisissez <strong>Le client saisit le montant</strong>. Définissez le <strong>texte du bouton</strong> sur <strong>Faire un don en Monero</strong>. Fixez éventuellement un montant minimum en XMR pour éviter les très petites factures.",
+            "1": "Créez un lien de paiement avec un titre tel que « Soutenir mon projet » et choisissez <strong>Le client saisit le montant</strong>. Fixez éventuellement un montant minimum en XMR pour éviter les très petites factures. Sous <strong>Partager</strong>, mettez <strong>Faire un don en Monero</strong> sur la première ligne du bouton.",
             "2": "Partagez l’URL réutilisable sur votre profil ou votre site web, ou copiez le bouton HTML depuis le tableau de bord. Vous pouvez aussi associer l’URL à votre propre bouton « Soutenir ce projet ».",
             "3": "Les donateurs saisissent un montant et choisissent XMR ou une monnaie fiduciaire de référence prise en charge sur la page de vérification, puis créent leur facture. Pour proposer plutôt des montants prédéfinis, créez un lien à montant fixe distinct pour chacun.",
             "4": "Les liens à montant saisi par le client affichent toujours la page de vérification. Pour les liens à montant fixe, gardez l’étape de vérification activée si l’ouverture d’une URL partagée ne doit pas créer de facture. La création automatique est facultative et consomme de la capacité lorsqu’un navigateur actif demande une facture."
@@ -1495,7 +1497,7 @@
         "body": {
           "1": "Les personnes qui détiennent des Monero recherchent les endroits qui les acceptent. Un badge « Monero accepté ici » à copier et une affiche imprimable sont disponibles dans le tableau de bord.",
           "2": {
-            "1": "<strong>Ajoutez un badge à votre site web.</strong> Ouvrez <strong>Tableau de bord → Liens de paiement</strong> et copiez le badge <strong>Monero accepté ici</strong> dans un bloc HTML. Il existe un badge sombre pour les fonds clairs et un badge clair pour les fonds sombres. Le badge est une simple image, sans pistage ni information de compte.",
+            "1": "<strong>Ajoutez un badge à votre site web.</strong> Ouvrez un lien de paiement dans <strong>Tableau de bord → Liens de paiement</strong>, mettez <strong>Monero accepté ici</strong> sur la première ligne du bouton et <strong>Payer en XMR</strong> sur la deuxième, puis copiez le HTML dans un bloc HTML. Choisissez sombre pour les fonds clairs et clair pour les fonds sombres. Le bouton est une simple image, sans pistage ni information de compte.",
             "2": "<strong>Imprimez une affiche.</strong> Chaque lien de paiement dispose d’une <strong>affiche imprimable avec QR code</strong>. Les clients la scannent avec leur portefeuille pour ouvrir le lien. Utilisez-la sur un comptoir, un stand de marché, une table d’événement ou une boîte à dons. Les affiches n’indiquent un prix que pour les liens fixés en XMR. Pour un encaissement en caisse façon terminal de carte, utilisez un <terminal>terminal</terminal> et affichez le badge à côté."
           }
         }

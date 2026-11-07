@@ -51,7 +51,7 @@ function availability() {
     { index: 5, category: "needs_review", code: "missing_closure_time" },
   ].map((row) => ({ ...row, invoice_ids: row.index === 3 ? [fixtureInvoice] : [],
     latest_closure_at: row.index === 2 || row.index === 4 ? "2026-10-29T12:00:00Z" : null,
-    cooldown_complete_at: row.index === 4 ? "2026-11-05T12:00:00Z" : null }));
+    cooldown_complete_at: row.index === 4 || (row.index === 2 && !exhausted) ? "2026-11-05T12:00:00Z" : null }));
   const counts = Object.fromEntries(["never_issued", "eligible_for_reuse", "reserved", "cooling_down", "needs_review"]
     .map((category) => [category, rows.filter((row) => row.category === category).length]));
   return { retrieved_at: new Date().toISOString(), cooldown_seconds: 604800, pool_size: 5, counts,

@@ -342,8 +342,8 @@
     "watching": "Surveillance du paiement…",
     "cancel": "Annuler la vente",
     "lowAddresses": {
-      "one": "Il ne reste que {count} adresse de facture libre. Les ventes impayées et annulées réservent une adresse pendant trois jours.",
-      "other": "Il ne reste que {count} adresses de facture libres. Les ventes impayées et annulées réservent une adresse pendant trois jours."
+      "one": "Il ne reste que {count} adresse de facture libre. Les ventes impayées et annulées réservent une adresse pendant trois jours par défaut.",
+      "other": "Il ne reste que {count} adresses de facture libres. Les ventes impayées et annulées réservent une adresse pendant trois jours par défaut."
     },
     "delete": "Supprimer",
     "note": "Note (facultatif)",
@@ -809,7 +809,11 @@
     "title": "Terminaux",
     "unavailable": "Les terminaux sont indisponibles. Actualisez pour réessayer.",
     "intro": "Acceptez Monero en personne. Ouvrez un lien de terminal sur une tablette ou un téléphone à votre caisse, saisissez le montant, et le client scanne le QR code avec son portefeuille. Chaque vente est une facture XMR normale, payée directement à votre portefeuille.",
-    "addressNote": "Chaque vente utilise l’une de vos adresses de facture. Les ventes impayées et annulées réservent leur adresse pendant trois jours ; une caisse très active peut donc en manquer. Le terminal vous avertit lorsqu’il en reste moins de 20 libres.",
+    "addressNote": {
+      "one": "Chaque vente utilise l’une de vos adresses de facture. Les ventes impayées et annulées réservent leur adresse pendant {count} heure après leur clôture ; une caisse très active peut donc en manquer. Les adresses jamais utilisées sont attribuées en premier. Le terminal vous avertit lorsqu’il en reste moins de 20 libres.",
+      "other": "Chaque vente utilise l’une de vos adresses de facture. Les ventes impayées et annulées réservent leur adresse pendant {count} heures après leur clôture ; une caisse très active peut donc en manquer. Les adresses jamais utilisées sont attribuées en premier. Le terminal vous avertit lorsqu’il en reste moins de 20 libres."
+    },
+    "addressNoteDefault": "Chaque vente utilise l’une de vos adresses de facture. Les ventes impayées et annulées réservent leur adresse pendant trois jours par défaut ; une caisse très active peut donc en manquer. Les adresses jamais utilisées sont attribuées en premier. Le terminal vous avertit lorsqu’il en reste moins de 20 libres.",
     "guide": "Guide du paiement en personne",
     "none": "Aucun terminal pour l’instant.",
     "disabled": "Désactivé",
@@ -920,7 +924,8 @@
   },
   "addresses": {
     "title": "Disponibilité des adresses de facture",
-    "eligible": "Adresses disponibles",
+    "eligible": "Sous-adresses disponibles",
+    "eligibleBreakdown": "{fresh} jamais utilisées, {reusable} prêtes à être réutilisées",
     "refresh": "Actualiser la disponibilité",
     "unavailable": "Indisponible. Actualisez pour réessayer.",
     "noneEligible": "Aucune adresse de facture n’est actuellement disponible.",
@@ -929,10 +934,17 @@
     "reserved": "Adresses réservées",
     "waiting": "Adresses en attente avant réutilisation",
     "needsReview": "À examiner",
-    "waitNote": "Après la clôture d’une facture, les adresses attendent avant de pouvoir être réutilisées, afin de mieux distinguer les paiements ultérieurs.",
+    "waitNote": {
+      "one": "Après la clôture d’une facture, sa sous-adresse attend {count} heure avant de pouvoir être réutilisée, afin de mieux distinguer les paiements ultérieurs.",
+      "other": "Après la clôture d’une facture, sa sous-adresse attend {count} heures avant de pouvoir être réutilisée, afin de mieux distinguer les paiements ultérieurs."
+    },
+    "orderNote": "Les sous-adresses jamais utilisées sont toujours attribuées en premier. Une sous-adresse prête à être réutilisée n’est attribuée à nouveau que lorsqu’il ne reste plus aucune sous-adresse jamais utilisée.",
     "noGuarantee": "La disponibilité d’une adresse ne garantit pas la création d’une facture. Les factures en attente, la disponibilité du portefeuille et les limites de création s’appliquent toujours.",
     "viewInHealth": "Voir les détails des adresses et des instantanés dans l’état du système",
-    "poolSummary": "Réserve prise en charge : {pool}. Délai avant réutilisation : {seconds} secondes.",
+    "poolSummary": {
+      "one": "Réserve prise en charge : {pool} sous-adresses. Après la clôture d’une facture, sa sous-adresse attend {count} heure avant de pouvoir être réutilisée.",
+      "other": "Réserve prise en charge : {pool} sous-adresses. Après la clôture d’une facture, sa sous-adresse attend {count} heures avant de pouvoir être réutilisée."
+    },
     "earliest": "Disponibilité estimée au plus tôt : {time}. Il s’agit d’une estimation, pas d’une garantie de création.",
     "latestSnapshot": "Dernier instantané en lecture seule",
     "latestAttempt": "Dernière tentative : {time} — {outcome}",
@@ -948,6 +960,7 @@
     "indexLine": "Index {index} : {explanation}",
     "latestClosure": "Dernière clôture : {time}",
     "estimatedEligibility": "Disponibilité estimée : {time}",
+    "eligibleSince": "Disponible depuis : {time}",
     "pendingExpired": "La facture en attente a dépassé sa date d’expiration. Son adresse reste réservée jusqu’à la mise à jour de son statut.",
     "relatedInvoices": "Factures associées ({count})",
     "code": {
@@ -1205,7 +1218,7 @@
       "inPerson": {
         "q": "Puis-je accepter Monero en personne, dans une boutique ou sur un stand de marché ?",
         "p1": "Oui. Créez un terminal dans le tableau de bord et ouvrez son lien sur une tablette ou un téléphone à votre caisse. Saisissez le montant, le client scanne le QR code avec son portefeuille, et l’écran affiche « Paiement repéré » dès que le paiement atteint le réseau, généralement en quelques secondes. Les fonds vont directement à votre portefeuille.",
-        "p2": "Avec zéro confirmation, le paiement n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé ; exigez davantage de confirmations pour les montants plus importants. Chaque vente utilise l’une de vos adresses de facture, et les ventes impayées ou annulées réservent la leur pendant trois jours.",
+        "p2": "Avec zéro confirmation, le paiement n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé ; exigez davantage de confirmations pour les montants plus importants. Chaque vente utilise l’une de vos adresses de facture, et les ventes impayées ou annulées réservent la leur pendant trois jours par défaut. Les adresses jamais utilisées sont toujours attribuées en premier.",
         "cta": "Configurer un terminal"
       },
       "donations": {
@@ -1372,7 +1385,7 @@
       },
       "limits": {
         "title": "Capacité d’adresses",
-        "p1": "Chaque facture utilise l’une de vos 199 adresses de facture. Après la clôture d’une facture, son adresse est réservée pendant trois jours afin de réduire le risque qu’un paiement tardif soit attribué à un autre client. Les ventes annulées et impayées réservent aussi une adresse.",
+        "p1": "Chaque facture utilise l’une de vos 199 adresses de facture, et les adresses jamais utilisées sont toujours attribuées en premier. Après la clôture d’une facture, son adresse est réservée pendant trois jours par défaut (l’opérateur peut modifier ce délai) afin de réduire le risque qu’un paiement tardif soit attribué à un autre client. Les ventes annulées et impayées réservent aussi une adresse.",
         "p2": "Cela permet en moyenne environ 66 ventes par jour. Le terminal affiche un avertissement lorsqu’il reste moins de 20 adresses libres. Le tableau de bord indique quand les adresses réservées redeviennent disponibles."
       }
     },
@@ -1481,7 +1494,7 @@
         "body": {
           "1": {
             "1": "Le quota public par défaut est de 10 créations de factures réussies par commerçant sur 24 heures glissantes, partagé entre tous les liens de paiement. Le tableau de bord affiche la limite configurée pour ce déploiement, l’utilisation, le quota restant et la disponibilité des adresses. L’actualisation récupère ces deux aperçus ; aucun ne réserve de capacité.",
-            "2": "Les autres limites de factures du commerçant s’appliquent toujours. La réserve d’adresses prend en charge jusqu’à 199 sous-adresses de facture par commerçant, toutes dans la plage par défaut que surveille chaque portefeuille Monero. Les demandes impayées consomment aussi de la capacité. Une adresse peut être réutilisée une fois ses factures précédentes clôturées et le délai d’attente par défaut de trois jours écoulé. Une nouvelle facture ne garantit pas une adresse jamais utilisée ; un nouveau paiement tardif destiné à une ancienne facture peut encore être confondu avec une plus récente après réutilisation.",
+            "2": "Les autres limites de factures du commerçant s’appliquent toujours. La réserve d’adresses prend en charge jusqu’à 199 sous-adresses de facture par commerçant, toutes dans la plage par défaut que surveille chaque portefeuille Monero. Les demandes impayées consomment aussi de la capacité. Les sous-adresses jamais utilisées sont toujours attribuées en premier ; une adresse n’est réutilisée qu’une fois toutes celles-ci attribuées, ses factures précédentes clôturées et le délai d’attente par défaut de trois jours écoulé. Une nouvelle facture ne garantit pas une adresse jamais utilisée ; un nouveau paiement tardif destiné à une ancienne facture peut encore être confondu avec une plus récente après réutilisation.",
             "3": "La configuration Nginx par défaut limite aussi les demandes d’achat publiques à 6 par minute et par adresse IP cliente, avec une rafale de 3. Les opérateurs peuvent configurer ces limites et le délai avant réutilisation. Les erreurs de débit ou de capacité peuvent inclure une indication Retry-After.",
             "4": "Du HTML simple ne permet pas de récupérer un envoi en double. Des envois distincts peuvent créer des factures distinctes. Si une réponse est interrompue, la création a peut-être déjà réussi. Ne relancez pas automatiquement : vérifiez toute URL de facture reçue ou contactez le commerçant avant de renvoyer le formulaire."
           },

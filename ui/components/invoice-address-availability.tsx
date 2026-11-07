@@ -31,6 +31,9 @@ export type SubaddressStatus = {
   } | null;
 };
 
+// Hours of the reuse wait, rounded up so a partial hour is never understated.
+export const cooldownHours = (status: SubaddressStatus) => Math.max(1, Math.ceil(status.cooldown_seconds / 3600));
+
 const timestamp = (value: string | null, t: Translate) => value ? utcTimestamp(value, t) : t("time.notRecorded");
 
 const explanationCodes = new Set(["never_issued", "cooldown_complete", "active_invoice", "awaiting_invoice_status_update", "reuse_cooldown", "inconsistent_history", "invalid_prior_invoice", "missing_closure_time"]);
@@ -43,15 +46,17 @@ export default async function InvoiceAddressAvailability({ status, full = false,
   compact?: boolean;
   showRefresh?: boolean;
 }) {
-  const { locale, t } = await getI18n();
+  const { t } = await getI18n();
   const snapshot = status?.snapshot;
   const eligible = status ? status.counts.never_issued + status.counts.eligible_for_reuse : null;
+  const breakdown = status ? t("addresses.eligibleBreakdown", { fresh: status.counts.never_issued, reusable: status.counts.eligible_for_reuse }) : null;
   if (compact) return (
     <section className="min-w-0 rounded-surface border border-stroke bg-white/70 p-4 shadow-soft" aria-label={t("addresses.title")}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-sans text-sm font-semibold">{t("addresses.title")}</h2>
           {eligible !== null ? <p className="mt-1 text-sm"><span>{t("addresses.eligible")}</span> <strong className="ml-2 font-mono text-lg">{eligible}</strong></p> : null}
+          {breakdown ? <p className="text-xs text-ink-soft">{breakdown}</p> : null}
         </div>
         {showRefresh ? <StatusRefreshButton label={t("addresses.refresh")} /> : null}
       </div>
@@ -65,7 +70,8 @@ export default async function InvoiceAddressAvailability({ status, full = false,
         {status ? <dl className="grid min-w-0 grid-cols-1 gap-3 text-sm sm:grid-cols-3">
           {[[t("addresses.reserved"), status.counts.reserved], [t("addresses.waiting"), status.counts.cooling_down], [t("addresses.needsReview"), status.counts.needs_review]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="font-mono font-semibold">{value}</dd></div>)}
         </dl> : null}
-        <p className="mt-2 text-sm text-ink-soft">{t("addresses.waitNote")}</p>
+        {status ? <p className="mt-2 text-sm text-ink-soft">{t("addresses.waitNote", { count: cooldownHours(status) })}</p> : null}
+        <p className="mt-2 text-sm text-ink-soft">{t("addresses.orderNote")}</p>
         <p className="mt-2 text-sm text-ink-soft">{t("addresses.noGuarantee")}</p>
         <Link className="mt-2 inline-block min-h-11 py-3 text-sm font-semibold underline underline-offset-4" href="/dashboard?tab=health">{t("addresses.viewInHealth")}</Link>
       </details>
@@ -89,13 +95,15 @@ export default async function InvoiceAddressAvailability({ status, full = false,
               <div key={label}><dt className="text-sm text-ink-soft">{label}</dt><dd className="mt-1 font-mono text-2xl font-semibold">{value}</dd></div>
             ))}
           </dl>
+          <p className="mt-3 text-sm">{breakdown}</p>
+          <p className="mt-2 text-sm text-ink-soft">{t("addresses.orderNote")}</p>
           <p className="mt-4 text-sm text-ink-soft">{t("refresh.retrieved")} <time dateTime={status.retrieved_at}>{timestamp(status.retrieved_at, t)}</time></p>
         </>
       ) : <p className="mt-4" role="status">{t("addresses.unavailable")}</p>}
       <p className="mt-2 text-sm text-ink-soft">{t("addresses.noGuarantee")}</p>
       {!full ? <Link className="mt-3 inline-block min-h-11 py-2 text-sm font-semibold underline underline-offset-4" href="/dashboard?tab=health">{t("addresses.viewInHealth")}</Link> : status ? (
         <>
-          <p className="mt-3 text-sm">{t("addresses.poolSummary", { pool: status.pool_size, seconds: status.cooldown_seconds.toLocaleString(locale) })}</p>
+          <p className="mt-3 text-sm">{t("addresses.poolSummary", { pool: status.pool_size, count: cooldownHours(status) })}</p>
           {status.earliest_estimated_eligibility_at ? <p className="mt-2 text-sm">{t("addresses.earliest", { time: timestamp(status.earliest_estimated_eligibility_at, t) })}</p> : null}
           <div className="mt-5 border-t border-stroke pt-4">
             <h3 className="font-semibold">{t("addresses.latestSnapshot")}</h3>
@@ -117,7 +125,7 @@ export default async function InvoiceAddressAvailability({ status, full = false,
                 <li key={address.index} className="min-w-0 py-3 text-sm">
                   <p className="font-semibold">{t("addresses.indexLine", { index: address.index, explanation: explanationCodes.has(address.code) ? t(`addresses.code.${address.code}`) : t("addresses.needsReview") })}</p>
                   {address.latest_closure_at ? <p>{t("addresses.latestClosure", { time: timestamp(address.latest_closure_at, t) })}</p> : null}
-                  {address.cooldown_complete_at ? <p>{t("addresses.estimatedEligibility", { time: timestamp(address.cooldown_complete_at, t) })}</p> : null}
+                  {address.cooldown_complete_at ? <p>{t(address.category === "eligible_for_reuse" ? "addresses.eligibleSince" : "addresses.estimatedEligibility", { time: timestamp(address.cooldown_complete_at, t) })}</p> : null}
                   {address.code === "awaiting_invoice_status_update" ? <p>{t("addresses.pendingExpired")}</p> : null}
                   {address.invoice_ids.length ? <details className="mt-1"><summary className="min-h-11 cursor-pointer py-2 focus-visible:ring-2 focus-visible:ring-clay">{t("addresses.relatedInvoices", { count: address.invoice_ids.length })}</summary><ul className="grid gap-2">{address.invoice_ids.map((id) => <li className="break-all" key={id}><Link className="font-mono underline underline-offset-4" href={`/dashboard?tab=invoices&status=all&archived=1&q=${id}`}>{id}</Link></li>)}</ul></details> : null}
                 </li>

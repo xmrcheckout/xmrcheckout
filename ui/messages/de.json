@@ -342,8 +342,8 @@
     "watching": "Warte auf Zahlung…",
     "cancel": "Verkauf stornieren",
     "lowAddresses": {
-      "one": "Nur noch {count} Rechnungsadresse ist frei. Unbezahlte und stornierte Verkäufe belegen eine Adresse drei Tage lang.",
-      "other": "Nur noch {count} Rechnungsadressen sind frei. Unbezahlte und stornierte Verkäufe belegen eine Adresse drei Tage lang."
+      "one": "Nur noch {count} Rechnungsadresse ist frei. Unbezahlte und stornierte Verkäufe belegen eine Adresse standardmäßig drei Tage lang.",
+      "other": "Nur noch {count} Rechnungsadressen sind frei. Unbezahlte und stornierte Verkäufe belegen eine Adresse standardmäßig drei Tage lang."
     },
     "delete": "Löschen",
     "note": "Notiz (optional)",
@@ -809,7 +809,11 @@
     "title": "Terminals",
     "unavailable": "Terminals sind nicht verfügbar. Aktualisieren Sie, um es erneut zu versuchen.",
     "intro": "Nehmen Sie Monero vor Ort an. Öffnen Sie einen Terminal-Link auf einem Tablet oder Smartphone an Ihrer Kasse, tippen Sie den Betrag ein, und der Kunde scannt den QR-Code mit seiner Wallet. Jeder Verkauf ist eine normale XMR-Rechnung, die direkt an Ihre Wallet bezahlt wird.",
-    "addressNote": "Jeder Verkauf verwendet eine Ihrer Rechnungsadressen. Unbezahlte und stornierte Verkäufe belegen ihre Adresse drei Tage lang, sodass eine stark genutzte Kasse knapp werden kann. Das Terminal warnt, wenn weniger als 20 frei sind.",
+    "addressNote": {
+      "one": "Jeder Verkauf verwendet eine Ihrer Rechnungsadressen. Unbezahlte und stornierte Verkäufe belegen ihre Adresse nach dem Schließen noch {count} Stunde, sodass eine stark genutzte Kasse knapp werden kann. Nie verwendete Adressen werden zuerst vergeben. Das Terminal warnt, wenn weniger als 20 frei sind.",
+      "other": "Jeder Verkauf verwendet eine Ihrer Rechnungsadressen. Unbezahlte und stornierte Verkäufe belegen ihre Adresse nach dem Schließen noch {count} Stunden, sodass eine stark genutzte Kasse knapp werden kann. Nie verwendete Adressen werden zuerst vergeben. Das Terminal warnt, wenn weniger als 20 frei sind."
+    },
+    "addressNoteDefault": "Jeder Verkauf verwendet eine Ihrer Rechnungsadressen. Unbezahlte und stornierte Verkäufe belegen ihre Adresse standardmäßig drei Tage lang, sodass eine stark genutzte Kasse knapp werden kann. Nie verwendete Adressen werden zuerst vergeben. Das Terminal warnt, wenn weniger als 20 frei sind.",
     "guide": "Anleitung für den Checkout vor Ort",
     "none": "Noch keine Terminals.",
     "disabled": "Deaktiviert",
@@ -920,7 +924,8 @@
   },
   "addresses": {
     "title": "Verfügbarkeit der Rechnungsadressen",
-    "eligible": "Verfügbare Adressen",
+    "eligible": "Verfügbare Subadressen",
+    "eligibleBreakdown": "{fresh} nie verwendet, {reusable} bereit zur Wiederverwendung",
     "refresh": "Verfügbarkeit aktualisieren",
     "unavailable": "Nicht verfügbar. Aktualisieren Sie, um es erneut zu versuchen.",
     "noneEligible": "Derzeit sind keine Rechnungsadressen verfügbar.",
@@ -929,10 +934,17 @@
     "reserved": "Reservierte Adressen",
     "waiting": "Adressen in Wartezeit vor Wiederverwendung",
     "needsReview": "Prüfung nötig",
-    "waitNote": "Adressen warten nach dem Schließen einer Rechnung, bevor sie wiederverwendet werden können, damit spätere Zahlungen unterschieden werden können.",
+    "waitNote": {
+      "one": "Nach dem Schließen einer Rechnung wartet ihre Subadresse {count} Stunde, bevor sie wiederverwendet werden kann, damit spätere Zahlungen unterschieden werden können.",
+      "other": "Nach dem Schließen einer Rechnung wartet ihre Subadresse {count} Stunden, bevor sie wiederverwendet werden kann, damit spätere Zahlungen unterschieden werden können."
+    },
+    "orderNote": "Nie verwendete Subadressen werden immer zuerst vergeben. Eine wiederverwendbare Subadresse wird erst erneut vergeben, wenn keine nie verwendete mehr übrig ist.",
     "noGuarantee": "Die Verfügbarkeit einer Adresse garantiert keine Rechnungserstellung. Offene Rechnungen, Wallet-Verfügbarkeit und Erstellungslimits gelten weiterhin.",
     "viewInHealth": "Adress- und Momentaufnahme-Details unter Systemzustand anzeigen",
-    "poolSummary": "Unterstützter Pool: {pool}. Wartezeit vor Wiederverwendung: {seconds} Sekunden.",
+    "poolSummary": {
+      "one": "Unterstützter Pool: {pool} Subadressen. Nach dem Schließen einer Rechnung wartet ihre Subadresse {count} Stunde, bevor sie wiederverwendet werden kann.",
+      "other": "Unterstützter Pool: {pool} Subadressen. Nach dem Schließen einer Rechnung wartet ihre Subadresse {count} Stunden, bevor sie wiederverwendet werden kann."
+    },
     "earliest": "Früheste geschätzte Verfügbarkeit: {time}. Dies ist eine Schätzung, keine Garantie für die Erstellung.",
     "latestSnapshot": "Letzte Momentaufnahme mit Lesezugriff",
     "latestAttempt": "Letzter Versuch: {time} – {outcome}",
@@ -948,6 +960,7 @@
     "indexLine": "Index {index}: {explanation}",
     "latestClosure": "Letzter Abschluss: {time}",
     "estimatedEligibility": "Geschätzte Verfügbarkeit: {time}",
+    "eligibleSince": "Verfügbar seit: {time}",
     "pendingExpired": "Die offene Rechnung hat ihre Ablaufzeit überschritten. Ihre Adresse bleibt reserviert, bis ihr Status aktualisiert wird.",
     "relatedInvoices": "Zugehörige Rechnungen ({count})",
     "code": {
@@ -1205,7 +1218,7 @@
       "inPerson": {
         "q": "Kann ich Monero vor Ort im Laden oder am Marktstand annehmen?",
         "p1": "Ja. Erstellen Sie im Dashboard ein Terminal und öffnen Sie seinen Link auf einem Tablet oder Smartphone an Ihrer Kasse. Tippen Sie den Betrag ein, der Kunde scannt den QR-Code mit seiner Wallet, und der Bildschirm zeigt „Zahlung gesehen“, sobald die Zahlung das Netzwerk erreicht – meist innerhalb von Sekunden. Die Gelder gehen direkt an Ihre Wallet.",
-        "p2": "Bei null Bestätigungen ist die Zahlung noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden; verlangen Sie für größere Beträge mehr Bestätigungen. Jeder Verkauf verwendet eine Ihrer Rechnungsadressen, und unbezahlte oder stornierte Verkäufe belegen ihre Adresse drei Tage lang.",
+        "p2": "Bei null Bestätigungen ist die Zahlung noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden; verlangen Sie für größere Beträge mehr Bestätigungen. Jeder Verkauf verwendet eine Ihrer Rechnungsadressen, und unbezahlte oder stornierte Verkäufe belegen ihre Adresse standardmäßig drei Tage lang. Nie verwendete Adressen werden immer zuerst vergeben.",
         "cta": "Terminal einrichten"
       },
       "donations": {
@@ -1372,7 +1385,7 @@
       },
       "limits": {
         "title": "Adresskapazität",
-        "p1": "Jede Rechnung verwendet eine Ihrer 199 Rechnungsadressen. Nach dem Schließen einer Rechnung wird ihre Adresse drei Tage lang zurückgehalten, um das Risiko zu verringern, dass eine verspätete Zahlung einem anderen Kunden zugeordnet wird. Auch stornierte und unbezahlte Verkäufe belegen eine Adresse.",
+        "p1": "Jede Rechnung verwendet eine Ihrer 199 Rechnungsadressen, und nie verwendete Adressen werden immer zuerst vergeben. Nach dem Schließen einer Rechnung wird ihre Adresse standardmäßig drei Tage lang zurückgehalten (der Betreiber kann das ändern), um das Risiko zu verringern, dass eine verspätete Zahlung einem anderen Kunden zugeordnet wird. Auch stornierte und unbezahlte Verkäufe belegen eine Adresse.",
         "p2": "Das erlaubt im Schnitt etwa 66 Verkäufe pro Tag. Das Terminal zeigt eine Warnung, wenn weniger als 20 Adressen frei sind. Das Dashboard zeigt, wann zurückgehaltene Adressen wieder verfügbar werden."
       }
     },
@@ -1481,7 +1494,7 @@
         "body": {
           "1": {
             "1": "Das öffentliche Standardkontingent beträgt 10 erfolgreiche Rechnungserstellungen pro Händler innerhalb gleitender 24 Stunden, geteilt über alle Zahlungslinks. Das Dashboard zeigt das für diese Installation konfigurierte Limit, die Nutzung, das verbleibende Kontingent und die Adressverfügbarkeit. Aktualisieren ruft beide Momentaufnahmen ab; keine davon reserviert Kapazität.",
-            "2": "Weitere Rechnungslimits für Händler gelten weiterhin. Der Adresspool unterstützt bis zu 199 Rechnungs-Subadressen pro Händler, alle innerhalb des Standardbereichs, den jede Monero-Wallet beobachtet. Auch unbezahlte Anfragen verbrauchen Kapazität. Eine Adresse kann wiederverwendet werden, nachdem ihre früheren Rechnungen geschlossen sind und die standardmäßige dreitägige Wartezeit abgelaufen ist. Eine neue Rechnung garantiert keine nie verwendete Adresse; eine neue verspätete Zahlung für eine ältere Rechnung kann nach einer Wiederverwendung dennoch mit einer neueren verwechselt werden.",
+            "2": "Weitere Rechnungslimits für Händler gelten weiterhin. Der Adresspool unterstützt bis zu 199 Rechnungs-Subadressen pro Händler, alle innerhalb des Standardbereichs, den jede Monero-Wallet beobachtet. Auch unbezahlte Anfragen verbrauchen Kapazität. Nie verwendete Subadressen werden immer zuerst vergeben; eine Adresse wird erst wiederverwendet, wenn alle vergeben sind, ihre früheren Rechnungen geschlossen sind und die standardmäßige dreitägige Wartezeit abgelaufen ist. Eine neue Rechnung garantiert keine nie verwendete Adresse; eine neue verspätete Zahlung für eine ältere Rechnung kann nach einer Wiederverwendung dennoch mit einer neueren verwechselt werden.",
             "3": "Die Standard-Nginx-Konfiguration begrenzt öffentliche Kaufanfragen außerdem auf 6 pro Minute und Client-IP, mit einem Burst von 3. Betreiber können diese Limits und die Wartezeit vor Wiederverwendung konfigurieren. Fehler wegen Rate oder Kapazität können einen Retry-After-Hinweis enthalten.",
             "4": "Reines HTML kann doppelte Übermittlungen nicht erkennen. Separate Übermittlungen können separate Rechnungen erstellen. Wird eine Antwort unterbrochen, war die Erstellung möglicherweise bereits erfolgreich. Wiederholen Sie nicht automatisch: Prüfen Sie jede erhaltene Rechnungs-URL oder wenden Sie sich an den Händler, bevor Sie erneut absenden."
           },

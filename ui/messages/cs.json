@@ -346,10 +346,10 @@
     "watching": "Sleduje se platba…",
     "cancel": "Zrušit prodej",
     "lowAddresses": {
-      "one": "Volná je jen {count} adresa pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu tři dny.",
-      "few": "Volné jsou jen {count} adresy pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu tři dny.",
-      "many": "Volných je jen {count} adresy pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu tři dny.",
-      "other": "Volných je jen {count} adres pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu tři dny."
+      "one": "Volná je jen {count} adresa pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu ve výchozím nastavení tři dny.",
+      "few": "Volné jsou jen {count} adresy pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu ve výchozím nastavení tři dny.",
+      "many": "Volných je jen {count} adresy pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu ve výchozím nastavení tři dny.",
+      "other": "Volných je jen {count} adres pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu ve výchozím nastavení tři dny."
     },
     "delete": "Smazat",
     "note": "Poznámka (nepovinné)",
@@ -821,7 +821,13 @@
     "title": "Terminály",
     "unavailable": "Terminály nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
     "intro": "Přijímejte Monero osobně. Otevřete odkaz na terminál na tabletu nebo telefonu u pokladny, zadejte částku a zákazník naskenuje QR kód svou peněženkou. Každý prodej je běžná platební výzva v XMR placená přímo do vaší peněženky.",
-    "addressNote": "Každý prodej využívá jednu z vašich adres pro platební výzvy. Nezaplacené a zrušené prodeje drží svou adresu tři dny, takže u rušné pokladny mohou adresy docházet. Terminál upozorní, když je volných méně než 20.",
+    "addressNote": {
+      "one": "Každý prodej využívá jednu z vašich adres pro platební výzvy. Nezaplacené a zrušené prodeje drží svou adresu ještě {count} hodinu po uzavření, takže u rušné pokladny mohou adresy docházet. Nikdy nepoužité adresy se přidělují jako první. Terminál upozorní, když je volných méně než 20.",
+      "few": "Každý prodej využívá jednu z vašich adres pro platební výzvy. Nezaplacené a zrušené prodeje drží svou adresu ještě {count} hodiny po uzavření, takže u rušné pokladny mohou adresy docházet. Nikdy nepoužité adresy se přidělují jako první. Terminál upozorní, když je volných méně než 20.",
+      "many": "Každý prodej využívá jednu z vašich adres pro platební výzvy. Nezaplacené a zrušené prodeje drží svou adresu ještě {count} hodiny po uzavření, takže u rušné pokladny mohou adresy docházet. Nikdy nepoužité adresy se přidělují jako první. Terminál upozorní, když je volných méně než 20.",
+      "other": "Každý prodej využívá jednu z vašich adres pro platební výzvy. Nezaplacené a zrušené prodeje drží svou adresu ještě {count} hodin po uzavření, takže u rušné pokladny mohou adresy docházet. Nikdy nepoužité adresy se přidělují jako první. Terminál upozorní, když je volných méně než 20."
+    },
+    "addressNoteDefault": "Každý prodej využívá jednu z vašich adres pro platební výzvy. Nezaplacené a zrušené prodeje ve výchozím nastavení drží svou adresu tři dny, takže u rušné pokladny mohou adresy docházet. Nikdy nepoužité adresy se přidělují jako první. Terminál upozorní, když je volných méně než 20.",
     "guide": "Návod k platbám na místě",
     "none": "Zatím žádné terminály.",
     "disabled": "Vypnuto",
@@ -936,7 +942,8 @@
   },
   "addresses": {
     "title": "Dostupnost adres pro platební výzvy",
-    "eligible": "Způsobilé adresy",
+    "eligible": "Způsobilé podadresy",
+    "eligibleBreakdown": "Nikdy nepoužité: {fresh}, připravené k opětovnému použití: {reusable}",
     "refresh": "Obnovit dostupnost",
     "unavailable": "Není k dispozici. Obnovte stránku a zkuste to znovu.",
     "noneEligible": "Momentálně nejsou k dispozici žádné způsobilé adresy pro platební výzvy.",
@@ -945,10 +952,21 @@
     "reserved": "Rezervované adresy",
     "waiting": "Adresy čekající na opětovné použití",
     "needsReview": "Vyžaduje kontrolu",
-    "waitNote": "Po uzavření platební výzvy adresy před opětovným použitím čekají, aby bylo možné rozlišit pozdější platby.",
+    "waitNote": {
+      "one": "Po uzavření platební výzvy čeká její podadresa {count} hodinu, než ji lze znovu použít, aby bylo možné rozlišit pozdější platby.",
+      "few": "Po uzavření platební výzvy čeká její podadresa {count} hodiny, než ji lze znovu použít, aby bylo možné rozlišit pozdější platby.",
+      "many": "Po uzavření platební výzvy čeká její podadresa {count} hodiny, než ji lze znovu použít, aby bylo možné rozlišit pozdější platby.",
+      "other": "Po uzavření platební výzvy čeká její podadresa {count} hodin, než ji lze znovu použít, aby bylo možné rozlišit pozdější platby."
+    },
+    "orderNote": "Nikdy nepoužité podadresy se vždy přidělují jako první. Podadresa připravená k opětovnému použití se znovu přidělí až ve chvíli, kdy žádná nikdy nepoužitá nezbývá.",
     "noGuarantee": "Způsobilost adresy nezaručuje vytvoření platební výzvy. Stále platí čekající platební výzvy, dostupnost peněženky a limity vytváření.",
     "viewInHealth": "Zobrazit podrobnosti adres a snímků ve Stavu systému",
-    "poolSummary": "Podporovaná zásoba: {pool}. Ochranná lhůta před opětovným použitím: {seconds} sekund.",
+    "poolSummary": {
+      "one": "Podporovaná zásoba: {pool} podadres. Po uzavření platební výzvy čeká její podadresa {count} hodinu, než ji lze znovu použít.",
+      "few": "Podporovaná zásoba: {pool} podadres. Po uzavření platební výzvy čeká její podadresa {count} hodiny, než ji lze znovu použít.",
+      "many": "Podporovaná zásoba: {pool} podadres. Po uzavření platební výzvy čeká její podadresa {count} hodiny, než ji lze znovu použít.",
+      "other": "Podporovaná zásoba: {pool} podadres. Po uzavření platební výzvy čeká její podadresa {count} hodin, než ji lze znovu použít."
+    },
     "earliest": "Nejdřívější odhadovaná způsobilost: {time}. Jde o odhad, nikoli o záruku vytvoření.",
     "latestSnapshot": "Poslední snímek pouze pro prohlížení",
     "latestAttempt": "Poslední pokus: {time} — {outcome}",
@@ -964,6 +982,7 @@
     "indexLine": "Index {index}: {explanation}",
     "latestClosure": "Poslední uzavření: {time}",
     "estimatedEligibility": "Odhadovaná způsobilost: {time}",
+    "eligibleSince": "Způsobilá od: {time}",
     "pendingExpired": "Čekající platební výzvě uplynula platnost. Její adresa zůstane rezervovaná, dokud se neaktualizuje její stav.",
     "relatedInvoices": "Související platební výzvy ({count})",
     "code": {
@@ -1223,7 +1242,7 @@
       "inPerson": {
         "q": "Mohu přijímat Monero osobně v obchodě nebo na stánku?",
         "p1": "Ano. Vytvořte v panelu terminál a otevřete jeho odkaz na tabletu nebo telefonu u pokladny. Zadejte částku, zákazník naskenuje QR kód svou peněženkou a jakmile platba dorazí do sítě, obvykle během několika sekund, zobrazí se „Platba zachycena“. Prostředky jdou přímo do vaší peněženky.",
-        "p2": "Při nule potvrzení platba ještě není v bloku a ve vzácných případech nemusí být potvrzena; u vyšších částek vyžadujte více potvrzení. Každý prodej využívá jednu z vašich adres pro platební výzvy a nezaplacené nebo zrušené prodeje drží svou adresu tři dny.",
+        "p2": "Při nule potvrzení platba ještě není v bloku a ve vzácných případech nemusí být potvrzena; u vyšších částek vyžadujte více potvrzení. Každý prodej využívá jednu z vašich adres pro platební výzvy a nezaplacené nebo zrušené prodeje drží svou adresu ve výchozím nastavení tři dny. Nikdy nepoužité adresy se vždy přidělují jako první.",
         "cta": "Nastavit terminál"
       },
       "donations": {
@@ -1392,7 +1411,7 @@
       },
       "limits": {
         "title": "Zásoba adres",
-        "p1": "Každá platební výzva využívá jednu z vašich 199 adres pro platební výzvy. Po uzavření platební výzvy je její adresa tři dny držena, aby se snížilo riziko přiřazení pozdní platby jinému zákazníkovi. Adresu drží i zrušené a nezaplacené prodeje.",
+        "p1": "Každá platební výzva využívá jednu z vašich 199 adres pro platební výzvy a nikdy nepoužité adresy se vždy přidělují jako první. Po uzavření platební výzvy je její adresa ve výchozím nastavení tři dny držena (provozovatel to může změnit), aby se snížilo riziko přiřazení pozdní platby jinému zákazníkovi. Adresu drží i zrušené a nezaplacené prodeje.",
         "p2": "To v průměru umožňuje zhruba 66 prodejů denně. Terminál zobrazí upozornění, když je volných méně než 20 adres. Panel ukazuje, kdy budou držené adresy znovu k dispozici."
       }
     },
@@ -1501,7 +1520,7 @@
         "body": {
           "1": {
             "1": "Výchozí veřejný limit je 10 úspěšně vytvořených platebních výzev na obchodníka za posledních 24 hodin, sdílený mezi všemi platebními odkazy. Panel ukazuje nastavený limit tohoto nasazení, využití, zbývající limit a dostupnost adres. Obnovení načte oba snímky; ani jeden kapacitu nerezervuje.",
-            "2": "Ostatní limity platebních výzev obchodníka stále platí. Zásoba adres podporuje až 199 podadres pro platební výzvy na obchodníka, všechny ve výchozím rozsahu, který sleduje každá peněženka Monero. Kapacitu spotřebovávají i nezaplacené požadavky. Adresu lze znovu použít poté, co se její předchozí platební výzvy uzavřou a uplyne výchozí třídenní ochranná lhůta. Nová platební výzva nezaručuje nikdy nepoužitou adresu; novou pozdní platbu určenou pro starší platební výzvu lze po opětovném použití stále zaměnit s novější.",
+            "2": "Ostatní limity platebních výzev obchodníka stále platí. Zásoba adres podporuje až 199 podadres pro platební výzvy na obchodníka, všechny ve výchozím rozsahu, který sleduje každá peněženka Monero. Kapacitu spotřebovávají i nezaplacené požadavky. Nikdy nepoužité podadresy se vždy přidělují jako první; adresa se znovu použije až po přidělení všech z nich, poté co se její předchozí platební výzvy uzavřou a uplyne výchozí třídenní ochranná lhůta. Nová platební výzva nezaručuje nikdy nepoužitou adresu; novou pozdní platbu určenou pro starší platební výzvu lze po opětovném použití stále zaměnit s novější.",
             "3": "Výchozí konfigurace Nginx navíc omezuje veřejné požadavky na nákup na 6 za minutu na IP adresu klienta, s nárazovou rezervou 3. Provozovatelé mohou tyto limity i ochrannou lhůtu nastavit. Chyby kvůli limitu nebo kapacitě mohou obsahovat pokyn Retry-After.",
             "4": "Obyčejné HTML nemá ochranu proti duplicitnímu odeslání. Samostatná odeslání mohou vytvořit samostatné platební výzvy. Pokud se odpověď přeruší, vytvoření už mohlo proběhnout. Neopakujte automaticky: zkontrolujte případnou obdrženou URL platební výzvy nebo kontaktujte obchodníka dříve, než odešlete znovu."
           },

@@ -346,10 +346,10 @@
     "watching": "Oczekiwanie na płatność…",
     "cancel": "Anuluj sprzedaż",
     "lowAddresses": {
-      "one": "Wolny jest tylko {count} adres płatności. Nieopłacone i anulowane sprzedaże blokują adres na trzy dni.",
-      "few": "Wolne są tylko {count} adresy płatności. Nieopłacone i anulowane sprzedaże blokują adres na trzy dni.",
-      "many": "Wolnych jest tylko {count} adresów płatności. Nieopłacone i anulowane sprzedaże blokują adres na trzy dni.",
-      "other": "Wolne jest tylko {count} adresu płatności. Nieopłacone i anulowane sprzedaże blokują adres na trzy dni."
+      "one": "Wolny jest tylko {count} adres płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują adres na trzy dni.",
+      "few": "Wolne są tylko {count} adresy płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują adres na trzy dni.",
+      "many": "Wolnych jest tylko {count} adresów płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują adres na trzy dni.",
+      "other": "Wolne jest tylko {count} adresu płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują adres na trzy dni."
     },
     "delete": "Usuń",
     "note": "Notatka (opcjonalnie)",
@@ -821,7 +821,13 @@
     "title": "Terminale",
     "unavailable": "Terminale są niedostępne. Odśwież, aby spróbować ponownie.",
     "intro": "Przyjmuj Monero na miejscu. Otwórz link terminala na tablecie lub telefonie przy kasie, wpisz kwotę, a klient zeskanuje kod QR swoim portfelem. Każda sprzedaż to zwykła prośba o płatność w XMR, opłacana bezpośrednio na twój portfel.",
-    "addressNote": "Każda sprzedaż używa jednego z twoich adresów płatności. Nieopłacone i anulowane sprzedaże blokują swój adres na trzy dni, więc przy dużym ruchu adresów może zabraknąć. Terminal ostrzega, gdy wolnych zostaje mniej niż 20.",
+    "addressNote": {
+      "one": "Każda sprzedaż używa jednego z twoich adresów płatności. Nieopłacone i anulowane sprzedaże blokują swój adres jeszcze przez {count} godzinę po zamknięciu, więc przy dużym ruchu adresów może zabraknąć. Nigdy nieużywane adresy są przydzielane najpierw. Terminal ostrzega, gdy wolnych zostaje mniej niż 20.",
+      "few": "Każda sprzedaż używa jednego z twoich adresów płatności. Nieopłacone i anulowane sprzedaże blokują swój adres jeszcze przez {count} godziny po zamknięciu, więc przy dużym ruchu adresów może zabraknąć. Nigdy nieużywane adresy są przydzielane najpierw. Terminal ostrzega, gdy wolnych zostaje mniej niż 20.",
+      "many": "Każda sprzedaż używa jednego z twoich adresów płatności. Nieopłacone i anulowane sprzedaże blokują swój adres jeszcze przez {count} godzin po zamknięciu, więc przy dużym ruchu adresów może zabraknąć. Nigdy nieużywane adresy są przydzielane najpierw. Terminal ostrzega, gdy wolnych zostaje mniej niż 20.",
+      "other": "Każda sprzedaż używa jednego z twoich adresów płatności. Nieopłacone i anulowane sprzedaże blokują swój adres jeszcze przez {count} godziny po zamknięciu, więc przy dużym ruchu adresów może zabraknąć. Nigdy nieużywane adresy są przydzielane najpierw. Terminal ostrzega, gdy wolnych zostaje mniej niż 20."
+    },
+    "addressNoteDefault": "Każda sprzedaż używa jednego z twoich adresów płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują swój adres na trzy dni, więc przy dużym ruchu adresów może zabraknąć. Nigdy nieużywane adresy są przydzielane najpierw. Terminal ostrzega, gdy wolnych zostaje mniej niż 20.",
     "guide": "Poradnik płatności na miejscu",
     "none": "Nie masz jeszcze terminali.",
     "disabled": "Wyłączony",
@@ -936,7 +942,8 @@
   },
   "addresses": {
     "title": "Dostępność adresów płatności",
-    "eligible": "Dostępne adresy",
+    "eligible": "Dostępne podadresy",
+    "eligibleBreakdown": "Nigdy nieużywane: {fresh}, gotowe do ponownego użycia: {reusable}",
     "refresh": "Odśwież dostępność",
     "unavailable": "Niedostępne. Odśwież, aby spróbować ponownie.",
     "noneEligible": "Obecnie żaden adres płatności nie jest dostępny.",
@@ -945,10 +952,21 @@
     "reserved": "Zarezerwowane adresy",
     "waiting": "Adresy czekające na ponowne użycie",
     "needsReview": "Wymaga przeglądu",
-    "waitNote": "Po zamknięciu prośby o płatność adresy odczekują, zanim będą mogły zostać ponownie użyte, co pomaga odróżnić późniejsze płatności.",
+    "waitNote": {
+      "one": "Po zamknięciu prośby o płatność jej podadres czeka {count} godzinę, zanim będzie mógł zostać ponownie użyty, co pomaga odróżnić późniejsze płatności.",
+      "few": "Po zamknięciu prośby o płatność jej podadres czeka {count} godziny, zanim będzie mógł zostać ponownie użyty, co pomaga odróżnić późniejsze płatności.",
+      "many": "Po zamknięciu prośby o płatność jej podadres czeka {count} godzin, zanim będzie mógł zostać ponownie użyty, co pomaga odróżnić późniejsze płatności.",
+      "other": "Po zamknięciu prośby o płatność jej podadres czeka {count} godziny, zanim będzie mógł zostać ponownie użyty, co pomaga odróżnić późniejsze płatności."
+    },
+    "orderNote": "Nigdy nieużywane podadresy są zawsze przydzielane najpierw. Podadres gotowy do ponownego użycia jest przydzielany ponownie dopiero wtedy, gdy nie zostanie żaden nigdy nieużywany.",
     "noGuarantee": "Dostępność adresu nie gwarantuje utworzenia prośby o płatność. Nadal obowiązują oczekujące prośby, dostępność portfela i limity tworzenia.",
     "viewInHealth": "Zobacz szczegóły adresów i migawek w sekcji Stan systemu",
-    "poolSummary": "Obsługiwana pula: {pool}. Czas oczekiwania przed ponownym użyciem: {seconds} s.",
+    "poolSummary": {
+      "one": "Obsługiwana pula: {pool} podadresów. Po zamknięciu prośby o płatność jej podadres czeka {count} godzinę, zanim będzie mógł zostać ponownie użyty.",
+      "few": "Obsługiwana pula: {pool} podadresów. Po zamknięciu prośby o płatność jej podadres czeka {count} godziny, zanim będzie mógł zostać ponownie użyty.",
+      "many": "Obsługiwana pula: {pool} podadresów. Po zamknięciu prośby o płatność jej podadres czeka {count} godzin, zanim będzie mógł zostać ponownie użyty.",
+      "other": "Obsługiwana pula: {pool} podadresów. Po zamknięciu prośby o płatność jej podadres czeka {count} godziny, zanim będzie mógł zostać ponownie użyty."
+    },
     "earliest": "Najwcześniejsza szacowana dostępność: {time}. To szacunek, a nie gwarancja utworzenia.",
     "latestSnapshot": "Ostatnia migawka tylko do odczytu",
     "latestAttempt": "Ostatnia próba: {time} — {outcome}",
@@ -964,6 +982,7 @@
     "indexLine": "Indeks {index}: {explanation}",
     "latestClosure": "Ostatnie zamknięcie: {time}",
     "estimatedEligibility": "Szacowana dostępność: {time}",
+    "eligibleSince": "Dostępny od: {time}",
     "pendingExpired": "Oczekująca prośba o płatność minęła termin ważności. Jej adres pozostaje zarezerwowany do czasu aktualizacji statusu.",
     "relatedInvoices": "Powiązane prośby o płatność ({count})",
     "code": {
@@ -1223,7 +1242,7 @@
       "inPerson": {
         "q": "Czy mogę przyjmować Monero na miejscu, w sklepie lub na stoisku?",
         "p1": "Tak. Utwórz terminal w panelu i otwórz jego link na tablecie lub telefonie przy kasie. Wpisz kwotę, klient skanuje kod QR swoim portfelem, a ekran pokazuje „Płatność zauważona”, gdy płatność dotrze do sieci, zwykle w ciągu kilku sekund. Środki trafiają bezpośrednio do twojego portfela.",
-        "p2": "Przy zerze potwierdzeń płatność nie jest jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona; przy wyższych kwotach wymagaj większej liczby potwierdzeń. Każda sprzedaż używa jednego z twoich adresów płatności, a nieopłacone lub anulowane sprzedaże blokują swój adres na trzy dni.",
+        "p2": "Przy zerze potwierdzeń płatność nie jest jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona; przy wyższych kwotach wymagaj większej liczby potwierdzeń. Każda sprzedaż używa jednego z twoich adresów płatności, a nieopłacone lub anulowane sprzedaże domyślnie blokują swój adres na trzy dni. Nigdy nieużywane adresy są zawsze przydzielane najpierw.",
         "cta": "Skonfiguruj terminal"
       },
       "donations": {
@@ -1392,7 +1411,7 @@
       },
       "limits": {
         "title": "Pula adresów",
-        "p1": "Każda prośba o płatność używa jednego z twoich 199 adresów płatności. Po zamknięciu prośby jej adres jest blokowany na trzy dni, aby zmniejszyć ryzyko przypisania spóźnionej płatności innemu klientowi. Anulowane i nieopłacone sprzedaże również blokują adres.",
+        "p1": "Każda prośba o płatność używa jednego z twoich 199 adresów płatności, a nigdy nieużywane adresy są zawsze przydzielane najpierw. Po zamknięciu prośby jej adres jest domyślnie blokowany na trzy dni (operator może to zmienić), aby zmniejszyć ryzyko przypisania spóźnionej płatności innemu klientowi. Anulowane i nieopłacone sprzedaże również blokują adres.",
         "p2": "Daje to średnio około 66 sprzedaży dziennie. Terminal wyświetla ostrzeżenie, gdy wolnych zostaje mniej niż 20 adresów. Panel pokazuje, kiedy zablokowane adresy znów będą dostępne."
       }
     },
@@ -1501,7 +1520,7 @@
         "body": {
           "1": {
             "1": "Domyślny limit publiczny to 10 udanych utworzeń próśb o płatność na sprzedawcę w ruchomym oknie 24 godzin, wspólny dla wszystkich linków płatności. Panel pokazuje limit skonfigurowany w tym wdrożeniu, wykorzystanie, pozostały limit i dostępność adresów. Odświeżenie pobiera obie migawki; żadna z nich niczego nie rezerwuje.",
-            "2": "Obowiązują też inne limity próśb o płatność sprzedawcy. Pula adresów obsługuje do 199 podadresów płatności na sprzedawcę, wszystkie w domyślnym zakresie obserwowanym przez każdy portfel Monero. Nieopłacone prośby również zużywają limit. Adres może zostać ponownie użyty po zamknięciu jego wcześniejszych próśb i upływie domyślnego, trzydniowego czasu oczekiwania. Nowa prośba nie gwarantuje nigdy nieużywanego adresu; nowa spóźniona płatność przeznaczona dla starszej prośby może po ponownym użyciu adresu zostać pomylona z nowszą.",
+            "2": "Obowiązują też inne limity próśb o płatność sprzedawcy. Pula adresów obsługuje do 199 podadresów płatności na sprzedawcę, wszystkie w domyślnym zakresie obserwowanym przez każdy portfel Monero. Nieopłacone prośby również zużywają limit. Nigdy nieużywane podadresy są zawsze przydzielane najpierw; adres zostaje ponownie użyty dopiero po przydzieleniu ich wszystkich, po zamknięciu jego wcześniejszych próśb i upływie domyślnego, trzydniowego czasu oczekiwania. Nowa prośba nie gwarantuje nigdy nieużywanego adresu; nowa spóźniona płatność przeznaczona dla starszej prośby może po ponownym użyciu adresu zostać pomylona z nowszą.",
             "3": "Domyślna konfiguracja Nginx ogranicza też publiczne żądania zakupu do 6 na minutę na adres IP klienta, z możliwym chwilowym wzrostem do 3. Operatorzy mogą skonfigurować te limity i czas oczekiwania przed ponownym użyciem. Błędy limitu częstotliwości lub puli mogą zawierać wskazówkę Retry-After.",
             "4": "Zwykły HTML nie ma ochrony przed podwójnym wysłaniem. Osobne wysłania mogą tworzyć osobne prośby o płatność. Jeśli odpowiedź zostanie przerwana, tworzenie mogło się już powieść. Nie ponawiaj automatycznie: sprawdź otrzymany adres URL prośby lub skontaktuj się ze sprzedawcą, zanim wyślesz ponownie."
           },

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { utcTimestamp } from "../lib/timestamps";
 import { getI18n } from "../lib/i18n/server";
-import InvoiceAddressAvailability, { type SubaddressStatus } from "./invoice-address-availability";
+import InvoiceAddressAvailability, { cooldownHours, type SubaddressStatus } from "./invoice-address-availability";
 import StatusBadge from "./status-badge";
 import TerminalEditor, { type TerminalData } from "./terminal-editor";
 
@@ -112,7 +112,7 @@ export async function TerminalsView({ terminals, currencies, addressStatus, sele
     <details className="text-sm text-ink-soft">
       <summary className="inline-flex min-h-11 cursor-pointer items-center py-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50">{t("terminals.aboutAddresses")}</summary>
       <div className="mt-1 grid gap-2">
-        <p>{t("terminals.addressNote")}</p>
+        <p>{addressStatus ? t("terminals.addressNote", { count: cooldownHours(addressStatus) }) : t("terminals.addressNoteDefault")}</p>
         <p><Link className={linkClass} href="/guides/in-person-monero-checkout">{t("terminals.guide")}</Link></p>
       </div>
     </details>

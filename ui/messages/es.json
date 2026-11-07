@@ -342,8 +342,8 @@
     "watching": "Esperando el pago…",
     "cancel": "Cancelar venta",
     "lowAddresses": {
-      "one": "Solo queda {count} dirección de factura libre. Las ventas sin pagar y canceladas reservan una dirección durante tres días.",
-      "other": "Solo quedan {count} direcciones de factura libres. Las ventas sin pagar y canceladas reservan una dirección durante tres días."
+      "one": "Solo queda {count} dirección de factura libre. Las ventas sin pagar y canceladas reservan una dirección durante tres días de forma predeterminada.",
+      "other": "Solo quedan {count} direcciones de factura libres. Las ventas sin pagar y canceladas reservan una dirección durante tres días de forma predeterminada."
     },
     "delete": "Borrar",
     "note": "Nota (opcional)",
@@ -809,7 +809,11 @@
     "title": "Terminales",
     "unavailable": "Los terminales no están disponibles. Actualiza para volver a intentarlo.",
     "intro": "Cobra en Monero en persona. Abre un enlace de terminal en una tableta o un teléfono en tu caja, escribe el importe y el cliente escanea el código QR con su billetera. Cada venta es una factura normal en XMR pagada directamente a tu billetera.",
-    "addressNote": "Cada venta usa una de tus direcciones de factura. Las ventas sin pagar y canceladas reservan su dirección durante tres días, así que una caja con mucho movimiento puede quedarse corta. El terminal avisa cuando quedan menos de 20 libres.",
+    "addressNote": {
+      "one": "Cada venta usa una de tus direcciones de factura. Las ventas sin pagar y canceladas reservan su dirección durante {count} hora después de cerrarse, así que una caja con mucho movimiento puede quedarse corta. Las direcciones nunca usadas se asignan primero. El terminal avisa cuando quedan menos de 20 libres.",
+      "other": "Cada venta usa una de tus direcciones de factura. Las ventas sin pagar y canceladas reservan su dirección durante {count} horas después de cerrarse, así que una caja con mucho movimiento puede quedarse corta. Las direcciones nunca usadas se asignan primero. El terminal avisa cuando quedan menos de 20 libres."
+    },
+    "addressNoteDefault": "Cada venta usa una de tus direcciones de factura. Las ventas sin pagar y canceladas reservan su dirección durante tres días de forma predeterminada, así que una caja con mucho movimiento puede quedarse corta. Las direcciones nunca usadas se asignan primero. El terminal avisa cuando quedan menos de 20 libres.",
     "guide": "Guía de cobro en persona",
     "none": "Todavía no hay terminales.",
     "disabled": "Desactivado",
@@ -920,7 +924,8 @@
   },
   "addresses": {
     "title": "Disponibilidad de direcciones de factura",
-    "eligible": "Direcciones disponibles",
+    "eligible": "Subdirecciones disponibles",
+    "eligibleBreakdown": "{fresh} nunca usadas, {reusable} listas para reutilizar",
     "refresh": "Actualizar disponibilidad",
     "unavailable": "No disponible. Actualiza para volver a intentarlo.",
     "noneEligible": "Ahora mismo no hay direcciones de factura disponibles.",
@@ -929,10 +934,17 @@
     "reserved": "Direcciones reservadas",
     "waiting": "Direcciones en espera antes de reutilizarse",
     "needsReview": "Requiere revisión",
-    "waitNote": "Las direcciones esperan tras cerrarse una factura antes de poder reutilizarse, para ayudar a distinguir pagos posteriores.",
+    "waitNote": {
+      "one": "Cuando una factura se cierra, su subdirección espera {count} hora antes de poder reutilizarse, para ayudar a distinguir pagos posteriores.",
+      "other": "Cuando una factura se cierra, su subdirección espera {count} horas antes de poder reutilizarse, para ayudar a distinguir pagos posteriores."
+    },
+    "orderNote": "Las subdirecciones nunca usadas siempre se asignan primero. Una subdirección lista para reutilizar solo se vuelve a asignar cuando no queda ninguna nunca usada.",
     "noGuarantee": "Que haya direcciones disponibles no garantiza que se pueda crear una factura. Siguen aplicándose las facturas pendientes, la disponibilidad de la billetera y los límites de creación.",
     "viewInHealth": "Ver detalles de direcciones e instantáneas en Estado del sistema",
-    "poolSummary": "Conjunto admitido: {pool}. Espera antes de reutilizar: {seconds} segundos.",
+    "poolSummary": {
+      "one": "Conjunto admitido: {pool} subdirecciones. Cuando una factura se cierra, su subdirección espera {count} hora antes de poder reutilizarse.",
+      "other": "Conjunto admitido: {pool} subdirecciones. Cuando una factura se cierra, su subdirección espera {count} horas antes de poder reutilizarse."
+    },
     "earliest": "Disponibilidad estimada más próxima: {time}. Es una estimación, no una garantía de creación.",
     "latestSnapshot": "Última instantánea de solo lectura",
     "latestAttempt": "Último intento: {time} — {outcome}",
@@ -948,6 +960,7 @@
     "indexLine": "Índice {index}: {explanation}",
     "latestClosure": "Último cierre: {time}",
     "estimatedEligibility": "Disponibilidad estimada: {time}",
+    "eligibleSince": "Disponible desde: {time}",
     "pendingExpired": "La factura pendiente ya superó su vencimiento. Su dirección sigue reservada hasta que se actualice su estado.",
     "relatedInvoices": "Facturas relacionadas ({count})",
     "code": {
@@ -1205,7 +1218,7 @@
       "inPerson": {
         "q": "¿Puedo aceptar Monero en persona en una tienda o un puesto de mercado?",
         "p1": "Sí. Crea un terminal en el panel y abre su enlace en una tableta o un teléfono en tu caja. Escribe el importe, el cliente escanea el código QR con su billetera y la pantalla muestra «Pago visto» en cuanto el pago llega a la red, normalmente en segundos. Los fondos van directamente a tu billetera.",
-        "p2": "Con cero confirmaciones el pago todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse; exige más confirmaciones para importes mayores. Cada venta usa una de tus direcciones de factura, y las ventas sin pagar o canceladas reservan la suya durante tres días.",
+        "p2": "Con cero confirmaciones el pago todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse; exige más confirmaciones para importes mayores. Cada venta usa una de tus direcciones de factura, y las ventas sin pagar o canceladas reservan la suya durante tres días de forma predeterminada. Las direcciones nunca usadas siempre se asignan primero.",
         "cta": "Configura un terminal"
       },
       "donations": {
@@ -1372,7 +1385,7 @@
       },
       "limits": {
         "title": "Capacidad de direcciones",
-        "p1": "Cada factura usa una de tus 199 direcciones de factura. Cuando una factura se cierra, su dirección se reserva durante tres días para reducir la posibilidad de que un pago tardío se atribuya a otro cliente. Las ventas canceladas y sin pagar también reservan una dirección.",
+        "p1": "Cada factura usa una de tus 199 direcciones de factura, y las direcciones nunca usadas siempre se asignan primero. Cuando una factura se cierra, su dirección se reserva durante tres días de forma predeterminada (el operador puede cambiarlo) para reducir la posibilidad de que un pago tardío se atribuya a otro cliente. Las ventas canceladas y sin pagar también reservan una dirección.",
         "p2": "Esto permite unas 66 ventas al día de media. El terminal muestra un aviso cuando quedan menos de 20 direcciones libres. El panel muestra cuándo vuelven a estar disponibles las direcciones reservadas."
       }
     },
@@ -1481,7 +1494,7 @@
         "body": {
           "1": {
             "1": "El límite público predeterminado es de 10 facturas creadas correctamente por comercio en cualquier periodo de 24 horas, compartido entre todos los enlaces de pago. El panel muestra el límite configurado en esta instalación, el uso, lo que queda disponible y la disponibilidad de direcciones. Actualizar obtiene ambos datos; ninguno reserva capacidad.",
-            "2": "Se siguen aplicando los demás límites de facturas del comercio. El conjunto de direcciones admite hasta 199 subdirecciones de factura por comercio, todas dentro del rango predeterminado que vigila cualquier billetera de Monero. Las solicitudes sin pagar también consumen capacidad. Una dirección puede reutilizarse cuando sus facturas anteriores se cierran y pasa el periodo de espera predeterminado de tres días. Una factura nueva no garantiza una dirección nunca usada; un pago tardío destinado a una factura anterior puede confundirse con una más reciente tras la reutilización.",
+            "2": "Se siguen aplicando los demás límites de facturas del comercio. El conjunto de direcciones admite hasta 199 subdirecciones de factura por comercio, todas dentro del rango predeterminado que vigila cualquier billetera de Monero. Las solicitudes sin pagar también consumen capacidad. Las subdirecciones nunca usadas siempre se asignan primero; una dirección solo se reutiliza cuando ya se han asignado todas, sus facturas anteriores se cierran y pasa el periodo de espera predeterminado de tres días. Una factura nueva no garantiza una dirección nunca usada; un pago tardío destinado a una factura anterior puede confundirse con una más reciente tras la reutilización.",
             "3": "La configuración predeterminada de Nginx también limita las solicitudes públicas de compra a 6 por minuto por IP de cliente, con ráfagas de 3. Los operadores pueden configurar estos límites y el periodo de espera para reutilizar direcciones. Los errores de frecuencia o de capacidad pueden incluir una indicación Retry-After.",
             "4": "El HTML simple no recupera envíos duplicados. Envíos distintos pueden crear facturas distintas. Si una respuesta se interrumpe, puede que la creación ya se haya completado. No reintentes automáticamente: comprueba cualquier URL de factura recibida o contacta con el comercio antes de volver a enviar."
           },

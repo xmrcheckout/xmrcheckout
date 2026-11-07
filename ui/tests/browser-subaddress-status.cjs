@@ -28,11 +28,17 @@ async function main() {
         await page.waitForLoadState("networkidle");
         await page.addStyleTag({ content: "html { font-size: 125%; }" });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `${width}/${tab} overflow`);
-        assert.match(await panel.innerText(), /Eligible addresses\s+2/);
+        assert.match(await panel.innerText(), /Eligible subaddresses\s+2/);
+        await panel.getByText("1 never used, 1 ready for reuse", { exact: true }).waitFor();
+        await panel.getByText(/^Never-used subaddresses are always issued first\./).waitFor({ state: "attached" });
         if (tab === "health") {
           await panel.getByText("Address details (5)", { exact: true }).focus();
           await page.keyboard.press("Enter");
           await panel.getByText("Index 3: Awaiting invoice status update", { exact: true }).waitFor();
+          await panel.getByText(/its subaddress waits 168 hours before it can be reused/).waitFor();
+          assert.equal(await panel.getByText(/seconds/).count(), 0);
+          await panel.getByText(/^Eligible since:.*2026-11-05/).waitFor();
+          await panel.getByText(/^Estimated eligibility:.*2026-11-05/).waitFor();
           await panel.getByText("Related invoices (1)", { exact: true }).focus();
           await page.keyboard.press("Enter");
           assert.match(await panel.getByRole("link", { name: /000000000456/ }).getAttribute("href"), /archived=1/);
@@ -59,7 +65,7 @@ async function main() {
       await page.addStyleTag({ content: "html { font-size: 125%; }" });
       const panel = page.getByRole("region", { name: "Invoice address availability", exact: true });
       await panel.getByText("Unavailable. Refresh to try again.").waitFor();
-      assert.equal(await panel.getByText("Eligible addresses", { exact: true }).count(), 0);
+      assert.equal(await panel.getByText("Eligible subaddresses", { exact: true }).count(), 0);
       await page.getByRole("button", { name: /^Create invoice$/i }).click();
       const dialog = page.getByRole("dialog");
       await dialog.getByLabel(/Amount \(XMR\)/i).fill("0.3");

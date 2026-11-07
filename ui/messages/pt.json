@@ -342,8 +342,8 @@
     "watching": "Aguardando o pagamento…",
     "cancel": "Cancelar venda",
     "lowAddresses": {
-      "one": "Apenas {count} endereço de fatura está livre. Vendas não pagas e canceladas reservam um endereço por três dias.",
-      "other": "Apenas {count} endereços de fatura estão livres. Vendas não pagas e canceladas reservam um endereço por três dias."
+      "one": "Apenas {count} endereço de fatura está livre. Vendas não pagas e canceladas reservam um endereço por três dias por padrão.",
+      "other": "Apenas {count} endereços de fatura estão livres. Vendas não pagas e canceladas reservam um endereço por três dias por padrão."
     },
     "delete": "Apagar",
     "note": "Observação (opcional)",
@@ -809,7 +809,11 @@
     "title": "Terminais",
     "unavailable": "Os terminais estão indisponíveis. Atualize para tentar novamente.",
     "intro": "Receba Monero presencialmente. Abra um link de terminal em um tablet ou celular no seu caixa, digite o valor e o cliente escaneia o QR code com a carteira dele. Cada venda é uma fatura XMR normal, paga diretamente na sua carteira.",
-    "addressNote": "Cada venda usa um dos seus endereços de fatura. Vendas não pagas e canceladas reservam o endereço por três dias, então um caixa movimentado pode ficar com poucos endereços. O terminal avisa quando menos de 20 estão livres.",
+    "addressNote": {
+      "one": "Cada venda usa um dos seus endereços de fatura. Vendas não pagas e canceladas reservam o endereço por {count} hora depois de fechadas, então um caixa movimentado pode ficar com poucos endereços. Endereços nunca usados são atribuídos primeiro. O terminal avisa quando menos de 20 estão livres.",
+      "other": "Cada venda usa um dos seus endereços de fatura. Vendas não pagas e canceladas reservam o endereço por {count} horas depois de fechadas, então um caixa movimentado pode ficar com poucos endereços. Endereços nunca usados são atribuídos primeiro. O terminal avisa quando menos de 20 estão livres."
+    },
+    "addressNoteDefault": "Cada venda usa um dos seus endereços de fatura. Vendas não pagas e canceladas reservam o endereço por três dias por padrão, então um caixa movimentado pode ficar com poucos endereços. Endereços nunca usados são atribuídos primeiro. O terminal avisa quando menos de 20 estão livres.",
     "guide": "Guia de pagamento presencial",
     "none": "Nenhum terminal ainda.",
     "disabled": "Desativado",
@@ -920,7 +924,8 @@
   },
   "addresses": {
     "title": "Disponibilidade de endereços de fatura",
-    "eligible": "Endereços elegíveis",
+    "eligible": "Subendereços elegíveis",
+    "eligibleBreakdown": "{fresh} nunca usados, {reusable} prontos para reutilização",
     "refresh": "Atualizar disponibilidade",
     "unavailable": "Indisponível. Atualize para tentar novamente.",
     "noneEligible": "Nenhum endereço de fatura está elegível no momento.",
@@ -929,10 +934,17 @@
     "reserved": "Endereços reservados",
     "waiting": "Endereços aguardando antes da reutilização",
     "needsReview": "Requer revisão",
-    "waitNote": "Os endereços aguardam um período após o fechamento de uma fatura antes de poderem ser reutilizados, para ajudar a distinguir pagamentos posteriores.",
+    "waitNote": {
+      "one": "Depois que uma fatura é fechada, o subendereço dela aguarda {count} hora antes de poder ser reutilizado, para ajudar a distinguir pagamentos posteriores.",
+      "other": "Depois que uma fatura é fechada, o subendereço dela aguarda {count} horas antes de poder ser reutilizado, para ajudar a distinguir pagamentos posteriores."
+    },
+    "orderNote": "Subendereços nunca usados são sempre atribuídos primeiro. Um subendereço pronto para reutilização só é atribuído de novo quando não resta nenhum nunca usado.",
     "noGuarantee": "A elegibilidade de endereços não garante a criação da fatura. Faturas pendentes, disponibilidade da carteira e limites de criação continuam se aplicando.",
     "viewInHealth": "Ver detalhes de endereços e instantâneos em Saúde do sistema",
-    "poolSummary": "Conjunto suportado: {pool}. Espera para reutilização: {seconds} segundos.",
+    "poolSummary": {
+      "one": "Conjunto suportado: {pool} subendereços. Depois que uma fatura é fechada, o subendereço dela aguarda {count} hora antes de poder ser reutilizado.",
+      "other": "Conjunto suportado: {pool} subendereços. Depois que uma fatura é fechada, o subendereço dela aguarda {count} horas antes de poder ser reutilizado."
+    },
     "earliest": "Elegibilidade estimada mais próxima: {time}. É uma estimativa, não uma garantia de criação.",
     "latestSnapshot": "Último instantâneo somente leitura",
     "latestAttempt": "Última tentativa: {time} — {outcome}",
@@ -948,6 +960,7 @@
     "indexLine": "Índice {index}: {explanation}",
     "latestClosure": "Último fechamento: {time}",
     "estimatedEligibility": "Elegibilidade estimada: {time}",
+    "eligibleSince": "Elegível desde: {time}",
     "pendingExpired": "A fatura pendente já passou do prazo de expiração. O endereço dela continua reservado até o status ser atualizado.",
     "relatedInvoices": "Faturas relacionadas ({count})",
     "code": {
@@ -1205,7 +1218,7 @@
       "inPerson": {
         "q": "Posso aceitar Monero presencialmente, em uma loja ou barraca de feira?",
         "p1": "Sim. Crie um terminal no painel e abra o link dele em um tablet ou celular no seu caixa. Digite o valor, o cliente escaneia o QR code com a carteira dele e a tela mostra “Pagamento visto” assim que o pagamento chega à rede, normalmente em segundos. Os fundos vão diretamente para a sua carteira.",
-        "p2": "Com zero confirmações, o pagamento ainda não está em um bloco e, em casos raros, pode não ser confirmado; exija mais confirmações para valores maiores. Cada venda usa um dos seus endereços de fatura, e vendas não pagas ou canceladas reservam o endereço por três dias.",
+        "p2": "Com zero confirmações, o pagamento ainda não está em um bloco e, em casos raros, pode não ser confirmado; exija mais confirmações para valores maiores. Cada venda usa um dos seus endereços de fatura, e vendas não pagas ou canceladas reservam o endereço por três dias por padrão. Endereços nunca usados são sempre atribuídos primeiro.",
         "cta": "Configurar um terminal"
       },
       "donations": {
@@ -1372,7 +1385,7 @@
       },
       "limits": {
         "title": "Capacidade de endereços",
-        "p1": "Cada fatura usa um dos seus 199 endereços de fatura. Depois que uma fatura é fechada, o endereço dela fica reservado por três dias para reduzir a chance de um pagamento atrasado ser atribuído a outro cliente. Vendas canceladas e não pagas também reservam um endereço.",
+        "p1": "Cada fatura usa um dos seus 199 endereços de fatura, e endereços nunca usados são sempre atribuídos primeiro. Depois que uma fatura é fechada, o endereço dela fica reservado por três dias por padrão (o operador pode alterar isso) para reduzir a chance de um pagamento atrasado ser atribuído a outro cliente. Vendas canceladas e não pagas também reservam um endereço.",
         "p2": "Isso permite cerca de 66 vendas por dia, em média. O terminal mostra um aviso quando menos de 20 endereços estão livres. O painel mostra quando os endereços reservados voltam a ficar disponíveis."
       }
     },
@@ -1481,7 +1494,7 @@
         "body": {
           "1": {
             "1": "A cota pública padrão é de 10 criações de fatura bem-sucedidas por comerciante em uma janela móvel de 24 horas, compartilhada entre todos os links de pagamento. O painel mostra o limite configurado nesta implantação, o uso, a cota restante e a disponibilidade de endereços. Atualizar obtém os dois instantâneos; nenhum deles reserva capacidade.",
-            "2": "Os outros limites de faturas do comerciante continuam valendo. O conjunto de endereços suporta até 199 subendereços de fatura por comerciante, todos dentro do intervalo padrão que toda carteira Monero observa. Solicitações não pagas também consomem capacidade. Um endereço pode ser reutilizado depois que as faturas anteriores dele são fechadas e o período de espera padrão de três dias passa. Uma nova fatura não garante um endereço nunca usado; um novo pagamento atrasado destinado a uma fatura antiga ainda pode ser confundido com uma mais nova após a reutilização.",
+            "2": "Os outros limites de faturas do comerciante continuam valendo. O conjunto de endereços suporta até 199 subendereços de fatura por comerciante, todos dentro do intervalo padrão que toda carteira Monero observa. Solicitações não pagas também consomem capacidade. Subendereços nunca usados são sempre atribuídos primeiro; um endereço só é reutilizado depois que todos eles foram atribuídos, as faturas anteriores dele são fechadas e o período de espera padrão de três dias passa. Uma nova fatura não garante um endereço nunca usado; um novo pagamento atrasado destinado a uma fatura antiga ainda pode ser confundido com uma mais nova após a reutilização.",
             "3": "A configuração padrão do Nginx também limita as solicitações públicas de compra a 6 por minuto por IP de cliente, com burst de 3. Os operadores podem configurar esses limites e o período de espera para reutilização. Erros de taxa ou de capacidade podem incluir orientação Retry-After.",
             "4": "HTML simples não tem recuperação de envios duplicados. Envios separados podem criar faturas separadas. Se uma resposta for interrompida, a criação pode já ter sido concluída. Não repita automaticamente: verifique qualquer URL de fatura recebida ou fale com o comerciante antes de enviar novamente."
           },

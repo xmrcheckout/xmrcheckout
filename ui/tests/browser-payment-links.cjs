@@ -138,7 +138,7 @@ async function main() {
         await fetch(base + "/api/core/__fixture/failure?mode=allowance");
         await page.reload({ waitUntil: "networkidle" });
         await page.getByText("Allowance unavailable. Refresh to try again.", { exact: true }).waitFor();
-        await page.getByText("Eligible addresses", { exact: true }).waitFor();
+        await page.getByText("Eligible subaddresses", { exact: true }).waitFor();
         await fetch(base + "/api/core/__fixture/failure?mode=addresses");
         await page.reload({ waitUntil: "networkidle" });
         await page.getByRole("region", { name: "Public invoice allowance", exact: true }).getByText(/remaining/).waitFor();

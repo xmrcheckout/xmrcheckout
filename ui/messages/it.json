@@ -215,6 +215,8 @@
     "currency": "Valuta",
     "amountHelp": "Inserisci un numero come 0.05: fino a 12 decimali per XMR, 2 per le altre valute.",
     "minimum": "Minimo: {amount} XMR. Gli importi in altre valute vengono verificati dopo la conversione.",
+    "estimateXmr": "Circa {amount} XMR al tasso spot attuale di CoinGecko. Solo come riferimento, non è una quotazione.",
+    "estimateFiat": "Circa {amount} al tasso spot attuale di CoinGecko. Solo come riferimento, non è una quotazione.",
     "customerFiatNote": "Gli importi in altre valute vengono convertiti in XMR al tasso attuale quando continui. Il tasso non è bloccato. La pagina di pagamento mostra il tasso usato e la sua fonte."
   },
   "autoLink": {

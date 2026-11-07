@@ -125,7 +125,7 @@ async function main() {
       assert.ok(await page.locator(`[id="${await amount.getAttribute("aria-describedby")}"]`).textContent());
       await amount.fill("0.1");
       await editor.getByRole("button", { name: "Save payment link" }).click();
-      await editor.getByRole("status").filter({ hasText: "Payment link saved" }).waitFor();
+      await editor.getByRole("status").filter({ hasText: "Payment link created" }).waitFor();
       await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
       await page.getByRole("button", { name: /^Copy link for / }).first().click();
       const copied = new URL(await page.evaluate(() => navigator.clipboard.readText()));

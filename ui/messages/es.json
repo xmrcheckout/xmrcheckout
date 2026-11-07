@@ -205,7 +205,7 @@
     "unavailableHelp": "No envíes ningún pago. Pide al comercio un enlace de pago nuevo.",
     "checkoutUnavailable": "Pago no disponible",
     "checkoutUnavailableHelp": "Actualiza para volver a intentarlo. Desde esta página no se ha solicitado ninguna factura.",
-    "fiatReference": "Referencia: {amount} {currency}",
+    "fiatReference": "{amount} {currency}, pago en XMR",
     "fiatNote": "Pagas en XMR, convertido al tipo de cambio actual cuando continúas. El tipo de cambio no queda fijado. La página de pago muestra el tipo de cambio usado y su fuente.",
     "directToWallet": "El pago va directamente a la billetera del comercio. Confirmaciones requeridas: {target}.",
     "create": "Continuar al pago",

@@ -205,7 +205,7 @@
     "unavailableHelp": "Senden Sie keine Zahlung. Fordern Sie beim Händler einen neuen Zahlungslink an.",
     "checkoutUnavailable": "Checkout nicht verfügbar",
     "checkoutUnavailableHelp": "Aktualisieren Sie, um es erneut zu versuchen. Von dieser Seite wurde keine Rechnung angefordert.",
-    "fiatReference": "Richtwert {amount} {currency}",
+    "fiatReference": "{amount} {currency}, Zahlung in XMR",
     "fiatNote": "Sie zahlen in XMR, umgerechnet zum aktuellen Kurs, wenn Sie fortfahren. Der Kurs ist nicht festgeschrieben. Die Zahlungsseite zeigt den verwendeten Kurs und seine Quelle.",
     "directToWallet": "Die Zahlung geht direkt an die Wallet des Händlers. Erforderliche Bestätigungen: {target}.",
     "create": "Weiter zur Zahlung",

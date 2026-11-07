@@ -205,7 +205,7 @@
     "unavailableHelp": "Non inviare il pagamento. Chiedi all'esercente un nuovo link di pagamento.",
     "checkoutUnavailable": "Pagamento non disponibile",
     "checkoutUnavailableHelp": "Aggiorna per riprovare. Nessuna richiesta di pagamento è stata richiesta da questa pagina.",
-    "fiatReference": "Riferimento di {amount} {currency}",
+    "fiatReference": "{amount} {currency}, pagamento in XMR",
     "fiatNote": "Paghi in XMR, convertito al tasso attuale quando continui. Il tasso non è bloccato. La pagina di pagamento mostra il tasso usato e la sua fonte.",
     "directToWallet": "Il pagamento va direttamente al portafoglio dell'esercente. Conferme richieste: {target}.",
     "create": "Continua al pagamento",

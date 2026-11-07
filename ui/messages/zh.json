@@ -203,7 +203,7 @@
     "unavailableHelp": "请勿付款。请联系商家获取新的付款链接。",
     "checkoutUnavailable": "结账不可用",
     "checkoutUnavailableHelp": "请刷新后重试。此页面尚未申请任何账单。",
-    "fiatReference": "{amount} {currency} 参考值",
+    "fiatReference": "{amount} {currency}，以 XMR 支付",
     "fiatNote": "你以 XMR 付款，金额会在你继续时按当前汇率换算。汇率不会锁定。付款页面会显示所用汇率及其来源。",
     "directToWallet": "付款直接进入商家的钱包。所需确认数：{target}。",
     "create": "继续付款",

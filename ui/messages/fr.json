@@ -205,7 +205,7 @@
     "unavailableHelp": "N’envoyez pas de paiement. Demandez un nouveau lien de paiement au commerçant.",
     "checkoutUnavailable": "Paiement indisponible",
     "checkoutUnavailableHelp": "Actualisez pour réessayer. Aucune facture n’a été demandée depuis cette page.",
-    "fiatReference": "Référence : {amount} {currency}",
+    "fiatReference": "{amount} {currency}, paiement en XMR",
     "fiatNote": "Vous payez en XMR, converti au cours actuel lorsque vous continuez. Le cours n’est pas bloqué. La page de paiement indique le cours utilisé et sa source.",
     "directToWallet": "Le paiement va directement au portefeuille du commerçant. Confirmations requises : {target}.",
     "create": "Continuer vers le paiement",

@@ -209,7 +209,7 @@
     "unavailableHelp": "Neposílejte platbu. Vyžádejte si od obchodníka nový platební odkaz.",
     "checkoutUnavailable": "Platba není k dispozici",
     "checkoutUnavailableHelp": "Obnovte stránku a zkuste to znovu. Z této stránky nebyla vyžádána žádná platební výzva.",
-    "fiatReference": "Orientačně {amount} {currency}",
+    "fiatReference": "{amount} {currency}, platba v XMR",
     "fiatNote": "Platíte v XMR, přepočteno aktuálním kurzem ve chvíli, kdy pokračujete. Kurz není zafixován. Platební stránka uvádí použitý kurz a jeho zdroj.",
     "directToWallet": "Platba jde přímo do peněženky obchodníka. Požadovaný počet potvrzení: {target}.",
     "create": "Pokračovat k platbě",

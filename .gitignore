@@ -21,6 +21,8 @@ nginx/conf.d/*.pre-*
 
 # Local deployment wiring (never committed).
 /local/
+/scripts/
+/tests/
 nginx/conf.d/local-*.conf
 
 # Local browser diagnostics and audit captures (preserved on disk).

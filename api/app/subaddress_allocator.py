@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import math
 from datetime import datetime, timezone
-from time import monotonic
+from time import monotonic, sleep
 from uuid import UUID, uuid4
 
 from sqlalchemy import text
@@ -12,6 +12,12 @@ from sqlalchemy.orm import Session
 from .models import InvoiceTransfer, SubaddressAllocation, User
 from .allocation_diagnostics import AllocationError, failure_category, log_event, persist_snapshot
 from .subaddress_status import MAX_SUBADDRESS_INDEX, load_availability, reuse_ready_at
+
+
+# Reconciliation holds the merchant lock for one wallet read per invoice, so a
+# short wait normally succeeds instead of rejecting the sale outright.
+ALLOCATION_LOCK_WAIT_SECONDS = 10.0
+ALLOCATION_LOCK_POLL_SECONDS = 0.1
 
 
 def allocation_lock_key(user_id: object) -> int:
@@ -34,9 +40,12 @@ def create_subaddress_for_user(
     if locked is None:
         raise ValueError("User not found")
     # Coordinate with reconciliation, which commits while holding a session lock.
-    if not db.execute(text("SELECT pg_try_advisory_xact_lock(:key)"),
-                      {"key": allocation_lock_key(user.id)}).scalar():
-        reject(503, "Invoice detection is busy. Try again shortly.", "allocation_contention", 5)
+    deadline = monotonic() + ALLOCATION_LOCK_WAIT_SECONDS
+    while not db.execute(text("SELECT pg_try_advisory_xact_lock(:key)"),
+                         {"key": allocation_lock_key(user.id)}).scalar():
+        if monotonic() >= deadline:
+            reject(503, "Invoice detection is busy. Try again shortly.", "allocation_contention", 5)
+        sleep(ALLOCATION_LOCK_POLL_SECONDS)
     now = datetime.now(timezone.utc)
     rows, allocations = load_availability(db, locked, now)
     candidates = [row for row in rows if row.category in ("never_issued", "eligible_for_reuse")]

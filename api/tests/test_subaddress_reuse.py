@@ -1,5 +1,6 @@
 """Set SUBADDRESS_DATABASE_TESTS=1 to exercise isolated PostgreSQL schemas."""
 import os
+import threading
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
@@ -189,7 +190,8 @@ class AllocationDatabaseTests(unittest.TestCase):
             key = reconciler._invoice_lock_key(f"allocation:{self.user_id}")
             conn.execute(text("SELECT pg_advisory_lock(:key)"), {"key": key})
             try:
-                with self.assertRaises(HTTPException) as raised:
+                with patch.object(allocator, "ALLOCATION_LOCK_WAIT_SECONDS", 0.3), \
+                        self.assertRaises(HTTPException) as raised:
                     self.issue()
                 self.assertEqual(raised.exception.status_code, 503)
             finally:
@@ -197,6 +199,19 @@ class AllocationDatabaseTests(unittest.TestCase):
         with self.Session() as db:
             self.assertEqual(db.query(SubaddressAllocation).count(), 0)
             self.assertEqual(db.get(User, self.user_id).invoice_creation_count, 0)
+
+    def test_allocation_waits_for_a_brief_reconciliation_lock(self):
+        key = reconciler._invoice_lock_key(f"allocation:{self.user_id}")
+        conn = self.engine.connect().execution_options(isolation_level="AUTOCOMMIT")
+        conn.execute(text("SELECT pg_advisory_lock(:key)"), {"key": key})
+        timer = threading.Timer(0.3, lambda: conn.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": key}))
+        timer.start()
+        try:
+            _, index = self.issue()
+        finally:
+            timer.join()
+            conn.close()
+        self.assertEqual(index, 1)
 
     def test_reconciliation_credits_only_new_payment_and_freezes_old_invoice(self):
         self.populate()

@@ -718,7 +718,6 @@ export default async function DashboardPage({
 
           {activeTab === "invoices" ? (
             <div className="grid min-w-0 grid-cols-1 gap-6">
-              <InvoiceAddressAvailability status={addressStatus} compact />
               <InvoicePanel
                 activeInvoices={allInvoices}
                 includeArchived={includeArchived}
@@ -733,6 +732,7 @@ export default async function DashboardPage({
                   profileData?.default_confirmation_target ?? 1
                 }
               />
+              <InvoiceAddressAvailability status={addressStatus} compact />
             </div>
           ) : null}
 

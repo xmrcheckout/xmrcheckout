@@ -396,7 +396,7 @@
     "printSign": "Stampa il cartello",
     "title": "Link di pagamento",
     "unavailable": "I link di pagamento non sono disponibili. Aggiorna per riprovare.",
-    "intro": "Crea un pulsante HTML riutilizzabile per ricevere donazioni o vendere prodotti e servizi. Ogni invio crea una richiesta di pagamento in XMR separata, pagata direttamente al tuo portafoglio.",
+    "intro": "Crea un pulsante HTML o link riutilizzabile per ricevere donazioni o vendere prodotti e servizi. Ogni invio crea una richiesta di pagamento in XMR separata, pagata direttamente al tuo portafoglio.",
     "allowanceNote": "Chiunque abbia il tuo link può creare una richiesta di pagamento, per questo i link hanno una quota giornaliera. Così restano abbastanza indirizzi liberi per il tuo pagamento.",
     "donationTip": "Per i contributi, usa un titolo come “Sostieni il mio progetto”, imposta il Testo del pulsante su “Dona con Monero” e scegli “Il cliente inserisce l'importo” così che i donatori digitino il proprio importo. Gli incassi ricorrenti non sono supportati.",
     "guide": "Guida alla configurazione dei link di pagamento",

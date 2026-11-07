@@ -396,7 +396,7 @@
     "printSign": "Imprimir cartel",
     "title": "Enlaces de pago",
     "unavailable": "Los enlaces de pago no están disponibles. Actualiza para volver a intentarlo.",
-    "intro": "Crea un botón HTML reutilizable para recibir donaciones o vender productos y servicios. Cada envío crea una factura en XMR distinta pagada directamente a tu billetera.",
+    "intro": "Crea un botón HTML o enlace reutilizable para recibir donaciones o vender productos y servicios. Cada envío crea una factura en XMR distinta pagada directamente a tu billetera.",
     "allowanceNote": "Cualquiera con tu enlace puede crear una factura, por eso los enlaces tienen un cupo diario. Así quedan suficientes direcciones de factura libres para tu propio pago.",
     "donationTip": "Para aportaciones, usa un título como «Apoya mi proyecto», pon como texto del botón «Donar con Monero» y elige «El cliente introduce el importe» para que cada donante escriba su propio importe. Los cobros recurrentes no están disponibles.",
     "guide": "Guía para configurar enlaces de pago",

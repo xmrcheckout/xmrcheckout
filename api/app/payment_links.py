@@ -28,7 +28,7 @@ from .rates import SUPPORTED_CURRENCIES
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
-PUBLIC_PAYMENT_LINK_DAILY_LIMIT = max(1, int(os.getenv("PUBLIC_PAYMENT_LINK_DAILY_LIMIT", "10")))
+PUBLIC_PAYMENT_LINK_DAILY_LIMIT = max(1, int(os.getenv("PUBLIC_PAYMENT_LINK_DAILY_LIMIT", "30")))
 # Payment-link checkouts are paid on the spot, so their invoices close sooner than
 # the general default. Late payments are still detected for LATE_PAYMENT_LOOKBACK_HOURS.
 PAYMENT_LINK_EXPIRY_MINUTES = int(os.getenv("PAYMENT_LINK_EXPIRY_MINUTES", "30"))

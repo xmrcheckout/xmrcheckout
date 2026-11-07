@@ -127,7 +127,7 @@ const server = http.createServer((request, response) => {
       mutationCount++;
       archived.add(path.split("/").pop()); status = 204;
     } else if (path === "/api/core/payment-links/status") {
-      result = { supported_currencies: ["USD", "EUR", "GBP"], daily_limit: 10, used: 0, remaining: 10, window_hours: 24, retrieved_at: new Date().toISOString() };
+      result = { supported_currencies: ["USD", "EUR", "GBP"], daily_limit: 30, used: 0, remaining: 30, window_hours: 24, retrieved_at: new Date().toISOString() };
     } else if (path === "/api/core/payment-links" && request.method === "GET") {
       result = [paymentLink];
     } else if (path.startsWith("/api/core/payment-links") && ["POST", "PATCH"].includes(request.method)) {

@@ -1500,7 +1500,7 @@
         "title": "Understand capacity and uncertain responses",
         "body": {
           "1": {
-            "1": "The default public allowance is 10 successful invoice creations per merchant over a rolling 24 hours, shared across all payment links. The dashboard shows this deployment’s configured limit, usage, remaining allowance, and address availability. Refresh retrieves both snapshots; neither reserves capacity.",
+            "1": "The default public allowance is 30 successful invoice creations per merchant over a rolling 24 hours, shared across all payment links. The dashboard shows this deployment’s configured limit, usage, remaining allowance, and address availability. Refresh retrieves both snapshots; neither reserves capacity.",
             "2": "Other merchant invoice limits still apply. The address pool supports up to 199 invoice subaddresses per merchant, all within the default range every Monero wallet watches. Unpaid requests consume capacity too. Never-used subaddresses are always issued first; an address is reused only after they have all been issued, its prior invoices close and the default three-day cooldown passes. A fresh invoice does not guarantee a never-used address; a new late payment intended for an older invoice can still be confused with a newer one after reuse.",
             "3": "The default Nginx configuration also limits public purchase requests to 6 per minute per client IP, with burst 3. Operators can configure these limits and the reuse cooldown. Rate or capacity errors may include Retry-After guidance.",
             "4": "Plain HTML has no duplicate-submission recovery. Separate submissions can create separate invoices. If a response is interrupted, creation may already have succeeded. Do not automatically retry: check any invoice URL received or contact the merchant before submitting again."
@@ -1696,7 +1696,7 @@
       "r085": "No API key, cookies, or JavaScript are required. Rejects query parameters with 400. Fixed links reject non-empty bodies; customer_amount links accept only amount and currency as a form or JSON body of string values. All other purchase settings come from the saved template.",
       "r086": "Customer amounts follow template precision rules (12 decimal places for XMR, 2 for fiat references, positive and below 1000000). Amounts below minimum_amount_xmr return 422 without creating an invoice.",
       "r087": "Success returns 303 to the hosted invoice; it does not return invoice JSON. Application errors are HTML, including unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). Applicable responses include Retry-After.",
-      "r088": "The default allowance is 10 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
+      "r088": "The default allowance is 30 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
       "r089": "There is no duplicate-submission recovery or automatic retry. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying.",
       "r090": "default_currency (XMR or a supported fiat reference, default XMR)",
       "r091": "confirmation_target (0-10, default 0)",

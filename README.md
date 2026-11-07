@@ -541,7 +541,7 @@ valid and continue detection. Full-settings PATCH requests use the same fields a
 PATCH requests can disable a link without changing its product settings.
 
 Public creations share the merchant's existing invoice and address limits and
-`PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (default 10 successful creations per rolling
+`PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (default 30 successful creations per rolling
 24 hours, across all links). The public POST endpoint is additionally limited at
 Nginx to 6 requests per minute per client IP, burst 3. A malicious visitor can
 consume the public allowance. Existing address reuse and three-day cooldown

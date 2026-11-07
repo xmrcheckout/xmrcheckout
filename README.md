@@ -279,19 +279,6 @@ zero-byte wallet cache with a valid matching `.keys` file. It moves only the
 damaged cache and temporary artifacts into a timestamped `.quarantine`
 directory so the cache can be rebuilt without deleting view-only keys.
 
-To migrate an older shared `./wallets/reconciler` directory, stop the
-reconciler and wallet-rpc services, validate the migration, then apply it:
-
-```
-python scripts/migrate_wallet_shards.py \
-  --source wallets/reconciler --target-root wallets --shards 3
-python scripts/migrate_wallet_shards.py \
-  --source wallets/reconciler --target-root wallets --shards 3 --apply
-```
-
-The migration copies and verifies files; it does not alter the shared source
-directory.
-
 4. If you are running the bundled `monerod`, check whether it is synced:
 
 ```

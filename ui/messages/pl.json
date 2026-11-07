@@ -552,7 +552,8 @@
       "rotated": "Utworzono nowy link. Poprzedni link już nie działa.",
       "created": "Terminal utworzony.",
       "saved": "Terminal zapisany.",
-      "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę terminali, zanim spróbujesz ponownie."
+      "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę terminali, zanim spróbujesz ponownie.",
+      "notShown": "Nie udało się wyświetlić linku. Spróbuj ponownie."
     },
     "actions": {
       "tourNoop": "Tylko tryb demo: zmiany nie są zapisywane.",
@@ -812,7 +813,7 @@
   "terminals": {
     "save": "Zapisz terminal",
     "create": "Utwórz terminal",
-    "linkOnce": "Otwórz ten link na urządzeniu przy kasie. Jest wyświetlany tylko raz.",
+    "linkOnce": "Otwórz ten link na urządzeniu przy kasie.",
     "linkWarning": "Każdy, kto ma ten link, może tworzyć prośby o płatność na twój portfel i widzieć ich status. Nie może przenosić środków ani otworzyć twojego panelu. Jeśli link zginie, utwórz nowy.",
     "linkQrAlt": "Kod QR linku terminala",
     "name": "Nazwa",
@@ -821,7 +822,10 @@
     "expiryMinutes": "Ważność prośby o płatność (minuty)",
     "zeroConfNote": "Przy zerze potwierdzeń ekran pokazuje „Płatność zauważona”, gdy tylko płatność dotrze do sieci, zwykle w ciągu kilku sekund. Nie jest ona jeszcze w bloku i w rzadkich przypadkach może nie zostać potwierdzona. Przy wyższych kwotach wymagaj większej liczby potwierdzeń (każde trwa około dwóch minut).",
     "enabled": "Włączony",
-    "lostDevice": "Urządzenie lub link zginęły? Utwórz nowy link. Bieżący link natychmiast przestanie działać.",
+    "lostDevice": "Urządzenie zginęło lub ktoś inny widział link? Utwórz nowy link. Bieżący link natychmiast przestanie działać.",
+    "showLink": "Pokaż link",
+    "showingLink": "Wczytywanie linku…",
+    "linkNotStored": "Ten link utworzono, zanim linki można było wyświetlać ponownie. Utwórz raz nowy link, a potem będzie można go tu wyświetlić i skopiować.",
     "newLink": "Utwórz nowy link",
     "replaceLink": "Zastąp link",
     "replaceDescription": "Urządzenie korzystające z bieżącego linku przestanie działać, dopóki nie otworzysz na nim nowego linku.",

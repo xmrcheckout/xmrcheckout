@@ -546,7 +546,8 @@
       "rotated": "Nouveau lien créé. L’ancien lien ne fonctionne plus.",
       "created": "Terminal créé.",
       "saved": "Terminal enregistré.",
-      "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des terminaux avant de réessayer."
+      "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des terminaux avant de réessayer.",
+      "notShown": "Impossible d’afficher le lien. Réessayez."
     },
     "actions": {
       "tourNoop": "Mode démo uniquement : aucune modification n’est enregistrée.",
@@ -800,7 +801,7 @@
   "terminals": {
     "save": "Enregistrer le terminal",
     "create": "Créer un terminal",
-    "linkOnce": "Ouvrez ce lien sur l’appareil de votre caisse. Il n’est affiché qu’une seule fois.",
+    "linkOnce": "Ouvrez ce lien sur l’appareil de votre caisse.",
     "linkWarning": "Toute personne disposant de ce lien peut créer des factures vers votre portefeuille et voir leur statut. Il ne permet pas de déplacer des fonds ni d’ouvrir votre tableau de bord. Créez un nouveau lien s’il est perdu.",
     "linkQrAlt": "QR code du lien du terminal",
     "name": "Nom",
@@ -809,7 +810,10 @@
     "expiryMinutes": "Expiration de la facture (minutes)",
     "zeroConfNote": "Zéro confirmation affiche « Paiement repéré » dès que le paiement atteint le réseau, généralement en quelques secondes. Il n’est pas encore inclus dans un bloc et pourrait, dans de rares cas, ne pas être confirmé. Exigez davantage de confirmations (environ deux minutes chacune) pour les montants plus importants.",
     "enabled": "Activé",
-    "lostDevice": "Appareil ou lien perdu ? Créez un nouveau lien. Le lien actuel cesse immédiatement de fonctionner.",
+    "lostDevice": "Appareil perdu, ou quelqu’un d’autre a vu le lien ? Créez un nouveau lien. Le lien actuel cesse immédiatement de fonctionner.",
+    "showLink": "Afficher le lien",
+    "showingLink": "Chargement du lien…",
+    "linkNotStored": "Ce lien a été créé avant que les liens puissent être affichés à nouveau. Créez une fois un nouveau lien : vous pourrez ensuite l’afficher et le copier ici.",
     "newLink": "Créer un nouveau lien",
     "replaceLink": "Remplacer le lien",
     "replaceDescription": "L’appareil qui utilise le lien actuel cessera de fonctionner jusqu’à ce que vous y ouvriez le nouveau lien.",

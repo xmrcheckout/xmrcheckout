@@ -4,14 +4,14 @@ import Image from "next/image";
 import { useEffect, useId, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import QRCode from "qrcode";
-import { saveTerminal, saveTerminalTourAction, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
+import { saveTerminal, saveTerminalTourAction, showTerminalLink, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
 import ConfirmSubmitButton from "./confirm-submit-button";
 import CopyCodeBlock from "./copy-code-block";
 import { useI18n } from "./i18n-provider";
 
 export type TerminalData = {
   id: string; name: string; default_currency: string; confirmation_target: number;
-  expiry_minutes: number; enabled: boolean; created_at: string | null; last_used_at: string | null;
+  expiry_minutes: number; enabled: boolean; created_at: string | null; last_used_at: string | null; link_available: boolean;
 };
 const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-4 py-3 text-ink";
 
@@ -19,6 +19,12 @@ function SaveButton({ existing }: { existing: boolean }) {
   const { t } = useI18n();
   const { pending } = useFormStatus();
   return <button disabled={pending} className="min-h-11 justify-self-start rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? t("common.saving") : existing ? t("terminals.save") : t("terminals.create")}</button>;
+}
+
+function ShowLinkButton() {
+  const { t } = useI18n();
+  const { pending } = useFormStatus();
+  return <button disabled={pending} className="inline-flex min-h-11 items-center justify-self-start rounded-full border border-stroke px-4 py-2 text-sm font-semibold transition hover:border-ink/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 disabled:opacity-60">{pending ? t("terminals.showingLink") : t("terminals.showLink")}</button>;
 }
 
 function NewLink({ url }: { url: string }) {
@@ -46,6 +52,7 @@ export default function TerminalEditor({ terminal, currencies, mode = "live" }: 
     return result;
   }, { error: "", success: "", url: "" });
   const [rotated, rotate] = useFormState<TerminalState, FormData>(save, { error: "", success: "", url: "" });
+  const [shown, show] = useFormState<TerminalState, FormData>(mode === "tour" ? saveTerminalTourAction : showTerminalLink, { error: "", success: "", url: "" });
   const prefix = useId();
   return <div className="grid min-w-0 gap-6"><form action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={terminal?.id ?? ""} />
@@ -62,6 +69,12 @@ export default function TerminalEditor({ terminal, currencies, mode = "live" }: 
     {state.url ? <NewLink url={state.url} /> : null}
     <SaveButton existing={!!terminal} />
   </form>
+  {terminal ? <form action={show} className="grid min-w-0 gap-3 border-t border-stroke pt-4">
+    <input type="hidden" name="id" value={terminal.id} />
+    {terminal.link_available || mode === "tour" ? <ShowLinkButton /> : <p className="text-sm text-ink-soft">{t("terminals.linkNotStored")}</p>}
+    <p role="status" className={shown.error ? "text-red-700" : "text-ink"}>{shown.error || shown.success}</p>
+    {shown.url && !rotated.url ? <NewLink url={shown.url} /> : null}
+  </form> : null}
   {terminal ? <form action={rotate} className="grid min-w-0 gap-3 border-t border-stroke pt-4">
     <input type="hidden" name="id" value={terminal.id} />
     <input type="hidden" name="mode" value="rotate" />

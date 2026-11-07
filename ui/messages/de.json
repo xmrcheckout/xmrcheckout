@@ -546,7 +546,8 @@
       "rotated": "Neuer Link erstellt. Der vorherige Link funktioniert nicht mehr.",
       "created": "Terminal erstellt.",
       "saved": "Terminal gespeichert.",
-      "notConfirmed": "Das Speichern konnte nicht bestätigt werden. Prüfen Sie die Terminal-Liste, bevor Sie es erneut versuchen."
+      "notConfirmed": "Das Speichern konnte nicht bestätigt werden. Prüfen Sie die Terminal-Liste, bevor Sie es erneut versuchen.",
+      "notShown": "Der Link konnte nicht angezeigt werden. Versuchen Sie es erneut."
     },
     "actions": {
       "tourNoop": "Nur Demo-Modus: Es werden keine Änderungen gespeichert.",
@@ -800,7 +801,7 @@
   "terminals": {
     "save": "Terminal speichern",
     "create": "Terminal erstellen",
-    "linkOnce": "Öffnen Sie diesen Link auf dem Gerät an Ihrer Kasse. Er wird nur einmal angezeigt.",
+    "linkOnce": "Öffnen Sie diesen Link auf dem Gerät an Ihrer Kasse.",
     "linkWarning": "Jeder mit diesem Link kann Rechnungen an Ihre Wallet erstellen und deren Status sehen. Er kann keine Gelder bewegen und Ihr Dashboard nicht öffnen. Erstellen Sie einen neuen Link, falls er verloren geht.",
     "linkQrAlt": "QR-Code für den Terminal-Link",
     "name": "Name",
@@ -809,7 +810,10 @@
     "expiryMinutes": "Rechnungsablauf (Minuten)",
     "zeroConfNote": "Bei null Bestätigungen wird „Zahlung gesehen“ angezeigt, sobald die Zahlung das Netzwerk erreicht, meist innerhalb von Sekunden. Sie ist dann noch in keinem Block und könnte in seltenen Fällen nicht bestätigt werden. Verlangen Sie für größere Beträge mehr Bestätigungen (jeweils etwa zwei Minuten).",
     "enabled": "Aktiviert",
-    "lostDevice": "Gerät oder Link verloren? Erstellen Sie einen neuen Link. Der aktuelle Link funktioniert dann sofort nicht mehr.",
+    "lostDevice": "Gerät verloren oder hat jemand anderes den Link gesehen? Erstellen Sie einen neuen Link. Der aktuelle Link funktioniert dann sofort nicht mehr.",
+    "showLink": "Link anzeigen",
+    "showingLink": "Link wird geladen…",
+    "linkNotStored": "Dieser Link wurde erstellt, bevor Links erneut angezeigt werden konnten. Erstellen Sie einmal einen neuen Link, dann können Sie ihn später hier anzeigen und kopieren.",
     "newLink": "Neuen Link erstellen",
     "replaceLink": "Link ersetzen",
     "replaceDescription": "Das Gerät mit dem aktuellen Link funktioniert erst wieder, wenn Sie den neuen Link darauf öffnen.",

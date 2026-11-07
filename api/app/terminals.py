@@ -22,7 +22,7 @@ from .models import Invoice, InvoiceTransfer, Terminal, User
 from .payment_links import AMOUNT_PATTERN, SUPPORTED_CURRENCIES, check_amount_precision, merchant
 from .routes import _public_invoice_status_response, create_invoice_for_merchant
 from .schemas import InvoiceCreateUser
-from .security import hash_api_key
+from .security import decrypt_secret, encrypt_secret, hash_api_key
 from .subaddress_status import merchant_status
 
 logger = logging.getLogger(__name__)
@@ -97,6 +97,7 @@ def serialize(terminal: Terminal, secret: str | None = None):
         "expiry_minutes": terminal.expiry_minutes, "enabled": terminal.enabled,
         "created_at": terminal.created_at.isoformat() if terminal.created_at else None,
         "last_used_at": terminal.last_used_at.isoformat() if terminal.last_used_at else None,
+        "link_available": terminal.token_encrypted is not None,
     }
     if secret is not None:
         data["url"] = terminal_url(secret)
@@ -119,7 +120,7 @@ def list_terminals(db: Session = Depends(get_db), user: User = Depends(merchant)
 @router.post("/api/core/terminals", status_code=201)
 def create_terminal(payload: TerminalSettings, db: Session = Depends(get_db), user: User = Depends(merchant)):
     secret = generate_terminal_secret()
-    terminal = Terminal(user_id=user.id, token_hash=hash_api_key(secret), **payload.model_dump())
+    terminal = Terminal(user_id=user.id, token_hash=hash_api_key(secret), token_encrypted=encrypt_secret(secret), **payload.model_dump())
     db.add(terminal)
     db.commit()
     db.refresh(terminal)
@@ -142,10 +143,20 @@ def rotate_terminal(terminal_id: UUID, db: Session = Depends(get_db), user: User
     terminal = owned_terminal(db, user, terminal_id)
     secret = generate_terminal_secret()
     terminal.token_hash = hash_api_key(secret)
+    terminal.token_encrypted = encrypt_secret(secret)
     db.commit()
     db.refresh(terminal)
     logger.info("Terminal secret rotated terminal=%s", terminal.id)
     return serialize(terminal, secret)
+
+
+@router.get("/api/core/terminals/{terminal_id}/link")
+def show_terminal_link(terminal_id: UUID, db: Session = Depends(get_db), user: User = Depends(merchant)):
+    terminal = owned_terminal(db, user, terminal_id)
+    if terminal.token_encrypted is None:
+        raise HTTPException(404, "This link was created before links could be shown again. Replace the link to get one you can copy.")
+    logger.info("Terminal link shown terminal=%s", terminal.id)
+    return {"url": terminal_url(decrypt_secret(terminal.token_encrypted))}
 
 
 def current_terminal(authorization: str | None = Header(default=None), db: Session = Depends(get_db)) -> Terminal:

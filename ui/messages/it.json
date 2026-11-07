@@ -546,7 +546,8 @@
       "rotated": "Nuovo link creato. Il link precedente non funziona più.",
       "created": "Terminale creato.",
       "saved": "Terminale salvato.",
-      "notConfirmed": "Impossibile confermare il salvataggio. Controlla l'elenco dei terminali prima di riprovare."
+      "notConfirmed": "Impossibile confermare il salvataggio. Controlla l'elenco dei terminali prima di riprovare.",
+      "notShown": "Impossibile mostrare il link. Riprova."
     },
     "actions": {
       "tourNoop": "Solo modalità demo: nessuna modifica viene salvata.",
@@ -800,7 +801,7 @@
   "terminals": {
     "save": "Salva il terminale",
     "create": "Crea un terminale",
-    "linkOnce": "Apri questo link sul dispositivo alla tua cassa. Viene mostrato una sola volta.",
+    "linkOnce": "Apri questo link sul dispositivo alla tua cassa.",
     "linkWarning": "Chiunque abbia questo link può creare richieste di pagamento verso il tuo portafoglio e vederne lo stato. Non può spostare fondi né aprire la tua dashboard. Crea un nuovo link se lo perdi.",
     "linkQrAlt": "Codice QR del link del terminale",
     "name": "Nome",
@@ -809,7 +810,10 @@
     "expiryMinutes": "Scadenza della richiesta di pagamento (minuti)",
     "zeroConfNote": "Con zero conferme compare “Pagamento visto” non appena il pagamento raggiunge la rete, di solito in pochi secondi. Non è ancora in un blocco e, in rari casi, potrebbe non essere confermato. Richiedi più conferme (circa due minuti ciascuna) per importi più alti.",
     "enabled": "Attivo",
-    "lostDevice": "Hai perso il dispositivo o il link? Crea un nuovo link. Il link attuale smette subito di funzionare.",
+    "lostDevice": "Hai perso il dispositivo o qualcun altro ha visto il link? Crea un nuovo link. Il link attuale smette subito di funzionare.",
+    "showLink": "Mostra link",
+    "showingLink": "Caricamento del link…",
+    "linkNotStored": "Questo link è stato creato prima che i link potessero essere mostrati di nuovo. Crea un nuovo link una volta e poi potrai mostrarlo e copiarlo qui.",
     "newLink": "Crea un nuovo link",
     "replaceLink": "Sostituisci il link",
     "replaceDescription": "Il dispositivo che usa il link attuale smetterà di funzionare finché non vi apri il nuovo link.",

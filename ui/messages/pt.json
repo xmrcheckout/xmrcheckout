@@ -546,7 +546,8 @@
       "rotated": "Novo link criado. O link anterior não funciona mais.",
       "created": "Terminal criado.",
       "saved": "Terminal salvo.",
-      "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de terminais antes de tentar novamente."
+      "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de terminais antes de tentar novamente.",
+      "notShown": "Não foi possível mostrar o link. Tente novamente."
     },
     "actions": {
       "tourNoop": "Apenas modo de demonstração: nenhuma alteração é salva.",
@@ -800,7 +801,7 @@
   "terminals": {
     "save": "Salvar terminal",
     "create": "Criar terminal",
-    "linkOnce": "Abra este link no dispositivo do seu caixa. Ele é mostrado apenas uma vez.",
+    "linkOnce": "Abra este link no dispositivo do seu caixa.",
     "linkWarning": "Qualquer pessoa com este link pode criar faturas para a sua carteira e ver o status delas. Ele não pode mover fundos nem abrir o seu painel. Crie um novo link se ele for perdido.",
     "linkQrAlt": "QR code do link do terminal",
     "name": "Nome",
@@ -809,7 +810,10 @@
     "expiryMinutes": "Expiração da fatura (minutos)",
     "zeroConfNote": "Zero confirmações mostra “Pagamento visto” assim que o pagamento chega à rede, normalmente em segundos. Ele ainda não está em um bloco e, em casos raros, pode não ser confirmado. Exija mais confirmações (cerca de dois minutos cada) para valores maiores.",
     "enabled": "Ativado",
-    "lostDevice": "Perdeu o dispositivo ou o link? Crie um novo link. O link atual para de funcionar imediatamente.",
+    "lostDevice": "Perdeu o dispositivo ou outra pessoa viu o link? Crie um novo link. O link atual para de funcionar imediatamente.",
+    "showLink": "Mostrar link",
+    "showingLink": "Carregando link…",
+    "linkNotStored": "Este link foi criado antes de os links poderem ser mostrados novamente. Crie um novo link uma vez e depois você poderá mostrá-lo e copiá-lo aqui.",
     "newLink": "Criar novo link",
     "replaceLink": "Substituir link",
     "replaceDescription": "O dispositivo que usa o link atual deixará de funcionar até que você abra o novo link nele.",

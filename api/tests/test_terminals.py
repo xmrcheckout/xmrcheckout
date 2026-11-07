@@ -5,7 +5,7 @@ import time
 import unittest
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, patch
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import requests
 import uvicorn
@@ -120,6 +120,39 @@ class TerminalIntegrationTests(unittest.TestCase):
                                   json={"name": "Front counter", "enabled": False}, timeout=10)
         self.assertEqual(disabled.status_code, 200)
         self.assertEqual(self.sell(new_auth).status_code, 403)
+
+    def test_merchant_can_show_current_link_again(self):
+        data, _ = self.create_terminal()
+        link = self.base + f"/api/core/terminals/{data['id']}/link"
+        shown = requests.get(link, headers=self.headers, timeout=10)
+        self.assertEqual(shown.status_code, 200, shown.text)
+        self.assertEqual(shown.json()["url"], data["url"])
+        self.assertIn("no-store", shown.headers.get("Cache-Control", ""))
+        rotated = requests.post(self.base + f"/api/core/terminals/{data['id']}/rotate", headers=self.headers, timeout=10).json()
+        self.assertEqual(requests.get(link, headers=self.headers, timeout=10).json()["url"], rotated["url"])
+        listed = requests.get(self.base + "/api/core/terminals", headers=self.headers, timeout=10).json()["terminals"]
+        row = next(item for item in listed if item["id"] == data["id"])
+        self.assertTrue(row["link_available"])
+        self.assertNotIn("url", row)
+        self.assertNotIn("token_encrypted", row)
+
+    def test_link_is_not_shown_to_others_or_when_not_stored(self):
+        from app.models import Terminal
+        from app.security import hash_api_key
+        data, auth = self.create_terminal()
+        link = self.base + f"/api/core/terminals/{data['id']}/link"
+        self.assertEqual(requests.get(link, headers=auth, timeout=10).status_code, 401)
+        other_key = str(uuid4())
+        with SessionLocal() as db:
+            db.add(User(payment_address=str(uuid4()), view_key_encrypted="fixture", api_key_hash=hash_api_key(other_key), api_key_encrypted="fixture"))
+            db.commit()
+        self.assertEqual(requests.get(link, headers={"Authorization": f"ApiKey {other_key}"}, timeout=10).status_code, 404)
+        with SessionLocal() as db:
+            db.get(Terminal, UUID(data["id"])).token_encrypted = None
+            db.commit()
+        missing = requests.get(link, headers=self.headers, timeout=10)
+        self.assertEqual(missing.status_code, 404)
+        self.assertIn("Replace the link", missing.json()["detail"])
 
     def test_terminal_cannot_manage_terminals(self):
         _, auth = self.create_terminal()

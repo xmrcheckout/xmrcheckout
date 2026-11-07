@@ -76,6 +76,7 @@ def startup():
             connection.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS terminal_attempt_id UUID"))
             connection.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS invoice_terminal_attempt ON invoices (terminal_id, terminal_attempt_id)"))
             connection.execute(text("CREATE INDEX IF NOT EXISTS invoice_terminal_id ON invoices (terminal_id) WHERE terminal_id IS NOT NULL"))
+            connection.execute(text("ALTER TABLE terminals ADD COLUMN IF NOT EXISTS token_encrypted VARCHAR(512)"))
             connection.execute(
                 text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS user_id UUID")
             )

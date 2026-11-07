@@ -237,6 +237,8 @@ class Terminal(Base):
     user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
     name = Column(String(100), nullable=False)
     token_hash = Column(String(64), nullable=False, unique=True, index=True)
+    # Encrypted copy of the secret so the merchant can show the link again. Null for links made before this existed.
+    token_encrypted = Column(String(512), nullable=True)
     default_currency = Column(String(3), nullable=False, default="XMR", server_default="XMR")
     confirmation_target = Column(Integer, nullable=False, default=0, server_default="0")
     expiry_minutes = Column(Integer, nullable=False, default=15, server_default="15")

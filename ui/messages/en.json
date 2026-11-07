@@ -546,7 +546,8 @@
       "rotated": "New link created. The previous link no longer works.",
       "created": "Terminal created.",
       "saved": "Terminal saved.",
-      "notConfirmed": "Could not confirm saving. Check the terminal list before trying again."
+      "notConfirmed": "Could not confirm saving. Check the terminal list before trying again.",
+      "notShown": "Could not show the link. Try again."
     },
     "actions": {
       "tourNoop": "Demo mode only: no changes are saved.",
@@ -800,7 +801,7 @@
   "terminals": {
     "save": "Save terminal",
     "create": "Create terminal",
-    "linkOnce": "Open this link on the device at your till. It is shown only once.",
+    "linkOnce": "Open this link on the device at your till.",
     "linkWarning": "Anyone with this link can create invoices to your wallet and see their status. It cannot move funds or open your dashboard. Create a new link if it is lost.",
     "linkQrAlt": "QR code for the terminal link",
     "name": "Name",
@@ -809,7 +810,10 @@
     "expiryMinutes": "Invoice expiry (minutes)",
     "zeroConfNote": "Zero confirmations shows “Payment seen” as soon as the payment reaches the network, usually within seconds. It is not yet in a block and could in rare cases fail to confirm. Require more confirmations (about two minutes each) for larger amounts.",
     "enabled": "Enabled",
-    "lostDevice": "Lost the device or the link? Create a new link. The current link stops working immediately.",
+    "lostDevice": "Lost the device, or has someone else seen the link? Create a new link. The current link stops working immediately.",
+    "showLink": "Show link",
+    "showingLink": "Loading link…",
+    "linkNotStored": "This link was created before links could be shown again. Create a new link once, and you can show and copy it here later.",
     "newLink": "Create new link",
     "replaceLink": "Replace link",
     "replaceDescription": "The device using the current link will stop working until you open the new link on it.",

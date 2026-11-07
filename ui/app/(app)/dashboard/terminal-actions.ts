@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getI18n } from "../../../lib/i18n/server";
 
 export type TerminalState = { error: string; success: string; url: string };
@@ -36,9 +37,29 @@ export async function saveTerminal(_state: TerminalState, form: FormData): Promi
     const data = await response.json();
     revalidatePath("/dashboard");
     if (data.url) return { error: "", success: rotating ? t("dashboard.terminalActions.rotated") : t("dashboard.terminalActions.created"), url: data.url };
-    return { error: "", success: t("dashboard.terminalActions.saved"), url: "" };
   } catch {
     return { error: t("dashboard.terminalActions.notConfirmed"), success: "", url: "" };
+  }
+  // Saving an existing terminal's settings closes it and returns to the list.
+  redirect("/dashboard?tab=terminals&saved=1");
+}
+
+export async function showTerminalLink(_state: TerminalState, form: FormData): Promise<TerminalState> {
+  const { t } = await getI18n();
+  const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
+  if (!apiKey) return { error: t("dashboard.terminalActions.connectFirst"), success: "", url: "" };
+  const id = String(form.get("id") ?? "");
+  try {
+    const response = await fetch(`${apiBase()}/api/core/terminals/${encodeURIComponent(id)}/link`, {
+      cache: "no-store", headers: { Authorization: `ApiKey ${apiKey}` },
+    });
+    if (response.status === 401) return { error: t("dashboard.actions.authExpired"), success: "", url: "" };
+    if (response.status === 404) return { error: t("terminals.linkNotStored"), success: "", url: "" };
+    if (!response.ok) return { error: t("dashboard.terminalActions.notShown"), success: "", url: "" };
+    const data = await response.json();
+    return typeof data?.url === "string" ? { error: "", success: "", url: data.url } : { error: t("dashboard.terminalActions.notShown"), success: "", url: "" };
+  } catch {
+    return { error: t("dashboard.terminalActions.notShown"), success: "", url: "" };
   }
 }
 

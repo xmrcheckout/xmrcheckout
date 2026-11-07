@@ -546,7 +546,8 @@
       "rotated": "Enlace nuevo creado. El enlace anterior ya no funciona.",
       "created": "Terminal creado.",
       "saved": "Terminal guardado.",
-      "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de terminales antes de volver a intentarlo."
+      "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de terminales antes de volver a intentarlo.",
+      "notShown": "No se pudo mostrar el enlace. Inténtalo de nuevo."
     },
     "actions": {
       "tourNoop": "Solo modo de demostración: no se guarda ningún cambio.",
@@ -800,7 +801,7 @@
   "terminals": {
     "save": "Guardar terminal",
     "create": "Crear terminal",
-    "linkOnce": "Abre este enlace en el dispositivo de tu caja. Solo se muestra una vez.",
+    "linkOnce": "Abre este enlace en el dispositivo de tu caja.",
     "linkWarning": "Cualquier persona con este enlace puede crear facturas a tu billetera y ver su estado. No puede mover fondos ni abrir tu panel. Crea un enlace nuevo si lo pierdes.",
     "linkQrAlt": "Código QR del enlace del terminal",
     "name": "Nombre",
@@ -809,7 +810,10 @@
     "expiryMinutes": "Vencimiento de la factura (minutos)",
     "zeroConfNote": "Con cero confirmaciones se muestra «Pago visto» en cuanto el pago llega a la red, normalmente en segundos. Todavía no está en un bloque y, en casos poco frecuentes, podría no confirmarse. Exige más confirmaciones (unos dos minutos cada una) para importes mayores.",
     "enabled": "Activado",
-    "lostDevice": "¿Perdiste el dispositivo o el enlace? Crea un enlace nuevo. El enlace actual deja de funcionar de inmediato.",
+    "lostDevice": "¿Perdiste el dispositivo o alguien más ha visto el enlace? Crea un enlace nuevo. El enlace actual deja de funcionar de inmediato.",
+    "showLink": "Mostrar enlace",
+    "showingLink": "Cargando enlace…",
+    "linkNotStored": "Este enlace se creó antes de que los enlaces pudieran mostrarse de nuevo. Crea un enlace nuevo una vez y después podrás mostrarlo y copiarlo aquí.",
     "newLink": "Crear enlace nuevo",
     "replaceLink": "Reemplazar enlace",
     "replaceDescription": "El dispositivo que usa el enlace actual dejará de funcionar hasta que abras en él el enlace nuevo.",

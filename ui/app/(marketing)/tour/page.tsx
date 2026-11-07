@@ -304,6 +304,7 @@ const buildNowFixture = (t: Translate) => {
       enabled: true,
       created_at: iso(-12 * 24 * 60 * 60 * 1000),
       last_used_at: iso(-42 * 60 * 1000),
+      link_available: true,
     },
     {
       id: "demo_terminal_market",
@@ -314,6 +315,7 @@ const buildNowFixture = (t: Translate) => {
       enabled: false,
       created_at: iso(-30 * 24 * 60 * 60 * 1000),
       last_used_at: null,
+      link_available: true,
     },
   ];
 

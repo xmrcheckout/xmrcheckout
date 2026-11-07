@@ -552,7 +552,8 @@
       "rotated": "Nový odkaz vytvořen. Předchozí odkaz již nefunguje.",
       "created": "Terminál vytvořen.",
       "saved": "Terminál uložen.",
-      "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam terminálů."
+      "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam terminálů.",
+      "notShown": "Odkaz se nepodařilo zobrazit. Zkuste to znovu."
     },
     "actions": {
       "tourNoop": "Pouze režim dema: žádné změny se neukládají.",
@@ -812,7 +813,7 @@
   "terminals": {
     "save": "Uložit terminál",
     "create": "Vytvořit terminál",
-    "linkOnce": "Otevřete tento odkaz na zařízení u pokladny. Zobrazí se pouze jednou.",
+    "linkOnce": "Otevřete tento odkaz na zařízení u pokladny.",
     "linkWarning": "Kdokoli s tímto odkazem může vytvářet platební výzvy do vaší peněženky a vidět jejich stav. Nemůže přesouvat prostředky ani otevřít váš panel. Pokud odkaz ztratíte, vytvořte nový.",
     "linkQrAlt": "QR kód odkazu na terminál",
     "name": "Název",
@@ -821,7 +822,10 @@
     "expiryMinutes": "Platnost platební výzvy (minuty)",
     "zeroConfNote": "Při nule potvrzení se „Platba zachycena“ zobrazí, jakmile platba dorazí do sítě, obvykle během několika sekund. Platba ještě není v bloku a ve vzácných případech nemusí být potvrzena. U vyšších částek vyžadujte více potvrzení (každé zhruba dvě minuty).",
     "enabled": "Povoleno",
-    "lostDevice": "Ztracené zařízení nebo odkaz? Vytvořte nový odkaz. Současný odkaz okamžitě přestane fungovat.",
+    "lostDevice": "Ztratili jste zařízení nebo odkaz viděl někdo jiný? Vytvořte nový odkaz. Současný odkaz okamžitě přestane fungovat.",
+    "showLink": "Zobrazit odkaz",
+    "showingLink": "Načítání odkazu…",
+    "linkNotStored": "Tento odkaz byl vytvořen dříve, než bylo možné odkazy znovu zobrazit. Jednou vytvořte nový odkaz a pak ho tu budete moci zobrazit a zkopírovat.",
     "newLink": "Vytvořit nový odkaz",
     "replaceLink": "Nahradit odkaz",
     "replaceDescription": "Zařízení se současným odkazem přestane fungovat, dokud na něm neotevřete nový odkaz.",

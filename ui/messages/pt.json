@@ -1678,7 +1678,7 @@
       "r067": "Título: 1–200 caracteres; descrição: até 2000. Os valores devem ser positivos e menores que 1000000; no máximo 12 casas decimais para XMR ou 2 para valores de referência em moeda fiduciária.",
       "r068": "Use supported_currencies do endpoint de status. Salvar não consulta o provedor de cotações.",
       "r069": "customer_amount (padrão false): o cliente informa o valor e escolhe XMR ou uma moeda fiduciária de referência suportada na compra. Esses links não armazenam valor, não podem usar auto_create_invoice e podem definir minimum_amount_xmr (12 casas decimais); valores de referência em moeda fiduciária são comparados após a conversão.",
-      "r070": "Meta de confirmações: 0–10, com o padrão do perfil do comerciante no momento do salvamento. enabled tem padrão true. As faturas usam a duração padrão configurada (uma hora, por padrão).",
+      "r070": "Meta de confirmações: 0–10, com o padrão do perfil do comerciante no momento do salvamento. enabled tem padrão true. As faturas criadas por um link expiram após a duração para links de pagamento configurada pelo operador (30 minutos, por padrão); pagamentos atrasados continuam sendo detectados.",
       "r071": "As URLs de retorno exigem HTTPS, com HTTP permitido para localhost e 127.0.0.1. Substituições de metadados e de expiração não são suportadas em modelos.",
       "r072": "confirmation_message: texto simples opcional de até 2000 caracteres (sem caracteres de controle além de quebra de linha e tabulação; em branco vira null). Cada fatura guarda um instantâneo, e o status público da fatura só o retorna após a confirmação.",
       "r073": "Retorna 201 com as configurações salvas, id, url e action_url.",

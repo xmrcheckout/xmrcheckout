@@ -212,6 +212,9 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             invoices = db.query(Invoice).filter(Invoice.user_id == self.user_id).all()
             self.assertEqual(len(invoices), 2)
             self.assertTrue(all(i.metadata_json["payment_link"]["title"] == "Example product" for i in invoices))
+            for invoice in invoices:
+                lifetime = invoice.expires_at - invoice.created_at
+                self.assertAlmostEqual(lifetime.total_seconds(), payment_links.PAYMENT_LINK_EXPIRY_MINUTES * 60, delta=60)
         requests.patch(self.base + "/api/core/payment-links/" + data["id"], headers=self.headers, json=self.settings).raise_for_status()
         self.assertEqual(requests.get(url).status_code, 200)
 

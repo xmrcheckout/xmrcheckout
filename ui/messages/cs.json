@@ -1704,7 +1704,7 @@
       "r067": "Název: 1–200 znaků; popis: nejvýše 2000. Částky musí být kladné a menší než 1000000; nejvýše 12 desetinných míst pro XMR nebo 2 pro orientační fiat částky.",
       "r068": "Použijte supported_currencies z endpointu stavu. Uložení nekontaktuje poskytovatele kurzů.",
       "r069": "customer_amount (výchozí false): zákazník při nákupu zadá částku a zvolí XMR nebo podporovanou orientační fiat měnu. Takové odkazy neukládají žádnou částku, nemohou používat auto_create_invoice a mohou nastavit minimum_amount_xmr (12 desetinných míst); orientační fiat částky se porovnávají po převodu.",
-      "r070": "Požadovaný počet potvrzení: 0–10, výchozí je hodnota z profilu obchodníka v době uložení. Enabled je ve výchozím stavu true. Platební výzvy používají nastavenou výchozí dobu platnosti (ve výchozím stavu jedna hodina).",
+      "r070": "Požadovaný počet potvrzení: 0–10, výchozí je hodnota z profilu obchodníka v době uložení. Enabled je ve výchozím stavu true. Platební výzvy vytvořené z odkazu vyprší po době platnosti platebních odkazů nastavené provozovatelem (ve výchozím stavu 30 minut); pozdní platby se stále rozpoznají.",
       "r071": "Návratové URL vyžadují HTTPS, HTTP je povoleno pro localhost a 127.0.0.1. Šablony nepodporují přepsání metadat ani platnosti.",
       "r072": "confirmation_message: volitelný prostý text do 2000 znaků (bez řídicích znaků kromě nového řádku a tabulátoru; prázdný se stane null). Každá platební výzva si uchovává snímek a veřejný stav platební výzvy ho vrací až po potvrzení.",
       "r073": "Vrací 201 s uloženým nastavením, id, url a action_url.",

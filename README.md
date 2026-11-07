@@ -127,6 +127,9 @@ cp .env.example .env
   availability gap does not create a blind spot.
 - `INVOICE_DEFAULT_EXPIRY_HOURS` sets how long a new invoice stays open when
   the request does not set its own expiry (default: `1`).
+- `PAYMENT_LINK_EXPIRY_MINUTES` sets how long invoices created from payment
+  links stay open (default: `30`, allowed `1`-`1440`). Late payments to them are
+  still detected within `LATE_PAYMENT_LOOKBACK_HOURS`.
 - Invoice creation is protected by per-user limits: `INVOICE_ACTIVE_LIMIT`
   (default `100` active invoices), `INVOICE_CREATION_RATE_LIMIT` (default
   `60` creations), and `INVOICE_CREATION_RATE_WINDOW_SECONDS` (default

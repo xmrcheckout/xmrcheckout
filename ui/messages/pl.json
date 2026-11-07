@@ -1704,7 +1704,7 @@
       "r067": "Tytuł: 1–200 znaków; opis: do 2000. Kwoty muszą być dodatnie i mniejsze niż 1000000; najwyżej 12 miejsc po przecinku dla XMR lub 2 dla kwot orientacyjnych w walucie fiat.",
       "r068": "Używaj supported_currencies z endpointu statusu. Zapis nie kontaktuje się z dostawcą notowań.",
       "r069": "customer_amount (domyślnie false): klient wpisuje kwotę i przy zakupie wybiera XMR lub obsługiwaną walutę fiat jako odniesienie. Takie linki nie zapisują kwoty, nie mogą używać auto_create_invoice i mogą ustawić minimum_amount_xmr (12 miejsc po przecinku); kwoty orientacyjne w walucie fiat są porównywane po przeliczeniu.",
-      "r070": "Liczba potwierdzeń: 0–10, domyślnie wartość z profilu sprzedawcy w chwili zapisu. enabled domyślnie true. Prośby o płatność używają skonfigurowanego domyślnego czasu ważności (domyślnie jedna godzina).",
+      "r070": "Liczba potwierdzeń: 0–10, domyślnie wartość z profilu sprzedawcy w chwili zapisu. enabled domyślnie true. Prośby o płatność utworzone z linku wygasają po czasie ważności linków płatności ustawionym przez operatora (domyślnie 30 minut); spóźnione płatności są nadal wykrywane.",
       "r071": "Adresy powrotne wymagają HTTPS; HTTP jest dozwolone dla localhost i 127.0.0.1. Szablony nie obsługują nadpisywania metadanych ani terminu ważności.",
       "r072": "confirmation_message: opcjonalny zwykły tekst do 2000 znaków (bez znaków sterujących poza nową linią i tabulatorem; pusty staje się null). Każda prośba o płatność zachowuje migawkę, a publiczny status zwraca ją dopiero po potwierdzeniu.",
       "r073": "Zwraca 201 z zapisanymi ustawieniami, id, url i action_url.",

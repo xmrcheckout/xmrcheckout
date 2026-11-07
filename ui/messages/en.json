@@ -1678,7 +1678,7 @@
       "r067": "Title: 1–200 characters; description: up to 2000. Amounts must be positive and below 1000000; at most 12 decimal places for XMR or 2 for fiat-reference inputs.",
       "r068": "Use supported_currencies from the status endpoint. Saves do not contact the quote provider.",
       "r069": "customer_amount (default false): the customer enters the amount and chooses XMR or a supported fiat-reference currency at purchase. Such links store no amount, cannot use auto_create_invoice, and may set minimum_amount_xmr (12 decimal places); fiat-reference amounts are compared after conversion.",
-      "r070": "Confirmation target: 0–10, defaulting to the merchant profile at save time. Enabled defaults to true. Invoices use the configured default lifetime (one hour by default).",
+      "r070": "Confirmation target: 0–10, defaulting to the merchant profile at save time. Enabled defaults to true. Invoices from a link expire after the operator-configured payment-link lifetime (30 minutes by default); late payments are still detected.",
       "r071": "Return URLs require HTTPS, with HTTP allowed for localhost and 127.0.0.1. Metadata and expiry overrides are not supported on templates.",
       "r072": "confirmation_message: optional plain text up to 2000 characters (no control characters other than newline and tab; blank becomes null). Each invoice keeps a snapshot, and the public invoice status returns it only after confirmation.",
       "r073": "Returns 201 with saved settings, id, url, and action_url.",

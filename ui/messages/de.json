@@ -1678,7 +1678,7 @@
       "r067": "Titel: 1–200 Zeichen; Beschreibung: bis zu 2000. Beträge müssen positiv und kleiner als 1000000 sein; höchstens 12 Nachkommastellen für XMR oder 2 für Fiat-Richtwerte.",
       "r068": "Verwenden Sie supported_currencies aus dem Status-Endpunkt. Beim Speichern wird der Kursanbieter nicht kontaktiert.",
       "r069": "customer_amount (Standard false): Der Kunde gibt beim Kauf den Betrag ein und wählt XMR oder eine unterstützte Fiat-Richtwährung. Solche Links speichern keinen Betrag, können auto_create_invoice nicht verwenden und dürfen minimum_amount_xmr setzen (12 Nachkommastellen); Fiat-Richtwerte werden nach der Umrechnung verglichen.",
-      "r070": "Bestätigungsziel: 0–10, standardmäßig das Händlerprofil zum Zeitpunkt des Speicherns. enabled ist standardmäßig true. Rechnungen verwenden die konfigurierte Standardlaufzeit (standardmäßig eine Stunde).",
+      "r070": "Bestätigungsziel: 0–10, standardmäßig das Händlerprofil zum Zeitpunkt des Speicherns. enabled ist standardmäßig true. Rechnungen aus einem Link laufen nach der vom Betreiber konfigurierten Laufzeit für Zahlungslinks ab (standardmäßig 30 Minuten); verspätete Zahlungen werden weiterhin erkannt.",
       "r071": "Rücksprung-URLs erfordern HTTPS; HTTP ist für localhost und 127.0.0.1 erlaubt. Metadaten und abweichende Ablaufzeiten werden bei Vorlagen nicht unterstützt.",
       "r072": "confirmation_message: optionaler reiner Text mit bis zu 2000 Zeichen (keine Steuerzeichen außer Zeilenumbruch und Tabulator; leer wird zu null). Jede Rechnung speichert eine Momentaufnahme, und der öffentliche Rechnungsstatus liefert sie erst nach der Bestätigung.",
       "r073": "Liefert 201 mit den gespeicherten Einstellungen, id, url und action_url.",

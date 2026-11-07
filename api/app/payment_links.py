@@ -29,6 +29,11 @@ from .rates import SUPPORTED_CURRENCIES
 router = APIRouter()
 logger = logging.getLogger(__name__)
 PUBLIC_PAYMENT_LINK_DAILY_LIMIT = max(1, int(os.getenv("PUBLIC_PAYMENT_LINK_DAILY_LIMIT", "10")))
+# Payment-link checkouts are paid on the spot, so their invoices close sooner than
+# the general default. Late payments are still detected for LATE_PAYMENT_LOOKBACK_HOURS.
+PAYMENT_LINK_EXPIRY_MINUTES = int(os.getenv("PAYMENT_LINK_EXPIRY_MINUTES", "30"))
+if not 1 <= PAYMENT_LINK_EXPIRY_MINUTES <= 1440:
+    raise RuntimeError("PAYMENT_LINK_EXPIRY_MINUTES must be between 1 and 1440")
 
 
 
@@ -372,7 +377,7 @@ def create_purchase(token: str, request: Request, db: Session, body: bytes = b""
             amounts = {"amount_xmr": link.amount_xmr, "amount_fiat": link.amount_fiat, "currency": link.currency}
         payload = InvoiceCreateUser(
             **amounts, confirmation_target=link.confirmation_target, checkout_continue_url=link.checkout_continue_url,
-            metadata=metadata,
+            metadata=metadata, expires_at=datetime.now(timezone.utc) + timedelta(minutes=PAYMENT_LINK_EXPIRY_MINUTES),
         )
         invoice = create_invoice_for_merchant(payload, request, db, user, payment_link_id=link.id, payment_link_attempt_id=attempt,
             minimum_amount_xmr=link.minimum_amount_xmr if customer else None)

@@ -1678,7 +1678,7 @@
       "r067": "Título: 1–200 caracteres; descripción: hasta 2000. Los importes deben ser positivos y menores que 1000000; como máximo 12 decimales en XMR o 2 en importes de referencia en moneda fiduciaria.",
       "r068": "Usa supported_currencies del endpoint de estado. Guardar no consulta al proveedor de cotizaciones.",
       "r069": "customer_amount (por defecto false): el cliente introduce el importe y elige XMR o una moneda fiduciaria de referencia admitida al comprar. Estos enlaces no guardan importe, no pueden usar auto_create_invoice y pueden definir minimum_amount_xmr (12 decimales); los importes de referencia en moneda fiduciaria se comparan tras la conversión.",
-      "r070": "Objetivo de confirmaciones: 0–10; por defecto, el del perfil del comercio al guardar. Enabled es true por defecto. Las facturas usan la duración predeterminada configurada (una hora por defecto).",
+      "r070": "Objetivo de confirmaciones: 0–10; por defecto, el del perfil del comercio al guardar. Enabled es true por defecto. Las facturas creadas desde un enlace vencen tras la duración para enlaces de pago que configura el operador (30 minutos por defecto); los pagos tardíos se siguen detectando.",
       "r071": "Las URL de retorno requieren HTTPS; se permite HTTP para localhost y 127.0.0.1. Las plantillas no admiten metadatos ni cambios de vencimiento.",
       "r072": "confirmation_message: texto simple opcional de hasta 2000 caracteres (sin caracteres de control salvo salto de línea y tabulador; si está vacío pasa a null). Cada factura guarda una copia, y el estado público de la factura solo lo devuelve tras la confirmación.",
       "r073": "Devuelve 201 con la configuración guardada, id, url y action_url.",

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { formatXmrAmount } from "../../../../../../lib/formatting";
 import type { PaymentLinkData } from "../../../../../../components/payment-link-editor";
 import { signXmrAmount } from "../../../../../../lib/payment-button";
-import { PrintSignButton, SignQrCode } from "../../../../../../components/payment-link-sign";
+import { PrintSignButton, SignEditor } from "../../../../../../components/payment-link-sign";
 import { getI18n } from "../../../../../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,13 +43,6 @@ export default async function PaymentLinkSignPage({ params }: { params: Promise<
       {!link.enabled ? <p role="alert" className="rounded-xl border border-clay p-3">{t("paymentLinks.signPage.disabled")}</p> : null}
       <div className="flex flex-wrap items-center gap-4"><PrintSignButton />{back}</div>
     </div>
-    <article aria-label={t("paymentLinks.signPage.preview")} className="print-sign mx-auto mt-8 grid max-w-2xl justify-items-center gap-5 rounded-2xl border border-stroke bg-white p-8 text-center">
-      <Image src="/badges/monero-accepted-here.svg" alt={t("paymentLinks.badgeAlt")} width={320} height={80} unoptimized className="h-auto max-w-full" />
-      <h2 className="break-words font-sans text-3xl font-semibold">{link.title}</h2>
-      {fixedXmr ? <p className="text-2xl font-semibold">{fixedXmr}</p> : null}
-      <SignQrCode url={link.url} />
-      <p className="text-xl font-semibold">{t("paymentLinks.signPage.scan")}</p>
-      <p className="break-all font-mono text-sm text-ink-soft">{link.url}</p>
-    </article>
+    <SignEditor url={link.url} title={link.title} price={fixedXmr} />
   </main>;
 }

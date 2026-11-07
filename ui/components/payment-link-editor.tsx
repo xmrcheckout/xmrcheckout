@@ -13,10 +13,10 @@ export type PaymentLinkData = {
   customer_amount: boolean; minimum_amount_xmr: string | null;
 };
 const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-4 py-3 text-ink";
-function Buttons({ canDisable }: { canDisable: boolean }) {
+function Buttons({ existing, enabled }: { existing: boolean; enabled: boolean }) {
   const { t } = useI18n();
   const { pending } = useFormStatus();
-  return <div className="flex flex-wrap gap-3"><button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? t("common.saving") : t("paymentLinks.editor.save")}</button>{canDisable ? <button disabled={pending} formNoValidate name="mode" value="disable" className="min-h-11 rounded-full border border-stroke px-5 py-2">{t("paymentLinks.editor.disable")}</button> : null}</div>;
+  return <div className="flex flex-wrap gap-3"><button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? t("common.saving") : t("paymentLinks.editor.save")}</button>{existing ? <button disabled={pending} formNoValidate name="mode" value={enabled ? "disable" : "enable"} className="min-h-11 rounded-full border border-stroke px-5 py-2">{enabled ? t("paymentLinks.editor.disable") : t("paymentLinks.editor.enable")}</button> : null}</div>;
 }
 export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies, mode = "live" }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null; mode?: "live" | "tour" }) {
   const { t } = useI18n();
@@ -27,8 +27,9 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies,
   const [enabled, setEnabled] = useState(link?.enabled ?? true);
   const [state, action] = useFormState<PaymentLinkState, FormData>(async (previous, data) => {
     const result = await (mode === "tour" ? savePaymentLinkTourAction : savePaymentLink)(previous, data);
-    if (result.success && !link) { setValues(empty); setEnabled(true); setAutomatic(false); setCustomerAmount(false); }
+    if (result.success && !link) { setValues(empty); setAutomatic(false); setCustomerAmount(false); }
     if (result.disabled) setEnabled(false);
+    if (result.enabled) setEnabled(true);
     return result;
   }, { error: "", success: "", fieldErrors: {} });
   const prefix = useId();
@@ -44,6 +45,7 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies,
   // Native action resets can otherwise undo a saved checkbox's visible state.
   return <form ref={form} action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={link?.id ?? ""} />
+    {link && enabled ? <input type="hidden" name="enabled" value="on" /> : null}
     <div><label htmlFor={`${prefix}-title`}>{t("paymentLinks.editor.title")}</label><input {...props("title")} required maxLength={200} />{error("title")}</div>
     <div><label htmlFor={`${prefix}-button_text`}>{t("paymentLinks.editor.buttonText")}</label><input {...props("button_text")} required maxLength={32} />{error("button_text")}
       <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.editor.buttonTextHelp")}</p>
@@ -71,12 +73,11 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies,
     <div><label htmlFor={`${prefix}-confirmation_message`}>{t("paymentLinks.editor.message")}</label><textarea {...props("confirmation_message")} maxLength={2000} rows={4} placeholder={t("paymentLinks.editor.messagePlaceholder")} />{error("confirmation_message")}
       <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.editor.messageHelp")} {rich(t("paymentLinks.editor.messageHelpTail"), { link: (text) => <a className="underline underline-offset-4" href="/guides/monero-payment-buttons#confirmation-message">{text}</a> })}</p>
     </div>
-    <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="enabled" checked={enabled} onChange={event => setEnabled(event.target.checked)} />{t("paymentLinks.editor.enableNew")}</label>
     <label className="flex min-h-11 items-center gap-3"><input type="checkbox" name="auto_create_invoice" checked={automatic} disabled={customerAmount} onChange={event => setAutomatic(event.target.checked)} />{t("paymentLinks.editor.autoCreate")}</label>
     {customerAmount ? <p className="text-sm text-ink-soft">{t("paymentLinks.editor.autoUnavailable")}</p> : null}
     <p className="text-sm text-ink-soft">{t("paymentLinks.editor.autoWarning")}</p>
-    <p className="text-sm text-ink-soft">{t("paymentLinks.editor.disableNote")}</p>
+    {link ? <p className="text-sm text-ink-soft">{t("paymentLinks.editor.disableNote")}</p> : null}
     <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
-    <Buttons canDisable={!!link?.enabled} />
+    <Buttons existing={!!link} enabled={enabled} />
   </form>;
 }

@@ -394,7 +394,7 @@
     "printSign": "Stampa il cartello",
     "title": "Link di pagamento",
     "unavailable": "I link di pagamento non sono disponibili. Aggiorna per riprovare.",
-    "intro": "Crea un pulsante riutilizzabile per un prodotto, un servizio o una donazione. Ogni invio crea una richiesta di pagamento in XMR separata, pagata direttamente al tuo portafoglio.",
+    "intro": "Crea un pulsante HTML riutilizzabile per ricevere donazioni o vendere prodotti e servizi. Ogni invio crea una richiesta di pagamento in XMR separata, pagata direttamente al tuo portafoglio.",
     "allowanceNote": "La creazione pubblica di richieste di pagamento ha una quota giornaliera e condivide la tua capacità di indirizzi.",
     "donationTip": "Per i contributi, usa un titolo come “Sostieni il mio progetto”, imposta il Testo del pulsante su “Dona con Monero” e scegli “Il cliente inserisce l'importo” così che i donatori digitino il proprio importo. Gli incassi ricorrenti non sono supportati.",
     "guide": "Guida alla configurazione dei link di pagamento",
@@ -424,6 +424,7 @@
     "editor": {
       "save": "Salva il link di pagamento",
       "disable": "Disattiva il link di pagamento",
+      "enable": "Attiva il link di pagamento",
       "defaultButton": "Acquista con Monero",
       "title": "Titolo",
       "buttonText": "Testo del pulsante",
@@ -449,7 +450,6 @@
       "messagePlaceholder": "Grazie! Scarica la tua copia: https://your-site.example/files/guide.pdf",
       "messageHelp": "Mostrato all'acquirente nella pagina della richiesta di pagamento solo dopo le conferme richieste; i link web diventano cliccabili. Tutti gli acquirenti di questo link vedono lo stesso testo e, con zero conferme, compare non appena il pagamento viene rilevato.",
       "messageHelpTail": "Testo semplice, fino a 2.000 caratteri. Le modifiche si applicano alle nuove richieste di pagamento. <link>Usalo per download, chiavi o istruzioni</link>.",
-      "enableNew": "Consenti nuovi acquisti",
       "autoCreate": "Salta il riepilogo e crea automaticamente la richiesta di pagamento",
       "autoUnavailable": "La creazione automatica non è disponibile quando il cliente inserisce l'importo.",
       "autoWarning": "Le visite possono creare richieste di pagamento non pagate e consumare la tua quota pubblica di richieste di pagamento e la capacità di indirizzi. Riaprire nella stessa scheda riprende la richiesta di pagamento attuale. Anche i browser automatizzati possono attivare la creazione.",
@@ -526,6 +526,7 @@
       "checkField": "Controlla questo campo.",
       "checkFields": "Controlla i campi evidenziati e le impostazioni del link di pagamento.",
       "disabled": "Link di pagamento disattivato.",
+      "enabled": "Link di pagamento attivato.",
       "saved": "Link di pagamento salvato. Il link e il pulsante da copiare sono elencati qui sotto.",
       "notConfirmed": "Impossibile confermare il salvataggio. Controlla l'elenco dei link di pagamento prima di riprovare."
     },
@@ -592,7 +593,7 @@
       },
       "settingsTab": "Impostazioni",
       "secretHelp": "Inviato con ogni consegna nell'intestazione <code>X-Webhook-Secret</code>.",
-      "navPaymentLinksDetail": "Pulsanti HTML riutilizzabili",
+      "navPaymentLinksDetail": "Pulsanti per donazioni, prodotti e servizi",
       "navTerminals": "Terminali",
       "navTerminalsDetail": "Pagamento in presenza",
       "navOverview": "Panoramica",
@@ -1397,7 +1398,7 @@
             "2": "Apri <dashboard>Dashboard → Link di pagamento</dashboard>, poi scegli <strong>Crea un link di pagamento</strong>.",
             "3": "Inserisci un titolo e una descrizione facoltativa. Per esempio, usa “Guida digitale” con un importo fisso di 20 e valuta EUR. Puoi anche scegliere un importo esatto in XMR oppure selezionare <strong>Il cliente inserisce l'importo</strong> per farlo digitare al cliente (vedi <donations>donazioni</donations>).",
             "4": "Scegli le conferme richieste. Il modulo parte dal tuo valore predefinito di esercente; zero accetta il rilevamento senza attendere la conferma di un blocco. Facoltativamente, aggiungi un URL di ritorno HTTPS dell'esercente e un <message>messaggio di conferma</message> mostrato dopo il pagamento.",
-            "5": "Lascia selezionato <strong>Consenti nuovi acquisti</strong> e salva. Imposta il Testo del pulsante per personalizzare l'etichetta dell'immagine (fino a 32 caratteri). Il valore predefinito è “Acquista con Monero”. I comandi per copiare compaiono nell'elenco dei link di pagamento; copia l'HTML aggiornato dopo aver cambiato l'etichetta. Facoltativamente, attiva “Salta il riepilogo e crea automaticamente la richiesta di pagamento” per aprire direttamente le richieste di pagamento. È disattivato per impostazione predefinita; le visite, anche di browser automatizzati, possono consumare la quota di richieste di pagamento e la capacità di indirizzi."
+            "5": "Salva il link. Imposta il Testo del pulsante per personalizzare l'etichetta dell'immagine (fino a 32 caratteri). Il valore predefinito è “Acquista con Monero”. I comandi per copiare compaiono nell'elenco dei link di pagamento; copia l'HTML aggiornato dopo aver cambiato l'etichetta. Facoltativamente, attiva “Salta il riepilogo e crea automaticamente la richiesta di pagamento” per aprire direttamente le richieste di pagamento. È disattivato per impostazione predefinita; le visite, anche di browser automatizzati, possono consumare la quota di richieste di pagamento e la capacità di indirizzi."
           },
           "2": "Per il riferimento di 20 €, ogni richiesta di acquisto calcola un importo in XMR usando la quotazione informativa disponibile. La richiesta di pagamento è definita in XMR e mostra la fonte e l'orario della quotazione. Non c'è alcun blocco del tasso né un risultato garantito in EUR. Se la quotazione non è disponibile, la creazione non riesce.",
           "3": "Ti serve prima una tua installazione? Segui la <selfhost>guida al self-hosting</selfhost>. Sono prerequisiti un portafoglio in sola lettura funzionante e servizi di rilevamento sincronizzati."
@@ -1445,7 +1446,7 @@
         "title": "Modifica o disattiva gli acquisti futuri",
         "body": {
           "1": "Apri <strong>Gestisci</strong>, poi Impostazioni sul link per cambiare i dettagli del prodotto o l'importo. Le modifiche salvate si applicano alle richieste di pagamento future, mentre le richieste di pagamento esistenti mantengono le impostazioni originali. L'URL riutilizzabile e il pulsante continuano a identificare lo stesso link.",
-          "2": "Usa <strong>Disattiva il link di pagamento</strong> per bloccare i nuovi acquisti. Le richieste di pagamento esistenti restano valide e il rilevamento continua. Riattiva un link dalle sue impostazioni dopo aver corretto un'eventuale valuta salvata non supportata o altre impostazioni non valide."
+          "2": "Usa <strong>Disattiva il link di pagamento</strong> per bloccare i nuovi acquisti. Le richieste di pagamento esistenti restano valide e il rilevamento continua. Usa <strong>Attiva il link di pagamento</strong> per accettare di nuovo nuovi acquisti, dopo aver corretto un'eventuale valuta salvata non supportata o altre impostazioni non valide."
         }
       },
       "donations": {

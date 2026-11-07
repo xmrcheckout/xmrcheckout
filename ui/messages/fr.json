@@ -394,7 +394,7 @@
     "printSign": "Imprimer l’affiche",
     "title": "Liens de paiement",
     "unavailable": "Les liens de paiement sont indisponibles. Actualisez pour réessayer.",
-    "intro": "Créez un bouton réutilisable pour un produit, un service ou un don. Chaque envoi crée une facture XMR distincte, payée directement à votre portefeuille.",
+    "intro": "Créez un bouton HTML réutilisable pour recevoir des dons ou vendre des produits et services. Chaque envoi crée une facture XMR distincte, payée directement à votre portefeuille.",
     "allowanceNote": "La création publique de factures dispose d’un quota quotidien et partage la capacité de vos adresses.",
     "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet », définissez le texte du bouton sur « Faire un don en Monero » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. La collecte récurrente n’est pas prise en charge.",
     "guide": "Guide de configuration des liens de paiement",
@@ -424,6 +424,7 @@
     "editor": {
       "save": "Enregistrer le lien de paiement",
       "disable": "Désactiver le lien de paiement",
+      "enable": "Activer le lien de paiement",
       "defaultButton": "Acheter avec Monero",
       "title": "Titre",
       "buttonText": "Texte du bouton",
@@ -449,7 +450,6 @@
       "messagePlaceholder": "Merci ! Téléchargez votre exemplaire : https://your-site.example/files/guide.pdf",
       "messageHelp": "Affiché à l’acheteur sur la page de la facture uniquement après les confirmations requises ; les liens web deviennent cliquables. Tous les acheteurs de ce lien voient le même texte et, avec zéro confirmation, il apparaît dès que le paiement est détecté.",
       "messageHelpTail": "Texte brut, jusqu’à 2 000 caractères. Les modifications s’appliquent aux nouvelles factures. <link>Utilisez-le pour des téléchargements, des clés ou des instructions</link>.",
-      "enableNew": "Autoriser de nouveaux achats",
       "autoCreate": "Ignorer la vérification et créer la facture automatiquement",
       "autoUnavailable": "La création automatique n’est pas disponible lorsque le client saisit le montant.",
       "autoWarning": "Les visites peuvent créer des factures impayées et consommer votre quota de factures publiques et votre capacité d’adresses. Une réouverture dans le même onglet reprend la facture en cours. Les navigateurs automatisés peuvent aussi déclencher une création.",
@@ -526,6 +526,7 @@
       "checkField": "Vérifiez ce champ.",
       "checkFields": "Vérifiez les champs mis en évidence et les paramètres du lien de paiement.",
       "disabled": "Lien de paiement désactivé.",
+      "enabled": "Lien de paiement activé.",
       "saved": "Lien de paiement enregistré. Votre lien et votre bouton à copier figurent ci-dessous.",
       "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des liens de paiement avant de réessayer."
     },
@@ -592,7 +593,7 @@
       },
       "settingsTab": "Paramètres",
       "secretHelp": "Envoyé avec chaque requête dans l’en-tête <code>X-Webhook-Secret</code>.",
-      "navPaymentLinksDetail": "Boutons HTML réutilisables",
+      "navPaymentLinksDetail": "Boutons pour dons, produits et services",
       "navTerminals": "Terminaux",
       "navTerminalsDetail": "Paiement en personne",
       "navOverview": "Vue d’ensemble",
@@ -1397,7 +1398,7 @@
             "2": "Ouvrez <dashboard>Tableau de bord → Liens de paiement</dashboard>, puis choisissez <strong>Créer un lien de paiement</strong>.",
             "3": "Saisissez un titre et une description facultative. Par exemple, utilisez « Guide numérique » avec un montant fixe de 20 et la devise EUR. Vous pouvez aussi choisir un montant exact en XMR, ou sélectionner <strong>Le client saisit le montant</strong> pour laisser le client l’indiquer (voir <donations>dons</donations>).",
             "4": "Choisissez le nombre de confirmations requises. Le formulaire reprend votre valeur par défaut de commerçant ; zéro accepte la détection sans attendre la confirmation d’un bloc. Ajoutez éventuellement une URL de retour du commerçant en HTTPS et un <message>message de confirmation</message> affiché après le paiement.",
-            "5": "Laissez <strong>Autoriser de nouveaux achats</strong> coché et enregistrez. Définissez le texte du bouton pour personnaliser le libellé du visuel (jusqu’à 32 caractères). La valeur par défaut est « Acheter avec Monero ». Les boutons de copie apparaissent dans la liste des liens de paiement ; copiez le HTML mis à jour après avoir modifié le libellé. Activez éventuellement « Ignorer la vérification et créer la facture automatiquement » pour ouvrir directement les factures. Cette option est désactivée par défaut ; les visites, y compris celles de navigateurs automatisés, peuvent consommer le quota de factures et la capacité d’adresses."
+            "5": "Enregistrez le lien. Définissez le texte du bouton pour personnaliser le libellé du visuel (jusqu’à 32 caractères). La valeur par défaut est « Acheter avec Monero ». Les boutons de copie apparaissent dans la liste des liens de paiement ; copiez le HTML mis à jour après avoir modifié le libellé. Activez éventuellement « Ignorer la vérification et créer la facture automatiquement » pour ouvrir directement les factures. Cette option est désactivée par défaut ; les visites, y compris celles de navigateurs automatisés, peuvent consommer le quota de factures et la capacité d’adresses."
           },
           "2": "Pour la référence de 20 €, chaque demande d’achat calcule un montant en XMR à partir du cours indicatif disponible. La facture est définie en XMR et indique la source du cours et l’horodatage. Le cours n’est pas bloqué et aucun résultat en EUR n’est garanti. Si le cours est indisponible, la création échoue.",
           "3": "Vous avez d’abord besoin de votre propre déploiement ? Suivez le <selfhost>guide d’auto-hébergement</selfhost>. Un portefeuille en lecture seule fonctionnel et des services de détection synchronisés sont indispensables."
@@ -1445,7 +1446,7 @@
         "title": "Modifier ou désactiver les futurs achats",
         "body": {
           "1": "Ouvrez <strong>Gérer</strong>, puis Paramètres sur le lien pour changer les détails du produit ou le montant. Les modifications enregistrées s’appliquent aux factures futures, tandis que les factures existantes conservent leurs paramètres d’origine. L’URL réutilisable et le bouton continuent d’identifier le même lien.",
-          "2": "Utilisez <strong>Désactiver le lien de paiement</strong> pour arrêter les nouveaux achats. Les factures existantes restent valides et leur détection se poursuit. Réactivez un lien depuis ses paramètres après avoir corrigé une devise enregistrée non prise en charge ou tout autre paramètre invalide."
+          "2": "Utilisez <strong>Désactiver le lien de paiement</strong> pour arrêter les nouveaux achats. Les factures existantes restent valides et leur détection se poursuit. Utilisez <strong>Activer le lien de paiement</strong> pour accepter à nouveau de nouveaux achats, après avoir corrigé une devise enregistrée non prise en charge ou tout autre paramètre invalide."
         }
       },
       "donations": {

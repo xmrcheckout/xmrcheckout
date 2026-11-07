@@ -400,7 +400,7 @@
     "printSign": "Vytisknout cedulku",
     "title": "Platební odkazy",
     "unavailable": "Platební odkazy nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
-    "intro": "Vytvořte opakovaně použitelné tlačítko pro produkt, službu nebo dar. Každé odeslání vytvoří samostatnou platební výzvu v XMR placenou přímo do vaší peněženky.",
+    "intro": "Vytvořte opakovaně použitelné HTML tlačítko pro přijímání darů nebo prodej produktů a služeb. Každé odeslání vytvoří samostatnou platební výzvu v XMR placenou přímo do vaší peněženky.",
     "allowanceNote": "Veřejné vytváření platebních výzev má denní limit a sdílí vaši zásobu adres.",
     "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“, nastavte Text tlačítka na „Přispět v Monero“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Opakované platby nejsou podporovány.",
     "guide": "Návod k nastavení platebních odkazů",
@@ -430,6 +430,7 @@
     "editor": {
       "save": "Uložit platební odkaz",
       "disable": "Vypnout platební odkaz",
+      "enable": "Zapnout platební odkaz",
       "defaultButton": "Koupit za Monero",
       "title": "Název",
       "buttonText": "Text tlačítka",
@@ -455,7 +456,6 @@
       "messagePlaceholder": "Děkujeme! Stáhněte si svou kopii: https://your-site.example/files/guide.pdf",
       "messageHelp": "Zobrazí se kupujícímu na stránce platební výzvy až po požadovaném počtu potvrzení; webové odkazy budou klikatelné. Stejný text uvidí každý kupující z tohoto odkazu a při nule potvrzení se zobrazí, jakmile je platba zjištěna.",
       "messageHelpTail": "Prostý text, nejvýše 2 000 znaků. Změny platí pro nové platební výzvy. <link>Použijte ji pro stahování, klíče nebo pokyny</link>.",
-      "enableNew": "Povolit nové nákupy",
       "autoCreate": "Přeskočit kontrolu a vytvořit platební výzvu automaticky",
       "autoUnavailable": "Automatické vytvoření není k dispozici, když částku zadává zákazník.",
       "autoWarning": "Návštěvy mohou vytvářet nezaplacené platební výzvy a spotřebovávat váš limit veřejných platebních výzev i zásobu adres. Opětovné otevření ve stejné kartě obnoví aktuální platební výzvu. Vytvoření mohou spustit i automatizované prohlížeče.",
@@ -532,6 +532,7 @@
       "checkField": "Zkontrolujte toto pole.",
       "checkFields": "Zkontrolujte zvýrazněná pole a nastavení platebního odkazu.",
       "disabled": "Platební odkaz vypnut.",
+      "enabled": "Platební odkaz zapnut.",
       "saved": "Platební odkaz uložen. Odkaz ke zkopírování a tlačítko najdete níže.",
       "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů."
     },
@@ -600,7 +601,7 @@
       },
       "settingsTab": "Nastavení",
       "secretHelp": "Posílá se s každým doručením v hlavičce <code>X-Webhook-Secret</code>.",
-      "navPaymentLinksDetail": "Opakovaně použitelná HTML tlačítka",
+      "navPaymentLinksDetail": "Tlačítka pro dary, produkty a služby",
       "navTerminals": "Terminály",
       "navTerminalsDetail": "Platby na místě",
       "navOverview": "Přehled",
@@ -1417,7 +1418,7 @@
             "2": "Otevřete <dashboard>Panel → Platební odkazy</dashboard> a zvolte <strong>Vytvořit platební odkaz</strong>.",
             "3": "Zadejte název a volitelný popis. Použijte například „Digitální příručka“ s pevnou částkou 20 a měnou EUR. Můžete také zvolit přesnou částku v XMR, nebo vybrat <strong>Částku zadává zákazník</strong>, aby ji zákazník napsal sám (viz <donations>dary</donations>).",
             "4": "Zvolte požadovaný počet potvrzení. Formulář začíná vaší výchozí hodnotou obchodníka; nula přijme detekci bez čekání na potvrzení v bloku. Volitelně přidejte návratovou HTTPS URL obchodníka a <message>zprávu po potvrzení</message> zobrazenou po platbě.",
-            "5": "Ponechte zaškrtnuté <strong>Povolit nové nákupy</strong> a uložte. V poli Text tlačítka můžete upravit popisek grafiky (až 32 znaků). Výchozí je „Koupit za Monero“. Ovládací prvky pro kopírování se zobrazí v seznamu platebních odkazů; po změně popisku zkopírujte aktualizované HTML. Volitelně zapněte „Přeskočit kontrolu a vytvořit platební výzvu automaticky“, aby se platební výzvy otevíraly přímo. Ve výchozím stavu je to vypnuté; návštěvy, včetně automatizovaných prohlížečů, mohou spotřebovávat limit platebních výzev a zásobu adres."
+            "5": "Uložte odkaz. V poli Text tlačítka můžete upravit popisek grafiky (až 32 znaků). Výchozí je „Koupit za Monero“. Ovládací prvky pro kopírování se zobrazí v seznamu platebních odkazů; po změně popisku zkopírujte aktualizované HTML. Volitelně zapněte „Přeskočit kontrolu a vytvořit platební výzvu automaticky“, aby se platební výzvy otevíraly přímo. Ve výchozím stavu je to vypnuté; návštěvy, včetně automatizovaných prohlížečů, mohou spotřebovávat limit platebních výzev a zásobu adres."
           },
           "2": "U orientační částky 20 € každý požadavek na nákup vypočítá částku v XMR pomocí dostupné informativní notace. Platební výzva je stanovena v XMR a zobrazuje zdroj notace a časové razítko. Kurz není zafixován a výsledek v EUR není zaručen. Pokud notace není k dispozici, vytvoření selže.",
           "3": "Potřebujete nejprve vlastní nasazení? Postupujte podle <selfhost>návodu k vlastnímu hostingu</selfhost>. Předpokladem je funkční peněženka pouze pro prohlížení a synchronizované služby detekce."
@@ -1465,7 +1466,7 @@
         "title": "Úprava nebo vypnutí budoucích nákupů",
         "body": {
           "1": "U odkazu otevřete <strong>Spravovat</strong> a pak Nastavení a změňte údaje o produktu nebo částku. Uložené změny platí pro budoucí platební výzvy, stávající platební výzvy si ponechávají původní nastavení. Opakovaně použitelná URL i tlačítko dál označují stejný odkaz.",
-          "2": "Pomocí <strong>Vypnout platební odkaz</strong> zastavíte nové nákupy. Stávající platební výzvy zůstávají platné a jejich detekce pokračuje. Odkaz znovu povolíte v jeho nastavení poté, co opravíte nepodporovanou uloženou měnu nebo jiná neplatná nastavení."
+          "2": "Pomocí <strong>Vypnout platební odkaz</strong> zastavíte nové nákupy. Stávající platební výzvy zůstávají platné a jejich detekce pokračuje. Pomocí <strong>Zapnout platební odkaz</strong> znovu přijímáte nové nákupy, jakmile opravíte nepodporovanou uloženou měnu nebo jiná neplatná nastavení."
         }
       },
       "donations": {

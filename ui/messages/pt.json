@@ -394,7 +394,7 @@
     "printSign": "Imprimir cartaz",
     "title": "Links de pagamento",
     "unavailable": "Os links de pagamento estão indisponíveis. Atualize para tentar novamente.",
-    "intro": "Crie um botão reutilizável para um produto, serviço ou doação. Cada envio cria uma fatura XMR separada, paga diretamente na sua carteira.",
+    "intro": "Crie um botão HTML reutilizável para receber doações ou vender produtos e serviços. Cada envio cria uma fatura XMR separada, paga diretamente na sua carteira.",
     "allowanceNote": "A criação pública de faturas tem uma cota diária e compartilha a sua capacidade de endereços.",
     "donationTip": "Para contribuições, use um título como “Apoie o meu projeto”, defina o Texto do botão como “Doar com Monero” e escolha “O cliente informa o valor” para que os doadores digitem o próprio valor. Cobranças recorrentes não são suportadas.",
     "guide": "Guia de configuração de links de pagamento",
@@ -424,6 +424,7 @@
     "editor": {
       "save": "Salvar link de pagamento",
       "disable": "Desativar link de pagamento",
+      "enable": "Ativar link de pagamento",
       "defaultButton": "Comprar com Monero",
       "title": "Título",
       "buttonText": "Texto do botão",
@@ -449,7 +450,6 @@
       "messagePlaceholder": "Obrigado! Baixe a sua cópia: https://your-site.example/files/guide.pdf",
       "messageHelp": "Mostrada ao comprador na página da fatura somente após as confirmações exigidas; links da web se tornam clicáveis. Todos os compradores deste link veem o mesmo texto e, com zero confirmações, ele aparece assim que o pagamento é detectado.",
       "messageHelpTail": "Texto simples, até 2.000 caracteres. As alterações valem para novas faturas. <link>Use para downloads, chaves ou instruções</link>.",
-      "enableNew": "Permitir novas compras",
       "autoCreate": "Pular a revisão e criar a fatura automaticamente",
       "autoUnavailable": "A criação automática não está disponível quando o cliente informa o valor.",
       "autoWarning": "Visitas podem criar faturas não pagas e consumir a sua cota pública de faturas e a capacidade de endereços. Reabrir na mesma aba retoma a fatura atual. Navegadores automatizados também podem disparar a criação.",
@@ -526,6 +526,7 @@
       "checkField": "Verifique este campo.",
       "checkFields": "Verifique os campos destacados e as configurações do link de pagamento.",
       "disabled": "Link de pagamento desativado.",
+      "enabled": "Link de pagamento ativado.",
       "saved": "Link de pagamento salvo. O seu link e botão para copiar estão listados abaixo.",
       "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de links de pagamento antes de tentar novamente."
     },
@@ -592,7 +593,7 @@
       },
       "settingsTab": "Configurações",
       "secretHelp": "Enviado em cada entrega no cabeçalho <code>X-Webhook-Secret</code>.",
-      "navPaymentLinksDetail": "Botões HTML reutilizáveis",
+      "navPaymentLinksDetail": "Botões para doações, produtos e serviços",
       "navTerminals": "Terminais",
       "navTerminalsDetail": "Pagamento presencial",
       "navOverview": "Visão geral",
@@ -1397,7 +1398,7 @@
             "2": "Abra <dashboard>Painel → Links de pagamento</dashboard> e escolha <strong>Criar link de pagamento</strong>.",
             "3": "Digite um título e uma descrição opcional. Por exemplo, use “Guia digital” com um valor fixo de 20 e a moeda EUR. Você também pode escolher um valor exato em XMR ou selecionar <strong>O cliente informa o valor</strong> para que o cliente o digite (veja <donations>doações</donations>).",
             "4": "Escolha as confirmações exigidas. O formulário começa com o seu padrão de comerciante; zero aceita a detecção sem esperar a confirmação de um bloco. Opcionalmente, adicione uma URL de retorno HTTPS do comerciante e uma <message>mensagem de confirmação</message> mostrada após o pagamento.",
-            "5": "Deixe <strong>Permitir novas compras</strong> selecionado e salve. Defina o Texto do botão para personalizar o rótulo da imagem (até 32 caracteres). O padrão é “Comprar com Monero”. Os controles de cópia aparecem na lista de links de pagamento; copie o HTML atualizado depois de alterar o rótulo. Opcionalmente, ative “Pular a revisão e criar a fatura automaticamente” para abrir faturas diretamente. Isso vem desativado por padrão; visitas, inclusive de navegadores automatizados, podem consumir a cota de faturas e a capacidade de endereços."
+            "5": "Salve o link. Defina o Texto do botão para personalizar o rótulo da imagem (até 32 caracteres). O padrão é “Comprar com Monero”. Os controles de cópia aparecem na lista de links de pagamento; copie o HTML atualizado depois de alterar o rótulo. Opcionalmente, ative “Pular a revisão e criar a fatura automaticamente” para abrir faturas diretamente. Isso vem desativado por padrão; visitas, inclusive de navegadores automatizados, podem consumir a cota de faturas e a capacidade de endereços."
           },
           "2": "Para a referência de €20, cada solicitação de compra calcula um valor em XMR usando a cotação informativa disponível. A fatura é definida em XMR e mostra a fonte e o horário da cotação. Não há travamento de cotação nem garantia de resultado em EUR. Se a cotação estiver indisponível, a criação falha.",
           "3": "Precisa primeiro da sua própria implantação? Siga o <selfhost>guia de auto-hospedagem</selfhost>. Uma carteira somente leitura funcionando e serviços de detecção sincronizados são pré-requisitos."
@@ -1445,7 +1446,7 @@
         "title": "Edite ou desative compras futuras",
         "body": {
           "1": "Abra <strong>Gerenciar</strong> e depois Configurações no link para alterar os detalhes do produto ou o valor. As alterações salvas valem para faturas futuras, enquanto as faturas existentes mantêm as configurações originais. A URL reutilizável e o botão continuam identificando o mesmo link.",
-          "2": "Use <strong>Desativar link de pagamento</strong> para impedir novas compras. As faturas existentes continuam válidas e a detecção prossegue. Reative um link pelas configurações dele depois de corrigir qualquer moeda salva não suportada ou outras configurações inválidas."
+          "2": "Use <strong>Desativar link de pagamento</strong> para impedir novas compras. As faturas existentes continuam válidas e a detecção prossegue. Use <strong>Ativar link de pagamento</strong> para voltar a aceitar novas compras, depois de corrigir qualquer moeda salva não suportada ou outras configurações inválidas."
         }
       },
       "donations": {

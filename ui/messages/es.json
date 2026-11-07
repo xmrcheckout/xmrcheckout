@@ -394,7 +394,7 @@
     "printSign": "Imprimir cartel",
     "title": "Enlaces de pago",
     "unavailable": "Los enlaces de pago no están disponibles. Actualiza para volver a intentarlo.",
-    "intro": "Crea un botón reutilizable para un producto, un servicio o una donación. Cada envío crea una factura en XMR distinta pagada directamente a tu billetera.",
+    "intro": "Crea un botón HTML reutilizable para recibir donaciones o vender productos y servicios. Cada envío crea una factura en XMR distinta pagada directamente a tu billetera.",
     "allowanceNote": "La creación pública de facturas tiene un cupo diario y comparte tu capacidad de direcciones.",
     "donationTip": "Para aportaciones, usa un título como «Apoya mi proyecto», pon como texto del botón «Donar con Monero» y elige «El cliente introduce el importe» para que cada donante escriba su propio importe. Los cobros recurrentes no están disponibles.",
     "guide": "Guía para configurar enlaces de pago",
@@ -424,6 +424,7 @@
     "editor": {
       "save": "Guardar enlace de pago",
       "disable": "Desactivar enlace de pago",
+      "enable": "Activar enlace de pago",
       "defaultButton": "Comprar con Monero",
       "title": "Título",
       "buttonText": "Texto del botón",
@@ -449,7 +450,6 @@
       "messagePlaceholder": "¡Gracias! Descarga tu copia: https://tu-sitio.example/files/guia.pdf",
       "messageHelp": "Se muestra al comprador en la página de la factura solo después de las confirmaciones requeridas; los enlaces web se pueden pulsar. Todos los compradores de este enlace ven el mismo texto y, con cero confirmaciones, aparece en cuanto se detecta el pago.",
       "messageHelpTail": "Texto sin formato, hasta 2000 caracteres. Los cambios se aplican a las facturas nuevas. <link>Úsalo para descargas, claves o instrucciones</link>.",
-      "enableNew": "Permitir compras nuevas",
       "autoCreate": "Omitir la revisión y crear la factura automáticamente",
       "autoUnavailable": "La creación automática no está disponible cuando el cliente introduce el importe.",
       "autoWarning": "Las visitas pueden crear facturas sin pagar y consumir tu cupo público de facturas y tu capacidad de direcciones. Al volver a abrir en la misma pestaña se retoma la factura actual. Los navegadores automatizados también pueden provocar la creación.",
@@ -526,6 +526,7 @@
       "checkField": "Revisa este campo.",
       "checkFields": "Revisa los campos marcados y la configuración del enlace de pago.",
       "disabled": "Enlace de pago desactivado.",
+      "enabled": "Enlace de pago activado.",
       "saved": "Enlace de pago guardado. Tu enlace y tu botón para copiar aparecen abajo.",
       "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de enlaces de pago antes de volver a intentarlo."
     },
@@ -592,7 +593,7 @@
       },
       "settingsTab": "Configuración",
       "secretHelp": "Se envía con cada entrega en el encabezado <code>X-Webhook-Secret</code>.",
-      "navPaymentLinksDetail": "Botones HTML reutilizables",
+      "navPaymentLinksDetail": "Botones para donaciones, productos y servicios",
       "navTerminals": "Terminales",
       "navTerminalsDetail": "Cobro presencial",
       "navOverview": "Resumen",
@@ -1397,7 +1398,7 @@
             "2": "Abre <dashboard>Panel → Enlaces de pago</dashboard> y elige <strong>Crear enlace de pago</strong>.",
             "3": "Escribe un título y una descripción opcional. Por ejemplo, usa «Guía digital» con un importe fijo de 20 y la moneda EUR. También puedes elegir un importe exacto en XMR o seleccionar <strong>El cliente introduce el importe</strong> para que el cliente lo escriba (consulta <donations>donaciones</donations>).",
             "4": "Elige las confirmaciones requeridas. El formulario parte de tu valor predeterminado; cero acepta la detección sin esperar la confirmación de un bloque. Si quieres, añade una URL de retorno HTTPS y un <message>mensaje de confirmación</message> que se muestre tras el pago.",
-            "5": "Deja marcada la opción <strong>Permitir compras nuevas</strong> y guarda. Usa Texto del botón para personalizar la etiqueta del gráfico (hasta 32 caracteres). El valor predeterminado es «Comprar con Monero». Los controles para copiar aparecen en la lista de enlaces de pago; copia el HTML actualizado después de cambiar la etiqueta. Si quieres, activa «Omitir la revisión y crear la factura automáticamente» para abrir las facturas directamente. Está desactivado por defecto; las visitas, incluidos los navegadores automatizados, pueden consumir el límite de facturas y la capacidad de direcciones."
+            "5": "Guarda el enlace. Usa Texto del botón para personalizar la etiqueta del gráfico (hasta 32 caracteres). El valor predeterminado es «Comprar con Monero». Los controles para copiar aparecen en la lista de enlaces de pago; copia el HTML actualizado después de cambiar la etiqueta. Si quieres, activa «Omitir la revisión y crear la factura automáticamente» para abrir las facturas directamente. Está desactivado por defecto; las visitas, incluidos los navegadores automatizados, pueden consumir el límite de facturas y la capacidad de direcciones."
           },
           "2": "Para la referencia de 20 €, cada solicitud de compra calcula un importe en XMR con la cotización informativa disponible. La factura se define en XMR y muestra la fuente y la hora de la cotización. No hay bloqueo de la tasa ni un resultado garantizado en EUR. Si la cotización no está disponible, la creación falla.",
           "3": "¿Necesitas primero tu propia instalación? Sigue la <selfhost>guía de autoalojamiento</selfhost>. Necesitas una billetera de solo lectura que funcione y servicios de detección sincronizados."
@@ -1445,7 +1446,7 @@
         "title": "Edita o desactiva las compras futuras",
         "body": {
           "1": "Abre <strong>Gestionar</strong> y luego Configuración en el enlace para cambiar los datos del producto o el importe. Los cambios guardados se aplican a las facturas futuras, mientras que las existentes conservan su configuración original. La URL reutilizable y el botón siguen identificando el mismo enlace.",
-          "2": "Usa <strong>Desactivar enlace de pago</strong> para detener las compras nuevas. Las facturas existentes siguen siendo válidas y se siguen detectando. Vuelve a activar un enlace desde su configuración después de corregir cualquier moneda guardada no admitida u otro ajuste no válido."
+          "2": "Usa <strong>Desactivar enlace de pago</strong> para detener las compras nuevas. Las facturas existentes siguen siendo válidas y se siguen detectando. Usa <strong>Activar enlace de pago</strong> para volver a aceptar compras nuevas, después de corregir cualquier moneda guardada no admitida u otro ajuste no válido."
         }
       },
       "donations": {

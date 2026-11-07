@@ -400,7 +400,7 @@
     "printSign": "Drukuj plakat",
     "title": "Linki płatności",
     "unavailable": "Linki płatności są niedostępne. Odśwież, aby spróbować ponownie.",
-    "intro": "Utwórz przycisk wielokrotnego użytku dla produktu, usługi lub darowizny. Każde wysłanie tworzy osobną prośbę o płatność w XMR, opłacaną bezpośrednio na twój portfel.",
+    "intro": "Utwórz przycisk HTML wielokrotnego użytku, aby przyjmować darowizny lub sprzedawać produkty i usługi. Każde wysłanie tworzy osobną prośbę o płatność w XMR, opłacaną bezpośrednio na twój portfel.",
     "allowanceNote": "Publiczne tworzenie próśb o płatność ma dzienny limit i korzysta z tej samej puli adresów.",
     "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt”, ustaw Tekst przycisku na „Wesprzyj w Monero” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Płatności cykliczne nie są obsługiwane.",
     "guide": "Poradnik konfiguracji linków płatności",
@@ -430,6 +430,7 @@
     "editor": {
       "save": "Zapisz link płatności",
       "disable": "Wyłącz link płatności",
+      "enable": "Włącz link płatności",
       "defaultButton": "Kup za Monero",
       "title": "Tytuł",
       "buttonText": "Tekst przycisku",
@@ -455,7 +456,6 @@
       "messagePlaceholder": "Dziękujemy! Pobierz swój egzemplarz: https://your-site.example/files/guide.pdf",
       "messageHelp": "Wyświetlana kupującemu na stronie prośby o płatność dopiero po wymaganych potwierdzeniach; linki stają się klikalne. Każdy kupujący przez ten link widzi ten sam tekst, a przy zerze potwierdzeń pojawia się on zaraz po wykryciu płatności.",
       "messageHelpTail": "Zwykły tekst, do 2000 znaków. Zmiany dotyczą nowych próśb o płatność. <link>Użyj go do plików, kluczy lub instrukcji</link>.",
-      "enableNew": "Zezwalaj na nowe zakupy",
       "autoCreate": "Pomiń podsumowanie i twórz prośbę o płatność automatycznie",
       "autoUnavailable": "Automatyczne tworzenie jest niedostępne, gdy klient wpisuje kwotę.",
       "autoWarning": "Odwiedziny mogą tworzyć nieopłacone prośby o płatność i zużywać twój publiczny limit oraz pulę adresów. Ponowne otwarcie w tej samej karcie wznawia bieżącą prośbę. Utworzenie mogą też wywołać zautomatyzowane przeglądarki.",
@@ -532,6 +532,7 @@
       "checkField": "Sprawdź to pole.",
       "checkFields": "Sprawdź wyróżnione pola i ustawienia linku płatności.",
       "disabled": "Link płatności wyłączony.",
+      "enabled": "Link płatności włączony.",
       "saved": "Link płatności zapisany. Link i przycisk do skopiowania znajdziesz poniżej.",
       "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę linków płatności, zanim spróbujesz ponownie."
     },
@@ -600,7 +601,7 @@
       },
       "settingsTab": "Ustawienia",
       "secretHelp": "Wysyłany z każdym dostarczeniem w nagłówku <code>X-Webhook-Secret</code>.",
-      "navPaymentLinksDetail": "Przyciski HTML wielokrotnego użytku",
+      "navPaymentLinksDetail": "Przyciski do darowizn, produktów i usług",
       "navTerminals": "Terminale",
       "navTerminalsDetail": "Płatność na miejscu",
       "navOverview": "Przegląd",
@@ -1417,7 +1418,7 @@
             "2": "Otwórz <dashboard>Panel → Linki płatności</dashboard>, a następnie wybierz <strong>Utwórz link płatności</strong>.",
             "3": "Wpisz tytuł i opcjonalny opis. Na przykład użyj „Poradnik cyfrowy” ze stałą kwotą 20 w walucie EUR. Możesz też podać dokładną kwotę w XMR albo wybrać <strong>Klient wpisuje kwotę</strong>, aby kwotę wpisał klient (zobacz <donations>darowizny</donations>).",
             "4": "Wybierz wymaganą liczbę potwierdzeń. Formularz zaczyna od twojej wartości domyślnej; zero akceptuje wykrycie bez czekania na potwierdzenie w bloku. Opcjonalnie dodaj adres powrotny HTTPS i <message>wiadomość po potwierdzeniu</message> wyświetlaną po płatności.",
-            "5": "Pozostaw zaznaczone <strong>Zezwalaj na nowe zakupy</strong> i zapisz. Ustaw Tekst przycisku, aby zmienić napis na grafice (do 32 znaków). Domyślnie jest to „Kup za Monero”. Przyciski kopiowania pojawiają się na liście linków płatności; po zmianie napisu skopiuj zaktualizowany HTML. Opcjonalnie włącz „Pomiń podsumowanie i twórz prośbę o płatność automatycznie”, aby od razu otwierać prośby. Domyślnie jest to wyłączone; odwiedziny, także zautomatyzowanych przeglądarek, mogą zużywać limit próśb o płatność i pulę adresów."
+            "5": "Zapisz link. Ustaw Tekst przycisku, aby zmienić napis na grafice (do 32 znaków). Domyślnie jest to „Kup za Monero”. Przyciski kopiowania pojawiają się na liście linków płatności; po zmianie napisu skopiuj zaktualizowany HTML. Opcjonalnie włącz „Pomiń podsumowanie i twórz prośbę o płatność automatycznie”, aby od razu otwierać prośby. Domyślnie jest to wyłączone; odwiedziny, także zautomatyzowanych przeglądarek, mogą zużywać limit próśb o płatność i pulę adresów."
           },
           "2": "Przy wartości orientacyjnej 20 € każde żądanie zakupu oblicza kwotę w XMR na podstawie dostępnego notowania informacyjnego. Prośba o płatność jest wyrażona w XMR i pokazuje źródło oraz czas notowania. Kurs nie jest blokowany i nie ma gwarancji wyniku w EUR. Jeśli notowanie jest niedostępne, tworzenie się nie powiedzie.",
           "3": "Potrzebujesz najpierw własnego wdrożenia? Skorzystaj z <selfhost>poradnika samodzielnego hostingu</selfhost>. Warunkiem jest działający portfel tylko do odczytu i zsynchronizowane usługi wykrywania."
@@ -1465,7 +1466,7 @@
         "title": "Edytuj lub wyłącz przyszłe zakupy",
         "body": {
           "1": "Otwórz <strong>Zarządzaj</strong>, a następnie Ustawienia przy linku, aby zmienić szczegóły produktu lub kwotę. Zapisane zmiany dotyczą przyszłych próśb o płatność, a istniejące zachowują pierwotne ustawienia. Adres wielokrotnego użytku i przycisk nadal wskazują ten sam link.",
-          "2": "Użyj <strong>Wyłącz link płatności</strong>, aby zablokować nowe zakupy. Istniejące prośby o płatność pozostają ważne, a ich wykrywanie trwa nadal. Link możesz ponownie włączyć w jego ustawieniach po poprawieniu nieobsługiwanej zapisanej waluty lub innych nieprawidłowych ustawień."
+          "2": "Użyj <strong>Wyłącz link płatności</strong>, aby zablokować nowe zakupy. Istniejące prośby o płatność pozostają ważne, a ich wykrywanie trwa nadal. Użyj <strong>Włącz link płatności</strong>, aby znowu przyjmować nowe zakupy, po poprawieniu nieobsługiwanej zapisanej waluty lub innych nieprawidłowych ustawień."
         }
       },
       "donations": {

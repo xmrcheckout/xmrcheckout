@@ -394,7 +394,7 @@
     "printSign": "Print sign",
     "title": "Payment links",
     "unavailable": "Payment links are unavailable. Refresh to try again.",
-    "intro": "Create a reusable button for a product, service, or donation. Each submission creates a separate XMR invoice paid directly to your wallet.",
+    "intro": "Create a reusable HTML button to accept donations or sell products and services. Each submission creates a separate XMR invoice paid directly to your wallet.",
     "allowanceNote": "Public invoice creation has a daily allowance and shares your address capacity.",
     "donationTip": "For contributions, use a title such as “Support my project”, set Button text to “Donate with Monero”, and choose “Customer enters the amount” so donors type their own amount. Recurring collection is not supported.",
     "guide": "Payment link setup guide",
@@ -424,6 +424,7 @@
     "editor": {
       "save": "Save payment link",
       "disable": "Disable payment link",
+      "enable": "Enable payment link",
       "defaultButton": "Buy with Monero",
       "title": "Title",
       "buttonText": "Button text",
@@ -449,7 +450,6 @@
       "messagePlaceholder": "Thanks! Download your copy: https://your-site.example/files/guide.pdf",
       "messageHelp": "Shown to the buyer on the invoice page only after the required confirmations; web links become clickable. Every buyer of this link sees the same text, and with zero confirmations it appears as soon as the payment is detected.",
       "messageHelpTail": "Plain text, up to 2,000 characters. Changes apply to new invoices. <link>Use it for downloads, keys or instructions</link>.",
-      "enableNew": "Enable new purchases",
       "autoCreate": "Skip review and create invoice automatically",
       "autoUnavailable": "Automatic creation is unavailable when the customer enters the amount.",
       "autoWarning": "Visits can create unpaid invoices and consume your public invoice allowance and address capacity. Reopening in the same tab resumes the current invoice. Automated browsers can also trigger creation.",
@@ -526,6 +526,7 @@
       "checkField": "Check this field.",
       "checkFields": "Check the highlighted fields and payment-link settings.",
       "disabled": "Payment link disabled.",
+      "enabled": "Payment link enabled.",
       "saved": "Payment link saved. Your copyable link and button are listed below.",
       "notConfirmed": "Could not confirm saving. Check the payment-link list before trying again."
     },
@@ -592,7 +593,7 @@
       },
       "settingsTab": "Settings",
       "secretHelp": "Sent with each delivery as the <code>X-Webhook-Secret</code> header.",
-      "navPaymentLinksDetail": "Reusable HTML buttons",
+      "navPaymentLinksDetail": "Buttons for donations, products and services",
       "navTerminals": "Terminals",
       "navTerminalsDetail": "In-person checkout",
       "navOverview": "Overview",
@@ -1397,7 +1398,7 @@
             "2": "Open <dashboard>Dashboard → Payment links</dashboard>, then choose <strong>Create payment link</strong>.",
             "3": "Enter a title and optional description. For example, use “Digital guide” with a fixed amount of 20 and currency EUR. You can also choose an exact XMR amount, or select <strong>Customer enters the amount</strong> to let the customer type it (see <donations>donations</donations>).",
             "4": "Choose your required confirmations. The form starts with your merchant default; zero accepts detection without waiting for a block confirmation. Optionally add an HTTPS merchant return URL and a <message>confirmation message</message> shown after payment.",
-            "5": "Leave <strong>Enable new purchases</strong> selected and save. Set Button text to customize the graphic label (up to 32 characters). The default is “Buy with Monero”. Copy controls appear in the payment-link list; copy the updated HTML after changing the label. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity."
+            "5": "Save the link. Set Button text to customize the graphic label (up to 32 characters). The default is “Buy with Monero”. Copy controls appear in the payment-link list; copy the updated HTML after changing the label. Optionally enable “Skip review and create invoice automatically” to open invoices directly. This is off by default; visits, including automated browsers, can consume invoice allowance and address capacity."
           },
           "2": "For the €20 reference, each purchase request calculates an XMR amount using the available informational quote. The invoice is defined in XMR and displays the quote source and timestamp. There is no rate lock or guaranteed EUR outcome. If the quote is unavailable, creation fails.",
           "3": "Need your own deployment first? Follow the <selfhost>self-hosting guide</selfhost>. A working view-only wallet and synchronized detection services are prerequisites."
@@ -1445,7 +1446,7 @@
         "title": "Edit or disable future purchases",
         "body": {
           "1": "Open <strong>Manage</strong>, then Settings on the link to change its product details or amount. Saved changes apply to future invoices, while existing invoices keep their original settings. The reusable URL and button continue to identify the same link.",
-          "2": "Use <strong>Disable payment link</strong> to stop new purchases. Existing invoices remain valid and continue detection. Re-enable a link through its settings after correcting any unsupported saved currency or other invalid settings."
+          "2": "Use <strong>Disable payment link</strong> to stop new purchases. Existing invoices remain valid and continue detection. Use <strong>Enable payment link</strong> to accept new purchases again, after correcting any unsupported saved currency or other invalid settings."
         }
       },
       "donations": {

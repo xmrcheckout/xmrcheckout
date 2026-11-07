@@ -11,6 +11,7 @@ import CopyCodeBlock from "./copy-code-block";
 import CopyIconButton from "./copy-icon-button";
 import PaymentLinkEditor, { type PaymentLinkData } from "./payment-link-editor";
 import PaymentButtonEditor from "./payment-button-editor";
+import DetailTabs, { type DetailTab } from "./detail-tabs";
 
 export type PaymentLinkUsage = { remaining: number; used: number; daily_limit: number; window_hours: number; retrieved_at: string; supported_currencies?: string[] };
 
@@ -137,39 +138,29 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
 
 function PaymentLinkDetail({ link, currencies, mode, t }: { link: PaymentLinkData; currencies: string[] | null; mode: Mode; t: Translate }) {
   const tour = mode === "tour";
-  const sectionClass = "grid min-w-0 gap-3 rounded-2xl border border-stroke p-5";
+  const panelClass = "grid min-w-0 gap-3";
+  const tabs: DetailTab[] = [
+    { id: "link", label: t("paymentLinks.shareLink"), content: <div className={panelClass}>
+      <p className="text-sm text-ink-soft">{t("paymentLinks.shareLinkHelp")}</p>
+      <CopyCodeBlock className={codeClass} label={t("paymentLinks.reusable")}>{link.url}</CopyCodeBlock>
+    </div> },
+    { id: "button", label: t("paymentLinks.shareButton"), content: <div className={panelClass}>
+      <PaymentButtonEditor url={link.url} initialText={link.button_text} previewHref={tour ? "/tour?tab=invoice" : link.url} autoCreate={link.auto_create_invoice} />
+    </div> },
+    ...(tour ? [] : [{ id: "sign", label: t("paymentLinks.shareSign"), content: <div className={panelClass}>
+      <p className="text-sm text-ink-soft">{t("paymentLinks.shareSignHelp")}</p>
+      <p><Link className={linkClass} href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>{t("paymentLinks.printable")}</Link></p>
+    </div> }]),
+    { id: "settings", label: t("paymentLinks.settings"), content: <PaymentLinkEditor currencies={currencies} link={link} mode={mode} /> },
+  ];
   return <section className="grid min-w-0 gap-6">
     <div>
       <p><Link className={`inline-flex min-h-11 items-center ${linkClass}`} href={listHref(mode)}><span aria-hidden="true">←&nbsp;</span>{t("paymentLinks.back")}</Link></p>
-      <h1 className="mt-2 break-words font-sans text-2xl font-semibold sm:text-3xl">{link.title}</h1>
+      <h1 id="payment-link-title" className="mt-2 break-words font-sans text-2xl font-semibold sm:text-3xl">{link.title}</h1>
       <p className="mt-2 flex flex-wrap items-center gap-3">{statusBadge(link, t)}<span>{priceLabel(link, t)}</span></p>
+      <p className="mt-2 text-sm text-ink-soft">{t("paymentLinks.shareIntro")}</p>
     </div>
     {tour ? <p className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">{t("paymentLinks.demoNote")}</p> : null}
-
-    <section aria-labelledby="payment-link-share-title" className="grid min-w-0 gap-4">
-      <div>
-        <h2 id="payment-link-share-title" className="font-sans text-xl font-semibold">{t("paymentLinks.share")}</h2>
-        <p className="mt-1 text-sm text-ink-soft">{t("paymentLinks.shareIntro")}</p>
-      </div>
-      <section aria-labelledby="share-link-title" className={sectionClass}>
-        <h3 id="share-link-title" className="font-sans font-semibold">{t("paymentLinks.shareLink")}</h3>
-        <p className="text-sm text-ink-soft">{t("paymentLinks.shareLinkHelp")}</p>
-        <CopyCodeBlock className={codeClass} label={t("paymentLinks.reusable")}>{link.url}</CopyCodeBlock>
-      </section>
-      <section aria-labelledby="share-button-title" className={sectionClass}>
-        <h3 id="share-button-title" className="font-sans font-semibold">{t("paymentLinks.shareButton")}</h3>
-        <PaymentButtonEditor url={link.url} initialText={link.button_text} previewHref={tour ? "/tour?tab=invoice" : link.url} autoCreate={link.auto_create_invoice} />
-      </section>
-      {tour ? null : <section aria-labelledby="share-sign-title" className={sectionClass}>
-        <h3 id="share-sign-title" className="font-sans font-semibold">{t("paymentLinks.shareSign")}</h3>
-        <p className="text-sm text-ink-soft">{t("paymentLinks.shareSignHelp")}</p>
-        <p><Link className={linkClass} href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>{t("paymentLinks.printable")}</Link></p>
-      </section>}
-    </section>
-
-    <section aria-labelledby="payment-link-settings-title" className={sectionClass}>
-      <h2 id="payment-link-settings-title" className="font-sans text-xl font-semibold">{t("paymentLinks.settings")}</h2>
-      <PaymentLinkEditor currencies={currencies} link={link} mode={mode} />
-    </section>
+    <DetailTabs tabs={tabs} labelledBy="payment-link-title" />
   </section>;
 }

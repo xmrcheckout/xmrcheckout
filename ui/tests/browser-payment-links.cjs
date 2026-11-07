@@ -9,6 +9,8 @@ async function axeViolations(page) {
   return result.violations.map(v => `${v.id}: ${v.nodes.map(n => n.target).join(", ")}`);
 }
 
+const openTab = (page, name) => page.getByRole("tab", { name, exact: true }).click();
+
 async function main() {
   const base = process.argv[2] || "http://127.0.0.1:3300";
   const merchant = process.argv[3];
@@ -34,18 +36,22 @@ async function main() {
       const detailUrl = page.url();
       assert.match(detailUrl, /tab=payment-links&link=/);
       const card = page.locator("#main-content");
+      assert.equal(await page.getByRole("tab", { name: "Link", exact: true }).getAttribute("aria-selected"), "true", "The Link tab opens first");
+      await page.getByRole("tab", { name: "Link", exact: true }).focus();
+      await page.keyboard.press("ArrowRight");
+      assert.equal(await page.getByRole("tab", { name: "Button for your website", exact: true }).getAttribute("aria-selected"), "true", "Arrow keys move between tabs");
       const preview = card.getByRole("link", { name: "Buy with Monero via xmrcheckout", exact: true });
       await preview.scrollIntoViewIfNeeded();
       await preview.getByRole("img").evaluate(image => image.decode());
       assert.equal(await preview.getAttribute("href"), base + "/pay/fixture-token");
-      await page.getByRole("region", { name: "Button for your website", exact: true }).getByRole("button", { name: "Copy code", exact: true }).click();
+      await page.getByRole("tabpanel", { name: "Button for your website", exact: true }).getByRole("button", { name: "Copy code", exact: true }).click();
       const snippet = await page.evaluate(() => navigator.clipboard.readText());
       assert.match(snippet, /<a href=/);
       assert.match(snippet, /<img src=/);
       assert.equal(snippet.includes("<form"), false);
       assert.equal((await fetch(merchant, { method: "POST", body: snippet })).status, 204);
       if (width === 1440) {
-        const buttonRegion = page.getByRole("region", { name: "Button for your website", exact: true });
+        const buttonRegion = page.getByRole("tabpanel", { name: "Button for your website", exact: true });
         await buttonRegion.getByRole("radio", { name: "Light, for dark backgrounds" }).check();
         await buttonRegion.getByLabel("First line", { exact: true }).fill("Monero accepted here");
         await buttonRegion.getByLabel("Second line", { exact: true }).fill("Pay with XMR");
@@ -68,6 +74,7 @@ async function main() {
         assert.equal((await fetch(base + "/buttons/payment.svg?theme=pink&text=Hi")).status, 400);
         await page.reload({ waitUntil: "networkidle" });
         assert.deepEqual(await axeViolations(page), [], "Payment link detail must pass WCAG 2.1 AA");
+        await openTab(page, "Printed sign");
         await card.getByRole("link", { name: "Printable sign with QR code", exact: true }).click();
         await page.getByRole("heading", { name: "Printable sign", exact: true }).waitFor();
         const sign = page.getByRole("article", { name: "Sign preview" });
@@ -107,7 +114,8 @@ async function main() {
         await page.goto(detailUrl, { waitUntil: "networkidle" });
       }
       if (width === 320) {
-        const settings = page.getByRole("region", { name: "Settings", exact: true });
+        await openTab(page, "Settings");
+        const settings = page.getByRole("tabpanel", { name: "Settings", exact: true });
         const skipReview = settings.getByRole("checkbox", { name: "Skip review and create invoice automatically" });
         await skipReview.check();
         const message = "Thanks!\nDownload: https://merchant.example/book-1.pdf";
@@ -117,8 +125,14 @@ async function main() {
         assert.match(page.url(), /tab=payment-links&saved=1$/, "Saving returns to the list");
         await page.goto(detailUrl, { waitUntil: "networkidle" });
         assert.equal((await (await fetch(base + "/api/core/public/payment-links/fixture-token")).json()).auto_create_invoice, true);
+        await openTab(page, "Settings");
         assert.equal(await skipReview.isChecked(), true, "Saved skip-review checkbox must remain checked");
-        const buttonRegion = page.getByRole("region", { name: "Button for your website", exact: true });
+        await settings.getByLabel("Confirmation message (optional)", { exact: true }).fill("Unsaved draft");
+        await openTab(page, "Button for your website");
+        await openTab(page, "Settings");
+        assert.equal(await settings.getByLabel("Confirmation message (optional)", { exact: true }).inputValue(), "Unsaved draft", "Switching tabs keeps unsaved edits");
+        await openTab(page, "Button for your website");
+        const buttonRegion = page.getByRole("tabpanel", { name: "Button for your website", exact: true });
         await buttonRegion.getByLabel("First line", { exact: true }).fill("Donate & <Monero>");
         const customized = buttonRegion.getByRole("img", { name: "Donate & <Monero> via xmrcheckout", exact: true });
         await customized.evaluate(image => image.decode());
@@ -130,7 +144,9 @@ async function main() {
         assert.ok(customHtml.includes("Donate &amp; &lt;Monero&gt; via xmrcheckout"));
         assert.ok(customHtml.includes("/buttons/payment.svg?theme=dark&amp;text="));
         await page.reload({ waitUntil: "networkidle" });
+        await openTab(page, "Button for your website");
         assert.equal(await buttonRegion.getByLabel("First line", { exact: true }).inputValue(), "Buy with Monero", "Editor edits are not saved");
+        await openTab(page, "Settings");
         assert.equal(await settings.getByLabel("Button text", { exact: true }).count(), 0, "Button text moved to the Share editor");
         assert.equal(await settings.getByLabel("Confirmation message (optional)", { exact: true }).inputValue(), message, "Confirmation message must survive reload");
         assert.equal(await skipReview.isChecked(), true, "Saved skip-review setting must survive reload");
@@ -138,6 +154,7 @@ async function main() {
         await settings.getByRole("button", { name: "Save payment link", exact: true }).click();
         await page.getByRole("status").filter({ hasText: "Payment link saved." }).waitFor();
         await page.goto(detailUrl, { waitUntil: "networkidle" });
+        await openTab(page, "Settings");
         assert.equal(await skipReview.isChecked(), false, "Disabled skip-review checkbox must remain unchecked");
       }
       await page.addStyleTag({ content: "html { font-size: 125%; }" });
@@ -182,6 +199,7 @@ async function main() {
         await fetch(base + "/api/core/__fixture/failure?mode=none");
       }
       await page.goto(detailUrl, { waitUntil: "networkidle" });
+      await openTab(page, "Button for your website");
       await preview.focus();
       await page.keyboard.press("Enter");
       await page.waitForURL(base + "/pay/fixture-token");

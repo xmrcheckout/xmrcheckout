@@ -15,7 +15,7 @@ from fastapi import HTTPException
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
-from app import invoice_checks, reconciler, routes, subaddress_allocator as allocator, subaddress_status as pool_status
+from app import invoice_checks, monero_service, reconciler, routes, subaddress_allocator as allocator, subaddress_status as pool_status
 from app.config import DATABASE_URL
 from app.db import Base
 from app.invoice_limits import reserve_invoice_creation
@@ -230,6 +230,35 @@ class AllocationDatabaseTests(unittest.TestCase):
         conn.close()
         self.assertFalse(retaken)
         self.assertEqual(index, 1)
+
+    def test_waiting_wallet_request_gets_the_lock_before_the_next_reconciler_read(self):
+        backend = monero_service.WalletBackend(client=Mock(), url="http://wallet-rpc-test:18083")
+        key = monero_service._wallet_rpc_lock_key(backend.url)
+        service = object.__new__(monero_service.MoneroWalletService)
+        service._lock_timeout_seconds = 5
+        conn = self.engine.connect().execution_options(isolation_level="AUTOCOMMIT")
+        conn.execute(text("SELECT pg_advisory_lock(:key)"), {"key": key})
+
+        def request():
+            with patch.object(monero_service, "engine", self.engine):
+                with service._wallet_rpc_lock(backend, operation="test"):
+                    return True
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            pending = pool.submit(request)
+            sleep(0.3)
+            # The reconciler releases the lock and immediately starts its next read.
+            conn.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": key})
+            retaken = conn.execute(text("SELECT pg_try_advisory_lock(:key)"), {"key": key}).scalar()
+            if retaken:
+                conn.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": key})
+            self.assertTrue(pending.result(timeout=5))
+        default_timeout = conn.execute(text("SHOW lock_timeout")).scalar()
+        conn.close()
+        self.assertFalse(retaken)
+        # The pooled connection goes back with its original lock timeout.
+        with self.engine.connect() as pooled:
+            self.assertEqual(pooled.execute(text("SHOW lock_timeout")).scalar(), default_timeout)
 
     def test_reconciliation_credits_only_new_payment_and_freezes_old_invoice(self):
         self.populate()

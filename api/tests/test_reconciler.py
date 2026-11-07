@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 
 from fastapi import HTTPException
 from requests import RequestException
+from sqlalchemy.exc import OperationalError
 
 from app import (
     btcpay_routes,
@@ -819,9 +820,7 @@ class WalletRecoverySafetyTests(unittest.TestCase):
     def test_wallet_rpc_lock_is_released_after_operation(self):
         connection = Mock()
         connection.execution_options.return_value = connection
-        lock_result = Mock()
-        lock_result.scalar.return_value = True
-        connection.execute.side_effect = [lock_result, Mock()]
+        connection.execute.return_value.scalar.return_value = "0"
         engine = Mock()
         engine.connect.return_value = connection
         service = object.__new__(MoneroWalletService)
@@ -832,15 +831,22 @@ class WalletRecoverySafetyTests(unittest.TestCase):
             with service._wallet_rpc_lock(backend, operation="test"):
                 pass
 
-        self.assertEqual(connection.execute.call_count, 2)
+        statements = [str(call.args[0]) for call in connection.execute.call_args_list]
+        self.assertIn("pg_advisory_lock", statements[2])
+        self.assertIn("lock_timeout", statements[3])
+        self.assertIn("pg_advisory_unlock", statements[4])
         connection.close.assert_called_once_with()
 
     def test_wallet_rpc_lock_timeout_returns_service_unavailable(self):
         connection = Mock()
         connection.execution_options.return_value = connection
-        lock_result = Mock()
-        lock_result.scalar.return_value = False
-        connection.execute.return_value = lock_result
+
+        def execute(statement, *args):
+            if "pg_advisory_lock" in str(statement):
+                raise OperationalError("SELECT pg_advisory_lock", {}, Exception("lock timeout"))
+            return Mock(scalar=Mock(return_value="0"))
+
+        connection.execute.side_effect = execute
         engine = Mock()
         engine.connect.return_value = connection
         service = object.__new__(MoneroWalletService)
@@ -853,6 +859,9 @@ class WalletRecoverySafetyTests(unittest.TestCase):
                     pass
 
         self.assertEqual(context.exception.status_code, 503)
+        statements = [str(call.args[0]) for call in connection.execute.call_args_list]
+        self.assertIn("lock_timeout", statements[-1])
+        self.assertFalse(any("pg_advisory_unlock" in statement for statement in statements))
         connection.close.assert_called_once_with()
 
     def test_status_check_does_not_call_wallet_dependent_rpc(self):

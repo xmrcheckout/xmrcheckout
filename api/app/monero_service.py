@@ -13,6 +13,7 @@ import requests
 from requests import RequestException
 from requests.auth import HTTPDigestAuth
 from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 
 from .config import (
     MONERO_DAEMON_URL,
@@ -149,31 +150,36 @@ class MoneroWalletService:
             0.0,
             getattr(self, "_lock_timeout_seconds", MONERO_WALLET_RPC_LOCK_TIMEOUT_SECONDS),
         )
-        deadline = time.monotonic() + timeout_seconds
         connection = engine.connect().execution_options(isolation_level="AUTOCOMMIT")
-        acquired = False
         try:
-            while True:
-                acquired = bool(
-                    connection.execute(
-                        text("SELECT pg_try_advisory_lock(:lock_key)"),
-                        {"lock_key": lock_key},
-                    ).scalar()
+            # Queue for the lock rather than polling: the reconciler takes it
+            # again straight after each wallet read, but its next request waits
+            # behind this one instead of jumping the queue.
+            previous_timeout = connection.execute(text("SHOW lock_timeout")).scalar()
+            connection.execute(
+                text("SELECT set_config('lock_timeout', :timeout, false)"),
+                {"timeout": f"{max(1, int(timeout_seconds * 1000))}ms"},
+            )
+            try:
+                connection.execute(
+                    text("SELECT pg_advisory_lock(:lock_key)"),
+                    {"lock_key": lock_key},
                 )
-                if acquired:
-                    break
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    logger.warning(
-                        "Wallet RPC lock timeout operation=%s timeout_seconds=%.1f",
-                        operation,
-                        timeout_seconds,
-                    )
-                    raise HTTPException(
-                        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                        detail="Monero wallet RPC is busy",
-                    )
-                time.sleep(min(0.1, remaining))
+            except OperationalError as exc:
+                logger.warning(
+                    "Wallet RPC lock timeout operation=%s timeout_seconds=%.1f",
+                    operation,
+                    timeout_seconds,
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Monero wallet RPC is busy",
+                ) from exc
+            finally:
+                connection.execute(
+                    text("SELECT set_config('lock_timeout', :timeout, false)"),
+                    {"timeout": previous_timeout},
+                )
             try:
                 yield
             finally:

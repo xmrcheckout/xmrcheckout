@@ -158,6 +158,27 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
     });
   }
 
+  // A hardware keyboard works like the on-screen keypad; Enter charges.
+  const keyboard = useRef<{ press: (value: string) => void; charge: () => Promise<void>; ready: boolean } | null>(null);
+  useEffect(() => {
+    keyboard.current = { press, charge, ready: !sale && !busy && Boolean(terminal) };
+  });
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const current = keyboard.current;
+      if (!current?.ready || event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return;
+      if (target?.closest("input, textarea, select, [contenteditable]")) return;
+      const value = /^[0-9]$/.test(event.key) ? event.key
+        : event.key === "." || event.key === "," || event.key === "Decimal" ? "."
+        : event.key === "Backspace" ? "⌫" : null;
+      if (value) { event.preventDefault(); current.press(value); return; }
+      if (event.key === "Enter" && !target?.closest("button, a")) { event.preventDefault(); void current.charge(); }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   async function charge() {
     if (!amount || Number(amount) <= 0) return setError(t("terminal.enterAmount"));
     if (demo) {

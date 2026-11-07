@@ -36,8 +36,9 @@ async function main() {
       const detailUrl = page.url();
       assert.match(detailUrl, /tab=payment-links&link=/);
       const card = page.locator("#main-content");
-      assert.equal(await page.getByRole("tab", { name: "Link", exact: true }).getAttribute("aria-selected"), "true", "The Link tab opens first");
-      await page.getByRole("tab", { name: "Link", exact: true }).focus();
+      assert.equal(await page.getByRole("tab", { name: "Settings", exact: true }).getAttribute("aria-selected"), "true", "The Settings tab opens first");
+      assert.equal(await page.getByRole("tab", { name: "Link", exact: true }).count(), 0, "The list already offers the link");
+      await page.getByRole("tab", { name: "Settings", exact: true }).focus();
       await page.keyboard.press("ArrowRight");
       assert.equal(await page.getByRole("tab", { name: "Button for your website", exact: true }).getAttribute("aria-selected"), "true", "Arrow keys move between tabs");
       const preview = card.getByRole("link", { name: "Buy with Monero via xmrcheckout", exact: true });

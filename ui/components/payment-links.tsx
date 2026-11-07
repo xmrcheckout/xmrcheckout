@@ -7,7 +7,6 @@ import { cookies } from "next/headers";
 import InvoiceAddressAvailability, { type SubaddressStatus } from "./invoice-address-availability";
 import StatusRefreshButton from "./status-refresh-button";
 import StatusBadge from "./status-badge";
-import CopyCodeBlock from "./copy-code-block";
 import CopyIconButton from "./copy-icon-button";
 import PaymentLinkEditor, { type PaymentLinkData } from "./payment-link-editor";
 import PaymentButtonEditor from "./payment-button-editor";
@@ -18,7 +17,6 @@ export type PaymentLinkUsage = { remaining: number; used: number; daily_limit: n
 type Translate = Awaited<ReturnType<typeof getI18n>>["t"];
 type Mode = "live" | "tour";
 
-const codeClass = "overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream";
 const linkClass = "font-semibold underline decoration-clay underline-offset-4";
 const listHref = (mode: Mode) => mode === "tour" ? "/tour?tab=payment-links" : "/dashboard?tab=payment-links";
 const detailHref = (mode: Mode, id: string) => `${listHref(mode)}&link=${encodeURIComponent(id)}`;
@@ -140,10 +138,7 @@ function PaymentLinkDetail({ link, currencies, mode, t }: { link: PaymentLinkDat
   const tour = mode === "tour";
   const panelClass = "grid min-w-0 gap-3";
   const tabs: DetailTab[] = [
-    { id: "link", label: t("paymentLinks.shareLink"), content: <div className={panelClass}>
-      <p className="text-sm text-ink-soft">{t("paymentLinks.shareLinkHelp")}</p>
-      <CopyCodeBlock className={codeClass} label={t("paymentLinks.reusable")}>{link.url}</CopyCodeBlock>
-    </div> },
+    { id: "settings", label: t("paymentLinks.settings"), content: <PaymentLinkEditor currencies={currencies} link={link} mode={mode} /> },
     { id: "button", label: t("paymentLinks.shareButton"), content: <div className={panelClass}>
       <PaymentButtonEditor url={link.url} initialText={link.button_text} previewHref={tour ? "/tour?tab=invoice" : link.url} autoCreate={link.auto_create_invoice} />
     </div> },
@@ -151,7 +146,6 @@ function PaymentLinkDetail({ link, currencies, mode, t }: { link: PaymentLinkDat
       <p className="text-sm text-ink-soft">{t("paymentLinks.shareSignHelp")}</p>
       <p><Link className={linkClass} href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>{t("paymentLinks.printable")}</Link></p>
     </div> }]),
-    { id: "settings", label: t("paymentLinks.settings"), content: <PaymentLinkEditor currencies={currencies} link={link} mode={mode} /> },
   ];
   return <section className="grid min-w-0 gap-6">
     <div>

@@ -403,7 +403,7 @@
     "title": "Platební odkazy",
     "unavailable": "Platební odkazy nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
     "intro": "Vytvořte opakovaně použitelné HTML tlačítko pro přijímání darů nebo prodej produktů a služeb. Každé odeslání vytvoří samostatnou platební výzvu v XMR placenou přímo do vaší peněženky.",
-    "allowanceNote": "Veřejné vytváření platebních výzev má denní limit a sdílí vaši zásobu adres.",
+    "allowanceNote": "Kdokoli s vaším odkazem může vytvořit platební výzvu, proto mají odkazy denní limit. Díky tomu zůstane dost volných adres pro vaše vlastní platby.",
     "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“, nastavte Text tlačítka na „Přispět v Monero“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Opakované platby nejsou podporovány.",
     "guide": "Návod k nastavení platebních odkazů",
     "lightBadge": "Světlý odznak (pro tmavé pozadí)",

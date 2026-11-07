@@ -397,7 +397,7 @@
     "title": "Zahlungslinks",
     "unavailable": "Zahlungslinks sind nicht verfügbar. Aktualisieren Sie, um es erneut zu versuchen.",
     "intro": "Erstellen Sie eine wiederverwendbare HTML-Schaltfläche, um Spenden anzunehmen oder Produkte und Dienstleistungen zu verkaufen. Jede Übermittlung erstellt eine eigene XMR-Rechnung, die direkt an Ihre Wallet bezahlt wird.",
-    "allowanceNote": "Die öffentliche Rechnungserstellung hat ein Tageskontingent und teilt sich Ihre Adresskapazität.",
+    "allowanceNote": "Jeder mit Ihrem Link kann eine Rechnung erstellen, daher haben Links ein Tageskontingent. So bleiben genug Rechnungsadressen für Ihren eigenen Checkout frei.",
     "donationTip": "Für Beiträge verwenden Sie einen Titel wie „Unterstütze mein Projekt“, setzen den Schaltflächentext auf „Mit Monero spenden“ und wählen „Kunde gibt den Betrag ein“, damit Spender ihren eigenen Betrag eintippen. Wiederkehrende Zahlungen werden nicht unterstützt.",
     "guide": "Anleitung zur Einrichtung von Zahlungslinks",
     "lightBadge": "Helles Abzeichen (für dunkle Hintergründe)",

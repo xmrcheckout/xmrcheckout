@@ -403,7 +403,7 @@
     "title": "Linki płatności",
     "unavailable": "Linki płatności są niedostępne. Odśwież, aby spróbować ponownie.",
     "intro": "Utwórz przycisk HTML wielokrotnego użytku, aby przyjmować darowizny lub sprzedawać produkty i usługi. Każde wysłanie tworzy osobną prośbę o płatność w XMR, opłacaną bezpośrednio na twój portfel.",
-    "allowanceNote": "Publiczne tworzenie próśb o płatność ma dzienny limit i korzysta z tej samej puli adresów.",
+    "allowanceNote": "Każdy, kto ma twój link, może utworzyć prośbę o płatność, dlatego linki mają dzienny limit. Dzięki temu w puli adresów zostaje dość wolnych adresów na twoje własne płatności.",
     "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt”, ustaw Tekst przycisku na „Wesprzyj w Monero” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Płatności cykliczne nie są obsługiwane.",
     "guide": "Poradnik konfiguracji linków płatności",
     "lightBadge": "Jasna odznaka (na ciemne tło)",

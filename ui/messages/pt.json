@@ -397,7 +397,7 @@
     "title": "Links de pagamento",
     "unavailable": "Os links de pagamento estão indisponíveis. Atualize para tentar novamente.",
     "intro": "Crie um botão HTML reutilizável para receber doações ou vender produtos e serviços. Cada envio cria uma fatura XMR separada, paga diretamente na sua carteira.",
-    "allowanceNote": "A criação pública de faturas tem uma cota diária e compartilha a sua capacidade de endereços.",
+    "allowanceNote": "Qualquer pessoa com o seu link pode criar uma fatura, por isso os links têm uma cota diária. Assim sobram endereços de fatura livres suficientes para o seu próprio pagamento.",
     "donationTip": "Para contribuições, use um título como “Apoie o meu projeto”, defina o Texto do botão como “Doar com Monero” e escolha “O cliente informa o valor” para que os doadores digitem o próprio valor. Cobranças recorrentes não são suportadas.",
     "guide": "Guia de configuração de links de pagamento",
     "lightBadge": "Selo claro (para fundos escuros)",

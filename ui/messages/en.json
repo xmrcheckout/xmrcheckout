@@ -397,7 +397,7 @@
     "title": "Payment links",
     "unavailable": "Payment links are unavailable. Refresh to try again.",
     "intro": "Create a reusable HTML button to accept donations or sell products and services. Each submission creates a separate XMR invoice paid directly to your wallet.",
-    "allowanceNote": "Public invoice creation has a daily allowance and shares your address capacity.",
+    "allowanceNote": "Anyone with your link can create an invoice, so links have a daily allowance. This keeps enough invoice addresses free for your own checkout.",
     "donationTip": "For contributions, use a title such as “Support my project”, set Button text to “Donate with Monero”, and choose “Customer enters the amount” so donors type their own amount. Recurring collection is not supported.",
     "guide": "Payment link setup guide",
     "lightBadge": "Light badge (for dark backgrounds)",

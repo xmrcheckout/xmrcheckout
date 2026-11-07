@@ -397,7 +397,7 @@
     "title": "Liens de paiement",
     "unavailable": "Les liens de paiement sont indisponibles. Actualisez pour réessayer.",
     "intro": "Créez un bouton HTML réutilisable pour recevoir des dons ou vendre des produits et services. Chaque envoi crée une facture XMR distincte, payée directement à votre portefeuille.",
-    "allowanceNote": "La création publique de factures dispose d’un quota quotidien et partage la capacité de vos adresses.",
+    "allowanceNote": "Toute personne disposant de votre lien peut créer une facture, c’est pourquoi les liens ont un quota quotidien. Il reste ainsi assez d’adresses de facture libres pour votre propre paiement.",
     "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet », définissez le texte du bouton sur « Faire un don en Monero » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. La collecte récurrente n’est pas prise en charge.",
     "guide": "Guide de configuration des liens de paiement",
     "lightBadge": "Badge clair (pour fonds sombres)",

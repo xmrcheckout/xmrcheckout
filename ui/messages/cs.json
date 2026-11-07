@@ -219,8 +219,8 @@
     "currency": "Měna",
     "amountHelp": "Zadejte číslo, například 0.05: až 12 desetinných míst pro XMR, 2 pro jiné měny.",
     "minimum": "Minimum: {amount} XMR. Částky v jiných měnách se kontrolují po převodu.",
-    "estimateXmr": "Přibližně {amount} XMR podle aktuálního spotového kurzu CoinGecko. Pouze orientačně, nejde o nabídku.",
-    "estimateFiat": "Přibližně {amount} podle aktuálního spotového kurzu CoinGecko. Pouze orientačně, nejde o nabídku.",
+    "estimateXmr": "Přibližně {amount} XMR",
+    "estimateFiat": "Přibližně {amount}",
     "customerFiatNote": "Částky v jiných měnách se přepočtou na XMR aktuálním kurzem ve chvíli, kdy pokračujete. Kurz není zafixován. Platební stránka uvádí použitý kurz a jeho zdroj."
   },
   "autoLink": {

@@ -213,8 +213,8 @@
     "currency": "货币",
     "amountHelp": "请输入数字，例如 0.05：XMR 最多 12 位小数，其他货币最多 2 位。",
     "minimum": "最低：{amount} XMR。其他货币的金额会在换算后检查。",
-    "estimateXmr": "按 CoinGecko 当前现货汇率约为 {amount} XMR。仅供参考，并非报价。",
-    "estimateFiat": "按 CoinGecko 当前现货汇率约为 {amount}。仅供参考，并非报价。",
+    "estimateXmr": "约{amount} XMR",
+    "estimateFiat": "约{amount}",
     "customerFiatNote": "其他货币的金额会在你继续时按当前汇率换算为 XMR。汇率不会锁定。付款页面会显示所用汇率及其来源。"
   },
   "autoLink": {

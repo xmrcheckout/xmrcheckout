@@ -1765,7 +1765,7 @@
     },
     "metaTitle": "Documentation de l’API de paiement Monero | XMR Checkout",
     "metaDescription": "Intégrez des factures Monero auto-hébergées grâce à l’API XMR Checkout, aux pages de facture publiques, à la détection des confirmations et aux webhooks.",
-    "newToSetup": "<strong>Vous découvrez l’installation ?</strong> Lisez le <selfhost>guide d’auto-hébergement</selfhost> ou suivez le <api>guide de l’API et des webhooks</api>.",
+    "newToSetup": "<strong>Vous préférez un guide pas à pas ?</strong> Lisez le <selfhost>guide d’auto-hébergement</selfhost> ou suivez le <api>guide de l’API et des webhooks</api>.",
     "start": {
       "createBody": "Appelez <code>POST /api/core/invoices</code> et envoyez le client vers l’URL de la facture hébergée.",
       "listenBody": "Abonnez-vous aux webhooks ou interrogez le point de terminaison public de la facture jusqu’à <code>invoice.confirmed</code>."
@@ -1775,6 +1775,17 @@
       "findOperations": "Retrouvez les six opérations dans les groupes Gestion des liens de paiement et Liens de paiement publics du <directory>répertoire des points de terminaison</directory>.",
       "editing": "Pour la modification, PATCH accepte l’ensemble des paramètres avec les champs de création, ou un corps limité à enabled tel que {\"enabled\": false}. La réactivation avec {\"enabled\": true} valide les paramètres enregistrés. Les mises à jour complètes remplacent les champs facultatifs omis par leurs valeurs par défaut. Les URL renvoyées restent stables ; les factures existantes conservent la copie de leurs paramètres produit.",
       "publicPost": "Un formulaire à montant fixe envoie un POST public vide, sans identifiants du commerçant ; un formulaire à montant saisi par le client n’envoie que amount et currency (par exemple amount=0.05&currency=XMR). Les clients automatiques peuvent envoyer un en-tête Idempotency-Key contenant un UUID et Accept: application/json. Une nouvelle tentative renvoie 201 ; une répétition renvoie 200 avec les mêmes invoice_url, status et expires_at. Enregistrez la clé avant de demander la création et conservez-la après une réponse interrompue. GET et HEAD ne créent jamais de facture. Voici un exemple d’échange réussi :"
+    },
+    "terminals": {
+      "title": "Terminaux pour la vente en personne",
+      "body": "Un terminal est un lien ouvert sur une tablette ou un téléphone à la caisse. Le personnel saisit un montant, et le client scanne le code QR avec son portefeuille. Chaque vente est une facture XMR normale payée directement sur le portefeuille du commerçant. Le lien du terminal contient sa propre clé, qui peut seulement créer, lire et annuler les factures de ce terminal : l’appareil ne détient donc jamais la clé API du commerçant.",
+      "guideBody": "<guide>Suivez le guide de la vente en personne</guide> pour configurer une caisse, la capacité d’adresses, les confirmations et ce que voient le personnel et les clients. Les opérations d’API ci-dessous permettent de gérer les terminaux et de créer une caisse personnalisée.",
+      "create": "Créez un terminal avec une clé API du commerçant conservée sur votre serveur. L’objectif de confirmations (0-10, 0 par défaut) et l’expiration (2-60 minutes, 15 par défaut) s’appliquent à chaque vente de ce terminal.",
+      "createResponse": "La réponse 201 inclut les paramètres enregistrés et le lien du terminal. La clé après #k= n’est affichée qu’une fois ; conservez-la sur l’appareil de caisse ou effectuez une rotation du terminal pour en obtenir une nouvelle.",
+      "sale": "Une caisse crée une vente avec la clé du terminal. Envoyez une Idempotency-Key au format UUID et conservez-la jusqu’à la réponse ; la renvoyer renvoie 200 avec la même facture au lieu d’en créer une autre.",
+      "saleResponse": "La réponse inclut ces champs sélectionnés. Affichez l’adresse et le montant au client, ou ouvrez invoice_url.",
+      "polling": "Interrogez GET /api/core/terminal/invoices/{invoice_id} pour suivre la détection et les confirmations. Pour mettre fin à une vente impayée, envoyez un POST à son chemin d’annulation ; il renvoie 409 dès qu’un paiement a été vu ou que la facture est close.",
+      "findOperations": "Retrouvez les huit opérations dans le groupe Terminaux du <directory>répertoire des points de terminaison</directory>."
     },
     "btcpay": {
       "baseUrl": "L’URL de base utilise <code>/api/v1</code>"

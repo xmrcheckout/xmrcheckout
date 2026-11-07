@@ -1785,7 +1785,7 @@
     },
     "metaTitle": "Dokumentace platebního API Monero | XMR Checkout",
     "metaDescription": "Integrujte samostatně hostované platební výzvy v Monero pomocí API XMR Checkout, veřejných stránek platebních výzev, detekce potvrzení a webhooků.",
-    "newToSetup": "<strong>Začínáte s nastavením?</strong> Přečtěte si <selfhost>návod k vlastnímu hostingu</selfhost> nebo postupujte podle <api>návodu k API a webhookům</api>.",
+    "newToSetup": "<strong>Chcete postup krok za krokem?</strong> Přečtěte si <selfhost>návod k vlastnímu hostingu</selfhost> nebo postupujte podle <api>návodu k API a webhookům</api>.",
     "start": {
       "createBody": "Zavolejte <code>POST /api/core/invoices</code> a pošlete zákazníka na URL hostované platební výzvy.",
       "listenBody": "Přihlaste se k odběru webhooků nebo se dotazujte na veřejný endpoint platebních výzev, dokud nenastane <code>invoice.confirmed</code>."
@@ -1795,6 +1795,17 @@
       "findOperations": "Šest operací najdete ve skupinách Správa platebních odkazů a Veřejné platební odkazy v <directory>přehledu endpointů</directory>.",
       "editing": "Pro úpravy PATCH přijímá kompletní nastavení s poli pro vytvoření, nebo tělo obsahující pouze enabled, například {\"enabled\": false}. Opětovné povolení pomocí {\"enabled\": true} ověří uložená nastavení. Aktualizace s kompletním nastavením nahradí vynechaná volitelná pole výchozími hodnotami. Vrácené URL zůstávají stejné; stávající platební výzvy si ponechávají snímky produktu.",
       "publicPost": "Formulář s pevnou částkou odešle prázdný veřejný POST bez přístupových údajů obchodníka; formulář s částkou zadávanou zákazníkem odešle pouze amount a currency (například amount=0.05&currency=XMR). Automatizovaní klienti mohou poslat hlavičku Idempotency-Key s UUID a Accept: application/json. Nový pokus vrací 201; opakování vrací 200 se stejnými invoice_url, status a expires_at. Klíč si uložte před požadavkem na vytvoření a po přerušených odpovědích si ho ponechte. GET a HEAD nikdy platební výzvy nevytvářejí. Ukázková úspěšná výměna:"
+    },
+    "terminals": {
+      "title": "Terminály pro prodej na místě",
+      "body": "Terminál je odkaz otevřený na tabletu nebo telefonu u pokladny. Obsluha zadá částku a zákazník naskenuje QR kód svou peněženkou. Každý prodej je běžná platební výzva v XMR placená přímo do peněženky obchodníka. Odkaz terminálu nese vlastní klíč, který umí jen vytvářet, číst a rušit platební výzvy tohoto terminálu, takže zařízení nikdy neuchovává API klíč obchodníka.",
+      "guideBody": "<guide>Postupujte podle průvodce prodejem na místě</guide> pro nastavení pokladny, zásobu adres, potvrzení a to, co vidí obsluha a zákazníci. Níže uvedené operace API umožňují spravovat terminály a vytvořit vlastní pokladnu.",
+      "create": "Vytvořte terminál pomocí API klíče obchodníka uloženého na vašem serveru. Požadovaný počet potvrzení (0-10, výchozí 0) a platnost (2-60 minut, výchozí 15) platí pro každý prodej z tohoto terminálu.",
+      "createResponse": "Odpověď 201 obsahuje uložené nastavení a odkaz terminálu. Klíč za #k= se zobrazí jen jednou; uložte ho do pokladního zařízení, nebo proveďte rotaci terminálu a získejte nový.",
+      "sale": "Pokladna vytvoří prodej klíčem terminálu. Pošlete Idempotency-Key ve formátu UUID a uchovejte ho, dokud nepřijde odpověď; jeho opakování vrátí 200 se stejnou platební výzvou místo vytvoření další.",
+      "saleResponse": "Odpověď obsahuje tato vybraná pole. Ukažte zákazníkovi adresu a částku, nebo otevřete invoice_url.",
+      "polling": "Dotazujte se na GET /api/core/terminal/invoices/{invoice_id} a sledujte detekci a potvrzení. Nezaplacený prodej ukončíte odesláním POST na jeho cestu pro zrušení; vrátí 409, jakmile byla zaznamenána platba nebo je platební výzva uzavřená.",
+      "findOperations": "Osm operací najdete ve skupině Terminály v <directory>přehledu endpointů</directory>."
     },
     "btcpay": {
       "baseUrl": "Základní URL používá <code>/api/v1</code>"

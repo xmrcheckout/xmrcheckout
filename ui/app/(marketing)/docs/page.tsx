@@ -844,6 +844,7 @@ export default async function DocsPage() {
           {[
             { href: "#start", label: t("docs.navStart") },
             { href: "#payment-links", label: t("paymentLinks.title") },
+            { href: "#terminals", label: t("docs.ref.r011") },
             { href: "#fiat-inputs", label: t("docs.navFiat") },
             { href: "#concepts", label: t("docs.navConcepts") },
             { href: "#api-reference", label: t("docs.apiReference") },
@@ -992,6 +993,59 @@ Location: https://checkout.example/invoice/NEW_INVOICE_ID`}</code></CopyCodeBloc
             <p className="mt-3">{t("docs.links.editing")}</p>
           </details>
           <p>{rich(t("docs.links.findOperations"), { directory: (text) => <a href="#api-reference" className="font-semibold underline underline-offset-4">{text}</a> })}</p>
+        </section>
+
+        <section id="terminals" aria-labelledby="terminals-title" className="mt-10 grid min-w-0 scroll-mt-24 gap-5 break-words rounded-surface border border-stroke bg-card p-5 sm:p-8">
+          <h2 id="terminals-title" className="font-sans text-2xl font-semibold">{t("docs.terminals.title")}</h2>
+          <p>{t("docs.terminals.body")}</p>
+          <p>{rich(t("docs.terminals.guideBody"), {
+            guide: (text) => <Link className="font-semibold underline decoration-clay underline-offset-4" href="/guides/in-person-monero-checkout">{text}</Link>,
+          })}</p>
+          <details className="min-w-0 rounded-xl border border-stroke p-4">
+            <summary className="min-h-11 cursor-pointer font-semibold">{t("docs.examplesSummary")}</summary>
+            <p className="mt-3">{t("docs.terminals.create")}</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/terminals
+Authorization: ApiKey YOUR_MERCHANT_API_KEY
+Content-Type: application/json
+
+{
+  "name": "Front counter",
+  "default_currency": "EUR",
+  "confirmation_target": 0,
+  "expiry_minutes": 15
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">{t("docs.terminals.createResponse")}</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`{
+  "id": "00000000-0000-4000-8000-000000000002",
+  "name": "Front counter",
+  "enabled": true,
+  "url": "https://checkout.example/terminal#k=xmrterm_YOUR_TERMINAL_KEY"
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">{t("docs.terminals.sale")}</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`POST /api/core/terminal/invoices
+Authorization: Terminal xmrterm_YOUR_TERMINAL_KEY
+Idempotency-Key: 6f1c2b9e-8d4a-4c3e-9b7f-2a5d1e0c4b88
+Content-Type: application/json
+
+{
+  "amount": "12.50",
+  "currency": "EUR",
+  "note": "Table 4"
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">{t("docs.terminals.saleResponse")}</p>
+            <CopyCodeBlock className={codeBlockClass}><code>{`{
+  "id": "00000000-0000-4000-8000-000000000003",
+  "status": "pending",
+  "amount_xmr": "0.041234567890",
+  "address": "8YOUR_INVOICE_SUBADDRESS",
+  "confirmation_target": 0,
+  "expires_at": "2026-11-07T12:15:00Z",
+  "note": "Table 4",
+  "invoice_url": "https://checkout.example/invoice/00000000-0000-4000-8000-000000000003"
+}`}</code></CopyCodeBlock>
+            <p className="mt-3">{t("docs.terminals.polling")}</p>
+          </details>
+          <p>{rich(t("docs.terminals.findOperations"), { directory: (text) => <a href="#api-reference" className="font-semibold underline underline-offset-4">{text}</a> })}</p>
         </section>
 
         <section

@@ -1765,7 +1765,7 @@
     },
     "metaTitle": "Documentação da API de pagamentos Monero | XMR Checkout",
     "metaDescription": "Integre faturas Monero auto-hospedadas com a API do XMR Checkout, páginas públicas de fatura, detecção de confirmações e webhooks.",
-    "newToSetup": "<strong>Começando agora?</strong> Leia o <selfhost>guia de auto-hospedagem</selfhost> ou siga o <api>guia de API e webhooks</api>.",
+    "newToSetup": "<strong>Prefere um passo a passo?</strong> Leia o <selfhost>guia de auto-hospedagem</selfhost> ou siga o <api>guia de API e webhooks</api>.",
     "start": {
       "createBody": "Chame <code>POST /api/core/invoices</code> e envie o cliente para a URL da fatura hospedada.",
       "listenBody": "Assine webhooks ou consulte periodicamente o endpoint público da fatura até <code>invoice.confirmed</code>."
@@ -1775,6 +1775,17 @@
       "findOperations": "Encontre as seis operações nos grupos Gestão de links de pagamento e Links de pagamento públicos no <directory>diretório de endpoints</directory>.",
       "editing": "Para editar, o PATCH aceita as configurações completas usando os campos de criação ou um corpo apenas com enabled, como {\"enabled\": false}. Reativar com {\"enabled\": true} valida as configurações salvas. Atualizações com configurações completas substituem os campos opcionais omitidos pelos valores padrão. As URLs retornadas permanecem estáveis; as faturas existentes mantêm os instantâneos do produto.",
       "publicPost": "Um formulário de valor fixo envia um POST público vazio, sem credenciais do comerciante; um formulário com valor informado pelo cliente envia apenas amount e currency (por exemplo amount=0.05&currency=XMR). Clientes automáticos podem enviar um cabeçalho Idempotency-Key com um UUID e Accept: application/json. Uma nova tentativa retorna 201; uma repetição retorna 200 com o mesmo invoice_url, status e expires_at. Salve a chave antes de solicitar a criação e guarde-a após respostas interrompidas. GET e HEAD nunca criam faturas. Uma troca bem-sucedida ilustrativa é:"
+    },
+    "terminals": {
+      "title": "Terminais para vendas presenciais",
+      "body": "Um terminal é um link aberto em um tablet ou celular no caixa. A equipe digita um valor e o cliente escaneia o código QR com a carteira. Cada venda é uma fatura normal em XMR paga diretamente na carteira do comerciante. O link do terminal tem a própria chave, que só pode criar, consultar e cancelar as faturas daquele terminal, então o dispositivo nunca guarda a chave de API do comerciante.",
+      "guideBody": "<guide>Siga o guia de checkout presencial</guide> para configurar um caixa, a capacidade de endereços, as confirmações e o que a equipe e os clientes veem. As operações de API abaixo permitem gerenciar terminais e criar um caixa personalizado.",
+      "create": "Crie um terminal com uma chave de API do comerciante guardada no seu servidor. A meta de confirmações (0-10, padrão 0) e a expiração (2-60 minutos, padrão 15) valem para todas as vendas desse terminal.",
+      "createResponse": "A resposta 201 inclui as configurações salvas e o link do terminal. A chave depois de #k= é mostrada só uma vez; guarde-a no dispositivo do caixa ou faça a rotação do terminal para obter uma nova.",
+      "sale": "Um caixa cria uma venda com a chave do terminal. Envie um Idempotency-Key UUID e guarde-o até chegar uma resposta; repeti-lo retorna 200 com a mesma fatura em vez de criar outra.",
+      "saleResponse": "A resposta inclui estes campos selecionados. Mostre o endereço e o valor ao cliente ou abra invoice_url.",
+      "polling": "Consulte GET /api/core/terminal/invoices/{invoice_id} para acompanhar a detecção e as confirmações. Para encerrar uma venda não paga, envie POST para o caminho de cancelamento; ele retorna 409 quando um pagamento já foi visto ou a fatura foi encerrada.",
+      "findOperations": "Encontre as oito operações no grupo Terminais do <directory>diretório de endpoints</directory>."
     },
     "btcpay": {
       "baseUrl": "A URL base usa <code>/api/v1</code>"

@@ -1755,7 +1755,7 @@
     },
     "metaTitle": "门罗币付款 API 文档 | XMR Checkout",
     "metaDescription": "通过 XMR Checkout API、公开账单页面、确认检测和 Webhook 集成自托管的门罗币账单。",
-    "newToSetup": "<strong>第一次设置？</strong>请阅读<selfhost>自托管指南</selfhost>或按照 <api>API 和 Webhook 指南</api>操作。",
+    "newToSetup": "<strong>想要分步说明？</strong>请阅读<selfhost>自托管指南</selfhost>或按照 <api>API 和 Webhook 指南</api>操作。",
     "start": {
       "createBody": "调用 <code>POST /api/core/invoices</code>，然后将顾客引导到托管账单 URL。",
       "listenBody": "订阅 Webhook，或轮询公开账单端点，直到出现 <code>invoice.confirmed</code>。"
@@ -1765,6 +1765,17 @@
       "findOperations": "在<directory>端点目录</directory>的“付款链接管理”和“公开付款链接”分组中可以找到这六个操作。",
       "editing": "编辑时，PATCH 接受使用创建字段的完整设置，或仅包含 enabled 的请求体，例如 {\"enabled\": false}。使用 {\"enabled\": true} 重新启用时会验证已保存的设置。完整设置更新会将省略的可选字段替换为默认值。返回的 URL 保持不变；现有账单保留其商品快照。",
       "publicPost": "固定金额表单会发送一个空的公开 POST，不带商家凭据；由顾客输入金额的表单只发送 amount 和 currency（例如 amount=0.05&currency=XMR）。自动化客户端可以发送 UUID 格式的 Idempotency-Key 请求头和 Accept: application/json。新的尝试返回 201；重放返回 200，并附带相同的 invoice_url、status 和 expires_at。请在申请创建前保存该密钥，并在响应中断后保留它。GET 和 HEAD 绝不会创建账单。一次成功交互的示例如下："
+    },
+    "terminals": {
+      "title": "线下收款终端",
+      "body": "收款终端是在收银台的平板电脑或手机上打开的链接。店员输入金额，顾客用钱包扫描二维码。每笔销售都是一张普通的 XMR 账单，款项直接付到商家的钱包。终端链接带有自己的密钥，只能创建、读取和取消该终端的账单，因此设备上从不保存商家的 API 密钥。",
+      "guideBody": "<guide>参阅线下收款指南</guide>，了解如何设置收银台、地址容量、确认数，以及店员和顾客会看到什么。下面的 API 操作可用于管理收款终端和构建自定义收银台。",
+      "create": "使用保存在你服务器上的商家 API 密钥创建收款终端。确认目标（0-10，默认 0）和有效期（2-60 分钟，默认 15）适用于该终端的每笔销售。",
+      "createResponse": "201 响应包含已保存的设置和终端链接。#k= 之后的密钥只显示一次；请将其保存在收银设备上，或轮换终端以获取新密钥。",
+      "sale": "收银台使用终端密钥创建销售。发送 UUID 格式的 Idempotency-Key，并在收到响应前一直保留；重放该键会返回 200 和同一张账单，而不会再创建一张。",
+      "saleResponse": "响应包含以下选定字段。向顾客展示地址和金额，或打开 invoice_url。",
+      "polling": "读取 GET /api/core/terminal/invoices/{invoice_id} 以跟踪检测和确认。要结束未付款的销售，请向其取消路径发送 POST；一旦已看到付款或账单已关闭，它会返回 409。",
+      "findOperations": "在<directory>端点目录</directory>的“收款终端”分组中可以找到这八个操作。"
     },
     "btcpay": {
       "baseUrl": "基础 URL 使用 <code>/api/v1</code>"

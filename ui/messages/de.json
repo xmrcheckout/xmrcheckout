@@ -1765,7 +1765,7 @@
     },
     "metaTitle": "Dokumentation der Monero-Zahlungs-API | XMR Checkout",
     "metaDescription": "Integrieren Sie selbst gehostete Monero-Rechnungen mit der XMR-Checkout-API, öffentlichen Rechnungsseiten, Bestätigungserkennung und Webhooks.",
-    "newToSetup": "<strong>Neu bei der Einrichtung?</strong> Lesen Sie die <selfhost>Anleitung zum Selbsthosten</selfhost> oder folgen Sie der <api>Anleitung zu API und Webhooks</api>.",
+    "newToSetup": "<strong>Lieber Schritt für Schritt?</strong> Lesen Sie die <selfhost>Anleitung zum Selbsthosten</selfhost> oder folgen Sie der <api>Anleitung zu API und Webhooks</api>.",
     "start": {
       "createBody": "Rufen Sie <code>POST /api/core/invoices</code> auf und schicken Sie den Kunden zur URL der gehosteten Rechnung.",
       "listenBody": "Abonnieren Sie Webhooks oder fragen Sie den öffentlichen Rechnungsendpunkt ab, bis <code>invoice.confirmed</code> eintritt."
@@ -1775,6 +1775,17 @@
       "findOperations": "Die sechs Operationen finden Sie in den Gruppen „Verwaltung von Zahlungslinks“ und „Öffentliche Zahlungslinks“ im <directory>Endpunktverzeichnis</directory>.",
       "editing": "Zum Bearbeiten akzeptiert PATCH vollständige Einstellungen mit den Feldern der Erstellung oder einen Body nur mit enabled, etwa {\"enabled\": false}. Erneutes Aktivieren mit {\"enabled\": true} prüft die gespeicherten Einstellungen. Bei Aktualisierungen mit vollständigen Einstellungen werden weggelassene optionale Felder durch Standardwerte ersetzt. Die zurückgegebenen URLs bleiben stabil; bestehende Rechnungen behalten ihre Produkt-Momentaufnahmen.",
       "publicPost": "Ein Formular mit festem Betrag sendet einen leeren öffentlichen POST ohne Händler-Zugangsdaten; ein Formular mit Kundenbetrag sendet nur amount und currency (zum Beispiel amount=0.05&currency=XMR). Automatische Clients können einen UUID-Header Idempotency-Key und Accept: application/json senden. Ein neuer Versuch liefert 201; eine Wiederholung liefert 200 mit derselben invoice_url, demselben status und expires_at. Speichern Sie den Schlüssel, bevor Sie die Erstellung anfordern, und behalten Sie ihn nach unterbrochenen Antworten. GET und HEAD erstellen nie Rechnungen. Ein beispielhafter erfolgreicher Austausch:"
+    },
+    "terminals": {
+      "title": "Terminals für den Verkauf vor Ort",
+      "body": "Ein Terminal ist ein Link, der auf einem Tablet oder Smartphone an der Kasse geöffnet wird. Das Personal tippt einen Betrag ein, und der Kunde scannt den QR-Code mit seiner Wallet. Jeder Verkauf ist eine normale XMR-Rechnung, die direkt an die Wallet des Händlers bezahlt wird. Der Terminal-Link enthält einen eigenen Schlüssel, der nur Rechnungen dieses Terminals erstellen, lesen und stornieren kann, sodass das Gerät nie den API-Schlüssel des Händlers speichert.",
+      "guideBody": "<guide>Folgen Sie der Anleitung für den Verkauf vor Ort</guide> zur Einrichtung einer Kasse, Adresskapazität, Bestätigungen und dazu, was Personal und Kunden sehen. Mit den folgenden API-Operationen verwalten Sie Terminals und bauen eine eigene Kasse.",
+      "create": "Erstellen Sie ein Terminal mit einem API-Schlüssel des Händlers, der auf Ihrem Server liegt. Bestätigungsziel (0-10, Standard 0) und Ablaufzeit (2-60 Minuten, Standard 15) gelten für jeden Verkauf dieses Terminals.",
+      "createResponse": "Die Antwort 201 enthält die gespeicherten Einstellungen und den Terminal-Link. Der Schlüssel nach #k= wird nur einmal angezeigt; speichern Sie ihn auf dem Kassengerät oder erzeugen Sie für das Terminal einen neuen Link.",
+      "sale": "Eine Kasse erstellt einen Verkauf mit dem Terminal-Schlüssel. Senden Sie einen Idempotency-Key als UUID und bewahren Sie ihn auf, bis eine Antwort eintrifft; eine Wiederholung liefert 200 mit derselben Rechnung, statt eine weitere zu erstellen.",
+      "saleResponse": "Die Antwort enthält diese ausgewählten Felder. Zeigen Sie dem Kunden Adresse und Betrag oder öffnen Sie invoice_url.",
+      "polling": "Fragen Sie GET /api/core/terminal/invoices/{invoice_id} ab, um Erkennung und Bestätigungen zu verfolgen. Um einen unbezahlten Verkauf zu beenden, senden Sie POST an seinen Stornierungspfad; er liefert 409, sobald eine Zahlung gesehen wurde oder die Rechnung geschlossen ist.",
+      "findOperations": "Die acht Operationen finden Sie in der Gruppe „Terminals“ im <directory>Endpunktverzeichnis</directory>."
     },
     "btcpay": {
       "baseUrl": "Die Basis-URL verwendet <code>/api/v1</code>"

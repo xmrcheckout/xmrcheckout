@@ -1785,7 +1785,7 @@
     },
     "metaTitle": "Dokumentacja API płatności Monero | XMR Checkout",
     "metaDescription": "Zintegruj samodzielnie hostowane prośby o płatność w Monero z API XMR Checkout, publicznymi stronami płatności, wykrywaniem potwierdzeń i webhookami.",
-    "newToSetup": "<strong>Zaczynasz od zera?</strong> Przeczytaj <selfhost>poradnik samodzielnego hostingu</selfhost> lub <api>poradnik API i webhooków</api>.",
+    "newToSetup": "<strong>Wolisz instrukcję krok po kroku?</strong> Przeczytaj <selfhost>poradnik samodzielnego hostingu</selfhost> lub <api>poradnik API i webhooków</api>.",
     "start": {
       "createBody": "Wywołaj <code>POST /api/core/invoices</code> i skieruj klienta pod adres URL hostowanej prośby o płatność.",
       "listenBody": "Subskrybuj webhooki lub odpytuj publiczny endpoint prośby o płatność aż do <code>invoice.confirmed</code>."
@@ -1795,6 +1795,17 @@
       "findOperations": "Sześć operacji znajdziesz w grupach Zarządzanie linkami płatności i Publiczne linki płatności w <directory>katalogu endpointów</directory>.",
       "editing": "Przy edycji PATCH przyjmuje pełne ustawienia z użyciem pól tworzenia albo treść zawierającą tylko enabled, np. {\"enabled\": false}. Ponowne włączenie przez {\"enabled\": true} weryfikuje zapisane ustawienia. Aktualizacja pełnych ustawień zastępuje pominięte pola opcjonalne wartościami domyślnymi. Zwrócone adresy URL się nie zmieniają; istniejące prośby o płatność zachowują migawki produktu.",
       "publicPost": "Formularz ze stałą kwotą wysyła pusty publiczny POST, bez danych dostępowych sprzedawcy; formularz z kwotą wpisywaną przez klienta wysyła tylko amount i currency (np. amount=0.05&currency=XMR). Klienci automatyczni mogą wysłać nagłówek Idempotency-Key z UUID oraz Accept: application/json. Nowa próba zwraca 201; powtórzenie zwraca 200 z tymi samymi invoice_url, status i expires_at. Zapisz klucz przed żądaniem utworzenia i zachowaj go po przerwanych odpowiedziach. GET i HEAD nigdy nie tworzą próśb o płatność. Przykładowa udana wymiana wygląda tak:"
+    },
+    "terminals": {
+      "title": "Terminale do sprzedaży stacjonarnej",
+      "body": "Terminal to link otwierany na tablecie lub telefonie przy kasie. Personel wpisuje kwotę, a klient skanuje kod QR swoim portfelem. Każda sprzedaż to zwykła prośba o płatność w XMR opłacana bezpośrednio do portfela sprzedawcy. Link terminala zawiera własny klucz, który może tylko tworzyć, odczytywać i anulować prośby o płatność tego terminala, więc urządzenie nigdy nie przechowuje klucza API sprzedawcy.",
+      "guideBody": "<guide>Skorzystaj z przewodnika po płatnościach stacjonarnych</guide>, aby skonfigurować kasę, pulę adresów, potwierdzenia i sprawdzić, co widzą personel i klienci. Poniższe operacje API pozwalają zarządzać terminalami i zbudować własną kasę.",
+      "create": "Utwórz terminal kluczem API sprzedawcy przechowywanym na Twoim serwerze. Wymagana liczba potwierdzeń (0-10, domyślnie 0) i czas ważności (2-60 minut, domyślnie 15) dotyczą każdej sprzedaży z tego terminala.",
+      "createResponse": "Odpowiedź 201 zawiera zapisane ustawienia i link terminala. Klucz po #k= jest pokazywany tylko raz; zapisz go na urządzeniu kasowym lub wygeneruj nowy link terminala.",
+      "sale": "Kasa tworzy sprzedaż kluczem terminala. Wyślij nagłówek Idempotency-Key z UUID i zachowaj go do otrzymania odpowiedzi; ponowienie z nim zwraca 200 z tą samą prośbą o płatność zamiast tworzyć nową.",
+      "saleResponse": "Odpowiedź zawiera te wybrane pola. Pokaż klientowi adres i kwotę albo otwórz invoice_url.",
+      "polling": "Odpytuj GET /api/core/terminal/invoices/{invoice_id}, aby śledzić wykrycie i potwierdzenia. Aby zakończyć nieopłaconą sprzedaż, wyślij POST na jej ścieżkę anulowania; zwraca 409, gdy płatność została już zauważona lub prośba o płatność jest zamknięta.",
+      "findOperations": "Osiem operacji znajdziesz w grupie Terminale w <directory>katalogu endpointów</directory>."
     },
     "btcpay": {
       "baseUrl": "Bazowy URL używa <code>/api/v1</code>"

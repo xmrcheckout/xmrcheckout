@@ -1765,7 +1765,7 @@
     },
     "metaTitle": "Documentazione dell'API di pagamento Monero | XMR Checkout",
     "metaDescription": "Integra richieste di pagamento Monero in self-hosting con l'API di XMR Checkout, pagine pubbliche delle richieste di pagamento, rilevamento delle conferme e webhook.",
-    "newToSetup": "<strong>Alle prime armi con la configurazione?</strong> Leggi la <selfhost>guida al self-hosting</selfhost> o segui la <api>guida ad API e webhook</api>.",
+    "newToSetup": "<strong>Preferisci una guida passo passo?</strong> Leggi la <selfhost>guida al self-hosting</selfhost> o segui la <api>guida ad API e webhook</api>.",
     "start": {
       "createBody": "Chiama <code>POST /api/core/invoices</code> e manda il cliente all'URL della richiesta di pagamento ospitata.",
       "listenBody": "Iscriviti ai webhook o interroga periodicamente l'endpoint pubblico della richiesta di pagamento fino a <code>invoice.confirmed</code>."
@@ -1775,6 +1775,17 @@
       "findOperations": "Trovi le sei operazioni nei gruppi Gestione dei link di pagamento e Link di pagamento pubblici nella <directory>directory degli endpoint</directory>.",
       "editing": "Per la modifica, PATCH accetta le impostazioni complete con i campi di creazione oppure un corpo con il solo enabled, come {\"enabled\": false}. La riattivazione con {\"enabled\": true} convalida le impostazioni salvate. Gli aggiornamenti completi sostituiscono i campi facoltativi omessi con i valori predefiniti. Gli URL restituiti restano stabili; le richieste di pagamento esistenti mantengono le istantanee del prodotto.",
       "publicPost": "Un modulo a importo fisso invia un POST pubblico vuoto, senza credenziali dell'esercente; un modulo con importo inserito dal cliente invia solo amount e currency (per esempio amount=0.05&currency=XMR). I client automatici possono inviare un'intestazione Idempotency-Key con un UUID e Accept: application/json. Un nuovo tentativo restituisce 201; una ripetizione restituisce 200 con gli stessi invoice_url, status ed expires_at. Salva la chiave prima di richiedere la creazione e conservala dopo risposte interrotte. GET e HEAD non creano mai richieste di pagamento. Uno scambio riuscito di esempio è:"
+    },
+    "terminals": {
+      "title": "Terminali per la vendita di persona",
+      "body": "Un terminale è un link aperto su un tablet o un telefono alla cassa. Il personale inserisce un importo e il cliente scansiona il codice QR con il proprio wallet. Ogni vendita è una normale richiesta di pagamento in XMR pagata direttamente al wallet dell'esercente. Il link del terminale contiene una propria chiave, che può solo creare, leggere e annullare le richieste di pagamento di quel terminale, quindi il dispositivo non conserva mai la chiave API dell'esercente.",
+      "guideBody": "<guide>Segui la guida al checkout di persona</guide> per configurare una cassa, la capacità di indirizzi, le conferme e ciò che vedono personale e clienti. Le operazioni API qui sotto permettono di gestire i terminali e creare una cassa personalizzata.",
+      "create": "Crea un terminale con una chiave API dell'esercente conservata sul tuo server. L'obiettivo di conferme (0-10, predefinito 0) e la scadenza (2-60 minuti, predefinita 15) valgono per ogni vendita di quel terminale.",
+      "createResponse": "La risposta 201 include le impostazioni salvate e il link del terminale. La chiave dopo #k= viene mostrata una sola volta; conservala sul dispositivo della cassa o ruota il terminale per ottenerne una nuova.",
+      "sale": "Una cassa crea una vendita con la chiave del terminale. Invia una Idempotency-Key UUID e conservala finché non arriva una risposta; ripeterla restituisce 200 con la stessa richiesta di pagamento invece di crearne un'altra.",
+      "saleResponse": "La risposta include questi campi selezionati. Mostra indirizzo e importo al cliente oppure apri invoice_url.",
+      "polling": "Leggi GET /api/core/terminal/invoices/{invoice_id} per seguire rilevamento e conferme. Per chiudere una vendita non pagata, invia POST al suo percorso di annullamento; restituisce 409 se è già stato visto un pagamento o la richiesta di pagamento è chiusa.",
+      "findOperations": "Trovi le otto operazioni nel gruppo Terminali nella <directory>directory degli endpoint</directory>."
     },
     "btcpay": {
       "baseUrl": "L'URL di base usa <code>/api/v1</code>"

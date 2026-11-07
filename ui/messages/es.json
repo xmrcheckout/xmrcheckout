@@ -1765,7 +1765,7 @@
     },
     "metaTitle": "Documentación de la API de pagos con Monero | XMR Checkout",
     "metaDescription": "Integra facturas de Monero autoalojadas con la API de XMR Checkout, las páginas públicas de factura, la detección de confirmaciones y los webhooks.",
-    "newToSetup": "<strong>¿Es tu primera instalación?</strong> Lee la <selfhost>guía de autoalojamiento</selfhost> o sigue la <api>guía de la API y los webhooks</api>.",
+    "newToSetup": "<strong>¿Prefieres una guía paso a paso?</strong> Lee la <selfhost>guía de autoalojamiento</selfhost> o sigue la <api>guía de la API y los webhooks</api>.",
     "start": {
       "createBody": "Llama a <code>POST /api/core/invoices</code> y envía al cliente a la URL de la factura alojada.",
       "listenBody": "Suscríbete a los webhooks o consulta periódicamente el endpoint público de la factura hasta <code>invoice.confirmed</code>."
@@ -1775,6 +1775,17 @@
       "findOperations": "Encontrarás las seis operaciones en los grupos Gestión de enlaces de pago y Enlaces de pago públicos del <directory>directorio de endpoints</directory>.",
       "editing": "Para editar, PATCH acepta la configuración completa con los campos de creación, o un cuerpo con solo enabled, como {\"enabled\": false}. Volver a activar con {\"enabled\": true} valida la configuración guardada. Las actualizaciones completas reemplazan los campos opcionales omitidos por sus valores predeterminados. Las URL devueltas no cambian; las facturas existentes conservan su copia del producto.",
       "publicPost": "Un formulario de importe fijo envía un POST público vacío, sin credenciales del comercio; un formulario con importe introducido por el cliente solo envía amount y currency (por ejemplo amount=0.05&currency=XMR). Los clientes automáticos pueden enviar un encabezado Idempotency-Key con un UUID y Accept: application/json. Un intento nuevo devuelve 201; repetirlo devuelve 200 con los mismos invoice_url, status y expires_at. Guarda la clave antes de solicitar la creación y consérvala tras una respuesta interrumpida. GET y HEAD nunca crean facturas. Un intercambio correcto de ejemplo es:"
+    },
+    "terminals": {
+      "title": "Terminales presenciales",
+      "body": "Un terminal es un enlace que se abre en una tableta o un teléfono en la caja. El personal escribe un importe y el cliente escanea el código QR con su billetera. Cada venta es una factura normal en XMR pagada directamente a la billetera del comercio. El enlace del terminal lleva su propia clave, que solo puede crear, consultar y cancelar las facturas de ese terminal, así que el dispositivo nunca guarda la clave API del comercio.",
+      "guideBody": "<guide>Sigue la guía de cobro presencial</guide> para configurar una caja, la capacidad de direcciones, las confirmaciones y lo que ven el personal y los clientes. Las operaciones de la API que siguen permiten gestionar terminales y crear una caja personalizada.",
+      "create": "Crea un terminal con una clave API del comercio guardada en tu servidor. El objetivo de confirmaciones (0-10, 0 por defecto) y la caducidad (2-60 minutos, 15 por defecto) se aplican a cada venta de ese terminal.",
+      "createResponse": "La respuesta 201 incluye la configuración guardada y el enlace del terminal. La clave tras #k= solo se muestra una vez; guárdala en el dispositivo de la caja o rota el terminal para obtener una nueva.",
+      "sale": "Una caja crea una venta con la clave del terminal. Envía una Idempotency-Key UUID y consérvala hasta recibir una respuesta; repetirla devuelve 200 con la misma factura en lugar de crear otra.",
+      "saleResponse": "La respuesta incluye estos campos seleccionados. Muestra la dirección y el importe al cliente, o abre invoice_url.",
+      "polling": "Consulta GET /api/core/terminal/invoices/{invoice_id} para seguir la detección y las confirmaciones. Para terminar una venta sin pagar, haz POST a su ruta de cancelación; devuelve 409 cuando ya se vio un pago o la factura se cerró.",
+      "findOperations": "Encontrarás las ocho operaciones en el grupo Terminales del <directory>directorio de endpoints</directory>."
     },
     "btcpay": {
       "baseUrl": "La URL base usa <code>/api/v1</code>"

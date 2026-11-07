@@ -27,6 +27,8 @@ const count = async () => (await (await fetch(fixture + '/__fixture')).json()).m
       await configure({ dashboardFailure: null });
       await page.getByRole('button', { name: 'Save terminal', exact: true }).click();
       await page.getByRole('status').filter({ hasText: 'Terminal saved.' }).waitFor();
+      assert.match(page.url(), /tab=terminals&saved=1$/, 'saving returns to the list');
+      await page.goto(base + '/dashboard?tab=terminals&terminal=fixture-terminal');
       assert.equal(await page.getByLabel('Enabled', { exact: true }).isChecked(), false);
       await page.goto(base + '/dashboard?tab=terminals');
       const creation = page.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^Create terminal$/ }) });

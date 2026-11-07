@@ -45,10 +45,12 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
       return { error: typeof data?.detail === "string" ? data.detail : general ?? t("dashboard.paymentLinkActions.checkFields"), success: "", fieldErrors };
     }
     revalidatePath("/dashboard");
-    return { error: "", success: disabling ? t("dashboard.paymentLinkActions.disabled") : enabling ? t("dashboard.paymentLinkActions.enabled") : id ? t("dashboard.paymentLinkActions.saved") : t("dashboard.paymentLinkActions.created"), fieldErrors, disabled: disabling, enabled: enabling };
+    if (!id || disabling || enabling) return { error: "", success: disabling ? t("dashboard.paymentLinkActions.disabled") : enabling ? t("dashboard.paymentLinkActions.enabled") : t("dashboard.paymentLinkActions.created"), fieldErrors, disabled: disabling, enabled: enabling };
   } catch {
     return { error: t("dashboard.paymentLinkActions.notConfirmed"), success: "", fieldErrors };
   }
+  // Saving an existing link's settings closes it and returns to the list.
+  redirect("/dashboard?tab=payment-links&saved=1");
 }
 
 export type DeletePaymentLinkState = { error: string; success: string };

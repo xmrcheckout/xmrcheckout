@@ -533,7 +533,8 @@
       "checkFields": "Zkontrolujte zvýrazněná pole a nastavení platebního odkazu.",
       "disabled": "Platební odkaz vypnut.",
       "enabled": "Platební odkaz zapnut.",
-      "saved": "Platební odkaz uložen. Odkaz ke zkopírování a tlačítko najdete níže.",
+      "created": "Platební odkaz vytvořen. Najdete ho níže ve svých platebních odkazech.",
+      "saved": "Platební odkaz uložen. Odkaz a tlačítko výše jsou aktuální.",
       "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů."
     },
     "terminalActions": {

@@ -527,7 +527,8 @@
       "checkFields": "Verifique os campos destacados e as configurações do link de pagamento.",
       "disabled": "Link de pagamento desativado.",
       "enabled": "Link de pagamento ativado.",
-      "saved": "Link de pagamento salvo. O seu link e botão para copiar estão listados abaixo.",
+      "created": "Link de pagamento criado. Ele aparece nos seus links de pagamento, abaixo.",
+      "saved": "Link de pagamento salvo. O link e o botão acima estão atualizados.",
       "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de links de pagamento antes de tentar novamente."
     },
     "terminalActions": {

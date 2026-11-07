@@ -527,7 +527,8 @@
       "checkFields": "Revisa los campos marcados y la configuración del enlace de pago.",
       "disabled": "Enlace de pago desactivado.",
       "enabled": "Enlace de pago activado.",
-      "saved": "Enlace de pago guardado. Tu enlace y tu botón para copiar aparecen abajo.",
+      "created": "Enlace de pago creado. Aparece en tus enlaces de pago, abajo.",
+      "saved": "Enlace de pago guardado. El enlace y el botón de arriba están actualizados.",
       "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de enlaces de pago antes de volver a intentarlo."
     },
     "terminalActions": {

@@ -527,7 +527,8 @@
       "checkFields": "Vérifiez les champs mis en évidence et les paramètres du lien de paiement.",
       "disabled": "Lien de paiement désactivé.",
       "enabled": "Lien de paiement activé.",
-      "saved": "Lien de paiement enregistré. Votre lien et votre bouton à copier figurent ci-dessous.",
+      "created": "Lien de paiement créé. Il figure ci-dessous dans vos liens de paiement.",
+      "saved": "Lien de paiement enregistré. Le lien et le bouton ci-dessus sont à jour.",
       "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des liens de paiement avant de réessayer."
     },
     "terminalActions": {

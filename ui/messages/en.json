@@ -527,7 +527,8 @@
       "checkFields": "Check the highlighted fields and payment-link settings.",
       "disabled": "Payment link disabled.",
       "enabled": "Payment link enabled.",
-      "saved": "Payment link saved. Your copyable link and button are listed below.",
+      "created": "Payment link created. It is listed in your payment links below.",
+      "saved": "Payment link saved. The link and button above are up to date.",
       "notConfirmed": "Could not confirm saving. Check the payment-link list before trying again."
     },
     "terminalActions": {

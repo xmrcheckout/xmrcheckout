@@ -533,7 +533,8 @@
       "checkFields": "Sprawdź wyróżnione pola i ustawienia linku płatności.",
       "disabled": "Link płatności wyłączony.",
       "enabled": "Link płatności włączony.",
-      "saved": "Link płatności zapisany. Link i przycisk do skopiowania znajdziesz poniżej.",
+      "created": "Link płatności utworzony. Znajdziesz go poniżej na liście swoich linków płatności.",
+      "saved": "Link płatności zapisany. Link i przycisk powyżej są aktualne.",
       "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę linków płatności, zanim spróbujesz ponownie."
     },
     "terminalActions": {

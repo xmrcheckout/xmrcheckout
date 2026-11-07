@@ -455,7 +455,12 @@
       "autoCreate": "Skip review and create invoice automatically",
       "autoUnavailable": "Automatic creation is unavailable when the customer enters the amount.",
       "autoWarning": "Visits can create unpaid invoices and consume your public invoice allowance and address capacity. Reopening in the same tab resumes the current invoice. Automated browsers can also trigger creation.",
-      "disableNote": "Disabling stops new purchases. Existing invoices continue to be checked."
+      "disableNote": "Disabling stops new purchases. Existing invoices continue to be checked.",
+      "delete": "Delete payment link",
+      "deleteWarning": "Deleting permanently removes this link, its button and its QR code. Anyone who opens them will see that the link is unavailable. Invoices already created are kept and continue to be checked.",
+      "deletePermanently": "Delete permanently",
+      "deleting": "Deleting…",
+      "deleteNote": "To delete this link, disable it first."
     },
     "signPage": {
       "title": "Printable sign",
@@ -531,7 +536,9 @@
       "enabled": "Payment link enabled.",
       "created": "Payment link created. It is listed in your payment links below.",
       "saved": "Payment link saved. The link and button above are up to date.",
-      "notConfirmed": "Could not confirm saving. Check the payment-link list before trying again."
+      "notConfirmed": "Could not confirm saving. Check the payment-link list before trying again.",
+      "deleted": "Payment link deleted.",
+      "deleteNotConfirmed": "Could not confirm deleting. Check the payment-link list before trying again."
     },
     "terminalActions": {
       "connectFirst": "Connect before saving a terminal.",

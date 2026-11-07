@@ -455,7 +455,12 @@
       "autoCreate": "Omitir la revisión y crear la factura automáticamente",
       "autoUnavailable": "La creación automática no está disponible cuando el cliente introduce el importe.",
       "autoWarning": "Las visitas pueden crear facturas sin pagar y consumir tu cupo público de facturas y tu capacidad de direcciones. Al volver a abrir en la misma pestaña se retoma la factura actual. Los navegadores automatizados también pueden provocar la creación.",
-      "disableNote": "Al desactivarlo se detienen las compras nuevas. Las facturas existentes se siguen comprobando."
+      "disableNote": "Al desactivarlo se detienen las compras nuevas. Las facturas existentes se siguen comprobando.",
+      "delete": "Eliminar enlace de pago",
+      "deleteWarning": "Al eliminarlo se borran de forma permanente este enlace, su botón y su código QR. Quien los abra verá que el enlace no está disponible. Las facturas ya creadas se conservan y se siguen comprobando.",
+      "deletePermanently": "Eliminar de forma permanente",
+      "deleting": "Eliminando…",
+      "deleteNote": "Para eliminar este enlace, desactívalo primero."
     },
     "signPage": {
       "title": "Cartel imprimible",
@@ -531,7 +536,9 @@
       "enabled": "Enlace de pago activado.",
       "created": "Enlace de pago creado. Aparece en tus enlaces de pago, abajo.",
       "saved": "Enlace de pago guardado. El enlace y el botón de arriba están actualizados.",
-      "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de enlaces de pago antes de volver a intentarlo."
+      "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de enlaces de pago antes de volver a intentarlo.",
+      "deleted": "Enlace de pago eliminado.",
+      "deleteNotConfirmed": "No se pudo confirmar la eliminación. Revisa la lista de enlaces de pago antes de volver a intentarlo."
     },
     "terminalActions": {
       "connectFirst": "Conéctate antes de guardar un terminal.",

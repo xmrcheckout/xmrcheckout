@@ -707,7 +707,7 @@ export default async function DashboardPage({
             </section>
           ) : null}
 
-          {activeTab === "payment-links" ? <PaymentLinks loginUrl={loginUrl} selectedId={typeof resolvedSearchParams.link === "string" ? resolvedSearchParams.link : undefined} /> : null}
+          {activeTab === "payment-links" ? <PaymentLinks loginUrl={loginUrl} selectedId={typeof resolvedSearchParams.link === "string" ? resolvedSearchParams.link : undefined} deleted={resolvedSearchParams.deleted === "1"} /> : null}
           {activeTab === "terminals" ? <Terminals loginUrl={loginUrl} selectedId={typeof resolvedSearchParams.terminal === "string" ? resolvedSearchParams.terminal : undefined} /> : null}
           {activeTab === "health" ? (
             <div className="grid min-w-0 grid-cols-1 gap-6">

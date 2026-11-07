@@ -461,7 +461,12 @@
       "autoCreate": "Pomiń podsumowanie i twórz prośbę o płatność automatycznie",
       "autoUnavailable": "Automatyczne tworzenie jest niedostępne, gdy klient wpisuje kwotę.",
       "autoWarning": "Odwiedziny mogą tworzyć nieopłacone prośby o płatność i zużywać twój publiczny limit oraz pulę adresów. Ponowne otwarcie w tej samej karcie wznawia bieżącą prośbę. Utworzenie mogą też wywołać zautomatyzowane przeglądarki.",
-      "disableNote": "Wyłączenie blokuje nowe zakupy. Istniejące prośby o płatność są nadal sprawdzane."
+      "disableNote": "Wyłączenie blokuje nowe zakupy. Istniejące prośby o płatność są nadal sprawdzane.",
+      "delete": "Usuń link płatności",
+      "deleteWarning": "Usunięcie trwale usuwa ten link, jego przycisk i kod QR. Każdy, kto je otworzy, zobaczy, że link jest niedostępny. Już utworzone prośby o płatność zostają zachowane i są nadal sprawdzane.",
+      "deletePermanently": "Usuń trwale",
+      "deleting": "Usuwanie…",
+      "deleteNote": "Aby usunąć ten link, najpierw go wyłącz."
     },
     "signPage": {
       "title": "Plakat do druku",
@@ -537,7 +542,9 @@
       "enabled": "Link płatności włączony.",
       "created": "Link płatności utworzony. Znajdziesz go poniżej na liście swoich linków płatności.",
       "saved": "Link płatności zapisany. Link i przycisk powyżej są aktualne.",
-      "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę linków płatności, zanim spróbujesz ponownie."
+      "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę linków płatności, zanim spróbujesz ponownie.",
+      "deleted": "Link płatności usunięty.",
+      "deleteNotConfirmed": "Nie udało się potwierdzić usunięcia. Sprawdź listę linków płatności, zanim spróbujesz ponownie."
     },
     "terminalActions": {
       "connectFirst": "Połącz się, zanim zapiszesz terminal.",

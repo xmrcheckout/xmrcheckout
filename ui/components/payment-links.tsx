@@ -30,7 +30,7 @@ const priceLabel = (link: PaymentLinkData, t: Translate) => link.customer_amount
 const statusBadge = (link: PaymentLinkData, t: Translate) =>
   <StatusBadge label={link.enabled ? t("terminals.enabled") : t("terminals.disabled")} tone={link.enabled ? "success" : "neutral"} />;
 
-export default async function PaymentLinks({ selectedId, loginUrl }: { selectedId?: string; loginUrl: string }) {
+export default async function PaymentLinks({ selectedId, deleted, loginUrl }: { selectedId?: string; deleted?: boolean; loginUrl: string }) {
   const { t } = await getI18n();
   const key = (await cookies()).get("xmrcheckout_api_key")?.value;
   const base = process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -47,11 +47,11 @@ export default async function PaymentLinks({ selectedId, loginUrl }: { selectedI
   const addressStatus: SubaddressStatus | null = addressResponse?.ok ? await addressResponse.json() : null;
   const links: PaymentLinkData[] = await response.json();
   const target = profile?.ok ? (await profile.json()).default_confirmation_target : 1;
-  return <PaymentLinksView links={links} usage={usage} addressStatus={addressStatus} target={target} selectedId={selectedId} />;
+  return <PaymentLinksView links={links} usage={usage} addressStatus={addressStatus} target={target} selectedId={selectedId} deleted={deleted} />;
 }
 
-export async function PaymentLinksView({ links, usage, addressStatus, target, selectedId, mode = "live" }: {
-  links: PaymentLinkData[]; usage: PaymentLinkUsage | null; addressStatus: SubaddressStatus | null; target: number; selectedId?: string; mode?: Mode;
+export async function PaymentLinksView({ links, usage, addressStatus, target, selectedId, deleted = false, mode = "live" }: {
+  links: PaymentLinkData[]; usage: PaymentLinkUsage | null; addressStatus: SubaddressStatus | null; target: number; selectedId?: string; deleted?: boolean; mode?: Mode;
 }) {
   const { t } = await getI18n();
   const currencies: string[] | null = usage?.supported_currencies ?? null;
@@ -69,6 +69,7 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
     </div>
     {tour ? <p className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm text-ink-soft">{t("paymentLinks.demoNote")}</p> : null}
     {selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("paymentLinks.notFound")}</p> : null}
+    {deleted && !selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("dashboard.paymentLinkActions.deleted")}</p> : null}
 
     <details className="rounded-2xl open:border open:border-stroke open:p-5">
       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-full bg-ink px-5 py-2 font-semibold text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">{t("paymentLinks.create")}</summary>

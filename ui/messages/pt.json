@@ -455,7 +455,12 @@
       "autoCreate": "Pular a revisão e criar a fatura automaticamente",
       "autoUnavailable": "A criação automática não está disponível quando o cliente informa o valor.",
       "autoWarning": "Visitas podem criar faturas não pagas e consumir a sua cota pública de faturas e a capacidade de endereços. Reabrir na mesma aba retoma a fatura atual. Navegadores automatizados também podem disparar a criação.",
-      "disableNote": "Desativar impede novas compras. As faturas existentes continuam sendo verificadas."
+      "disableNote": "Desativar impede novas compras. As faturas existentes continuam sendo verificadas.",
+      "delete": "Excluir link de pagamento",
+      "deleteWarning": "Excluir remove permanentemente este link, seu botão e seu QR code. Quem abri-los verá que o link não está disponível. As faturas já criadas são mantidas e continuam sendo verificadas.",
+      "deletePermanently": "Excluir permanentemente",
+      "deleting": "Excluindo…",
+      "deleteNote": "Para excluir este link, desative-o primeiro."
     },
     "signPage": {
       "title": "Cartaz para impressão",
@@ -531,7 +536,9 @@
       "enabled": "Link de pagamento ativado.",
       "created": "Link de pagamento criado. Ele aparece nos seus links de pagamento, abaixo.",
       "saved": "Link de pagamento salvo. O link e o botão acima estão atualizados.",
-      "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de links de pagamento antes de tentar novamente."
+      "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de links de pagamento antes de tentar novamente.",
+      "deleted": "Link de pagamento excluído.",
+      "deleteNotConfirmed": "Não foi possível confirmar a exclusão. Confira a lista de links de pagamento antes de tentar novamente."
     },
     "terminalActions": {
       "connectFirst": "Conecte-se antes de salvar um terminal.",

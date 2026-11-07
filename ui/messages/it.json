@@ -455,7 +455,12 @@
       "autoCreate": "Salta il riepilogo e crea automaticamente la richiesta di pagamento",
       "autoUnavailable": "La creazione automatica non è disponibile quando il cliente inserisce l'importo.",
       "autoWarning": "Le visite possono creare richieste di pagamento non pagate e consumare la tua quota pubblica di richieste di pagamento e la capacità di indirizzi. Riaprire nella stessa scheda riprende la richiesta di pagamento attuale. Anche i browser automatizzati possono attivare la creazione.",
-      "disableNote": "La disattivazione blocca i nuovi acquisti. Le richieste di pagamento esistenti continuano a essere controllate."
+      "disableNote": "La disattivazione blocca i nuovi acquisti. Le richieste di pagamento esistenti continuano a essere controllate.",
+      "delete": "Elimina il link di pagamento",
+      "deleteWarning": "L'eliminazione rimuove definitivamente questo link, il suo pulsante e il suo codice QR. Chi li apre vedrà che il link non è disponibile. Le richieste di pagamento già create vengono conservate e continuano a essere controllate.",
+      "deletePermanently": "Elimina definitivamente",
+      "deleting": "Eliminazione…",
+      "deleteNote": "Per eliminare questo link, disattivalo prima."
     },
     "signPage": {
       "title": "Cartello stampabile",
@@ -531,7 +536,9 @@
       "enabled": "Link di pagamento attivato.",
       "created": "Link di pagamento creato. È elencato qui sotto tra i tuoi link di pagamento.",
       "saved": "Link di pagamento salvato. Il link e il pulsante qui sopra sono aggiornati.",
-      "notConfirmed": "Impossibile confermare il salvataggio. Controlla l'elenco dei link di pagamento prima di riprovare."
+      "notConfirmed": "Impossibile confermare il salvataggio. Controlla l'elenco dei link di pagamento prima di riprovare.",
+      "deleted": "Link di pagamento eliminato.",
+      "deleteNotConfirmed": "Impossibile confermare l'eliminazione. Controlla l'elenco dei link di pagamento prima di riprovare."
     },
     "terminalActions": {
       "connectFirst": "Collegati prima di salvare un terminale.",

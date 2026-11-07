@@ -191,6 +191,20 @@ def edit_link(link_id: UUID, payload: PaymentLinkInput | PaymentLinkState, db: S
     return serialize(link)
 
 
+@router.delete("/api/core/payment-links/{link_id}", status_code=204)
+def delete_link(link_id: UUID, db: Session = Depends(get_db), user: User = Depends(merchant)):
+    # Invoices keep their own copy of the link settings, so they are unaffected.
+    db.query(User).filter(User.id == user.id).with_for_update().one()
+    link = db.query(PaymentLink).filter(PaymentLink.id == link_id, PaymentLink.user_id == user.id).with_for_update().first()
+    if link is None:
+        raise HTTPException(404, "Payment link not found")
+    if link.enabled:
+        raise HTTPException(409, "Disable the payment link before deleting it.")
+    db.delete(link)
+    db.commit()
+    return Response(status_code=204)
+
+
 def enabled_link(db, token):
     link = db.query(PaymentLink).filter(PaymentLink.token == token, PaymentLink.enabled.is_(True)).first()
     if link is None:

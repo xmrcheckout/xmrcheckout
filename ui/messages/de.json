@@ -455,7 +455,12 @@
       "autoCreate": "Übersicht überspringen und Rechnung automatisch erstellen",
       "autoUnavailable": "Die automatische Erstellung ist nicht verfügbar, wenn der Kunde den Betrag eingibt.",
       "autoWarning": "Besuche können unbezahlte Rechnungen erzeugen und Ihr Kontingent für öffentliche Rechnungen sowie Ihre Adresskapazität verbrauchen. Erneutes Öffnen im selben Tab setzt die aktuelle Rechnung fort. Auch automatisierte Browser können die Erstellung auslösen.",
-      "disableNote": "Das Deaktivieren stoppt neue Käufe. Bestehende Rechnungen werden weiterhin geprüft."
+      "disableNote": "Das Deaktivieren stoppt neue Käufe. Bestehende Rechnungen werden weiterhin geprüft.",
+      "delete": "Zahlungslink löschen",
+      "deleteWarning": "Das Löschen entfernt diesen Link, seine Schaltfläche und seinen QR-Code dauerhaft. Wer sie öffnet, sieht, dass der Link nicht verfügbar ist. Bereits erstellte Rechnungen bleiben erhalten und werden weiterhin geprüft.",
+      "deletePermanently": "Endgültig löschen",
+      "deleting": "Wird gelöscht…",
+      "deleteNote": "Deaktivieren Sie diesen Link zuerst, um ihn zu löschen."
     },
     "signPage": {
       "title": "Druckbares Schild",
@@ -531,7 +536,9 @@
       "enabled": "Zahlungslink aktiviert.",
       "created": "Zahlungslink erstellt. Er ist unten in Ihren Zahlungslinks aufgeführt.",
       "saved": "Zahlungslink gespeichert. Link und Schaltfläche oben sind aktualisiert.",
-      "notConfirmed": "Das Speichern konnte nicht bestätigt werden. Prüfen Sie die Liste der Zahlungslinks, bevor Sie es erneut versuchen."
+      "notConfirmed": "Das Speichern konnte nicht bestätigt werden. Prüfen Sie die Liste der Zahlungslinks, bevor Sie es erneut versuchen.",
+      "deleted": "Zahlungslink gelöscht.",
+      "deleteNotConfirmed": "Das Löschen konnte nicht bestätigt werden. Prüfen Sie die Liste der Zahlungslinks, bevor Sie es erneut versuchen."
     },
     "terminalActions": {
       "connectFirst": "Verbinden Sie sich, bevor Sie ein Terminal speichern.",

@@ -461,7 +461,12 @@
       "autoCreate": "Přeskočit kontrolu a vytvořit platební výzvu automaticky",
       "autoUnavailable": "Automatické vytvoření není k dispozici, když částku zadává zákazník.",
       "autoWarning": "Návštěvy mohou vytvářet nezaplacené platební výzvy a spotřebovávat váš limit veřejných platebních výzev i zásobu adres. Opětovné otevření ve stejné kartě obnoví aktuální platební výzvu. Vytvoření mohou spustit i automatizované prohlížeče.",
-      "disableNote": "Vypnutí zastaví nové nákupy. Stávající platební výzvy se budou kontrolovat dál."
+      "disableNote": "Vypnutí zastaví nové nákupy. Stávající platební výzvy se budou kontrolovat dál.",
+      "delete": "Smazat platební odkaz",
+      "deleteWarning": "Smazáním trvale odstraníte tento odkaz, jeho tlačítko a QR kód. Kdo je otevře, uvidí, že odkaz není dostupný. Již vytvořené platební výzvy zůstanou zachovány a budou se dál kontrolovat.",
+      "deletePermanently": "Trvale smazat",
+      "deleting": "Maže se…",
+      "deleteNote": "Chcete-li tento odkaz smazat, nejprve ho vypněte."
     },
     "signPage": {
       "title": "Tisknutelná cedulka",
@@ -537,7 +542,9 @@
       "enabled": "Platební odkaz zapnut.",
       "created": "Platební odkaz vytvořen. Najdete ho níže ve svých platebních odkazech.",
       "saved": "Platební odkaz uložen. Odkaz a tlačítko výše jsou aktuální.",
-      "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů."
+      "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů.",
+      "deleted": "Platební odkaz smazán.",
+      "deleteNotConfirmed": "Smazání se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam platebních odkazů."
     },
     "terminalActions": {
       "connectFirst": "Před uložením terminálu se připojte.",

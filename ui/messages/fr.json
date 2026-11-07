@@ -455,7 +455,12 @@
       "autoCreate": "Ignorer la vérification et créer la facture automatiquement",
       "autoUnavailable": "La création automatique n’est pas disponible lorsque le client saisit le montant.",
       "autoWarning": "Les visites peuvent créer des factures impayées et consommer votre quota de factures publiques et votre capacité d’adresses. Une réouverture dans le même onglet reprend la facture en cours. Les navigateurs automatisés peuvent aussi déclencher une création.",
-      "disableNote": "La désactivation empêche les nouveaux achats. Les factures existantes continuent d’être vérifiées."
+      "disableNote": "La désactivation empêche les nouveaux achats. Les factures existantes continuent d’être vérifiées.",
+      "delete": "Supprimer le lien de paiement",
+      "deleteWarning": "La suppression retire définitivement ce lien, son bouton et son QR code. Toute personne qui les ouvre verra que le lien n’est pas disponible. Les factures déjà créées sont conservées et continuent d’être vérifiées.",
+      "deletePermanently": "Supprimer définitivement",
+      "deleting": "Suppression…",
+      "deleteNote": "Pour supprimer ce lien, désactivez-le d’abord."
     },
     "signPage": {
       "title": "Affiche imprimable",
@@ -531,7 +536,9 @@
       "enabled": "Lien de paiement activé.",
       "created": "Lien de paiement créé. Il figure ci-dessous dans vos liens de paiement.",
       "saved": "Lien de paiement enregistré. Le lien et le bouton ci-dessus sont à jour.",
-      "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des liens de paiement avant de réessayer."
+      "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des liens de paiement avant de réessayer.",
+      "deleted": "Lien de paiement supprimé.",
+      "deleteNotConfirmed": "Impossible de confirmer la suppression. Vérifiez la liste des liens de paiement avant de réessayer."
     },
     "terminalActions": {
       "connectFirst": "Connectez-vous avant d’enregistrer un terminal.",

@@ -215,6 +215,30 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
         requests.patch(self.base + "/api/core/payment-links/" + data["id"], headers=self.headers, json=self.settings).raise_for_status()
         self.assertEqual(requests.get(url).status_code, 200)
 
+    def test_delete_requires_disabled_link_and_keeps_invoices(self):
+        data, url = self.create(confirmation_message="Thanks for buying")
+        endpoint = self.base + "/api/core/payment-links/" + data["id"]
+        created = requests.post(url + "/invoices", allow_redirects=False)
+        invoice_id = created.headers["Location"].rsplit("/", 1)[1]
+        self.assertEqual(requests.delete(endpoint, headers=self.headers).status_code, 409)
+        other_key = str(uuid4())
+        with SessionLocal() as db:
+            db.add(User(payment_address=str(uuid4()), view_key_encrypted="fixture", api_key_hash=hash_api_key(other_key), api_key_encrypted="fixture"))
+            db.commit()
+        requests.patch(endpoint, headers=self.headers, json={"enabled": False}).raise_for_status()
+        self.assertEqual(requests.delete(endpoint, headers={"Authorization": f"ApiKey {other_key}"}).status_code, 404)
+        self.assertEqual(requests.delete(endpoint).status_code, 401)
+        self.assertEqual(requests.delete(endpoint, headers=self.headers).status_code, 204)
+        self.assertEqual(requests.delete(endpoint, headers=self.headers).status_code, 404)
+        self.assertNotIn(data["id"], [row["id"] for row in requests.get(self.base + "/api/core/payment-links", headers=self.headers).json()])
+        self.assertEqual(requests.get(url).status_code, 404)
+        self.assertEqual(requests.post(url + "/invoices").status_code, 404)
+        with SessionLocal() as db:
+            invoice = db.query(Invoice).filter(Invoice.id == invoice_id).one()
+            self.assertEqual(invoice.metadata_json["checkout"]["confirmation_message"], "Thanks for buying")
+            self.assertEqual(invoice.metadata_json["payment_link"]["title"], "Example product")
+        self.assertEqual(requests.get(self.base + f"/api/core/public/invoice/{invoice_id}").status_code, 200)
+
     def test_confirmed_return_url(self):
         _, url = self.create(checkout_continue_url="https://merchant.example/thanks")
         response = requests.post(url + "/invoices", allow_redirects=False)

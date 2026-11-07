@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { savePaymentLink, savePaymentLinkTourAction, type PaymentLinkState } from "../app/(app)/dashboard/payment-link-actions";
+import { deletePaymentLink, deletePaymentLinkTourAction, savePaymentLink, savePaymentLinkTourAction, type DeletePaymentLinkState, type PaymentLinkState } from "../app/(app)/dashboard/payment-link-actions";
 import { rich } from "../lib/i18n/rich";
 import { useI18n } from "./i18n-provider";
 
@@ -17,6 +17,33 @@ function Buttons({ existing, enabled }: { existing: boolean; enabled: boolean })
   const { t } = useI18n();
   const { pending } = useFormStatus();
   return <div className="flex flex-wrap gap-3"><button disabled={pending} className="min-h-11 rounded-full bg-ink px-5 py-2 text-cream disabled:opacity-60">{pending ? t("common.saving") : t("paymentLinks.editor.save")}</button>{existing ? <button disabled={pending} formNoValidate name="mode" value={enabled ? "disable" : "enable"} className="min-h-11 rounded-full border border-stroke px-5 py-2">{enabled ? t("paymentLinks.editor.disable") : t("paymentLinks.editor.enable")}</button> : null}</div>;
+}
+function DeleteSubmit() {
+  const { t } = useI18n();
+  const { pending } = useFormStatus();
+  return <button disabled={pending} className="min-h-11 rounded-full bg-red-700 px-5 py-2 font-semibold text-white disabled:opacity-60">{pending ? t("paymentLinks.editor.deleting") : t("paymentLinks.editor.deletePermanently")}</button>;
+}
+// Deletion cannot be undone, so it is offered only for disabled links and needs a second confirmation.
+function DeletePaymentLink({ id, mode }: { id: string; mode: "live" | "tour" }) {
+  const { t } = useI18n();
+  const [confirming, setConfirming] = useState(false);
+  const [state, action] = useFormState<DeletePaymentLinkState, FormData>(mode === "tour" ? deletePaymentLinkTourAction : deletePaymentLink, { error: "", success: "" });
+  const warning = useRef<HTMLParagraphElement>(null);
+  const opener = useRef<HTMLButtonElement>(null);
+  const opened = useRef(false);
+  useEffect(() => {
+    if (confirming) warning.current?.focus();
+    else if (opened.current) opener.current?.focus();
+    opened.current = confirming;
+  }, [confirming]);
+  return <div className="grid gap-3 border-t border-stroke pt-4">
+    {confirming ? <form action={action} className="grid gap-3">
+      <input type="hidden" name="id" value={id} />
+      <p ref={warning} tabIndex={-1} className="border-l-2 border-red-700 px-4 py-3 text-sm focus:outline-none">{t("paymentLinks.editor.deleteWarning")}</p>
+      <div className="flex flex-wrap gap-3"><DeleteSubmit /><button type="button" onClick={() => setConfirming(false)} className="min-h-11 rounded-full border border-stroke px-5 py-2">{t("common.cancel")}</button></div>
+    </form> : <p><button ref={opener} type="button" onClick={() => setConfirming(true)} className="min-h-11 rounded-full border border-red-700 px-5 py-2 text-red-700">{t("paymentLinks.editor.delete")}</button></p>}
+    <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
+  </div>;
 }
 export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies, mode = "live" }: { link?: PaymentLinkData; defaultTarget?: number; currencies: string[] | null; mode?: "live" | "tour" }) {
   const { t } = useI18n();
@@ -43,7 +70,7 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies,
   const unknown = values.currency !== "XMR" && !currencies?.includes(values.currency);
   // All fields are controlled; creation resets them explicitly after success.
   // Native action resets can otherwise undo a saved checkbox's visible state.
-  return <form ref={form} action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
+  return <><form ref={form} action={action} onReset={event => event.preventDefault()} className="grid min-w-0 gap-4">
     <input type="hidden" name="id" value={link?.id ?? ""} />
     {link && enabled ? <input type="hidden" name="enabled" value="on" /> : null}
     <div><label htmlFor={`${prefix}-title`}>{t("paymentLinks.editor.title")}</label><input {...props("title")} required maxLength={200} />{error("title")}</div>
@@ -77,7 +104,9 @@ export default function PaymentLinkEditor({ link, defaultTarget = 1, currencies,
     {customerAmount ? <p className="text-sm text-ink-soft">{t("paymentLinks.editor.autoUnavailable")}</p> : null}
     <p className="text-sm text-ink-soft">{t("paymentLinks.editor.autoWarning")}</p>
     {link ? <p className="text-sm text-ink-soft">{t("paymentLinks.editor.disableNote")}</p> : null}
+    {link && enabled ? <p className="text-sm text-ink-soft">{t("paymentLinks.editor.deleteNote")}</p> : null}
     <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
     <Buttons existing={!!link} enabled={enabled} />
-  </form>;
+  </form>
+  {link && !enabled ? <DeletePaymentLink id={link.id} mode={mode} /> : null}</>;
 }

@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getI18n } from "../../../lib/i18n/server";
 
 export type PaymentLinkState = { error: string; success: string; fieldErrors: Record<string, string>; disabled?: boolean; enabled?: boolean };
@@ -48,6 +49,32 @@ export async function savePaymentLink(_state: PaymentLinkState, form: FormData):
   } catch {
     return { error: t("dashboard.paymentLinkActions.notConfirmed"), success: "", fieldErrors };
   }
+}
+
+export type DeletePaymentLinkState = { error: string; success: string };
+export async function deletePaymentLink(_state: DeletePaymentLinkState, form: FormData): Promise<DeletePaymentLinkState> {
+  const { t } = await getI18n();
+  const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
+  if (!apiKey) return { error: t("dashboard.paymentLinkActions.connectFirst"), success: "" };
+  const id = String(form.get("id") ?? "");
+  if (!id) return { error: t("dashboard.paymentLinkActions.deleteNotConfirmed"), success: "" };
+  try {
+    const response = await fetch(`${process.env.API_BASE_URL ?? "http://localhost:8000"}/api/core/payment-links/${encodeURIComponent(id)}`, {
+      method: "DELETE", cache: "no-store", headers: { Authorization: `ApiKey ${apiKey}` },
+    });
+    if (response.status === 401) return { error: t("dashboard.actions.authExpired"), success: "" };
+    if (response.status === 409) return { error: t("paymentLinks.editor.deleteNote"), success: "" };
+    if (!response.ok && response.status !== 404) return { error: t("dashboard.paymentLinkActions.deleteNotConfirmed"), success: "" };
+  } catch {
+    return { error: t("dashboard.paymentLinkActions.deleteNotConfirmed"), success: "" };
+  }
+  revalidatePath("/dashboard");
+  redirect("/dashboard?tab=payment-links&deleted=1");
+}
+
+export async function deletePaymentLinkTourAction(_state: DeletePaymentLinkState, _form: FormData): Promise<DeletePaymentLinkState> {
+  const { t } = await getI18n();
+  return { error: "", success: t("dashboard.actions.tourNoop") };
 }
 
 export async function savePaymentLinkTourAction(_state: PaymentLinkState, _form: FormData): Promise<PaymentLinkState> {

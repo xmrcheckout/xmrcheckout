@@ -76,8 +76,6 @@ async function main() {
         await page.reload({ waitUntil: "networkidle" });
         assert.deepEqual(await axeViolations(page), [], "Payment link detail must pass WCAG 2.1 AA");
         await openTab(page, "Printed sign");
-        await card.getByRole("link", { name: "Printable sign with QR code", exact: true }).click();
-        await page.getByRole("heading", { name: "Printable sign", exact: true }).waitFor();
         const sign = page.getByRole("article", { name: "Sign preview" });
         await sign.getByText("0.1 XMR", { exact: true }).waitFor();
         await sign.getByText("Scan to pay with Monero", { exact: true }).waitFor();
@@ -106,12 +104,15 @@ async function main() {
         assert.equal(await signEditor.isVisible(), false, "Print must hide the sign editor");
         assert.equal(await page.locator(".site-header").isVisible(), false, "Print must hide the site header");
         assert.equal(await page.getByRole("button", { name: "Print sign" }).isVisible(), false, "Print must hide controls");
+        assert.equal(await page.getByRole("tablist").isVisible(), false, "Print must hide the tabs");
+        assert.equal(await page.getByRole("heading", { name: "Fixture product", level: 1 }).isVisible(), false, "Print must show the sign alone");
+        if (process.env.PAYMENT_LINK_SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.PAYMENT_LINK_SCREENSHOT_DIR}/payment-link-sign-print.png`, fullPage: true });
         assert.equal(await qr.isVisible(), true);
         await page.emulateMedia({ media: "screen" });
-        await page.getByRole("link", { name: "Back to payment links", exact: true }).click();
-        await page.getByRole("heading", { name: "Payment links", exact: true }).waitFor();
-        await page.goto(base + "/dashboard/payment-links/00000000-0000-4000-8000-000000000000/sign");
-        await page.getByRole("alert").filter({ hasText: "This payment link was not found." }).waitFor();
+        await openTab(page, "Settings");
+        await page.emulateMedia({ media: "print" });
+        assert.equal(await page.getByRole("heading", { name: "Fixture product", level: 1 }).isVisible(), true, "Printing another tab prints the page as usual");
+        await page.emulateMedia({ media: "screen" });
         await page.goto(detailUrl, { waitUntil: "networkidle" });
       }
       if (width === 320) {

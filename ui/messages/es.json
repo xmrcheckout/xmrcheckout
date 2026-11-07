@@ -426,7 +426,6 @@
     "pasteHtml": "Pégalo en un bloque HTML de tu web. {behavior} No hace falta ningún formulario ni JavaScript. También puedes asociar el enlace reutilizable a tu propio botón.",
     "graphicAuto": "Al abrir el gráfico se solicita una factura automáticamente.",
     "graphicReview": "El gráfico enlaza a la página de revisión del pago; el cliente crea la factura desde allí.",
-    "printable": "Cartel imprimible con código QR",
     "editor": {
       "save": "Guardar enlace de pago",
       "disable": "Desactivar enlace de pago",
@@ -465,10 +464,6 @@
       "deleteNote": "Para eliminar este enlace, desactívalo primero."
     },
     "signPage": {
-      "title": "Cartel imprimible",
-      "back": "Volver a los enlaces de pago",
-      "notFound": "No se encontró este enlace de pago.",
-      "unavailable": "Los enlaces de pago no están disponibles. Actualiza la página para intentarlo de nuevo.",
       "help": "Imprime este cartel o guárdalo como PDF desde el diálogo de impresión. Los clientes escanean el código QR para abrir tu enlace de pago; cada pago va directamente a tu billetera.",
       "disabled": "Este enlace de pago está desactivado. El código QR no funcionará hasta que vuelvas a activar el enlace.",
       "preview": "Vista previa del cartel",
@@ -508,7 +503,6 @@
     "shareIntro": "Elige cómo llegan tus clientes a este enlace. Todas las opciones abren la misma página de pago.",
     "shareButton": "Botón para tu sitio web",
     "shareSign": "Cartel impreso",
-    "shareSignHelp": "Para un mostrador, un puesto o una caja de donativos. Los clientes escanean el código QR para abrir este enlace.",
     "settings": "Configuración"
   },
   "diagnostic": {
@@ -1387,7 +1381,7 @@
         "step2": "Abre <strong>Panel → Terminales</strong> y elige <strong>Crear terminal</strong>. Ponle un nombre como «Mostrador principal» y elige una moneda predeterminada.",
         "step3": "El panel muestra el enlace del terminal y un código QR una sola vez. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él.",
         "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal hasta que elijas <strong>Olvidar este terminal</strong>.",
-        "p1": "Para que los clientes sepan que pueden pagar con Monero, imprime el <strong>Cartel imprimible con código QR</strong> de un enlace de pago desde Panel → Enlaces de pago y colócalo junto a la caja. <link>Más formas de que te encuentren</link>"
+        "p1": "Para que los clientes sepan que pueden pagar con Monero, abre un enlace de pago en Panel → Enlaces de pago, imprime el cartel de su pestaña <strong>Cartel impreso</strong> y colócalo junto a la caja. <link>Más formas de que te encuentren</link>"
       },
       "sale": {
         "title": "Cobra un pago",
@@ -1509,7 +1503,7 @@
           "1": "Quienes tienen Monero buscan lugares que lo acepten. En el panel tienes una insignia «Monero accepted here» para copiar y un cartel imprimible.",
           "2": {
             "1": "<strong>Añade una insignia a tu sitio web.</strong> Abre un enlace de pago en <strong>Panel → Enlaces de pago</strong>, pon <strong>Aceptamos Monero</strong> en la primera línea del botón y <strong>Paga con XMR</strong> en la segunda, y copia el HTML en un bloque HTML. Elige oscuro para fondos claros y claro para fondos oscuros. El botón es una imagen simple, sin seguimiento ni datos de la cuenta.",
-            "2": "<strong>Imprime un cartel.</strong> Cada enlace de pago tiene un <strong>Cartel imprimible con código QR</strong>. Los clientes lo escanean con su billetera para abrir el enlace. Úsalo en un mostrador, un puesto de mercado, la mesa de un evento o una caja de donaciones. Los carteles solo muestran un precio en los enlaces con importe fijo en XMR. Para cobrar en caja como con una tarjeta, usa un <terminal>terminal</terminal> y coloca la insignia a su lado."
+            "2": "<strong>Imprime un cartel.</strong> Cada enlace de pago tiene un cartel con código QR en su pestaña <strong>Cartel impreso</strong>. Los clientes lo escanean con su billetera para abrir el enlace. Úsalo en un mostrador, un puesto de mercado, la mesa de un evento o una caja de donaciones. Los carteles solo muestran un precio en los enlaces con importe fijo en XMR. Para cobrar en caja como con una tarjeta, usa un <terminal>terminal</terminal> y coloca la insignia a su lado."
           }
         }
       },

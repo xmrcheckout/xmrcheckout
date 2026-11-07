@@ -100,6 +100,18 @@ pre:focus-visible {
   body {
     background: #fff !important;
   }
+  /* Printing from the sign tab prints the sign alone. */
+  body:has([role="tabpanel"]:not([hidden]) .print-sign) *:not(:has(.print-sign), .print-sign, .print-sign *) {
+    display: none !important;
+  }
+  body:has([role="tabpanel"]:not([hidden]) .print-sign) :has(.print-sign) {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
   .print-sign {
     border: 0 !important;
     margin-top: 0 !important;

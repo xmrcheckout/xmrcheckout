@@ -426,7 +426,6 @@
     "pasteHtml": "Fügen Sie dies in einen HTML-Block auf Ihrer Website ein. {behavior} Es sind weder Formular noch JavaScript nötig. Sie können den wiederverwendbaren Link auch mit Ihrer eigenen Schaltfläche verknüpfen.",
     "graphicAuto": "Das Öffnen der Grafik fordert automatisch eine Rechnung an.",
     "graphicReview": "Die Grafik verlinkt auf die Seite zur Zahlungsübersicht; dort erstellt der Kunde die Rechnung.",
-    "printable": "Druckbares Schild mit QR-Code",
     "editor": {
       "save": "Zahlungslink speichern",
       "disable": "Zahlungslink deaktivieren",
@@ -465,10 +464,6 @@
       "deleteNote": "Deaktivieren Sie diesen Link zuerst, um ihn zu löschen."
     },
     "signPage": {
-      "title": "Druckbares Schild",
-      "back": "Zurück zu den Zahlungslinks",
-      "notFound": "Dieser Zahlungslink wurde nicht gefunden.",
-      "unavailable": "Zahlungslinks sind nicht verfügbar. Aktualisieren Sie, um es erneut zu versuchen.",
       "help": "Drucken Sie dieses Schild oder speichern Sie es über den Druckdialog als PDF. Kunden scannen den QR-Code, um Ihren Zahlungslink zu öffnen; jede Zahlung geht direkt an Ihre Wallet.",
       "disabled": "Dieser Zahlungslink ist deaktiviert. Der QR-Code funktioniert erst wieder, wenn Sie den Link erneut aktivieren.",
       "preview": "Vorschau des Schilds",
@@ -508,7 +503,6 @@
     "shareIntro": "Wähle, wie Kunden diesen Link erreichen. Jede Option öffnet dieselbe Zahlungsseite.",
     "shareButton": "Button für deine Website",
     "shareSign": "Gedrucktes Schild",
-    "shareSignHelp": "Für Theke, Marktstand oder Spendenbox. Kunden scannen den QR-Code, um diesen Link zu öffnen.",
     "settings": "Einstellungen"
   },
   "diagnostic": {
@@ -1387,7 +1381,7 @@
         "step2": "Öffnen Sie <strong>Dashboard → Terminals</strong> und wählen Sie <strong>Terminal erstellen</strong>. Geben Sie ihm einen Namen wie „Vordere Theke“ und wählen Sie eine Standardwährung.",
         "step3": "Das Dashboard zeigt den Terminal-Link und einen QR-Code einmalig an. Scannen Sie ihn mit dem Gerät, das Sie an der Kasse verwenden, oder kopieren Sie den Link dorthin.",
         "step4": "Fügen Sie die Seite auf dem Gerät zum Startbildschirm hinzu, um eine Vollbild-Kasse zu erhalten. Das Gerät merkt sich das Terminal, bis Sie <strong>Dieses Terminal vergessen</strong> wählen.",
-        "p1": "Damit Kunden wissen, dass sie mit Monero bezahlen können, drucken Sie das <strong>Druckbare Schild mit QR-Code</strong> eines Zahlungslinks unter Dashboard → Zahlungslinks aus und platzieren Sie es an der Kasse. <link>Weitere Möglichkeiten, gefunden zu werden</link>"
+        "p1": "Damit Kunden wissen, dass sie mit Monero bezahlen können, öffnen Sie einen Zahlungslink unter Dashboard → Zahlungslinks, drucken Sie das Schild im Tab <strong>Gedrucktes Schild</strong> aus und platzieren Sie es an der Kasse. <link>Weitere Möglichkeiten, gefunden zu werden</link>"
       },
       "sale": {
         "title": "Eine Zahlung annehmen",
@@ -1509,7 +1503,7 @@
           "1": "Menschen, die Monero besitzen, suchen nach Orten, die es akzeptieren. Ein kopierbares Abzeichen „Monero wird hier akzeptiert“ und ein druckbares Schild stehen im Dashboard bereit.",
           "2": {
             "1": "<strong>Fügen Sie Ihrer Website ein Abzeichen hinzu.</strong> Öffnen Sie einen Zahlungslink unter <strong>Dashboard → Zahlungslinks</strong>, setzen Sie die erste Zeile der Schaltfläche auf <strong>Monero wird hier akzeptiert</strong> und die zweite auf <strong>Mit XMR bezahlen</strong> und kopieren Sie das HTML in einen HTML-Block. Wählen Sie Dunkel für helle Hintergründe und Hell für dunkle. Die Schaltfläche ist ein einfaches Bild ohne Tracking und ohne Kontodaten.",
-            "2": "<strong>Drucken Sie ein Schild.</strong> Jeder Zahlungslink hat ein <strong>Druckbares Schild mit QR-Code</strong>. Kunden scannen es mit ihrer Wallet, um den Link zu öffnen. Verwenden Sie es an einer Theke, einem Marktstand, einem Veranstaltungstisch oder einer Spendenbox. Schilder zeigen nur bei Links mit festem XMR-Betrag einen Preis. Für einen Checkout wie mit einem Kartenterminal an der Kasse verwenden Sie ein <terminal>Terminal</terminal> und stellen das Abzeichen daneben."
+            "2": "<strong>Drucken Sie ein Schild.</strong> Jeder Zahlungslink hat im Tab <strong>Gedrucktes Schild</strong> ein Schild mit QR-Code. Kunden scannen es mit ihrer Wallet, um den Link zu öffnen. Verwenden Sie es an einer Theke, einem Marktstand, einem Veranstaltungstisch oder einer Spendenbox. Schilder zeigen nur bei Links mit festem XMR-Betrag einen Preis. Für einen Checkout wie mit einem Kartenterminal an der Kasse verwenden Sie ein <terminal>Terminal</terminal> und stellen das Abzeichen daneben."
           }
         }
       },

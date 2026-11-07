@@ -426,7 +426,6 @@
     "pasteHtml": "Cole em um bloco HTML do seu site. {behavior} Não é necessário formulário nem JavaScript. Você também pode associar o link reutilizável ao seu próprio botão.",
     "graphicAuto": "Abrir a imagem solicita uma fatura automaticamente.",
     "graphicReview": "A imagem leva à página de revisão do pagamento; o cliente cria a fatura a partir dela.",
-    "printable": "Cartaz para impressão com QR code",
     "editor": {
       "save": "Salvar link de pagamento",
       "disable": "Desativar link de pagamento",
@@ -465,10 +464,6 @@
       "deleteNote": "Para excluir este link, desative-o primeiro."
     },
     "signPage": {
-      "title": "Cartaz para impressão",
-      "back": "Voltar aos links de pagamento",
-      "notFound": "Este link de pagamento não foi encontrado.",
-      "unavailable": "Os links de pagamento estão indisponíveis. Atualize para tentar novamente.",
       "help": "Imprima este cartaz ou salve-o como PDF pela janela de impressão. Os clientes escaneiam o QR code para abrir o seu link de pagamento; cada pagamento vai diretamente para a sua carteira.",
       "disabled": "Este link de pagamento está desativado. O QR code não funcionará até que você ative o link novamente.",
       "preview": "Prévia do cartaz",
@@ -508,7 +503,6 @@
     "shareIntro": "Escolha como os clientes chegam a este link. Todas as opções abrem a mesma página de pagamento.",
     "shareButton": "Botão para o seu site",
     "shareSign": "Cartaz impresso",
-    "shareSignHelp": "Para um balcão, uma barraca ou uma caixa de doações. Os clientes escaneiam o QR code para abrir este link.",
     "settings": "Configurações"
   },
   "diagnostic": {
@@ -1387,7 +1381,7 @@
         "step2": "Abra <strong>Painel → Terminais</strong> e escolha <strong>Criar terminal</strong>. Dê a ele um nome como “Balcão da frente” e escolha uma moeda padrão.",
         "step3": "O painel mostra o link do terminal e um QR code uma única vez. Escaneie-o com o dispositivo que você usará no caixa ou copie o link para ele.",
         "step4": "No dispositivo, adicione a página à tela inicial para ter um caixa em tela cheia. O dispositivo lembra o terminal até você escolher <strong>Esquecer este terminal</strong>.",
-        "p1": "Para que os clientes saibam que podem pagar com Monero, imprima o <strong>Cartaz para impressão com QR code</strong> de um link de pagamento em Painel → Links de pagamento e coloque-o perto do caixa. <link>Mais formas de as pessoas encontrarem você</link>"
+        "p1": "Para que os clientes saibam que podem pagar com Monero, abra um link de pagamento em Painel → Links de pagamento, imprima o cartaz da aba <strong>Cartaz impresso</strong> e coloque-o perto do caixa. <link>Mais formas de as pessoas encontrarem você</link>"
       },
       "sale": {
         "title": "Receba um pagamento",
@@ -1509,7 +1503,7 @@
           "1": "Quem tem Monero procura lugares que o aceitam. Um selo “Aceitamos Monero” para copiar e um cartaz para impressão estão disponíveis no painel.",
           "2": {
             "1": "<strong>Adicione um selo ao seu site.</strong> Abra um link de pagamento em <strong>Painel → Links de pagamento</strong>, coloque <strong>Aceitamos Monero</strong> na primeira linha do botão e <strong>Pague com XMR</strong> na segunda, e copie o HTML para um bloco HTML. Escolha escuro para fundos claros e claro para fundos escuros. O botão é uma imagem simples, sem rastreamento nem dados da conta.",
-            "2": "<strong>Imprima um cartaz.</strong> Cada link de pagamento tem um <strong>Cartaz para impressão com QR code</strong>. Os clientes o escaneiam com a carteira para abrir o link. Use-o em um balcão, barraca de feira, mesa de evento ou caixa de doações. Os cartazes mostram um preço apenas para links com valor fixo em XMR. Para um pagamento no caixa ao estilo de maquininha, use um <terminal>terminal</terminal> e coloque o selo ao lado dele."
+            "2": "<strong>Imprima um cartaz.</strong> Cada link de pagamento tem um cartaz com QR code na aba <strong>Cartaz impresso</strong>. Os clientes o escaneiam com a carteira para abrir o link. Use-o em um balcão, barraca de feira, mesa de evento ou caixa de doações. Os cartazes mostram um preço apenas para links com valor fixo em XMR. Para um pagamento no caixa ao estilo de maquininha, use um <terminal>terminal</terminal> e coloque o selo ao lado dele."
           }
         }
       },

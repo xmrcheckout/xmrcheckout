@@ -426,7 +426,6 @@
     "pasteHtml": "Collez-le dans un bloc HTML de votre site web. {behavior} Aucun formulaire ni JavaScript n’est nécessaire. Vous pouvez aussi associer le lien réutilisable à votre propre bouton.",
     "graphicAuto": "L’ouverture du visuel demande automatiquement une facture.",
     "graphicReview": "Le visuel renvoie vers la page de vérification du paiement ; le client y crée une facture.",
-    "printable": "Affiche imprimable avec QR code",
     "editor": {
       "save": "Enregistrer le lien de paiement",
       "disable": "Désactiver le lien de paiement",
@@ -465,10 +464,6 @@
       "deleteNote": "Pour supprimer ce lien, désactivez-le d’abord."
     },
     "signPage": {
-      "title": "Affiche imprimable",
-      "back": "Retour aux liens de paiement",
-      "notFound": "Ce lien de paiement est introuvable.",
-      "unavailable": "Les liens de paiement sont indisponibles. Actualisez pour réessayer.",
       "help": "Imprimez cette affiche ou enregistrez-la en PDF depuis la boîte de dialogue d’impression. Les clients scannent le QR code pour ouvrir votre lien de paiement ; chaque paiement va directement à votre portefeuille.",
       "disabled": "Ce lien de paiement est désactivé. Le QR code ne fonctionnera pas tant que vous n’aurez pas réactivé le lien.",
       "preview": "Aperçu de l’affiche",
@@ -508,7 +503,6 @@
     "shareIntro": "Choisissez comment vos clients accèdent à ce lien. Chaque option ouvre la même page de paiement.",
     "shareButton": "Bouton pour votre site web",
     "shareSign": "Affiche imprimée",
-    "shareSignHelp": "Pour un comptoir, un stand ou une boîte à dons. Les clients scannent le QR code pour ouvrir ce lien.",
     "settings": "Paramètres"
   },
   "diagnostic": {
@@ -1387,7 +1381,7 @@
         "step2": "Ouvrez <strong>Tableau de bord → Terminaux</strong> et choisissez <strong>Créer un terminal</strong>. Donnez-lui un nom tel que « Comptoir principal » et choisissez une devise par défaut.",
         "step3": "Le tableau de bord affiche une seule fois le lien du terminal et un QR code. Scannez-le avec l’appareil que vous utiliserez à la caisse, ou copiez-y le lien.",
         "step4": "Sur l’appareil, ajoutez la page à l’écran d’accueil pour obtenir une caisse en plein écran. L’appareil mémorise le terminal jusqu’à ce que vous choisissiez <strong>Oublier ce terminal</strong>.",
-        "p1": "Pour que vos clients sachent qu’ils peuvent payer en Monero, imprimez l’<strong>Affiche imprimable avec QR code</strong> d’un lien de paiement depuis Tableau de bord → Liens de paiement et placez-la près de la caisse. <link>D’autres façons de vous faire connaître</link>"
+        "p1": "Pour que vos clients sachent qu’ils peuvent payer en Monero, ouvrez un lien de paiement dans Tableau de bord → Liens de paiement, imprimez l’affiche depuis son onglet <strong>Affiche imprimée</strong> et placez-la près de la caisse. <link>D’autres façons de vous faire connaître</link>"
       },
       "sale": {
         "title": "Encaisser un paiement",
@@ -1509,7 +1503,7 @@
           "1": "Les personnes qui détiennent des Monero recherchent les endroits qui les acceptent. Un badge « Monero accepté ici » à copier et une affiche imprimable sont disponibles dans le tableau de bord.",
           "2": {
             "1": "<strong>Ajoutez un badge à votre site web.</strong> Ouvrez un lien de paiement dans <strong>Tableau de bord → Liens de paiement</strong>, mettez <strong>Monero accepté ici</strong> sur la première ligne du bouton et <strong>Payer en XMR</strong> sur la deuxième, puis copiez le HTML dans un bloc HTML. Choisissez sombre pour les fonds clairs et clair pour les fonds sombres. Le bouton est une simple image, sans pistage ni information de compte.",
-            "2": "<strong>Imprimez une affiche.</strong> Chaque lien de paiement dispose d’une <strong>affiche imprimable avec QR code</strong>. Les clients la scannent avec leur portefeuille pour ouvrir le lien. Utilisez-la sur un comptoir, un stand de marché, une table d’événement ou une boîte à dons. Les affiches n’indiquent un prix que pour les liens fixés en XMR. Pour un encaissement en caisse façon terminal de carte, utilisez un <terminal>terminal</terminal> et affichez le badge à côté."
+            "2": "<strong>Imprimez une affiche.</strong> Chaque lien de paiement dispose d’une affiche avec QR code dans son onglet <strong>Affiche imprimée</strong>. Les clients la scannent avec leur portefeuille pour ouvrir le lien. Utilisez-la sur un comptoir, un stand de marché, une table d’événement ou une boîte à dons. Les affiches n’indiquent un prix que pour les liens fixés en XMR. Pour un encaissement en caisse façon terminal de carte, utilisez un <terminal>terminal</terminal> et affichez le badge à côté."
           }
         }
       },

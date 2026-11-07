@@ -426,7 +426,6 @@
     "pasteHtml": "Paste into an HTML block on your website. {behavior} No form or JavaScript is needed. You can also attach the reusable link to your own button.",
     "graphicAuto": "Opening the graphic automatically requests an invoice.",
     "graphicReview": "The graphic links to the payment review page; the customer creates an invoice from there.",
-    "printable": "Printable sign with QR code",
     "editor": {
       "save": "Save payment link",
       "disable": "Disable payment link",
@@ -465,10 +464,6 @@
       "deleteNote": "To delete this link, disable it first."
     },
     "signPage": {
-      "title": "Printable sign",
-      "back": "Back to payment links",
-      "notFound": "This payment link was not found.",
-      "unavailable": "Payment links are unavailable. Refresh to try again.",
       "help": "Print this sign or save it as a PDF from the print dialog. Customers scan the QR code to open your payment link; each payment goes directly to your wallet.",
       "disabled": "This payment link is disabled. The QR code will not work until you enable the link again.",
       "preview": "Sign preview",
@@ -508,7 +503,6 @@
     "shareIntro": "Choose how customers reach this link. Every option opens the same payment page.",
     "shareButton": "Button for your website",
     "shareSign": "Printed sign",
-    "shareSignHelp": "For a counter, stall, or donation box. Customers scan the QR code to open this link.",
     "settings": "Settings"
   },
   "diagnostic": {
@@ -1387,7 +1381,7 @@
         "step2": "Open <strong>Dashboard → Terminals</strong> and choose <strong>Create terminal</strong>. Give it a name such as “Front counter”, and pick a default currency.",
         "step3": "The dashboard shows the terminal link and a QR code once. Scan it with the device you will use at the till, or copy the link to it.",
         "step4": "On the device, add the page to the home screen for a full-screen till. The device remembers the terminal until you choose <strong>Forget this terminal</strong>.",
-        "p1": "To let customers know they can pay with Monero, print a payment link's <strong>Printable sign with QR code</strong> from Dashboard → Payment links and place it by the till. <link>More ways to let people find you</link>"
+        "p1": "To let customers know they can pay with Monero, open a payment link in Dashboard → Payment links, print the sign on its <strong>Printed sign</strong> tab and place it by the till. <link>More ways to let people find you</link>"
       },
       "sale": {
         "title": "Take a payment",
@@ -1509,7 +1503,7 @@
           "1": "People who hold Monero look for places that accept it. A copyable “Monero accepted here” badge and a printable sign are available in the dashboard.",
           "2": {
             "1": "<strong>Add a badge to your website.</strong> Open a payment link in <strong>Dashboard → Payment links</strong>, set the button's first line to <strong>Monero accepted here</strong> and the second to <strong>Pay with XMR</strong>, then copy the HTML into an HTML block. Choose dark for light backgrounds and light for dark ones. The button is a plain image with no tracking or account details.",
-            "2": "<strong>Print a sign.</strong> Each payment link has a <strong>Printable sign with QR code</strong>. Customers scan it with their wallet to open the link. Use it at a counter, market stall, event table, or donation box. Signs show a price only for links fixed in XMR. For card-style checkout at a till, use a <terminal>terminal</terminal> and display the badge beside it."
+            "2": "<strong>Print a sign.</strong> Each payment link has a sign with a QR code on its <strong>Printed sign</strong> tab. Customers scan it with their wallet to open the link. Use it at a counter, market stall, event table, or donation box. Signs show a price only for links fixed in XMR. For card-style checkout at a till, use a <terminal>terminal</terminal> and display the badge beside it."
           }
         }
       },

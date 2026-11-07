@@ -55,7 +55,7 @@ export function SignEditor({ url, title, price }: { url: string; title: string; 
 
   return <>
     <style>{`@media print { ${look.page} }`}</style>
-    <section aria-labelledby={`${id}-title`} className="no-print mx-auto mt-6 grid max-w-2xl gap-4 rounded-2xl border border-stroke p-5">
+    <section aria-labelledby={`${id}-title`} className="no-print grid max-w-2xl gap-4 rounded-2xl border border-stroke p-5">
       <div>
         <h2 id={`${id}-title`} className="font-sans text-xl font-semibold">{t("paymentLinks.signPage.editorTitle")}</h2>
         <p className="mt-1 text-sm text-ink-soft">{t("paymentLinks.signPage.notSaved")}</p>
@@ -78,7 +78,7 @@ export function SignEditor({ url, title, price }: { url: string; title: string; 
         {check(t("paymentLinks.signPage.showUrl"), showUrl, setShowUrl)}
       </fieldset>
     </section>
-    <article aria-label={t("paymentLinks.signPage.preview")} className={`print-sign mx-auto mt-8 grid justify-items-center rounded-2xl border border-stroke bg-white text-center ${look.article}`}>
+    <article aria-label={t("paymentLinks.signPage.preview")} className={`print-sign mt-3 grid print:mx-auto justify-items-center rounded-2xl border border-stroke bg-white text-center ${look.article}`}>
       {showHeader ? <ButtonImage url={url} options={design.preview} className={`block h-auto max-w-full ${look.header}`} /> : null}
       {heading.trim() ? <p className={`break-words font-sans font-semibold ${look.heading}`}>{heading}</p> : null}
       {note.trim() ? <p className={`break-words ${look.note}`}>{note}</p> : null}

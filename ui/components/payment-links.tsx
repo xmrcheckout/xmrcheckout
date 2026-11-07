@@ -11,6 +11,8 @@ import CopyIconButton from "./copy-icon-button";
 import PaymentLinkEditor, { type PaymentLinkData } from "./payment-link-editor";
 import PaymentButtonEditor from "./payment-button-editor";
 import DetailTabs, { type DetailTab } from "./detail-tabs";
+import { PrintSignButton, SignEditor } from "./payment-link-sign";
+import { signXmrAmount } from "../lib/payment-button";
 
 export type PaymentLinkUsage = { remaining: number; used: number; daily_limit: number; window_hours: number; retrieved_at: string; supported_currencies?: string[] };
 
@@ -137,15 +139,18 @@ export async function PaymentLinksView({ links, usage, addressStatus, target, se
 function PaymentLinkDetail({ link, currencies, mode, t }: { link: PaymentLinkData; currencies: string[] | null; mode: Mode; t: Translate }) {
   const tour = mode === "tour";
   const panelClass = "grid min-w-0 gap-3";
+  const signPrice = signXmrAmount(link);
   const tabs: DetailTab[] = [
     { id: "settings", label: t("paymentLinks.settings"), content: <PaymentLinkEditor currencies={currencies} link={link} mode={mode} /> },
     { id: "button", label: t("paymentLinks.shareButton"), content: <div className={panelClass}>
       <PaymentButtonEditor url={link.url} initialText={link.button_text} previewHref={tour ? "/tour?tab=invoice" : link.url} autoCreate={link.auto_create_invoice} />
     </div> },
-    ...(tour ? [] : [{ id: "sign", label: t("paymentLinks.shareSign"), content: <div className={panelClass}>
-      <p className="text-sm text-ink-soft">{t("paymentLinks.shareSignHelp")}</p>
-      <p><Link className={linkClass} href={`/dashboard/payment-links/${encodeURIComponent(link.id)}/sign`}>{t("paymentLinks.printable")}</Link></p>
-    </div> }]),
+    { id: "sign", label: t("paymentLinks.shareSign"), content: <div className={panelClass}>
+      <p className="text-sm text-ink-soft">{t("paymentLinks.signPage.help")}</p>
+      {!link.enabled ? <p role="alert" className="rounded-xl border border-clay p-3">{t("paymentLinks.signPage.disabled")}</p> : null}
+      <div><PrintSignButton /></div>
+      <SignEditor url={link.url} title={link.title} price={signPrice ? `${formatXmrAmount(signPrice)} XMR` : null} />
+    </div> },
   ];
   return <section className="grid min-w-0 gap-6">
     <div>

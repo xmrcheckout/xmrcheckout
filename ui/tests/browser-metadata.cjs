@@ -23,7 +23,7 @@ const id = '00000000-0000-4000-8000-000000000456';
       assert.equal(await page.locator('meta[name=robots][content*=noindex]').count(), 0, path + ' stays indexable');
     }
     await context.addCookies([{ name: 'xmrcheckout_api_key', value: 'fixture-key', url: base }]);
-    for (const path of ['/dashboard?tab=payment-links', '/dashboard?tab=terminals', '/dashboard?tab=profile', '/dashboard/payment-links/00000000-0000-4000-8000-000000000777/sign', '/i/' + id, '/i/' + id + '/receipt', '/invoice/' + id, '/pay/fixture-token', '/i/bad-id', '/i/bad-id/receipt', '/invoice/bad-id', '/pay/dead-token', '/invoice-link-unavailable', '/payment-link-unavailable', '/i-link-unavailable']) {
+    for (const path of ['/dashboard?tab=payment-links', '/dashboard?tab=terminals', '/dashboard?tab=profile', '/i/' + id, '/i/' + id + '/receipt', '/invoice/' + id, '/pay/fixture-token', '/i/bad-id', '/i/bad-id/receipt', '/invoice/bad-id', '/pay/dead-token', '/invoice-link-unavailable', '/payment-link-unavailable', '/i-link-unavailable']) {
       await page.goto(base + path, { waitUntil: 'networkidle' });
       assert.ok(await page.locator('meta[name=robots][content*=noindex]').count(), path + ' noindex');
       assert.equal((await page.title()).includes(id), false, 'No identifier in metadata title');

@@ -432,7 +432,6 @@
     "pasteHtml": "Wklej do bloku HTML na swojej stronie. {behavior} Nie potrzeba formularza ani JavaScriptu. Link wielokrotnego użytku możesz też podpiąć pod własny przycisk.",
     "graphicAuto": "Otwarcie grafiki automatycznie tworzy prośbę o płatność.",
     "graphicReview": "Grafika prowadzi do strony podsumowania płatności; stamtąd klient tworzy prośbę o płatność.",
-    "printable": "Plakat do druku z kodem QR",
     "editor": {
       "save": "Zapisz link płatności",
       "disable": "Wyłącz link płatności",
@@ -471,10 +470,6 @@
       "deleteNote": "Aby usunąć ten link, najpierw go wyłącz."
     },
     "signPage": {
-      "title": "Plakat do druku",
-      "back": "Wróć do linków płatności",
-      "notFound": "Nie znaleziono tego linku płatności.",
-      "unavailable": "Linki płatności są niedostępne. Odśwież, aby spróbować ponownie.",
       "help": "Wydrukuj ten plakat lub zapisz go jako PDF w oknie drukowania. Klienci skanują kod QR, aby otworzyć twój link płatności; każda płatność trafia bezpośrednio do twojego portfela.",
       "disabled": "Ten link płatności jest wyłączony. Kod QR nie zadziała, dopóki ponownie nie włączysz linku.",
       "preview": "Podgląd plakatu",
@@ -514,7 +509,6 @@
     "shareIntro": "Wybierz, jak klienci trafią do tego linku. Każda opcja otwiera tę samą stronę płatności.",
     "shareButton": "Przycisk na Twoją stronę",
     "shareSign": "Wydrukowany plakat",
-    "shareSignHelp": "Na ladę, stoisko lub skarbonkę na darowizny. Klienci skanują kod QR, aby otworzyć ten link.",
     "settings": "Ustawienia"
   },
   "diagnostic": {
@@ -1413,7 +1407,7 @@
         "step2": "Otwórz <strong>Panel → Terminale</strong> i wybierz <strong>Utwórz terminal</strong>. Nadaj mu nazwę, np. „Kasa przy wejściu”, i wybierz domyślną walutę.",
         "step3": "Panel jednorazowo pokazuje link terminala i kod QR. Zeskanuj go urządzeniem, którego będziesz używać przy kasie, lub skopiuj na nie link.",
         "step4": "Na urządzeniu dodaj stronę do ekranu głównego, aby mieć kasę na pełnym ekranie. Urządzenie pamięta terminal, dopóki nie wybierzesz <strong>Zapomnij ten terminal</strong>.",
-        "p1": "Aby klienci wiedzieli, że mogą zapłacić w Monero, wydrukuj <strong>Plakat do druku z kodem QR</strong> linku płatności z Panel → Linki płatności i umieść go przy kasie. <link>Więcej sposobów, by dać się znaleźć</link>"
+        "p1": "Aby klienci wiedzieli, że mogą zapłacić w Monero, otwórz link płatności w Panel → Linki płatności, wydrukuj plakat z karty <strong>Wydrukowany plakat</strong> i umieść go przy kasie. <link>Więcej sposobów, by dać się znaleźć</link>"
       },
       "sale": {
         "title": "Przyjmij płatność",
@@ -1535,7 +1529,7 @@
           "1": "Osoby, które mają Monero, szukają miejsc, w których mogą nim zapłacić. W panelu znajdziesz odznakę „Tu przyjmujemy Monero” do skopiowania i plakat do druku.",
           "2": {
             "1": "<strong>Dodaj odznakę na swoją stronę.</strong> Otwórz link płatności w <strong>Panel → Linki płatności</strong>, ustaw pierwszy wiersz przycisku na <strong>Tu przyjmujemy Monero</strong>, a drugi na <strong>Zapłać w XMR</strong>, i skopiuj HTML do bloku HTML. Wybierz ciemny na jasne tło i jasny na ciemne. Przycisk to zwykły obrazek bez śledzenia i bez danych konta.",
-            "2": "<strong>Wydrukuj plakat.</strong> Każdy link płatności ma <strong>Plakat do druku z kodem QR</strong>. Klienci skanują go portfelem, aby otworzyć link. Używaj go przy ladzie, na stoisku, przy stole na wydarzeniu lub na skarbonce. Plakaty pokazują cenę tylko dla linków ze stałą kwotą w XMR. Do płatności przy kasie w stylu terminala kartowego użyj <terminal>terminala</terminal> i postaw obok niego odznakę."
+            "2": "<strong>Wydrukuj plakat.</strong> Każdy link płatności ma plakat z kodem QR na karcie <strong>Wydrukowany plakat</strong>. Klienci skanują go portfelem, aby otworzyć link. Używaj go przy ladzie, na stoisku, przy stole na wydarzeniu lub na skarbonce. Plakaty pokazują cenę tylko dla linków ze stałą kwotą w XMR. Do płatności przy kasie w stylu terminala kartowego użyj <terminal>terminala</terminal> i postaw obok niego odznakę."
           }
         }
       },

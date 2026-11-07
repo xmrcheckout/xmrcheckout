@@ -426,7 +426,6 @@
     "pasteHtml": "Incolla in un blocco HTML del tuo sito web. {behavior} Non servono moduli né JavaScript. Puoi anche collegare il link riutilizzabile a un tuo pulsante.",
     "graphicAuto": "Aprire l'immagine crea automaticamente una richiesta di pagamento.",
     "graphicReview": "L'immagine porta alla pagina di riepilogo del pagamento; da lì il cliente crea la richiesta di pagamento.",
-    "printable": "Cartello stampabile con codice QR",
     "editor": {
       "save": "Salva il link di pagamento",
       "disable": "Disattiva il link di pagamento",
@@ -465,10 +464,6 @@
       "deleteNote": "Per eliminare questo link, disattivalo prima."
     },
     "signPage": {
-      "title": "Cartello stampabile",
-      "back": "Torna ai link di pagamento",
-      "notFound": "Questo link di pagamento non è stato trovato.",
-      "unavailable": "I link di pagamento non sono disponibili. Aggiorna per riprovare.",
       "help": "Stampa questo cartello o salvalo come PDF dalla finestra di stampa. I clienti scansionano il codice QR per aprire il tuo link di pagamento; ogni pagamento va direttamente al tuo portafoglio.",
       "disabled": "Questo link di pagamento è disattivato. Il codice QR non funzionerà finché non riattivi il link.",
       "preview": "Anteprima del cartello",
@@ -508,7 +503,6 @@
     "shareIntro": "Scegli come i clienti raggiungono questo link. Ogni opzione apre la stessa pagina di pagamento.",
     "shareButton": "Pulsante per il tuo sito web",
     "shareSign": "Cartello stampato",
-    "shareSignHelp": "Per un bancone, una bancarella o una cassetta per le donazioni. I clienti scansionano il codice QR per aprire questo link.",
     "settings": "Impostazioni"
   },
   "diagnostic": {
@@ -1387,7 +1381,7 @@
         "step2": "Apri <strong>Dashboard → Terminali</strong> e scegli <strong>Crea un terminale</strong>. Dagli un nome come “Bancone principale” e scegli una valuta predefinita.",
         "step3": "La dashboard mostra una sola volta il link del terminale e un codice QR. Scansionalo con il dispositivo che userai alla cassa o copiaci il link.",
         "step4": "Sul dispositivo, aggiungi la pagina alla schermata Home per avere una cassa a schermo intero. Il dispositivo ricorda il terminale finché non scegli <strong>Dimentica questo terminale</strong>.",
-        "p1": "Per far sapere ai clienti che possono pagare con Monero, stampa il <strong>Cartello stampabile con codice QR</strong> di un link di pagamento da Dashboard → Link di pagamento e mettilo vicino alla cassa. <link>Altri modi per farti trovare</link>"
+        "p1": "Per far sapere ai clienti che possono pagare con Monero, apri un link di pagamento da Dashboard → Link di pagamento, stampa il cartello dalla sua scheda <strong>Cartello stampato</strong> e mettilo vicino alla cassa. <link>Altri modi per farti trovare</link>"
       },
       "sale": {
         "title": "Ricevi un pagamento",
@@ -1509,7 +1503,7 @@
           "1": "Chi possiede Monero cerca posti che lo accettino. Nella dashboard sono disponibili un badge “Qui si accetta Monero” da copiare e un cartello stampabile.",
           "2": {
             "1": "<strong>Aggiungi un badge al tuo sito web.</strong> Apri un link di pagamento in <strong>Dashboard → Link di pagamento</strong>, imposta la prima riga del pulsante su <strong>Qui si accetta Monero</strong> e la seconda su <strong>Paga in XMR</strong>, poi copia l'HTML in un blocco HTML. Scegli scuro per sfondi chiari e chiaro per sfondi scuri. Il pulsante è una semplice immagine senza tracciamento né dati dell'account.",
-            "2": "<strong>Stampa un cartello.</strong> Ogni link di pagamento ha un <strong>Cartello stampabile con codice QR</strong>. I clienti lo scansionano con il portafoglio per aprire il link. Usalo a un bancone, a una bancarella, al tavolo di un evento o su una cassetta per le donazioni. I cartelli mostrano un prezzo solo per i link con importo fisso in XMR. Per un pagamento alla cassa in stile POS, usa un <terminal>terminale</terminal> e metti il badge accanto."
+            "2": "<strong>Stampa un cartello.</strong> Ogni link di pagamento ha un cartello con codice QR nella sua scheda <strong>Cartello stampato</strong>. I clienti lo scansionano con il portafoglio per aprire il link. Usalo a un bancone, a una bancarella, al tavolo di un evento o su una cassetta per le donazioni. I cartelli mostrano un prezzo solo per i link con importo fisso in XMR. Per un pagamento alla cassa in stile POS, usa un <terminal>terminale</terminal> e metti il badge accanto."
           }
         }
       },

@@ -432,7 +432,6 @@
     "pasteHtml": "Vložte do HTML bloku na svém webu. {behavior} Není potřeba žádný formulář ani JavaScript. Opakovaně použitelný odkaz můžete také připojit k vlastnímu tlačítku.",
     "graphicAuto": "Otevření grafiky automaticky vyžádá platební výzvu.",
     "graphicReview": "Grafika vede na stránku s kontrolou platby; zákazník tam vytvoří platební výzvu.",
-    "printable": "Tisknutelná cedulka s QR kódem",
     "editor": {
       "save": "Uložit platební odkaz",
       "disable": "Vypnout platební odkaz",
@@ -471,10 +470,6 @@
       "deleteNote": "Chcete-li tento odkaz smazat, nejprve ho vypněte."
     },
     "signPage": {
-      "title": "Tisknutelná cedulka",
-      "back": "Zpět na platební odkazy",
-      "notFound": "Tento platební odkaz nebyl nalezen.",
-      "unavailable": "Platební odkazy nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
       "help": "Vytiskněte tuto cedulku nebo ji v dialogu tisku uložte jako PDF. Zákazníci naskenují QR kód a otevřou váš platební odkaz; každá platba jde přímo do vaší peněženky.",
       "disabled": "Tento platební odkaz je vypnutý. QR kód nebude fungovat, dokud odkaz znovu nepovolíte.",
       "preview": "Náhled cedulky",
@@ -514,7 +509,6 @@
     "shareIntro": "Vyberte, jak se zákazníci k tomuto odkazu dostanou. Každá možnost otevře stejnou platební stránku.",
     "shareButton": "Tlačítko pro váš web",
     "shareSign": "Vytištěná cedulka",
-    "shareSignHelp": "Na pult, stánek nebo pokladničku na dary. Zákazníci naskenují QR kód a otevřou tento odkaz.",
     "settings": "Nastavení"
   },
   "diagnostic": {
@@ -1413,7 +1407,7 @@
         "step2": "Otevřete <strong>Panel → Terminály</strong> a zvolte <strong>Vytvořit terminál</strong>. Pojmenujte ho, například „Přední pult“, a vyberte výchozí měnu.",
         "step3": "Panel jednou zobrazí odkaz na terminál a QR kód. Naskenujte ho zařízením, které budete používat u pokladny, nebo do něj odkaz zkopírujte.",
         "step4": "Na zařízení přidejte stránku na plochu, abyste měli pokladnu přes celou obrazovku. Zařízení si terminál pamatuje, dokud nezvolíte <strong>Zapomenout tento terminál</strong>.",
-        "p1": "Aby zákazníci věděli, že mohou platit v Monero, vytiskněte <strong>Tisknutelnou cedulku s QR kódem</strong> platebního odkazu z Panel → Platební odkazy a umístěte ji k pokladně. <link>Další způsoby, jak o sobě dát vědět</link>"
+        "p1": "Aby zákazníci věděli, že mohou platit v Monero, otevřete platební odkaz v Panel → Platební odkazy, vytiskněte cedulku na kartě <strong>Vytištěná cedulka</strong> a umístěte ji k pokladně. <link>Další způsoby, jak o sobě dát vědět</link>"
       },
       "sale": {
         "title": "Přijetí platby",
@@ -1535,7 +1529,7 @@
           "1": "Lidé, kteří drží Monero, hledají místa, kde ho přijímají. V panelu je k dispozici odznak „Zde přijímáme Monero“ ke zkopírování a tisknutelná cedulka.",
           "2": {
             "1": "<strong>Přidejte odznak na svůj web.</strong> Otevřete platební odkaz v <strong>Panel → Platební odkazy</strong>, nastavte první řádek tlačítka na <strong>Zde přijímáme Monero</strong> a druhý na <strong>Plaťte v XMR</strong> a zkopírujte HTML do HTML bloku. Pro světlé pozadí zvolte tmavé, pro tmavé světlé. Tlačítko je obyčejný obrázek bez sledování a bez údajů o účtu.",
-            "2": "<strong>Vytiskněte cedulku.</strong> Každý platební odkaz má <strong>Tisknutelnou cedulku s QR kódem</strong>. Zákazníci ji naskenují peněženkou a otevřou odkaz. Použijte ji u pultu, na stánku, na stole při akci nebo na pokladničce. Cedulky zobrazují cenu pouze u odkazů s pevnou částkou v XMR. Pro platby u pokladny podobné platbám kartou použijte <terminal>terminál</terminal> a odznak umístěte vedle něj."
+            "2": "<strong>Vytiskněte cedulku.</strong> Každý platební odkaz má na kartě <strong>Vytištěná cedulka</strong> cedulku s QR kódem. Zákazníci ji naskenují peněženkou a otevřou odkaz. Použijte ji u pultu, na stánku, na stole při akci nebo na pokladničce. Cedulky zobrazují cenu pouze u odkazů s pevnou částkou v XMR. Pro platby u pokladny podobné platbám kartou použijte <terminal>terminál</terminal> a odznak umístěte vedle něj."
           }
         }
       },

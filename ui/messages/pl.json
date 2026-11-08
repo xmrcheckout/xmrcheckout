@@ -362,7 +362,7 @@
     "unavailable": "Linki płatności są niedostępne. Odśwież, aby spróbować ponownie.",
     "intro": "Utwórz przycisk HTML lub link wielokrotnego użytku, aby przyjmować darowizny lub sprzedawać produkty i usługi. Każde wysłanie tworzy osobną prośbę o płatność w XMR, opłacaną bezpośrednio na twój portfel.",
     "allowanceNote": "Każdy, kto ma twój link, może utworzyć prośbę o płatność, dlatego linki mają dzienny limit. Dzięki temu w puli adresów zostaje dość wolnych adresów na twoje własne płatności.",
-    "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Następnie w sekcji Udostępnij ustaw pierwszy wiersz przycisku na „Wesprzyj w Monero”. Płatności cykliczne nie są obsługiwane.",
+    "donationTip": "Przy wpłatach użyj tytułu takiego jak „Wesprzyj mój projekt” i wybierz „Klient wpisuje kwotę”, aby darczyńcy sami podawali kwotę. Następnie na karcie „Przycisk na Twoją stronę” ustaw pierwszy wiersz przycisku na „Wesprzyj w Monero”. Płatności cykliczne nie są obsługiwane.",
     "guide": "Poradnik konfiguracji linków płatności",
     "allowance": "Publiczny limit próśb o płatność",
     "allowanceSummary": "Pozostało: {remaining} · Wykorzystano: {used} · Limit {limit} w ruchomym oknie {hours} godz.",
@@ -1435,7 +1435,7 @@
       "embed": {
         "title": "Skopiuj przycisk HTML lub adres wielokrotnego użytku",
         "body": {
-          "1": "Otwórz link w panelu. W sekcji Udostępnij wybierz ciemny lub jasny przycisk i edytuj jego dwa wiersze tekstu (do 32 znaków każdy; domyślnie „Kup za Monero”). Podgląd i HTML aktualizują się podczas pisania. Skopiuj HTML do własnego bloku HTML na stronie. Grafika prowadzi do strony podsumowania płatności. Fragment nie wymaga formularza, JavaScriptu ani klucza API sprzedawcy.",
+          "1": "Otwórz link w panelu. Na karcie „Przycisk na Twoją stronę” wybierz ciemny lub jasny przycisk i edytuj jego dwa wiersze tekstu (do 32 znaków każdy; domyślnie „Kup za Monero”). Podgląd i HTML aktualizują się podczas pisania. Skopiuj HTML do własnego bloku HTML na stronie. Grafika prowadzi do strony podsumowania płatności. Fragment nie wymaga formularza, JavaScriptu ani klucza API sprzedawcy.",
           "2": "Ten przykład używa zarezerwowanej domeny przykładowej i tokenu zastępczego. Skopiuj swój prawdziwy fragment z panelu; nie umieszczaj danych portfela ani klucza API w kodzie HTML strony.",
           "3": "Możesz też skopiować adres wielokrotnego użytku i podpiąć go pod zwykły link lub własny przycisk na stronie. Obie opcje pokazują stronę podsumowania produktu; następnie klient wysyła żądanie zakupu. Przy włączonym podsumowaniu otwarcie adresu nie tworzy prośby o płatność. Przy włączonym automatycznym tworzeniu aktywna przeglądarka tworzy prośbę o płatność i ją otwiera. Ta sama karta wznawia bieżącą nieopłaconą prośbę; użyj „Rozpocznij kolejny zakup”, aby złożyć osobne zamówienie. Bez JavaScriptu lub pamięci przeglądarki klienci używają przycisku ręcznego tworzenia.",
           "4": "Zakupy używają zapisanego portfela odbiorczego, kwoty, liczby potwierdzeń i adresu powrotnego. Edycja kodu HTML nie może zmienić tych ustawień."
@@ -1482,7 +1482,7 @@
         "body": {
           "1": "Twórcy, opiekunowie projektów i inni odbiorcy mogą używać linków płatności, aby otrzymywać dobrowolne wpłaty bezpośrednio na własny portfel. Każde udane wysłanie tworzy osobną prośbę o płatność z wykrywaniem płatności i postępem potwierdzeń.",
           "2": {
-            "1": "Utwórz link płatności z tytułem takim jak „Wesprzyj mój projekt” i wybierz <strong>Klient wpisuje kwotę</strong>. Opcjonalnie ustaw minimalną kwotę w XMR, aby uniknąć bardzo małych próśb o płatność. W sekcji <strong>Udostępnij</strong> ustaw pierwszy wiersz przycisku na <strong>Wesprzyj w Monero</strong>.",
+            "1": "Utwórz link płatności z tytułem takim jak „Wesprzyj mój projekt” i wybierz <strong>Klient wpisuje kwotę</strong>. Opcjonalnie ustaw minimalną kwotę w XMR, aby uniknąć bardzo małych próśb o płatność. Na karcie <strong>Przycisk na Twoją stronę</strong> ustaw pierwszy wiersz przycisku na <strong>Wesprzyj w Monero</strong>.",
             "2": "Udostępnij adres wielokrotnego użytku w swoim profilu lub na stronie albo skopiuj przycisk HTML z panelu. Adres możesz też podpiąć pod własny przycisk „Wesprzyj ten projekt”.",
             "3": "Darczyńcy wpisują kwotę i wybierają XMR lub obsługiwaną walutę fiat jako odniesienie na stronie podsumowania, a następnie tworzą prośbę o płatność. Aby zaoferować stałe kwoty, utwórz osobny link ze stałą kwotą dla każdej z nich.",
             "4": "Linki z kwotą wpisywaną przez klienta zawsze pokazują stronę podsumowania. W linkach ze stałą kwotą pozostaw włączone podsumowanie, jeśli otwarcie udostępnionego adresu nie powinno tworzyć prośby o płatność. Automatyczne tworzenie jest opcjonalne i zużywa limit, gdy aktywna przeglądarka tworzy prośbę."
@@ -1700,14 +1700,14 @@
       "r084": "pusta treść formularza (linki stałe) LUB amount i currency (linki z customer_amount)",
       "r085": "Nie są wymagane klucz API, ciasteczka ani JavaScript. Parametry zapytania są odrzucane z kodem 400. Linki stałe odrzucają niepustą treść; linki z customer_amount przyjmują tylko amount i currency jako formularz lub treść JSON z wartościami tekstowymi. Wszystkie pozostałe ustawienia zakupu pochodzą z zapisanego szablonu.",
       "r086": "Kwoty klienta podlegają regułom precyzji szablonu (12 miejsc po przecinku dla XMR, 2 dla walut fiat, dodatnie i mniejsze niż 1000000). Kwoty poniżej minimum_amount_xmr zwracają 422 bez tworzenia prośby o płatność.",
-      "r087": "Sukces zwraca 303 do hostowanej prośby o płatność; nie zwraca jej w formacie JSON. Błędy aplikacji są w HTML, w tym niedostępne linki (404), błędy konfiguracji sprzedawcy (409), przekroczenie limitów (429) oraz awarie usługi lub notowań (503). Odpowiednie odpowiedzi zawierają Retry-After.",
+      "r087": "Zwykły formularz HTML po sukcesie otrzymuje 303 do hostowanej prośby o płatność, a przy błędach strony HTML: niedostępne linki (404), błędy konfiguracji sprzedawcy (409), limity pojemności lub częstotliwości (429) oraz awarie usługi lub kursu (503). Z Accept: application/json sukces zwraca JSON (201 dla nowej prośby, 200 dla powtórzenia), a błędy również zwracają JSON. Odpowiednie odpowiedzi zawierają Retry-After.",
       "r088": "Domyślny limit to 30 utworzeń na sprzedawcę w ruchomym oknie 24 godzin; domyślny limit Nginx to 6 żądań na minutę na adres IP klienta, z chwilowym wzrostem do 3. Obowiązują też inne limity sprzedawcy i adresów. Operatorzy mogą zmieniać te wartości domyślne.",
-      "r089": "Nie ma ochrony przed podwójnym wysłaniem ani automatycznego ponawiania. Przerwana odpowiedź nie dowodzi, że tworzenie się nie powiodło; sprawdź otrzymany adres URL prośby lub skontaktuj się ze sprzedawcą przed ponowieniem.",
+      "r089": "Zwykły formularz HTML nie potrafi wykryć podwójnego wysłania, więc nie ponawiaj go automatycznie. Przerwana odpowiedź nie dowodzi, że utworzenie się nie powiodło; przed ponowieniem sprawdź otrzymany URL prośby o płatność lub skontaktuj się ze sprzedawcą. Klienci API mogą bezpiecznie ponawiać, używając tego samego Idempotency-Key.",
       "r090": "default_currency (XMR lub obsługiwana waluta fiat, domyślnie XMR)",
       "r091": "confirmation_target (0-10, domyślnie 0)",
       "r092": "expiry_minutes (2-60, domyślnie 15)",
       "r093": "enabled (domyślnie true)",
-      "r094": "Zwraca ustawienia terminala i url, który kończy się na #k= i kluczem terminala. Klucz jest przechowywany tylko jako skrót i nigdy nie zostanie ponownie zwrócony; aby go zastąpić, wygeneruj nowy.",
+      "r094": "Zwraca ustawienia terminala i url, który kończy się na #k= i kluczu terminala. Link można później pokazać ponownie; rotacja go zastępuje, a stary link przestaje działać.",
       "r095": "Klucz terminala może tworzyć prośby o płatność, odczytywać status własnych próśb i anulować własne nieopłacone prośby. Nie może odczytywać innych próśb, zmieniać ustawień ani używać innych endpointów.",
       "r096": "Authorization: Terminal <key>",
       "r097": "amount (tekst)",
@@ -1791,7 +1791,13 @@
       "r175": "Wersja jest ustawiona dla zgodności z zachowaniem interfejsu zwrotów.",
       "r176": "Uprawnienia to ciągi znaków ograniczone do sklepu, powiązane z jednym identyfikatorem sklepu.",
       "r177": "Uprawnienia do zwrotów zostały celowo pominięte.",
-      "r178": "Ponownie pokazuje bieżący link terminala."
+      "r178": "Ponownie pokazuje bieżący link terminala.",
+      "r179": "Usuwa wyłączony link. Dla aktywnego linku zwracany jest 409; istniejące prośby o płatność pozostają bez zmian.",
+      "r180": "Odczytuje stan wykrywania płatności dla próśb o płatność zalogowanego sprzedawcy.",
+      "r181": "Odczytuje pulę adresów sprzedawcy z lokalnych zapisów: adresy w użyciu, w okresie oczekiwania i dostępne.",
+      "r182": "Wyświetla prośby o płatność sklepu zgodne z BTCPay (stronicowanie przez skip i take, do 100 na stronę).",
+      "r183": "Nagłówek Idempotency-Key (UUID; użyj go ponownie, by bezpiecznie ponowić)",
+      "r184": "Accept: application/json (zwraca JSON zamiast przekierowania)"
     },
     "metaTitle": "Dokumentacja API płatności Monero | XMR Checkout",
     "metaDescription": "Zintegruj samodzielnie hostowane prośby o płatność w Monero z API XMR Checkout, publicznymi stronami płatności, wykrywaniem potwierdzeń i webhookami.",
@@ -1802,7 +1808,7 @@
     },
     "links": {
       "guideBody": "<guide>Skorzystaj z poradnika konfiguracji dla sprzedawców</guide>, aby poznać wymagania portfela, osadzanie, limity, realizację zamówień i <message>wiadomości po potwierdzeniu</message>, takie jak linki do pobrania wyświetlane po płatności. Poniższe operacje API pozwalają zarządzać tymi samymi szablonami z poziomu integracji.",
-      "findOperations": "Sześć operacji znajdziesz w grupach Zarządzanie linkami płatności i Publiczne linki płatności w <directory>katalogu endpointów</directory>.",
+      "findOperations": "Siedem operacji znajdziesz w grupach Zarządzanie linkami płatności i Publiczne linki płatności w <directory>katalogu endpointów</directory>.",
       "editing": "Przy edycji PATCH przyjmuje pełne ustawienia z użyciem pól tworzenia albo treść zawierającą tylko enabled, np. {\"enabled\": false}. Ponowne włączenie przez {\"enabled\": true} weryfikuje zapisane ustawienia. Aktualizacja pełnych ustawień zastępuje pominięte pola opcjonalne wartościami domyślnymi. Zwrócone adresy URL się nie zmieniają; istniejące prośby o płatność zachowują migawki produktu.",
       "publicPost": "Formularz ze stałą kwotą wysyła pusty publiczny POST, bez danych dostępowych sprzedawcy; formularz z kwotą wpisywaną przez klienta wysyła tylko amount i currency (np. amount=0.05&currency=XMR). Klienci automatyczni mogą wysłać nagłówek Idempotency-Key z UUID oraz Accept: application/json. Nowa próba zwraca 201; powtórzenie zwraca 200 z tymi samymi invoice_url, status i expires_at. Zapisz klucz przed żądaniem utworzenia i zachowaj go po przerwanych odpowiedziach. GET i HEAD nigdy nie tworzą próśb o płatność. Przykładowa udana wymiana wygląda tak:"
     },
@@ -1815,7 +1821,7 @@
       "sale": "Kasa tworzy sprzedaż kluczem terminala. Wyślij nagłówek Idempotency-Key z UUID i zachowaj go do otrzymania odpowiedzi; ponowienie z nim zwraca 200 z tą samą prośbą o płatność zamiast tworzyć nową.",
       "saleResponse": "Odpowiedź zawiera te wybrane pola. Pokaż klientowi adres i kwotę albo otwórz invoice_url.",
       "polling": "Odpytuj GET /api/core/terminal/invoices/{invoice_id}, aby śledzić wykrycie i potwierdzenia. Aby zakończyć nieopłaconą sprzedaż, wyślij POST na jej ścieżkę anulowania; zwraca 409, gdy płatność została już zauważona lub prośba o płatność jest zamknięta.",
-      "findOperations": "Osiem operacji znajdziesz w grupie Terminale w <directory>katalogu endpointów</directory>."
+      "findOperations": "Dziewięć operacji znajdziesz w grupie Terminale w <directory>katalogu endpointów</directory>."
     },
     "btcpay": {
       "baseUrl": "Bazowy URL używa <code>/api/v1</code>"
@@ -1875,7 +1881,6 @@
     "subaddressTitle": "Prośby o płatność wyłącznie na podadresy",
     "subaddressBody": "Każda prośba o płatność używa podadresu wyprowadzonego z adresu głównego, co ułatwia uzgadnianie.",
     "subaddress1": "Indeks podadresu widoczny przy każdej prośbie o płatność",
-    "subaddress2": "Lookahead portfela decyduje o wykrywaniu",
     "subaddress3": "Podadresy rotują w zakresie indeksów od 1 do 199",
     "subaddress4": "Wszystkie adresy płatności mieszczą się w domyślnym zakresie obserwowanym przez każdy portfel Monero",
     "lifecycle": "Cykl życia prośby o płatność",

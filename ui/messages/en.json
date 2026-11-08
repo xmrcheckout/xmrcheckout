@@ -356,7 +356,7 @@
     "unavailable": "Payment links are unavailable. Refresh to try again.",
     "intro": "Create a reusable HTML button or link to accept donations or sell products and services. Each submission creates a separate XMR invoice paid directly to your wallet.",
     "allowanceNote": "Anyone with your link can create an invoice, so links have a daily allowance. This keeps enough invoice addresses free for your own checkout.",
-    "donationTip": "For contributions, use a title such as “Support my project” and choose “Customer enters the amount” so donors type their own amount. Then set the button's first line to “Donate with Monero” under Share. Recurring collection is not supported.",
+    "donationTip": "For contributions, use a title such as “Support my project” and choose “Customer enters the amount” so donors type their own amount. Then set the button's first line to “Donate with Monero” on the link's “Button for your website” tab. Recurring collection is not supported.",
     "guide": "Payment link setup guide",
     "allowance": "Public invoice allowance",
     "allowanceSummary": "{remaining} remaining · {used} used · Limit {limit} per rolling {hours} hours",
@@ -1409,7 +1409,7 @@
       "embed": {
         "title": "Copy your HTML button or reusable URL",
         "body": {
-          "1": "Open the link in the dashboard. Under Share, choose a dark or light button and edit its two lines of text (up to 32 characters each; the default is “Buy with Monero”). The preview and HTML update as you type. Copy the HTML into a custom HTML block on your website. The graphic links to the payment review page. No form, JavaScript, or merchant API key is needed in the snippet.",
+          "1": "Open the link in the dashboard. On the link's “Button for your website” tab, choose a dark or light button and edit its two lines of text (up to 32 characters each; the default is “Buy with Monero”). The preview and HTML update as you type. Copy the HTML into a custom HTML block on your website. The graphic links to the payment review page. No form, JavaScript, or merchant API key is needed in the snippet.",
           "2": "This example uses a reserved example domain and placeholder token. Copy your actual snippet from the dashboard; keep your wallet credentials and API key out of website HTML.",
           "3": "You can also copy the reusable URL and attach it to a normal link or your own website button. Both options show the product review page; the customer then submits a purchase request. With review enabled, opening a URL does not create an invoice. With automatic creation enabled, an active browser requests an invoice and opens it. The same tab resumes its current unpaid invoice; use “Start another purchase” for a separate order. Without JavaScript or browser storage, customers use the manual creation button.",
           "4": "Purchases use the saved receiving wallet, amount, confirmation target, and return URL. Editing HTML cannot override these settings."
@@ -1456,7 +1456,7 @@
         "body": {
           "1": "Creators, maintainers, and other recipients can use payment links to receive voluntary contributions directly to their own wallet. Each successful submission creates a separate invoice with payment detection and confirmation progress.",
           "2": {
-            "1": "Create a payment link with a title such as “Support my project” and choose <strong>Customer enters the amount</strong>. Optionally set a minimum amount in XMR to avoid very small invoices. Under <strong>Share</strong>, set the button's first line to <strong>Donate with Monero</strong>.",
+            "1": "Create a payment link with a title such as “Support my project” and choose <strong>Customer enters the amount</strong>. Optionally set a minimum amount in XMR to avoid very small invoices. On the link's <strong>Button for your website</strong> tab, set the button's first line to <strong>Donate with Monero</strong>.",
             "2": "Share the reusable URL on your profile or website, or copy the HTML button from the dashboard. You can attach the URL to your own “Support this project” button too.",
             "3": "Donors enter an amount and choose XMR or a supported fiat-reference currency on the review page, then create their invoice. To offer preset amounts instead, create a separate fixed-amount link for each.",
             "4": "Customer-entered links always show the review page. For fixed-amount links, keep the review step enabled if opening a shared URL should not create an invoice. Automatic creation is optional and consumes capacity when an active browser requests an invoice."
@@ -1674,14 +1674,14 @@
       "r084": "empty form body (fixed links) OR amount and currency (customer_amount links)",
       "r085": "No API key, cookies, or JavaScript are required. Rejects query parameters with 400. Fixed links reject non-empty bodies; customer_amount links accept only amount and currency as a form or JSON body of string values. All other purchase settings come from the saved template.",
       "r086": "Customer amounts follow template precision rules (12 decimal places for XMR, 2 for fiat references, positive and below 1000000). Amounts below minimum_amount_xmr return 422 without creating an invoice.",
-      "r087": "Success returns 303 to the hosted invoice; it does not return invoice JSON. Application errors are HTML, including unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). Applicable responses include Retry-After.",
+      "r087": "A plain HTML form receives 303 to the hosted invoice on success and HTML error pages: unavailable links (404), merchant configuration errors (409), capacity/rate limits (429), and service/quote failures (503). With Accept: application/json, success returns JSON (201 for a new invoice, 200 for a replay) and errors return JSON. Applicable responses include Retry-After.",
       "r088": "The default allowance is 30 creations per merchant per rolling 24 hours; the default Nginx limit is 6 requests per minute per client IP, burst 3. Other merchant and address limits also apply. Operators can configure these defaults.",
-      "r089": "There is no duplicate-submission recovery or automatic retry. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying.",
+      "r089": "A plain HTML form has no duplicate-submission recovery, so do not retry it automatically. An interrupted response does not prove creation failed; check any received invoice URL or contact the merchant before retrying. API clients can retry safely by reusing the same Idempotency-Key.",
       "r090": "default_currency (XMR or a supported fiat reference, default XMR)",
       "r091": "confirmation_target (0-10, default 0)",
       "r092": "expiry_minutes (2-60, default 15)",
       "r093": "enabled (default true)",
-      "r094": "Returns the terminal settings and url, which ends in #k= followed by the terminal key. The key is stored only as a hash and is never returned again; rotate to replace it.",
+      "r094": "Returns the terminal settings and url, which ends in #k= followed by the terminal key. The link can be shown again later; rotating replaces it, and the old link stops working.",
       "r095": "A terminal key can create invoices, read the status of its own invoices, and cancel its own unpaid invoices. It cannot read other invoices, change settings, or use other endpoints.",
       "r096": "Authorization: Terminal <key>",
       "r097": "amount (string)",
@@ -1765,7 +1765,13 @@
       "r175": "Version is set for compatibility with refund UI behavior.",
       "r176": "Permissions are store-scoped strings tied to one store id.",
       "r177": "Refund permissions are intentionally omitted.",
-      "r178": "Show the terminal’s current link again."
+      "r178": "Show the terminal’s current link again.",
+      "r179": "Delete a disabled link. An enabled link returns 409; existing invoices are unaffected.",
+      "r180": "Read payment-detection health for the signed-in merchant’s own invoices.",
+      "r181": "Read the merchant’s invoice address pool from local records: addresses in use, cooling down, and available.",
+      "r182": "List the store’s BTCPay-compatible invoices (skip and take paging, up to 100 per page).",
+      "r183": "Idempotency-Key header (UUID; reuse it to retry safely)",
+      "r184": "Accept: application/json (returns JSON instead of a redirect)"
     },
     "metaTitle": "Monero Payment API Documentation | XMR Checkout",
     "metaDescription": "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
@@ -1776,7 +1782,7 @@
     },
     "links": {
       "guideBody": "<guide>Follow the merchant setup guide</guide> for wallet prerequisites, embedding, capacity, fulfillment, and <message>confirmation messages</message> such as download links shown after payment. The API operations below support managing those same templates from an integration.",
-      "findOperations": "Find the six operations in the Payment-link management and Public payment links groups in the <directory>endpoint directory</directory>.",
+      "findOperations": "Find the seven operations in the Payment-link management and Public payment links groups in the <directory>endpoint directory</directory>.",
       "editing": "For editing, PATCH accepts full settings using the creation fields, or an enabled-only body such as {\"enabled\": false}. Re-enabling with {\"enabled\": true} validates saved settings. Full-settings updates replace omitted optional fields with defaults. The returned URLs remain stable; existing invoices retain their product snapshots.",
       "publicPost": "A fixed-amount form sends an empty public POST, without merchant credentials; a customer-entered-amount form sends only amount and currency (for example amount=0.05&currency=XMR). Automatic clients may send a UUID Idempotency-Key header and Accept: application/json. A new attempt returns 201; replay returns 200 with the same invoice_url, status, and expires_at. Save the key before requesting creation and retain it after interrupted responses. GET and HEAD never create invoices. An illustrative successful exchange is:"
     },
@@ -1789,7 +1795,7 @@
       "sale": "A till creates a sale with the terminal key. Send a UUID Idempotency-Key and keep it until a response arrives; replaying it returns 200 with the same invoice instead of creating another.",
       "saleResponse": "The response includes these selected fields. Show the address and amount to the customer, or open invoice_url.",
       "polling": "Read GET /api/core/terminal/invoices/{invoice_id} to follow detection and confirmations. To end an unpaid sale, POST to its cancel path; it returns 409 once a payment was seen or the invoice closed.",
-      "findOperations": "Find the eight operations in the Terminals group in the <directory>endpoint directory</directory>."
+      "findOperations": "Find the nine operations in the Terminals group in the <directory>endpoint directory</directory>."
     },
     "btcpay": {
       "baseUrl": "Base URL uses <code>/api/v1</code>"
@@ -1845,7 +1851,6 @@
     "subaddressTitle": "Subaddress-only invoices",
     "subaddressBody": "Every invoice uses a subaddress derived from your primary address for clearer reconciliation.",
     "subaddress1": "Subaddress index shown on each invoice",
-    "subaddress2": "Wallet lookahead controls discovery",
     "subaddress3": "Subaddresses cycle through indices 1 to 199",
     "subaddress4": "All invoice addresses are within the default range every Monero wallet watches",
     "lifecycle": "Invoice lifecycle",

@@ -362,7 +362,7 @@
     "unavailable": "Platební odkazy nejsou k dispozici. Obnovte stránku a zkuste to znovu.",
     "intro": "Vytvořte opakovaně použitelné HTML tlačítko nebo odkaz pro přijímání darů nebo prodej produktů a služeb. Každé odeslání vytvoří samostatnou platební výzvu v XMR placenou přímo do vaší peněženky.",
     "allowanceNote": "Kdokoli s vaším odkazem může vytvořit platební výzvu, proto mají odkazy denní limit. Díky tomu zůstane dost volných adres pro vaše vlastní platby.",
-    "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Pak v části Sdílet nastavte první řádek tlačítka na „Přispět v Monero“. Opakované platby nejsou podporovány.",
+    "donationTip": "Pro příspěvky použijte název jako „Podpořte můj projekt“ a zvolte „Částku zadává zákazník“, aby dárci zadali vlastní částku. Pak na kartě „Tlačítko pro váš web“ nastavte první řádek tlačítka na „Přispět v Monero“. Opakované platby nejsou podporovány.",
     "guide": "Návod k nastavení platebních odkazů",
     "allowance": "Limit veřejných platebních výzev",
     "allowanceSummary": "Zbývá {remaining} · využito {used} · limit {limit} za posledních {hours} hodin",
@@ -1435,7 +1435,7 @@
       "embed": {
         "title": "Zkopírujte HTML tlačítko nebo opakovaně použitelnou URL",
         "body": {
-          "1": "Otevřete odkaz v panelu. V části Sdílet zvolte tmavé nebo světlé tlačítko a upravte jeho dva řádky textu (každý až 32 znaků; výchozí je „Koupit za Monero“). Náhled i HTML se aktualizují během psaní. Zkopírujte HTML do vlastního HTML bloku na svém webu. Grafika vede na stránku s kontrolou platby. Ve fragmentu není potřeba žádný formulář, JavaScript ani API klíč obchodníka.",
+          "1": "Otevřete odkaz v panelu. Na kartě „Tlačítko pro váš web“ zvolte tmavé nebo světlé tlačítko a upravte jeho dva řádky textu (každý až 32 znaků; výchozí je „Koupit za Monero“). Náhled i HTML se aktualizují během psaní. Zkopírujte HTML do vlastního HTML bloku na svém webu. Grafika vede na stránku s kontrolou platby. Ve fragmentu není potřeba žádný formulář, JavaScript ani API klíč obchodníka.",
           "2": "Tento příklad používá vyhrazenou ukázkovou doménu a zástupný token. Skutečný fragment zkopírujte z panelu; přístupové údaje k peněžence a API klíč do HTML webu nedávejte.",
           "3": "Můžete také zkopírovat opakovaně použitelnou URL a připojit ji k běžnému odkazu nebo vlastnímu tlačítku na webu. Obě možnosti zobrazí stránku s kontrolou produktu; zákazník pak odešle požadavek na nákup. Se zapnutou kontrolou otevření URL platební výzvu nevytvoří. Se zapnutým automatickým vytvářením si aktivní prohlížeč platební výzvu vyžádá a otevře ji. Stejná karta obnoví svou aktuální nezaplacenou platební výzvu; pro samostatnou objednávku použijte „Zahájit další nákup“. Bez JavaScriptu nebo úložiště prohlížeče použijí zákazníci tlačítko pro ruční vytvoření.",
           "4": "Nákupy používají uloženou přijímající peněženku, částku, požadovaný počet potvrzení a návratovou URL. Úpravou HTML tato nastavení nelze přepsat."
@@ -1482,7 +1482,7 @@
         "body": {
           "1": "Tvůrci, správci projektů a další příjemci mohou pomocí platebních odkazů přijímat dobrovolné příspěvky přímo do vlastní peněženky. Každé úspěšné odeslání vytvoří samostatnou platební výzvu s detekcí platby a průběhem potvrzování.",
           "2": {
-            "1": "Vytvořte platební odkaz s názvem jako „Podpořte můj projekt“ a zvolte <strong>Částku zadává zákazník</strong>. Volitelně nastavte minimální částku v XMR, abyste se vyhnuli velmi malým platebním výzvám. V části <strong>Sdílet</strong> nastavte první řádek tlačítka na <strong>Přispět v Monero</strong>.",
+            "1": "Vytvořte platební odkaz s názvem jako „Podpořte můj projekt“ a zvolte <strong>Částku zadává zákazník</strong>. Volitelně nastavte minimální částku v XMR, abyste se vyhnuli velmi malým platebním výzvám. Na kartě <strong>Tlačítko pro váš web</strong> nastavte první řádek tlačítka na <strong>Přispět v Monero</strong>.",
             "2": "Sdílejte opakovaně použitelnou URL na svém profilu nebo webu, nebo zkopírujte HTML tlačítko z panelu. URL můžete připojit i k vlastnímu tlačítku „Podpořte tento projekt“.",
             "3": "Dárci na stránce s kontrolou zadají částku, zvolí XMR nebo podporovanou orientační fiat měnu a pak vytvoří svou platební výzvu. Pokud chcete nabídnout přednastavené částky, vytvořte pro každou samostatný odkaz s pevnou částkou.",
             "4": "Odkazy s částkou zadávanou zákazníkem vždy zobrazí stránku s kontrolou. U odkazů s pevnou částkou ponechte krok kontroly zapnutý, pokud otevření sdílené URL nemá vytvořit platební výzvu. Automatické vytváření je volitelné a spotřebovává kapacitu, když si aktivní prohlížeč platební výzvu vyžádá."
@@ -1700,14 +1700,14 @@
       "r084": "prázdné tělo formuláře (pevné odkazy) NEBO amount a currency (odkazy s customer_amount)",
       "r085": "Není potřeba API klíč, cookies ani JavaScript. Parametry dotazu odmítá s 400. Pevné odkazy odmítají neprázdná těla; odkazy s customer_amount přijímají pouze amount a currency jako formulář nebo JSON tělo s řetězcovými hodnotami. Všechna ostatní nastavení nákupu pocházejí z uložené šablony.",
       "r086": "Částky zákazníků se řídí pravidly přesnosti šablony (12 desetinných míst pro XMR, 2 pro orientační fiat částky, kladné a menší než 1000000). Částky pod minimum_amount_xmr vrací 422 bez vytvoření platební výzvy.",
-      "r087": "Při úspěchu vrací 303 na hostovanou platební výzvu; JSON platební výzvy nevrací. Chyby aplikace jsou v HTML, včetně nedostupných odkazů (404), chyb konfigurace obchodníka (409), limitů kapacity/četnosti (429) a selhání služby/kurzu (503). Příslušné odpovědi obsahují Retry-After.",
+      "r087": "Běžný HTML formulář při úspěchu dostane 303 na hostovanou platební výzvu a při chybách HTML stránky: nedostupné odkazy (404), chyby konfigurace obchodníka (409), limity kapacity nebo četnosti (429) a výpadky služby nebo kurzu (503). S Accept: application/json vrací úspěch JSON (201 pro novou výzvu, 200 pro opakování) a chyby také JSON. Příslušné odpovědi obsahují Retry-After.",
       "r088": "Výchozí limit je 30 vytvoření na obchodníka za posledních 24 hodin; výchozí limit Nginx je 6 požadavků za minutu na IP adresu klienta, nárazově 3. Platí také další limity obchodníka a adres. Provozovatelé mohou tyto výchozí hodnoty nastavit.",
-      "r089": "Neexistuje ochrana proti duplicitnímu odeslání ani automatické opakování. Přerušená odpověď neprokazuje, že vytvoření selhalo; před opakováním zkontrolujte případnou obdrženou URL platební výzvy nebo kontaktujte obchodníka.",
+      "r089": "Běžný HTML formulář se nedokáže zotavit z dvojího odeslání, proto ho automaticky neopakujte. Přerušená odpověď nedokazuje, že vytvoření selhalo; před opakováním zkontrolujte případnou obdrženou URL platební výzvy nebo kontaktujte obchodníka. Klienti API mohou bezpečně opakovat se stejným Idempotency-Key.",
       "r090": "default_currency (XMR nebo podporovaná orientační fiat měna, výchozí XMR)",
       "r091": "confirmation_target (0-10, výchozí 0)",
       "r092": "expiry_minutes (2-60, výchozí 15)",
       "r093": "enabled (výchozí true)",
-      "r094": "Vrací nastavení terminálu a url, která končí #k= a klíčem terminálu. Klíč se ukládá pouze jako hash a už nikdy se nevrací; pro nahrazení proveďte rotaci.",
+      "r094": "Vrací nastavení terminálu a url, která končí na #k= a klíč terminálu. Odkaz lze později znovu zobrazit; rotace ho nahradí a starý odkaz přestane fungovat.",
       "r095": "Klíč terminálu může vytvářet platební výzvy, číst stav vlastních platebních výzev a rušit vlastní nezaplacené platební výzvy. Nemůže číst jiné platební výzvy, měnit nastavení ani používat jiné endpointy.",
       "r096": "Authorization: Terminal <key>",
       "r097": "amount (řetězec)",
@@ -1791,7 +1791,13 @@
       "r175": "Verze je nastavena kvůli kompatibilitě s chováním rozhraní pro vrácení peněz.",
       "r176": "Oprávnění jsou řetězce omezené na obchod a vázané na jedno ID obchodu.",
       "r177": "Oprávnění k vracení peněz jsou záměrně vynechána.",
-      "r178": "Znovu zobrazí aktuální odkaz terminálu."
+      "r178": "Znovu zobrazí aktuální odkaz terminálu.",
+      "r179": "Smaže vypnutý odkaz. Zapnutý odkaz vrátí 409; existující platební výzvy zůstanou beze změny.",
+      "r180": "Načte stav detekce plateb pro platební výzvy přihlášeného obchodníka.",
+      "r181": "Načte z místních záznamů zásobu adres pro platební výzvy obchodníka: používané, čekající a dostupné adresy.",
+      "r182": "Vypíše platební výzvy obchodu kompatibilní s BTCPay (stránkování přes skip a take, až 100 na stránku).",
+      "r183": "Hlavička Idempotency-Key (UUID; znovu ji použijte pro bezpečné opakování)",
+      "r184": "Accept: application/json (vrací JSON místo přesměrování)"
     },
     "metaTitle": "Dokumentace platebního API Monero | XMR Checkout",
     "metaDescription": "Integrujte samostatně hostované platební výzvy v Monero pomocí API XMR Checkout, veřejných stránek platebních výzev, detekce potvrzení a webhooků.",
@@ -1802,7 +1808,7 @@
     },
     "links": {
       "guideBody": "<guide>Postupujte podle návodu k nastavení pro obchodníky</guide>, kde najdete předpoklady pro peněženku, vkládání, kapacitu, vyřizování a <message>zprávy po potvrzení</message>, například odkazy ke stažení zobrazené po platbě. Operace API níže umožňují spravovat tytéž šablony z integrace.",
-      "findOperations": "Šest operací najdete ve skupinách Správa platebních odkazů a Veřejné platební odkazy v <directory>přehledu endpointů</directory>.",
+      "findOperations": "Sedm operací najdete ve skupinách Správa platebních odkazů a Veřejné platební odkazy v <directory>přehledu endpointů</directory>.",
       "editing": "Pro úpravy PATCH přijímá kompletní nastavení s poli pro vytvoření, nebo tělo obsahující pouze enabled, například {\"enabled\": false}. Opětovné povolení pomocí {\"enabled\": true} ověří uložená nastavení. Aktualizace s kompletním nastavením nahradí vynechaná volitelná pole výchozími hodnotami. Vrácené URL zůstávají stejné; stávající platební výzvy si ponechávají snímky produktu.",
       "publicPost": "Formulář s pevnou částkou odešle prázdný veřejný POST bez přístupových údajů obchodníka; formulář s částkou zadávanou zákazníkem odešle pouze amount a currency (například amount=0.05&currency=XMR). Automatizovaní klienti mohou poslat hlavičku Idempotency-Key s UUID a Accept: application/json. Nový pokus vrací 201; opakování vrací 200 se stejnými invoice_url, status a expires_at. Klíč si uložte před požadavkem na vytvoření a po přerušených odpovědích si ho ponechte. GET a HEAD nikdy platební výzvy nevytvářejí. Ukázková úspěšná výměna:"
     },
@@ -1815,7 +1821,7 @@
       "sale": "Pokladna vytvoří prodej klíčem terminálu. Pošlete Idempotency-Key ve formátu UUID a uchovejte ho, dokud nepřijde odpověď; jeho opakování vrátí 200 se stejnou platební výzvou místo vytvoření další.",
       "saleResponse": "Odpověď obsahuje tato vybraná pole. Ukažte zákazníkovi adresu a částku, nebo otevřete invoice_url.",
       "polling": "Dotazujte se na GET /api/core/terminal/invoices/{invoice_id} a sledujte detekci a potvrzení. Nezaplacený prodej ukončíte odesláním POST na jeho cestu pro zrušení; vrátí 409, jakmile byla zaznamenána platba nebo je platební výzva uzavřená.",
-      "findOperations": "Osm operací najdete ve skupině Terminály v <directory>přehledu endpointů</directory>."
+      "findOperations": "Devět operací najdete ve skupině Terminály v <directory>přehledu endpointů</directory>."
     },
     "btcpay": {
       "baseUrl": "Základní URL používá <code>/api/v1</code>"
@@ -1875,7 +1881,6 @@
     "subaddressTitle": "Platební výzvy pouze s podadresami",
     "subaddressBody": "Každá platební výzva používá podadresu odvozenou z vaší primární adresy pro přehlednější párování plateb.",
     "subaddress1": "Index podadresy zobrazený u každé platební výzvy",
-    "subaddress2": "Lookahead peněženky řídí vyhledávání",
     "subaddress3": "Podadresy cyklují indexy 1 až 199",
     "subaddress4": "Všechny adresy platebních výzev jsou ve výchozím rozsahu, který sleduje každá peněženka Monero",
     "lifecycle": "Životní cyklus platební výzvy",

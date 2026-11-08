@@ -101,8 +101,8 @@ Take payments at a till from a phone or tablet.
 [In-person checkout guide](https://xmrcheckout.com/guides/in-person-monero-checkout) · [API reference](https://xmrcheckout.com/docs)
 
 - Create a terminal in **Dashboard → Terminals** and open its link on the device
-  at the till. The terminal key is in the link's URL fragment, is shown once and
-  is stored only as a hash; *Create new link* replaces it.
+  at the till. The terminal key is in the link's URL fragment. *Show link* shows it again;
+  *Create new link* replaces it, and the old link stops working.
 - A terminal key can only create invoices, read their status, and cancel its own
   unpaid ones. It cannot read other invoices, change settings, or use the
   merchant API. Resetting the merchant API key does not change terminal links;
@@ -111,7 +111,7 @@ Take payments at a till from a phone or tablet.
   so the till shows the payment within seconds. Read
   [Confirmations](#confirmations) before taking larger amounts.
 - Sales appear in the normal invoice list, CSV export, and webhook events, tagged
-  with `terminal_id` and `metadata.terminal`. Your invoice limits and address
+  with `metadata.terminal` (id, name, note). Your invoice limits and address
   capacity apply; the payment-link allowance does not.
 
 ### Confirmations
@@ -441,7 +441,7 @@ Retention defaults to 7 days. To override:
 
 Donations use an ordinary payment link. To show a "Donate" link in the header and footer:
 - Connect your wallet and create a payment link with "Customer enters the amount"
-- Set `DONATION_LINK` to its path, for example `DONATION_LINK=/pay/<token>`, then rebuild the UI
+- Set `DONATION_LINK` to its path, for example `DONATION_LINK=/pay/<token>`, or to a full `https://` URL, then rebuild the UI. Any other value leaves donations off
 
 `/donate` then redirects to that payment link. Without `DONATION_LINK`, `/donate` is not found and no "Donate" link is shown.
 

@@ -57,6 +57,11 @@ const endpointGroupsFor = (t: Translate) => [
       "description": t("docs.ref.r005")
     },
     {
+      "method": "DELETE",
+      "path": "/api/core/payment-links/{link_id}",
+      "description": t("docs.ref.r179")
+    },
+    {
       "method": "GET",
       "path": "/api/core/payment-links/status",
       "description": t("docs.ref.r006")
@@ -171,6 +176,16 @@ const endpointGroupsFor = (t: Translate) => [
         path: "/api/core/invoices/{invoice_id}/transfers",
         description: t("docs.ref.r034"),
       },
+      {
+        method: "GET",
+        path: "/api/core/system/status",
+        description: t("docs.ref.r180"),
+      },
+      {
+        method: "GET",
+        path: "/api/core/subaddresses/status",
+        description: t("docs.ref.r181"),
+      },
     ],
   },
   {
@@ -251,6 +266,11 @@ const endpointGroupsFor = (t: Translate) => [
         method: "POST",
         path: "/api/v1/stores/{store_id}/invoices",
         description: t("docs.ref.r050"),
+      },
+      {
+        method: "GET",
+        path: "/api/v1/stores/{store_id}/invoices",
+        description: t("docs.ref.r182"),
       },
       {
         method: "GET",
@@ -403,7 +423,7 @@ const endpointRequirementsFor = (t: Translate): EndpointRequirement[] => [
     t("docs.ref.r081"),
     t("docs.ref.r084")
   ],
-  "optional": [],
+  "optional": [t("docs.ref.r183"), t("docs.ref.r184")],
   "notes": [
     t("docs.ref.r085"),
     t("docs.ref.r086"),
@@ -1137,7 +1157,6 @@ Content-Type: application/json
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>{t("docs.subaddress1")}</li>
-              <li>{t("docs.subaddress2")}</li>
               <li>{t("docs.subaddress3")}</li>
               <li>{t("docs.subaddress4")}</li>
             </ul>

@@ -356,7 +356,7 @@
     "unavailable": "Zahlungslinks sind nicht verfügbar. Aktualisieren Sie, um es erneut zu versuchen.",
     "intro": "Erstellen Sie eine wiederverwendbare HTML-Schaltfläche oder einen Link, um Spenden anzunehmen oder Produkte und Dienstleistungen zu verkaufen. Jede Übermittlung erstellt eine eigene XMR-Rechnung, die direkt an Ihre Wallet bezahlt wird.",
     "allowanceNote": "Jeder mit Ihrem Link kann eine Rechnung erstellen, daher haben Links ein Tageskontingent. So bleiben genug Rechnungsadressen für Ihren eigenen Checkout frei.",
-    "donationTip": "Für Beiträge verwenden Sie einen Titel wie „Unterstütze mein Projekt“ und wählen „Kunde gibt den Betrag ein“, damit Spender ihren eigenen Betrag eintippen. Setzen Sie dann unter Teilen die erste Zeile der Schaltfläche auf „Mit Monero spenden“. Wiederkehrende Zahlungen werden nicht unterstützt.",
+    "donationTip": "Für Beiträge verwenden Sie einen Titel wie „Unterstütze mein Projekt“ und wählen „Kunde gibt den Betrag ein“, damit Spender ihren eigenen Betrag eintippen. Setzen Sie dann im Tab „Button für deine Website“ die erste Zeile der Schaltfläche auf „Mit Monero spenden“. Wiederkehrende Zahlungen werden nicht unterstützt.",
     "guide": "Anleitung zur Einrichtung von Zahlungslinks",
     "allowance": "Kontingent für öffentliche Rechnungen",
     "allowanceSummary": "{remaining} übrig · {used} verwendet · Limit {limit} pro gleitende {hours} Stunden",
@@ -1409,7 +1409,7 @@
       "embed": {
         "title": "HTML-Schaltfläche oder wiederverwendbare URL kopieren",
         "body": {
-          "1": "Öffnen Sie den Link im Dashboard. Wählen Sie unter Teilen eine dunkle oder helle Schaltfläche und bearbeiten Sie ihre zwei Textzeilen (jeweils bis zu 32 Zeichen; Standard ist „Mit Monero kaufen“). Vorschau und HTML werden beim Tippen aktualisiert. Kopieren Sie das HTML in einen eigenen HTML-Block auf Ihrer Website. Die Grafik verlinkt auf die Seite zur Zahlungsübersicht. Im Snippet sind weder Formular noch JavaScript noch ein Händler-API-Schlüssel nötig.",
+          "1": "Öffnen Sie den Link im Dashboard. Wählen Sie im Tab „Button für deine Website“ eine dunkle oder helle Schaltfläche und bearbeiten Sie ihre zwei Textzeilen (jeweils bis zu 32 Zeichen; Standard ist „Mit Monero kaufen“). Vorschau und HTML werden beim Tippen aktualisiert. Kopieren Sie das HTML in einen eigenen HTML-Block auf Ihrer Website. Die Grafik verlinkt auf die Seite zur Zahlungsübersicht. Im Snippet sind weder Formular noch JavaScript noch ein Händler-API-Schlüssel nötig.",
           "2": "Dieses Beispiel verwendet eine reservierte Beispieldomain und ein Platzhalter-Token. Kopieren Sie Ihr tatsächliches Snippet aus dem Dashboard; halten Sie Wallet-Zugangsdaten und API-Schlüssel aus dem HTML Ihrer Website heraus.",
           "3": "Sie können auch die wiederverwendbare URL kopieren und mit einem normalen Link oder Ihrer eigenen Website-Schaltfläche verknüpfen. Beide Varianten zeigen die Produktübersicht; der Kunde sendet dann eine Kaufanfrage ab. Ist die Übersicht aktiviert, erstellt das Öffnen einer URL keine Rechnung. Ist die automatische Erstellung aktiviert, fordert ein aktiver Browser eine Rechnung an und öffnet sie. Derselbe Tab setzt seine aktuelle unbezahlte Rechnung fort; verwenden Sie „Weiteren Kauf starten“ für eine separate Bestellung. Ohne JavaScript oder Browserspeicher nutzen Kunden die Schaltfläche zur manuellen Erstellung.",
           "4": "Käufe verwenden die gespeicherte Empfangs-Wallet, den Betrag, das Bestätigungsziel und die Rücksprung-URL. Bearbeitetes HTML kann diese Einstellungen nicht überschreiben."
@@ -1456,7 +1456,7 @@
         "body": {
           "1": "Kreative, Maintainer und andere Empfänger können Zahlungslinks nutzen, um freiwillige Beiträge direkt in ihre eigene Wallet zu erhalten. Jede erfolgreiche Übermittlung erstellt eine eigene Rechnung mit Zahlungserkennung und Bestätigungsfortschritt.",
           "2": {
-            "1": "Erstellen Sie einen Zahlungslink mit einem Titel wie „Unterstütze mein Projekt“ und wählen Sie <strong>Kunde gibt den Betrag ein</strong>. Legen Sie optional einen Mindestbetrag in XMR fest, um sehr kleine Rechnungen zu vermeiden. Setzen Sie unter <strong>Teilen</strong> die erste Zeile der Schaltfläche auf <strong>Mit Monero spenden</strong>.",
+            "1": "Erstellen Sie einen Zahlungslink mit einem Titel wie „Unterstütze mein Projekt“ und wählen Sie <strong>Kunde gibt den Betrag ein</strong>. Legen Sie optional einen Mindestbetrag in XMR fest, um sehr kleine Rechnungen zu vermeiden. Setzen Sie im Tab <strong>Button für deine Website</strong> die erste Zeile der Schaltfläche auf <strong>Mit Monero spenden</strong>.",
             "2": "Teilen Sie die wiederverwendbare URL auf Ihrem Profil oder Ihrer Website oder kopieren Sie die HTML-Schaltfläche aus dem Dashboard. Sie können die URL auch mit Ihrer eigenen Schaltfläche „Dieses Projekt unterstützen“ verknüpfen.",
             "3": "Spender geben auf der Übersichtsseite einen Betrag ein, wählen XMR oder eine unterstützte Fiat-Richtwährung und erstellen dann ihre Rechnung. Für feste Beträge erstellen Sie stattdessen je einen eigenen Link mit festem Betrag.",
             "4": "Links mit vom Kunden eingegebenem Betrag zeigen immer die Übersichtsseite. Lassen Sie bei Links mit festem Betrag den Übersichtsschritt aktiviert, wenn das Öffnen einer geteilten URL keine Rechnung erstellen soll. Die automatische Erstellung ist optional und verbraucht Kapazität, wenn ein aktiver Browser eine Rechnung anfordert."
@@ -1674,14 +1674,14 @@
       "r084": "leerer Formular-Body (feste Links) ODER amount und currency (customer_amount-Links)",
       "r085": "Es sind weder API-Schlüssel noch Cookies noch JavaScript nötig. Query-Parameter werden mit 400 abgelehnt. Feste Links lehnen nicht leere Bodys ab; customer_amount-Links akzeptieren nur amount und currency als Formular- oder JSON-Body mit String-Werten. Alle anderen Kaufeinstellungen stammen aus der gespeicherten Vorlage.",
       "r086": "Kundenbeträge folgen den Genauigkeitsregeln der Vorlage (12 Nachkommastellen für XMR, 2 für Fiat-Richtwerte, positiv und kleiner als 1000000). Beträge unter minimum_amount_xmr liefern 422, ohne eine Rechnung zu erstellen.",
-      "r087": "Bei Erfolg wird 303 zur gehosteten Rechnung geliefert, kein Rechnungs-JSON. Anwendungsfehler sind HTML, darunter nicht verfügbare Links (404), Konfigurationsfehler des Händlers (409), Kapazitäts-/Ratenlimits (429) und Dienst- oder Kursfehler (503). Entsprechende Antworten enthalten Retry-After.",
+      "r087": "Ein einfaches HTML-Formular erhält bei Erfolg 303 zur gehosteten Rechnung und bei Fehlern HTML-Seiten: nicht verfügbare Links (404), Konfigurationsfehler des Händlers (409), Kapazitäts- oder Ratenlimits (429) und Dienst- oder Kursfehler (503). Mit Accept: application/json liefert ein Erfolg JSON (201 für eine neue Rechnung, 200 für eine Wiederholung), und Fehler kommen ebenfalls als JSON. Zutreffende Antworten enthalten Retry-After.",
       "r088": "Das Standardkontingent beträgt 30 Erstellungen pro Händler innerhalb gleitender 24 Stunden; das Standard-Nginx-Limit liegt bei 6 Anfragen pro Minute und Client-IP, Burst 3. Weitere Händler- und Adresslimits gelten ebenfalls. Betreiber können diese Standards konfigurieren.",
-      "r089": "Es gibt weder eine Erkennung doppelter Übermittlungen noch automatische Wiederholungen. Eine unterbrochene Antwort beweist nicht, dass die Erstellung fehlgeschlagen ist; prüfen Sie jede erhaltene Rechnungs-URL oder wenden Sie sich an den Händler, bevor Sie es erneut versuchen.",
+      "r089": "Ein einfaches HTML-Formular kann doppelte Übermittlungen nicht erkennen; wiederholen Sie es daher nicht automatisch. Eine unterbrochene Antwort beweist nicht, dass die Erstellung fehlgeschlagen ist; prüfen Sie vor einem erneuten Versuch jede erhaltene Rechnungs-URL oder kontaktieren Sie den Händler. API-Clients können mit demselben Idempotency-Key sicher wiederholen.",
       "r090": "default_currency (XMR oder ein unterstützter Fiat-Richtwert, Standard XMR)",
       "r091": "confirmation_target (0-10, Standard 0)",
       "r092": "expiry_minutes (2-60, Standard 15)",
       "r093": "enabled (Standard true)",
-      "r094": "Liefert die Terminal-Einstellungen und url, die mit #k= gefolgt vom Terminal-Schlüssel endet. Der Schlüssel wird nur als Hash gespeichert und nie wieder ausgegeben; erzeugen Sie einen neuen Link, um ihn zu ersetzen.",
+      "r094": "Gibt die Terminal-Einstellungen und die url zurück, die auf #k= gefolgt vom Terminal-Schlüssel endet. Der Link kann später erneut angezeigt werden; eine Rotation ersetzt ihn, und der alte Link funktioniert nicht mehr.",
       "r095": "Ein Terminal-Schlüssel kann Rechnungen erstellen, den Status seiner eigenen Rechnungen lesen und seine eigenen unbezahlten Rechnungen stornieren. Er kann keine anderen Rechnungen lesen, keine Einstellungen ändern und keine anderen Endpunkte verwenden.",
       "r096": "Authorization: Terminal <key>",
       "r097": "amount (String)",
@@ -1765,7 +1765,13 @@
       "r175": "Die Version ist zur Kompatibilität mit dem Verhalten der Erstattungs-UI gesetzt.",
       "r176": "Berechtigungen sind Store-bezogene Strings, die an eine Store-ID gebunden sind.",
       "r177": "Erstattungsberechtigungen sind bewusst weggelassen.",
-      "r178": "Den aktuellen Link des Terminals erneut anzeigen."
+      "r178": "Den aktuellen Link des Terminals erneut anzeigen.",
+      "r179": "Einen deaktivierten Link löschen. Ein aktiver Link liefert 409; bestehende Rechnungen bleiben unverändert.",
+      "r180": "Den Zustand der Zahlungserkennung für die eigenen Rechnungen des angemeldeten Händlers lesen.",
+      "r181": "Den Adresspool des Händlers für Rechnungen aus lokalen Daten lesen: belegte, abkühlende und verfügbare Adressen.",
+      "r182": "Die BTCPay-kompatiblen Rechnungen des Shops auflisten (Paginierung mit skip und take, bis zu 100 pro Seite).",
+      "r183": "Header Idempotency-Key (UUID; für sichere Wiederholungen erneut verwenden)",
+      "r184": "Accept: application/json (liefert JSON statt einer Weiterleitung)"
     },
     "metaTitle": "Dokumentation der Monero-Zahlungs-API | XMR Checkout",
     "metaDescription": "Integrieren Sie selbst gehostete Monero-Rechnungen mit der XMR-Checkout-API, öffentlichen Rechnungsseiten, Bestätigungserkennung und Webhooks.",
@@ -1776,7 +1782,7 @@
     },
     "links": {
       "guideBody": "<guide>Folgen Sie der Einrichtungsanleitung für Händler</guide> zu Wallet-Voraussetzungen, Einbettung, Kapazität, Auslieferung und <message>Bestätigungsnachrichten</message> wie Download-Links, die nach der Zahlung angezeigt werden. Mit den folgenden API-Operationen lassen sich dieselben Vorlagen aus einer Integration verwalten.",
-      "findOperations": "Die sechs Operationen finden Sie in den Gruppen „Verwaltung von Zahlungslinks“ und „Öffentliche Zahlungslinks“ im <directory>Endpunktverzeichnis</directory>.",
+      "findOperations": "Die sieben Operationen finden Sie in den Gruppen „Verwaltung von Zahlungslinks“ und „Öffentliche Zahlungslinks“ im <directory>Endpunktverzeichnis</directory>.",
       "editing": "Zum Bearbeiten akzeptiert PATCH vollständige Einstellungen mit den Feldern der Erstellung oder einen Body nur mit enabled, etwa {\"enabled\": false}. Erneutes Aktivieren mit {\"enabled\": true} prüft die gespeicherten Einstellungen. Bei Aktualisierungen mit vollständigen Einstellungen werden weggelassene optionale Felder durch Standardwerte ersetzt. Die zurückgegebenen URLs bleiben stabil; bestehende Rechnungen behalten ihre Produkt-Momentaufnahmen.",
       "publicPost": "Ein Formular mit festem Betrag sendet einen leeren öffentlichen POST ohne Händler-Zugangsdaten; ein Formular mit Kundenbetrag sendet nur amount und currency (zum Beispiel amount=0.05&currency=XMR). Automatische Clients können einen UUID-Header Idempotency-Key und Accept: application/json senden. Ein neuer Versuch liefert 201; eine Wiederholung liefert 200 mit derselben invoice_url, demselben status und expires_at. Speichern Sie den Schlüssel, bevor Sie die Erstellung anfordern, und behalten Sie ihn nach unterbrochenen Antworten. GET und HEAD erstellen nie Rechnungen. Ein beispielhafter erfolgreicher Austausch:"
     },
@@ -1789,7 +1795,7 @@
       "sale": "Eine Kasse erstellt einen Verkauf mit dem Terminal-Schlüssel. Senden Sie einen Idempotency-Key als UUID und bewahren Sie ihn auf, bis eine Antwort eintrifft; eine Wiederholung liefert 200 mit derselben Rechnung, statt eine weitere zu erstellen.",
       "saleResponse": "Die Antwort enthält diese ausgewählten Felder. Zeigen Sie dem Kunden Adresse und Betrag oder öffnen Sie invoice_url.",
       "polling": "Fragen Sie GET /api/core/terminal/invoices/{invoice_id} ab, um Erkennung und Bestätigungen zu verfolgen. Um einen unbezahlten Verkauf zu beenden, senden Sie POST an seinen Stornierungspfad; er liefert 409, sobald eine Zahlung gesehen wurde oder die Rechnung geschlossen ist.",
-      "findOperations": "Die acht Operationen finden Sie in der Gruppe „Terminals“ im <directory>Endpunktverzeichnis</directory>."
+      "findOperations": "Die neun Operationen finden Sie in der Gruppe „Terminals“ im <directory>Endpunktverzeichnis</directory>."
     },
     "btcpay": {
       "baseUrl": "Die Basis-URL verwendet <code>/api/v1</code>"
@@ -1845,7 +1851,6 @@
     "subaddressTitle": "Rechnungen nur mit Subadressen",
     "subaddressBody": "Jede Rechnung verwendet eine von Ihrer Hauptadresse abgeleitete Subadresse für einen klareren Abgleich.",
     "subaddress1": "Subadress-Index wird auf jeder Rechnung angezeigt",
-    "subaddress2": "Der Wallet-Lookahead steuert die Erkennung",
     "subaddress3": "Subadressen durchlaufen die Indizes 1 bis 199",
     "subaddress4": "Alle Rechnungsadressen liegen im Standardbereich, den jede Monero-Wallet beobachtet",
     "lifecycle": "Lebenszyklus einer Rechnung",

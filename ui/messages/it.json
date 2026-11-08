@@ -356,7 +356,7 @@
     "unavailable": "I link di pagamento non sono disponibili. Aggiorna per riprovare.",
     "intro": "Crea un pulsante HTML o link riutilizzabile per ricevere donazioni o vendere prodotti e servizi. Ogni invio crea una richiesta di pagamento in XMR separata, pagata direttamente al tuo portafoglio.",
     "allowanceNote": "Chiunque abbia il tuo link può creare una richiesta di pagamento, per questo i link hanno una quota giornaliera. Così restano abbastanza indirizzi liberi per il tuo pagamento.",
-    "donationTip": "Per i contributi, usa un titolo come “Sostieni il mio progetto” e scegli “Il cliente inserisce l'importo” così che i donatori digitino il proprio importo. Poi, in Condividi, imposta la prima riga del pulsante su “Dona con Monero”. Gli incassi ricorrenti non sono supportati.",
+    "donationTip": "Per i contributi, usa un titolo come “Sostieni il mio progetto” e scegli “Il cliente inserisce l'importo” così che i donatori digitino il proprio importo. Poi, nella scheda “Pulsante per il tuo sito web”, imposta la prima riga del pulsante su “Dona con Monero”. Gli incassi ricorrenti non sono supportati.",
     "guide": "Guida alla configurazione dei link di pagamento",
     "allowance": "Quota pubblica di richieste di pagamento",
     "allowanceSummary": "{remaining} rimanenti · {used} usate · Limite di {limit} ogni {hours} ore (finestra mobile)",
@@ -1409,7 +1409,7 @@
       "embed": {
         "title": "Copia il pulsante HTML o l'URL riutilizzabile",
         "body": {
-          "1": "Apri il link nella dashboard. In Condividi, scegli un pulsante scuro o chiaro e modifica le sue due righe di testo (fino a 32 caratteri ciascuna; il valore predefinito è “Acquista con Monero”). L'anteprima e l'HTML si aggiornano mentre scrivi. Copia l'HTML in un blocco HTML personalizzato del tuo sito web. L'immagine porta alla pagina di riepilogo del pagamento. Lo snippet non richiede moduli, JavaScript né la chiave API dell'esercente.",
+          "1": "Apri il link nella dashboard. Nella scheda “Pulsante per il tuo sito web”, scegli un pulsante scuro o chiaro e modifica le sue due righe di testo (fino a 32 caratteri ciascuna; il valore predefinito è “Acquista con Monero”). L'anteprima e l'HTML si aggiornano mentre scrivi. Copia l'HTML in un blocco HTML personalizzato del tuo sito web. L'immagine porta alla pagina di riepilogo del pagamento. Lo snippet non richiede moduli, JavaScript né la chiave API dell'esercente.",
           "2": "Questo esempio usa un dominio di esempio riservato e un token segnaposto. Copia il tuo snippet reale dalla dashboard; tieni le credenziali del portafoglio e la chiave API fuori dall'HTML del sito.",
           "3": "Puoi anche copiare l'URL riutilizzabile e collegarlo a un normale link o a un pulsante del tuo sito. Entrambe le opzioni mostrano la pagina di riepilogo del prodotto; il cliente poi invia una richiesta di acquisto. Con il riepilogo attivo, aprire un URL non crea una richiesta di pagamento. Con la creazione automatica attiva, un browser attivo genera una richiesta di pagamento e la apre. La stessa scheda riprende la richiesta di pagamento non pagata in corso; usa “Inizia un altro acquisto” per un ordine separato. Senza JavaScript o archiviazione del browser, i clienti usano il pulsante di creazione manuale.",
           "4": "Gli acquisti usano il portafoglio di ricezione, l'importo, l'obiettivo di conferme e l'URL di ritorno salvati. Modificare l'HTML non può sovrascrivere queste impostazioni."
@@ -1456,7 +1456,7 @@
         "body": {
           "1": "Creator, maintainer e altri destinatari possono usare i link di pagamento per ricevere contributi volontari direttamente nel proprio portafoglio. Ogni invio riuscito crea una richiesta di pagamento separata con rilevamento del pagamento e avanzamento delle conferme.",
           "2": {
-            "1": "Crea un link di pagamento con un titolo come “Sostieni il mio progetto” e scegli <strong>Il cliente inserisce l'importo</strong>. Facoltativamente, imposta un importo minimo in XMR per evitare richieste di pagamento molto piccole. In <strong>Condividi</strong>, imposta la prima riga del pulsante su <strong>Dona con Monero</strong>.",
+            "1": "Crea un link di pagamento con un titolo come “Sostieni il mio progetto” e scegli <strong>Il cliente inserisce l'importo</strong>. Facoltativamente, imposta un importo minimo in XMR per evitare richieste di pagamento molto piccole. Nella scheda <strong>Pulsante per il tuo sito web</strong>, imposta la prima riga del pulsante su <strong>Dona con Monero</strong>.",
             "2": "Condividi l'URL riutilizzabile sul tuo profilo o sito web, oppure copia il pulsante HTML dalla dashboard. Puoi anche collegare l'URL a un tuo pulsante “Sostieni questo progetto”.",
             "3": "I donatori inseriscono un importo e scelgono XMR o una valuta fiat di riferimento supportata nella pagina di riepilogo, poi creano la loro richiesta di pagamento. Per offrire importi prestabiliti, crea un link separato a importo fisso per ciascuno.",
             "4": "I link con importo inserito dal cliente mostrano sempre la pagina di riepilogo. Per i link a importo fisso, mantieni attivo il riepilogo se l'apertura di un URL condiviso non deve creare una richiesta di pagamento. La creazione automatica è facoltativa e consuma capacità quando un browser attivo genera una richiesta di pagamento."
@@ -1674,14 +1674,14 @@
       "r084": "corpo del modulo vuoto (link fissi) OPPURE amount e currency (link con customer_amount)",
       "r085": "Non servono chiave API, cookie né JavaScript. Rifiuta i parametri di query con 400. I link fissi rifiutano i corpi non vuoti; i link con customer_amount accettano solo amount e currency come modulo o corpo JSON con valori stringa. Tutte le altre impostazioni di acquisto provengono dal modello salvato.",
       "r086": "Gli importi del cliente seguono le regole di precisione del modello (12 decimali per XMR, 2 per i riferimenti in valuta fiat, positivi e inferiori a 1000000). Gli importi sotto minimum_amount_xmr restituiscono 422 senza creare una richiesta di pagamento.",
-      "r087": "In caso di successo restituisce 303 verso la richiesta di pagamento ospitata; non restituisce il JSON della richiesta di pagamento. Gli errori dell'applicazione sono in HTML, inclusi link non disponibili (404), errori di configurazione dell'esercente (409), limiti di capacità/frequenza (429) e guasti del servizio/delle quotazioni (503). Le risposte pertinenti includono Retry-After.",
+      "r087": "Un semplice modulo HTML riceve un 303 verso la richiesta di pagamento ospitata in caso di successo e pagine di errore HTML: link non disponibili (404), errori di configurazione dell'esercente (409), limiti di capacità o di frequenza (429) e guasti del servizio o della quotazione (503). Con Accept: application/json, il successo restituisce JSON (201 per una nuova richiesta, 200 per una ripetizione) e anche gli errori restituiscono JSON. Le risposte pertinenti includono Retry-After.",
       "r088": "La quota predefinita è di 30 creazioni per esercente in una finestra mobile di 24 ore; il limite predefinito di Nginx è di 6 richieste al minuto per IP del client, con burst di 3. Si applicano anche altri limiti dell'esercente e degli indirizzi. Gli operatori possono configurare questi valori predefiniti.",
-      "r089": "Non c'è alcun recupero degli invii duplicati né ripetizione automatica. Una risposta interrotta non prova che la creazione sia fallita; controlla l'eventuale URL della richiesta di pagamento ricevuto o contatta l'esercente prima di riprovare.",
+      "r089": "Un semplice modulo HTML non può recuperare da un invio duplicato, quindi non ripeterlo automaticamente. Una risposta interrotta non dimostra che la creazione sia fallita; controlla qualsiasi URL di richiesta ricevuto o contatta l'esercente prima di riprovare. I client API possono riprovare in sicurezza riutilizzando la stessa Idempotency-Key.",
       "r090": "default_currency (XMR o un riferimento in valuta fiat supportato, predefinito XMR)",
       "r091": "confirmation_target (0-10, predefinito 0)",
       "r092": "expiry_minutes (2-60, predefinito 15)",
       "r093": "enabled (predefinito true)",
-      "r094": "Restituisce le impostazioni del terminale e l'url, che termina con #k= seguito dalla chiave del terminale. La chiave viene memorizzata solo come hash e non viene mai più restituita; ruotala per sostituirla.",
+      "r094": "Restituisce le impostazioni del terminale e l'url, che termina con #k= seguito dalla chiave del terminale. Il link può essere mostrato di nuovo in seguito; la rotazione lo sostituisce e il vecchio link smette di funzionare.",
       "r095": "Una chiave del terminale può creare richieste di pagamento, leggere lo stato delle proprie richieste di pagamento e annullare le proprie richieste di pagamento non pagate. Non può leggere altre richieste di pagamento, modificare le impostazioni né usare altri endpoint.",
       "r096": "Authorization: Terminal <key>",
       "r097": "amount (stringa)",
@@ -1765,7 +1765,13 @@
       "r175": "La versione è impostata per compatibilità con il comportamento dell'interfaccia dei rimborsi.",
       "r176": "I permessi sono stringhe limitate al negozio, legate a un ID negozio.",
       "r177": "I permessi di rimborso sono omessi intenzionalmente.",
-      "r178": "Mostra di nuovo il link attuale del terminale."
+      "r178": "Mostra di nuovo il link attuale del terminale.",
+      "r179": "Elimina un link disattivato. Un link attivo restituisce 409; le richieste di pagamento esistenti non cambiano.",
+      "r180": "Legge lo stato del rilevamento dei pagamenti per le richieste dell'esercente connesso.",
+      "r181": "Legge il pool di indirizzi delle richieste dell'esercente dai dati locali: indirizzi in uso, in attesa e disponibili.",
+      "r182": "Elenca le richieste compatibili con BTCPay del negozio (paginazione con skip e take, fino a 100 per pagina).",
+      "r183": "Intestazione Idempotency-Key (UUID; riutilizzala per riprovare in sicurezza)",
+      "r184": "Accept: application/json (restituisce JSON invece di un reindirizzamento)"
     },
     "metaTitle": "Documentazione dell'API di pagamento Monero | XMR Checkout",
     "metaDescription": "Integra richieste di pagamento Monero in self-hosting con l'API di XMR Checkout, pagine pubbliche delle richieste di pagamento, rilevamento delle conferme e webhook.",
@@ -1776,7 +1782,7 @@
     },
     "links": {
       "guideBody": "<guide>Segui la guida di configurazione per esercenti</guide> per i prerequisiti del portafoglio, l'incorporamento, la capacità, l'evasione e i <message>messaggi di conferma</message>, come i link per il download mostrati dopo il pagamento. Le operazioni API qui sotto permettono di gestire quegli stessi modelli da un'integrazione.",
-      "findOperations": "Trovi le sei operazioni nei gruppi Gestione dei link di pagamento e Link di pagamento pubblici nella <directory>directory degli endpoint</directory>.",
+      "findOperations": "Trovi le sette operazioni nei gruppi Gestione dei link di pagamento e Link di pagamento pubblici nella <directory>directory degli endpoint</directory>.",
       "editing": "Per la modifica, PATCH accetta le impostazioni complete con i campi di creazione oppure un corpo con il solo enabled, come {\"enabled\": false}. La riattivazione con {\"enabled\": true} convalida le impostazioni salvate. Gli aggiornamenti completi sostituiscono i campi facoltativi omessi con i valori predefiniti. Gli URL restituiti restano stabili; le richieste di pagamento esistenti mantengono le istantanee del prodotto.",
       "publicPost": "Un modulo a importo fisso invia un POST pubblico vuoto, senza credenziali dell'esercente; un modulo con importo inserito dal cliente invia solo amount e currency (per esempio amount=0.05&currency=XMR). I client automatici possono inviare un'intestazione Idempotency-Key con un UUID e Accept: application/json. Un nuovo tentativo restituisce 201; una ripetizione restituisce 200 con gli stessi invoice_url, status ed expires_at. Salva la chiave prima di richiedere la creazione e conservala dopo risposte interrotte. GET e HEAD non creano mai richieste di pagamento. Uno scambio riuscito di esempio è:"
     },
@@ -1789,7 +1795,7 @@
       "sale": "Una cassa crea una vendita con la chiave del terminale. Invia una Idempotency-Key UUID e conservala finché non arriva una risposta; ripeterla restituisce 200 con la stessa richiesta di pagamento invece di crearne un'altra.",
       "saleResponse": "La risposta include questi campi selezionati. Mostra indirizzo e importo al cliente oppure apri invoice_url.",
       "polling": "Leggi GET /api/core/terminal/invoices/{invoice_id} per seguire rilevamento e conferme. Per chiudere una vendita non pagata, invia POST al suo percorso di annullamento; restituisce 409 se è già stato visto un pagamento o la richiesta di pagamento è chiusa.",
-      "findOperations": "Trovi le otto operazioni nel gruppo Terminali nella <directory>directory degli endpoint</directory>."
+      "findOperations": "Trovi le nove operazioni nel gruppo Terminali nella <directory>directory degli endpoint</directory>."
     },
     "btcpay": {
       "baseUrl": "L'URL di base usa <code>/api/v1</code>"
@@ -1845,7 +1851,6 @@
     "subaddressTitle": "Richieste di pagamento solo con sottoindirizzi",
     "subaddressBody": "Ogni richiesta di pagamento usa un sottoindirizzo derivato dal tuo indirizzo principale per una riconciliazione più chiara.",
     "subaddress1": "Indice del sottoindirizzo mostrato su ogni richiesta di pagamento",
-    "subaddress2": "Il lookahead del portafoglio controlla l'individuazione",
     "subaddress3": "I sottoindirizzi ruotano tra gli indici da 1 a 199",
     "subaddress4": "Tutti gli indirizzi di pagamento rientrano nell'intervallo predefinito osservato da ogni portafoglio Monero",
     "lifecycle": "Ciclo di vita della richiesta di pagamento",

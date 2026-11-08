@@ -356,7 +356,7 @@
     "unavailable": "Les liens de paiement sont indisponibles. Actualisez pour réessayer.",
     "intro": "Créez un bouton HTML ou lien réutilisable pour recevoir des dons ou vendre des produits et services. Chaque envoi crée une facture XMR distincte, payée directement à votre portefeuille.",
     "allowanceNote": "Toute personne disposant de votre lien peut créer une facture, c’est pourquoi les liens ont un quota quotidien. Il reste ainsi assez d’adresses de facture libres pour votre propre paiement.",
-    "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. Ensuite, sous Partager, mettez « Faire un don en Monero » sur la première ligne du bouton. La collecte récurrente n’est pas prise en charge.",
+    "donationTip": "Pour les contributions, utilisez un titre tel que « Soutenir mon projet » et choisissez « Le client saisit le montant » pour que les donateurs indiquent leur propre montant. Ensuite, dans l’onglet « Bouton pour votre site web », mettez « Faire un don en Monero » sur la première ligne du bouton. La collecte récurrente n’est pas prise en charge.",
     "guide": "Guide de configuration des liens de paiement",
     "allowance": "Quota de factures publiques",
     "allowanceSummary": "{remaining} restantes · {used} utilisées · Limite de {limit} sur {hours} heures glissantes",
@@ -1409,7 +1409,7 @@
       "embed": {
         "title": "Copier votre bouton HTML ou votre URL réutilisable",
         "body": {
-          "1": "Ouvrez le lien dans le tableau de bord. Sous Partager, choisissez un bouton sombre ou clair et modifiez ses deux lignes de texte (jusqu’à 32 caractères chacune ; la valeur par défaut est « Acheter avec Monero »). L’aperçu et le HTML se mettent à jour pendant la saisie. Copiez le HTML dans un bloc HTML personnalisé de votre site web. Le visuel renvoie vers la page de vérification du paiement. Aucun formulaire, aucun JavaScript ni aucune clé API de commerçant n’est nécessaire dans l’extrait.",
+          "1": "Ouvrez le lien dans le tableau de bord. Dans l’onglet « Bouton pour votre site web », choisissez un bouton sombre ou clair et modifiez ses deux lignes de texte (jusqu’à 32 caractères chacune ; la valeur par défaut est « Acheter avec Monero »). L’aperçu et le HTML se mettent à jour pendant la saisie. Copiez le HTML dans un bloc HTML personnalisé de votre site web. Le visuel renvoie vers la page de vérification du paiement. Aucun formulaire, aucun JavaScript ni aucune clé API de commerçant n’est nécessaire dans l’extrait.",
           "2": "Cet exemple utilise un domaine d’exemple réservé et un jeton fictif. Copiez votre véritable extrait depuis le tableau de bord ; ne mettez jamais vos identifiants de portefeuille ni votre clé API dans le HTML de votre site.",
           "3": "Vous pouvez aussi copier l’URL réutilisable et l’associer à un lien ordinaire ou à votre propre bouton. Les deux options affichent la page de vérification du produit ; le client envoie ensuite une demande d’achat. Lorsque la vérification est activée, l’ouverture d’une URL ne crée pas de facture. Lorsque la création automatique est activée, un navigateur actif demande une facture et l’ouvre. Le même onglet reprend sa facture impayée en cours ; utilisez « Commencer un autre achat » pour une commande distincte. Sans JavaScript ni stockage du navigateur, les clients utilisent le bouton de création manuelle.",
           "4": "Les achats utilisent le portefeuille de réception, le montant, l’objectif de confirmations et l’URL de retour enregistrés. Modifier le HTML ne permet pas de contourner ces paramètres."
@@ -1456,7 +1456,7 @@
         "body": {
           "1": "Les créateurs, les mainteneurs et d’autres bénéficiaires peuvent utiliser des liens de paiement pour recevoir des contributions volontaires directement dans leur propre portefeuille. Chaque envoi réussi crée une facture distincte avec détection du paiement et progression des confirmations.",
           "2": {
-            "1": "Créez un lien de paiement avec un titre tel que « Soutenir mon projet » et choisissez <strong>Le client saisit le montant</strong>. Fixez éventuellement un montant minimum en XMR pour éviter les très petites factures. Sous <strong>Partager</strong>, mettez <strong>Faire un don en Monero</strong> sur la première ligne du bouton.",
+            "1": "Créez un lien de paiement avec un titre tel que « Soutenir mon projet » et choisissez <strong>Le client saisit le montant</strong>. Fixez éventuellement un montant minimum en XMR pour éviter les très petites factures. Dans l’onglet <strong>Bouton pour votre site web</strong>, mettez <strong>Faire un don en Monero</strong> sur la première ligne du bouton.",
             "2": "Partagez l’URL réutilisable sur votre profil ou votre site web, ou copiez le bouton HTML depuis le tableau de bord. Vous pouvez aussi associer l’URL à votre propre bouton « Soutenir ce projet ».",
             "3": "Les donateurs saisissent un montant et choisissent XMR ou une monnaie fiduciaire de référence prise en charge sur la page de vérification, puis créent leur facture. Pour proposer plutôt des montants prédéfinis, créez un lien à montant fixe distinct pour chacun.",
             "4": "Les liens à montant saisi par le client affichent toujours la page de vérification. Pour les liens à montant fixe, gardez l’étape de vérification activée si l’ouverture d’une URL partagée ne doit pas créer de facture. La création automatique est facultative et consomme de la capacité lorsqu’un navigateur actif demande une facture."
@@ -1674,14 +1674,14 @@
       "r084": "corps de formulaire vide (liens fixes) OU amount et currency (liens customer_amount)",
       "r085": "Aucune clé API, aucun cookie ni JavaScript n’est requis. Les paramètres de requête sont rejetés avec 400. Les liens fixes rejettent les corps non vides ; les liens customer_amount n’acceptent que amount et currency, sous forme de formulaire ou de corps JSON à valeurs de type chaîne. Tous les autres paramètres d’achat proviennent du modèle enregistré.",
       "r086": "Les montants saisis par le client suivent les règles de précision du modèle (12 décimales pour XMR, 2 pour les références en monnaie fiduciaire, positifs et inférieurs à 1000000). Les montants inférieurs à minimum_amount_xmr renvoient 422 sans créer de facture.",
-      "r087": "Un succès renvoie 303 vers la facture hébergée ; aucun JSON de facture n’est renvoyé. Les erreurs applicatives sont en HTML, notamment les liens indisponibles (404), les erreurs de configuration du commerçant (409), les limites de capacité ou de débit (429) et les défaillances du service ou du cours (503). Les réponses concernées incluent Retry-After.",
+      "r087": "Un formulaire HTML simple reçoit un 303 vers la facture hébergée en cas de succès, et des pages d’erreur HTML : liens indisponibles (404), erreurs de configuration du commerçant (409), limites de capacité ou de fréquence (429) et pannes du service ou du cours (503). Avec Accept: application/json, le succès renvoie du JSON (201 pour une nouvelle facture, 200 pour une relecture) et les erreurs renvoient du JSON. Les réponses concernées incluent Retry-After.",
       "r088": "Le quota par défaut est de 30 créations par commerçant sur 24 heures glissantes ; la limite Nginx par défaut est de 6 requêtes par minute et par adresse IP cliente, avec une rafale de 3. D’autres limites liées au commerçant et aux adresses s’appliquent aussi. Les opérateurs peuvent configurer ces valeurs par défaut.",
-      "r089": "Il n’existe ni récupération des envois en double ni nouvelle tentative automatique. Une réponse interrompue ne prouve pas que la création a échoué ; vérifiez toute URL de facture reçue ou contactez le commerçant avant de réessayer.",
+      "r089": "Un formulaire HTML simple ne peut pas récupérer d’une soumission en double ; ne le relancez donc pas automatiquement. Une réponse interrompue ne prouve pas que la création a échoué ; vérifiez toute URL de facture reçue ou contactez le commerçant avant de réessayer. Les clients API peuvent réessayer sans risque en réutilisant la même Idempotency-Key.",
       "r090": "default_currency (XMR ou une référence en monnaie fiduciaire prise en charge, XMR par défaut)",
       "r091": "confirmation_target (0-10, 0 par défaut)",
       "r092": "expiry_minutes (2-60, 15 par défaut)",
       "r093": "enabled (true par défaut)",
-      "r094": "Renvoie les paramètres du terminal et son url, qui se termine par #k= suivi de la clé du terminal. La clé n’est stockée que sous forme de hachage et n’est plus jamais renvoyée ; effectuez une rotation pour la remplacer.",
+      "r094": "Renvoie les réglages du terminal et l’url, qui se termine par #k= suivi de la clé du terminal. Le lien peut être affiché à nouveau plus tard ; une rotation le remplace et l’ancien lien cesse de fonctionner.",
       "r095": "Une clé de terminal peut créer des factures, lire le statut de ses propres factures et annuler ses propres factures impayées. Elle ne peut pas lire d’autres factures, modifier les paramètres ni utiliser d’autres points de terminaison.",
       "r096": "Authorization: Terminal <key>",
       "r097": "amount (chaîne)",
@@ -1765,7 +1765,13 @@
       "r175": "La version est définie pour la compatibilité avec le comportement de l’interface de remboursement.",
       "r176": "Les autorisations sont des chaînes limitées à une boutique, liées à un identifiant de boutique.",
       "r177": "Les autorisations de remboursement sont volontairement omises.",
-      "r178": "Afficher à nouveau le lien actuel du terminal."
+      "r178": "Afficher à nouveau le lien actuel du terminal.",
+      "r179": "Supprimer un lien désactivé. Un lien actif renvoie 409 ; les factures existantes ne sont pas affectées.",
+      "r180": "Lire l’état de la détection des paiements pour les factures du commerçant connecté.",
+      "r181": "Lire la réserve d’adresses de facture du commerçant à partir des enregistrements locaux : adresses utilisées, en attente et disponibles.",
+      "r182": "Lister les factures compatibles BTCPay de la boutique (pagination avec skip et take, jusqu’à 100 par page).",
+      "r183": "En-tête Idempotency-Key (UUID ; réutilisez-le pour réessayer sans risque)",
+      "r184": "Accept: application/json (renvoie du JSON au lieu d’une redirection)"
     },
     "metaTitle": "Documentation de l’API de paiement Monero | XMR Checkout",
     "metaDescription": "Intégrez des factures Monero auto-hébergées grâce à l’API XMR Checkout, aux pages de facture publiques, à la détection des confirmations et aux webhooks.",
@@ -1776,7 +1782,7 @@
     },
     "links": {
       "guideBody": "<guide>Suivez le guide de configuration pour les commerçants</guide> pour les prérequis du portefeuille, l’intégration, la capacité, la livraison et les <message>messages de confirmation</message>, comme les liens de téléchargement affichés après le paiement. Les opérations d’API ci-dessous permettent de gérer ces mêmes modèles depuis une intégration.",
-      "findOperations": "Retrouvez les six opérations dans les groupes Gestion des liens de paiement et Liens de paiement publics du <directory>répertoire des points de terminaison</directory>.",
+      "findOperations": "Retrouvez les sept opérations dans les groupes Gestion des liens de paiement et Liens de paiement publics du <directory>répertoire des points de terminaison</directory>.",
       "editing": "Pour la modification, PATCH accepte l’ensemble des paramètres avec les champs de création, ou un corps limité à enabled tel que {\"enabled\": false}. La réactivation avec {\"enabled\": true} valide les paramètres enregistrés. Les mises à jour complètes remplacent les champs facultatifs omis par leurs valeurs par défaut. Les URL renvoyées restent stables ; les factures existantes conservent la copie de leurs paramètres produit.",
       "publicPost": "Un formulaire à montant fixe envoie un POST public vide, sans identifiants du commerçant ; un formulaire à montant saisi par le client n’envoie que amount et currency (par exemple amount=0.05&currency=XMR). Les clients automatiques peuvent envoyer un en-tête Idempotency-Key contenant un UUID et Accept: application/json. Une nouvelle tentative renvoie 201 ; une répétition renvoie 200 avec les mêmes invoice_url, status et expires_at. Enregistrez la clé avant de demander la création et conservez-la après une réponse interrompue. GET et HEAD ne créent jamais de facture. Voici un exemple d’échange réussi :"
     },
@@ -1789,7 +1795,7 @@
       "sale": "Une caisse crée une vente avec la clé du terminal. Envoyez une Idempotency-Key au format UUID et conservez-la jusqu’à la réponse ; la renvoyer renvoie 200 avec la même facture au lieu d’en créer une autre.",
       "saleResponse": "La réponse inclut ces champs sélectionnés. Affichez l’adresse et le montant au client, ou ouvrez invoice_url.",
       "polling": "Interrogez GET /api/core/terminal/invoices/{invoice_id} pour suivre la détection et les confirmations. Pour mettre fin à une vente impayée, envoyez un POST à son chemin d’annulation ; il renvoie 409 dès qu’un paiement a été vu ou que la facture est close.",
-      "findOperations": "Retrouvez les huit opérations dans le groupe Terminaux du <directory>répertoire des points de terminaison</directory>."
+      "findOperations": "Retrouvez les neuf opérations dans le groupe Terminaux du <directory>répertoire des points de terminaison</directory>."
     },
     "btcpay": {
       "baseUrl": "L’URL de base utilise <code>/api/v1</code>"
@@ -1845,7 +1851,6 @@
     "subaddressTitle": "Factures sur sous-adresses uniquement",
     "subaddressBody": "Chaque facture utilise une sous-adresse dérivée de votre adresse principale, pour un rapprochement plus clair.",
     "subaddress1": "Index de sous-adresse affiché sur chaque facture",
-    "subaddress2": "La plage d’anticipation du portefeuille détermine la découverte",
     "subaddress3": "Les sous-adresses parcourent les index 1 à 199",
     "subaddress4": "Toutes les adresses de facture se trouvent dans la plage par défaut que surveille chaque portefeuille Monero",
     "lifecycle": "Cycle de vie d’une facture",

@@ -150,6 +150,20 @@ def rotate_terminal(terminal_id: UUID, db: Session = Depends(get_db), user: User
     return serialize(terminal, secret)
 
 
+@router.delete("/api/core/terminals/{terminal_id}", status_code=204)
+def delete_terminal(terminal_id: UUID, db: Session = Depends(get_db), user: User = Depends(merchant)):
+    # Sales already made are invoices, which keep their own record and are still checked.
+    terminal = db.query(Terminal).filter(Terminal.id == terminal_id, Terminal.user_id == user.id).with_for_update().first()
+    if terminal is None:
+        raise HTTPException(404, "Terminal not found")
+    if terminal.enabled:
+        raise HTTPException(409, "Disable the terminal before deleting it.")
+    db.delete(terminal)
+    db.commit()
+    logger.info("Terminal deleted terminal=%s", terminal_id)
+    return Response(status_code=204)
+
+
 @router.get("/api/core/terminals/{terminal_id}/link")
 def show_terminal_link(terminal_id: UUID, db: Session = Depends(get_db), user: User = Depends(merchant)):
     terminal = owned_terminal(db, user, terminal_id)

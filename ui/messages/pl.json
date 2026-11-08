@@ -521,7 +521,9 @@
       "created": "Terminal utworzony.",
       "saved": "Terminal zapisany.",
       "notConfirmed": "Nie udało się potwierdzić zapisu. Sprawdź listę terminali, zanim spróbujesz ponownie.",
-      "notShown": "Nie udało się wyświetlić linku. Spróbuj ponownie."
+      "notShown": "Nie udało się wyświetlić linku. Spróbuj ponownie.",
+      "deleted": "Terminal usunięty.",
+      "deleteNotConfirmed": "Nie udało się potwierdzić usunięcia. Sprawdź listę terminali, zanim spróbujesz ponownie."
     },
     "actions": {
       "tourNoop": "Tylko tryb demo: zmiany nie są zapisywane.",
@@ -848,7 +850,12 @@
     "back": "Wszystkie terminale",
     "settings": "Ustawienia",
     "aboutAddresses": "O adresach płatności",
-    "replacing": "Zastępowanie linku…"
+    "replacing": "Zastępowanie linku…",
+    "delete": "Usuń terminal",
+    "deleteWarning": "Usunięcie trwale usuwa ten terminal i jego link. Urządzenie, które otworzy link, zobaczy, że nie jest on już ważny. Już dokonane sprzedaże zostają zachowane jako prośby o płatność i są nadal sprawdzane.",
+    "deletePermanently": "Usuń trwale",
+    "deleting": "Usuwanie…",
+    "deleteNote": "Aby usunąć ten terminal, najpierw go wyłącz."
   },
   "settings": {
     "requiredConfirmations": "Wymagane potwierdzenia",
@@ -1806,7 +1813,8 @@
       "r181": "Odczytuje pulę adresów sprzedawcy z lokalnych zapisów: adresy w użyciu, w okresie oczekiwania i dostępne.",
       "r182": "Wyświetla prośby o płatność sklepu zgodne z BTCPay (stronicowanie przez skip i take, do 100 na stronę).",
       "r183": "Nagłówek Idempotency-Key (UUID; użyj go ponownie, by bezpiecznie ponowić)",
-      "r184": "Accept: application/json (zwraca JSON zamiast przekierowania)"
+      "r184": "Accept: application/json (zwraca JSON zamiast przekierowania)",
+      "r185": "Usuwa wyłączony terminal; jego link przestaje działać. Dla aktywnego terminala zwracany jest 409; istniejące prośby o płatność pozostają bez zmian."
     },
     "metaTitle": "Dokumentacja API płatności Monero | XMR Checkout",
     "metaDescription": "Zintegruj samodzielnie hostowane prośby o płatność w Monero z API XMR Checkout, publicznymi stronami płatności, wykrywaniem potwierdzeń i webhookami.",

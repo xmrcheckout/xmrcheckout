@@ -63,6 +63,32 @@ export async function showTerminalLink(_state: TerminalState, form: FormData): P
   }
 }
 
+export type DeleteTerminalState = { error: string; success: string };
+export async function deleteTerminal(_state: DeleteTerminalState, form: FormData): Promise<DeleteTerminalState> {
+  const { t } = await getI18n();
+  const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
+  if (!apiKey) return { error: t("dashboard.terminalActions.connectFirst"), success: "" };
+  const id = String(form.get("id") ?? "");
+  if (!id) return { error: t("dashboard.terminalActions.deleteNotConfirmed"), success: "" };
+  try {
+    const response = await fetch(`${apiBase()}/api/core/terminals/${encodeURIComponent(id)}`, {
+      method: "DELETE", cache: "no-store", headers: { Authorization: `ApiKey ${apiKey}` },
+    });
+    if (response.status === 401) return { error: t("dashboard.actions.authExpired"), success: "" };
+    if (response.status === 409) return { error: t("terminals.deleteNote"), success: "" };
+    if (!response.ok && response.status !== 404) return { error: t("dashboard.terminalActions.deleteNotConfirmed"), success: "" };
+  } catch {
+    return { error: t("dashboard.terminalActions.deleteNotConfirmed"), success: "" };
+  }
+  revalidatePath("/dashboard");
+  redirect("/dashboard?tab=terminals&deleted=1");
+}
+
+export async function deleteTerminalTourAction(_state: DeleteTerminalState, _form: FormData): Promise<DeleteTerminalState> {
+  const { t } = await getI18n();
+  return { error: "", success: t("dashboard.actions.tourNoop") };
+}
+
 export async function saveTerminalTourAction(_state: TerminalState, _form: FormData): Promise<TerminalState> {
   const { t } = await getI18n();
   return { error: "", success: t("dashboard.actions.tourNoop"), url: "" };

@@ -515,7 +515,9 @@
       "created": "Terminal creado.",
       "saved": "Terminal guardado.",
       "notConfirmed": "No se pudo confirmar el guardado. Revisa la lista de terminales antes de volver a intentarlo.",
-      "notShown": "No se pudo mostrar el enlace. Inténtalo de nuevo."
+      "notShown": "No se pudo mostrar el enlace. Inténtalo de nuevo.",
+      "deleted": "Terminal eliminado.",
+      "deleteNotConfirmed": "No se pudo confirmar la eliminación. Revisa la lista de terminales antes de volver a intentarlo."
     },
     "actions": {
       "tourNoop": "Solo modo de demostración: no se guarda ningún cambio.",
@@ -832,7 +834,12 @@
     "back": "Todas las terminales",
     "settings": "Configuración",
     "aboutAddresses": "Sobre las direcciones de factura",
-    "replacing": "Reemplazando enlace…"
+    "replacing": "Reemplazando enlace…",
+    "delete": "Eliminar terminal",
+    "deleteWarning": "Al eliminarlo se borran de forma permanente este terminal y su enlace. Un dispositivo que abra el enlace verá que ya no es válido. Las ventas ya realizadas se conservan como facturas y se siguen comprobando.",
+    "deletePermanently": "Eliminar de forma permanente",
+    "deleting": "Eliminando…",
+    "deleteNote": "Para eliminar este terminal, desactívalo primero."
   },
   "settings": {
     "requiredConfirmations": "Confirmaciones requeridas",
@@ -1780,7 +1787,8 @@
       "r181": "Consulta el conjunto de direcciones de factura del comercio a partir de los registros locales: direcciones en uso, en espera y disponibles.",
       "r182": "Lista las facturas compatibles con BTCPay de la tienda (paginación con skip y take, hasta 100 por página).",
       "r183": "Cabecera Idempotency-Key (UUID; reutilízala para reintentar con seguridad)",
-      "r184": "Accept: application/json (devuelve JSON en lugar de una redirección)"
+      "r184": "Accept: application/json (devuelve JSON en lugar de una redirección)",
+      "r185": "Elimina un terminal desactivado; su enlace deja de funcionar. Un terminal activo devuelve 409; las facturas existentes no se ven afectadas."
     },
     "metaTitle": "Documentación de la API de pagos con Monero | XMR Checkout",
     "metaDescription": "Integra facturas de Monero autoalojadas con la API de XMR Checkout, las páginas públicas de factura, la detección de confirmaciones y los webhooks.",

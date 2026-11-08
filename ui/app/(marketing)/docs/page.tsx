@@ -93,6 +93,7 @@ const endpointGroupsFor = (t: Translate) => [
     { "method": "PATCH", "path": "/api/core/terminals/{terminal_id}", "description": t("docs.ref.r015") },
     { "method": "GET", "path": "/api/core/terminals/{terminal_id}/link", "description": t("docs.ref.r178") },
     { "method": "POST", "path": "/api/core/terminals/{terminal_id}/rotate", "description": t("docs.ref.r016") },
+    { "method": "DELETE", "path": "/api/core/terminals/{terminal_id}", "description": t("docs.ref.r185") },
     { "method": "GET", "path": "/api/core/terminal/status", "description": t("docs.ref.r017") },
     { "method": "POST", "path": "/api/core/terminal/invoices", "description": t("docs.ref.r018") },
     { "method": "GET", "path": "/api/core/terminal/invoices/{invoice_id}", "description": t("docs.ref.r019") },

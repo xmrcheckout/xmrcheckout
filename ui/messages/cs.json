@@ -521,7 +521,9 @@
       "created": "Terminál vytvořen.",
       "saved": "Terminál uložen.",
       "notConfirmed": "Uložení se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam terminálů.",
-      "notShown": "Odkaz se nepodařilo zobrazit. Zkuste to znovu."
+      "notShown": "Odkaz se nepodařilo zobrazit. Zkuste to znovu.",
+      "deleted": "Terminál smazán.",
+      "deleteNotConfirmed": "Smazání se nepodařilo potvrdit. Než to zkusíte znovu, zkontrolujte seznam terminálů."
     },
     "actions": {
       "tourNoop": "Pouze režim dema: žádné změny se neukládají.",
@@ -848,7 +850,12 @@
     "back": "Všechny terminály",
     "settings": "Nastavení",
     "aboutAddresses": "O adresách pro platební výzvy",
-    "replacing": "Nahrazování odkazu…"
+    "replacing": "Nahrazování odkazu…",
+    "delete": "Smazat terminál",
+    "deleteWarning": "Smazáním trvale odstraníte tento terminál a jeho odkaz. Zařízení, které odkaz otevře, uvidí, že už neplatí. Již provedené prodeje zůstanou zachovány jako platební výzvy a budou se dál kontrolovat.",
+    "deletePermanently": "Trvale smazat",
+    "deleting": "Maže se…",
+    "deleteNote": "Chcete-li tento terminál smazat, nejprve ho vypněte."
   },
   "settings": {
     "requiredConfirmations": "Požadovaná potvrzení",
@@ -1806,7 +1813,8 @@
       "r181": "Načte z místních záznamů zásobu adres pro platební výzvy obchodníka: používané, čekající a dostupné adresy.",
       "r182": "Vypíše platební výzvy obchodu kompatibilní s BTCPay (stránkování přes skip a take, až 100 na stránku).",
       "r183": "Hlavička Idempotency-Key (UUID; znovu ji použijte pro bezpečné opakování)",
-      "r184": "Accept: application/json (vrací JSON místo přesměrování)"
+      "r184": "Accept: application/json (vrací JSON místo přesměrování)",
+      "r185": "Smaže vypnutý terminál; jeho odkaz přestane fungovat. Zapnutý terminál vrátí 409; existující platební výzvy zůstanou beze změny."
     },
     "metaTitle": "Dokumentace platebního API Monero | XMR Checkout",
     "metaDescription": "Integrujte samostatně hostované platební výzvy v Monero pomocí API XMR Checkout, veřejných stránek platebních výzev, detekce potvrzení a webhooků.",

@@ -515,7 +515,9 @@
       "created": "Terminal erstellt.",
       "saved": "Terminal gespeichert.",
       "notConfirmed": "Das Speichern konnte nicht bestätigt werden. Prüfen Sie die Terminal-Liste, bevor Sie es erneut versuchen.",
-      "notShown": "Der Link konnte nicht angezeigt werden. Versuchen Sie es erneut."
+      "notShown": "Der Link konnte nicht angezeigt werden. Versuchen Sie es erneut.",
+      "deleted": "Terminal gelöscht.",
+      "deleteNotConfirmed": "Das Löschen konnte nicht bestätigt werden. Prüfen Sie die Terminal-Liste, bevor Sie es erneut versuchen."
     },
     "actions": {
       "tourNoop": "Nur Demo-Modus: Es werden keine Änderungen gespeichert.",
@@ -832,7 +834,12 @@
     "back": "Alle Terminals",
     "settings": "Einstellungen",
     "aboutAddresses": "Zu Rechnungsadressen",
-    "replacing": "Link wird ersetzt…"
+    "replacing": "Link wird ersetzt…",
+    "delete": "Terminal löschen",
+    "deleteWarning": "Das Löschen entfernt dieses Terminal und seinen Link dauerhaft. Ein Gerät, das den Link öffnet, sieht, dass er nicht mehr gültig ist. Bereits getätigte Verkäufe bleiben als Rechnungen erhalten und werden weiterhin geprüft.",
+    "deletePermanently": "Endgültig löschen",
+    "deleting": "Wird gelöscht…",
+    "deleteNote": "Deaktivieren Sie dieses Terminal zuerst, um es zu löschen."
   },
   "settings": {
     "requiredConfirmations": "Erforderliche Bestätigungen",
@@ -1780,7 +1787,8 @@
       "r181": "Den Adresspool des Händlers für Rechnungen aus lokalen Daten lesen: belegte, abkühlende und verfügbare Adressen.",
       "r182": "Die BTCPay-kompatiblen Rechnungen des Shops auflisten (Paginierung mit skip und take, bis zu 100 pro Seite).",
       "r183": "Header Idempotency-Key (UUID; für sichere Wiederholungen erneut verwenden)",
-      "r184": "Accept: application/json (liefert JSON statt einer Weiterleitung)"
+      "r184": "Accept: application/json (liefert JSON statt einer Weiterleitung)",
+      "r185": "Ein deaktiviertes Terminal löschen; sein Link funktioniert nicht mehr. Ein aktives Terminal liefert 409; bestehende Rechnungen bleiben unverändert."
     },
     "metaTitle": "Dokumentation der Monero-Zahlungs-API | XMR Checkout",
     "metaDescription": "Integrieren Sie selbst gehostete Monero-Rechnungen mit der XMR-Checkout-API, öffentlichen Rechnungsseiten, Bestätigungserkennung und Webhooks.",

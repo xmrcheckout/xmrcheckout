@@ -121,6 +121,41 @@ class TerminalIntegrationTests(unittest.TestCase):
         self.assertEqual(disabled.status_code, 200)
         self.assertEqual(self.sell(new_auth).status_code, 403)
 
+    def test_only_a_disabled_terminal_can_be_deleted(self):
+        data, auth = self.create_terminal()
+        sale = self.sell(auth).json()
+        url = self.base + f"/api/core/terminals/{data['id']}"
+        refused = requests.delete(url, headers=self.headers, timeout=10)
+        self.assertEqual(refused.status_code, 409, refused.text)
+        self.assertEqual(self.sell(auth).status_code, 201)
+        disabled = requests.patch(url, headers=self.headers, json={"name": "Front counter", "enabled": False}, timeout=10)
+        self.assertEqual(disabled.status_code, 200, disabled.text)
+        deleted = requests.delete(url, headers=self.headers, timeout=10)
+        self.assertEqual(deleted.status_code, 204, deleted.text)
+        listed = requests.get(self.base + "/api/core/terminals", headers=self.headers, timeout=10).json()["terminals"]
+        self.assertNotIn(data["id"], [terminal["id"] for terminal in listed])
+        self.assertEqual(self.sell(auth).status_code, 401)
+        self.assertEqual(requests.get(url + "/link", headers=self.headers, timeout=10).status_code, 404)
+        self.assertEqual(requests.delete(url, headers=self.headers, timeout=10).status_code, 404)
+        # The sale stays an invoice with its public status.
+        public = requests.get(self.base + f"/api/core/public/invoice/{sale['id']}", timeout=10)
+        self.assertEqual(public.status_code, 200, public.text)
+
+    def test_merchant_cannot_delete_another_merchants_terminal(self):
+        data, _ = self.create_terminal()
+        requests.patch(self.base + f"/api/core/terminals/{data['id']}", headers=self.headers,
+                       json={"name": "Front counter", "enabled": False}, timeout=10)
+        from app.security import hash_api_key
+        other_key = str(uuid4())
+        with SessionLocal() as db:
+            db.add(User(payment_address=str(uuid4()), view_key_encrypted="fixture", api_key_hash=hash_api_key(other_key), api_key_encrypted="fixture"))
+            db.commit()
+        other = requests.delete(self.base + f"/api/core/terminals/{data['id']}",
+                                headers={"Authorization": f"ApiKey {other_key}"}, timeout=10)
+        self.assertEqual(other.status_code, 404, other.text)
+        listed = requests.get(self.base + "/api/core/terminals", headers=self.headers, timeout=10).json()["terminals"]
+        self.assertIn(data["id"], [terminal["id"] for terminal in listed])
+
     def test_merchant_can_show_current_link_again(self):
         data, _ = self.create_terminal()
         link = self.base + f"/api/core/terminals/{data['id']}/link"

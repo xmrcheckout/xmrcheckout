@@ -23,7 +23,7 @@ const statusBadge = (terminal: TerminalData, t: Translate) =>
   <StatusBadge label={terminal.enabled ? t("terminals.enabled") : t("terminals.disabled")} tone={terminal.enabled ? "success" : "neutral"} />;
 const lastUsed = (terminal: TerminalData, t: Translate) => terminal.last_used_at ? utcTimestamp(terminal.last_used_at, t) : t("terminals.never");
 
-export default async function Terminals({ selectedId, saved, loginUrl }: { selectedId?: string; saved?: boolean; loginUrl: string }) {
+export default async function Terminals({ selectedId, saved, deleted, loginUrl }: { selectedId?: string; saved?: boolean; deleted?: boolean; loginUrl: string }) {
   const { t } = await getI18n();
   const key = (await cookies()).get("xmrcheckout_api_key")?.value;
   const base = process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -38,11 +38,11 @@ export default async function Terminals({ selectedId, saved, loginUrl }: { selec
   const terminals: TerminalData[] = (await response.json()).terminals;
   const usage = usageResponse?.ok ? await usageResponse.json() : null;
   const addressStatus: SubaddressStatus | null = addressResponse?.ok ? await addressResponse.json() : null;
-  return <TerminalsView terminals={terminals} currencies={usage?.supported_currencies ?? []} addressStatus={addressStatus} selectedId={selectedId} saved={saved} />;
+  return <TerminalsView terminals={terminals} currencies={usage?.supported_currencies ?? []} addressStatus={addressStatus} selectedId={selectedId} saved={saved} deleted={deleted} />;
 }
 
-export async function TerminalsView({ terminals, currencies, addressStatus, selectedId, saved = false, mode = "live" }: {
-  terminals: TerminalData[]; currencies: string[]; addressStatus: SubaddressStatus | null; selectedId?: string; saved?: boolean; mode?: Mode;
+export async function TerminalsView({ terminals, currencies, addressStatus, selectedId, saved = false, deleted = false, mode = "live" }: {
+  terminals: TerminalData[]; currencies: string[]; addressStatus: SubaddressStatus | null; selectedId?: string; saved?: boolean; deleted?: boolean; mode?: Mode;
 }) {
   const { t } = await getI18n();
   const tour = mode === "tour";
@@ -74,6 +74,7 @@ export async function TerminalsView({ terminals, currencies, addressStatus, sele
     {demoNote}
     {selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("terminals.notFound")}</p> : null}
     {saved && !selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("dashboard.terminalActions.saved")}</p> : null}
+    {deleted && !selectedId ? <p role="status" className="border-l-2 border-clay bg-clay/5 px-4 py-3 text-sm">{t("dashboard.terminalActions.deleted")}</p> : null}
 
     <details className="rounded-2xl open:border open:border-stroke open:p-5">
       <summary className="inline-flex min-h-11 cursor-pointer list-none items-center justify-center rounded-full bg-ink px-5 py-2 font-semibold text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">{t("terminals.create")}</summary>

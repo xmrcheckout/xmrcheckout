@@ -103,6 +103,8 @@ Take payments at a till from a phone or tablet.
 - Create a terminal in **Dashboard → Terminals** and open its link on the device
   at the till. The terminal key is in the link's URL fragment. *Show link* shows it again;
   *Create new link* replaces it, and the old link stops working.
+- A disabled terminal can be deleted. Its link stops working; its sales stay in
+  the invoice list.
 - A terminal key can only create invoices, read their status, and cancel its own
   unpaid ones. It cannot read other invoices, change settings, or use the
   merchant API. Resetting the merchant API key does not change terminal links;

@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import QRCode from "qrcode";
-import { saveTerminal, saveTerminalTourAction, showTerminalLink, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
+import { deleteTerminal, deleteTerminalTourAction, saveTerminal, saveTerminalTourAction, showTerminalLink, type DeleteTerminalState, type TerminalState } from "../app/(app)/dashboard/terminal-actions";
 import ConfirmSubmitButton from "./confirm-submit-button";
 import CopyCodeBlock from "./copy-code-block";
 import { useI18n } from "./i18n-provider";
@@ -36,6 +36,35 @@ function NewLink({ url }: { url: string }) {
     <p className="text-sm text-ink-soft">{t("terminals.linkWarning")}</p>
     {qr ? <Image src={qr} alt={t("terminals.linkQrAlt")} width={200} height={200} unoptimized className="rounded-lg bg-white" /> : null}
     <CopyCodeBlock className="overflow-x-auto rounded-xl bg-ink p-5 pt-16 font-mono text-sm text-cream">{url}</CopyCodeBlock>
+  </div>;
+}
+
+function DeleteSubmit() {
+  const { t } = useI18n();
+  const { pending } = useFormStatus();
+  return <button disabled={pending} className="min-h-11 rounded-full bg-red-700 px-5 py-2 font-semibold text-white disabled:opacity-60">{pending ? t("terminals.deleting") : t("terminals.deletePermanently")}</button>;
+}
+
+// Deletion cannot be undone, so it is offered only for disabled terminals and needs a second confirmation.
+function DeleteTerminal({ id, mode }: { id: string; mode: "live" | "tour" }) {
+  const { t } = useI18n();
+  const [confirming, setConfirming] = useState(false);
+  const [state, action] = useFormState<DeleteTerminalState, FormData>(mode === "tour" ? deleteTerminalTourAction : deleteTerminal, { error: "", success: "" });
+  const warning = useRef<HTMLParagraphElement>(null);
+  const opener = useRef<HTMLButtonElement>(null);
+  const opened = useRef(false);
+  useEffect(() => {
+    if (confirming) warning.current?.focus();
+    else if (opened.current) opener.current?.focus();
+    opened.current = confirming;
+  }, [confirming]);
+  return <div className="grid min-w-0 gap-3 border-t border-stroke pt-4">
+    {confirming ? <form action={action} className="grid gap-3">
+      <input type="hidden" name="id" value={id} />
+      <p ref={warning} tabIndex={-1} className="border-l-2 border-red-700 px-4 py-3 text-sm focus:outline-none">{t("terminals.deleteWarning")}</p>
+      <div className="flex flex-wrap gap-3"><DeleteSubmit /><button type="button" onClick={() => setConfirming(false)} className="min-h-11 rounded-full border border-stroke px-5 py-2">{t("common.cancel")}</button></div>
+    </form> : <p><button ref={opener} type="button" onClick={() => setConfirming(true)} className="min-h-11 rounded-full border border-red-700 px-5 py-2 text-red-700">{t("terminals.delete")}</button></p>}
+    <p role="status" className={state.error ? "text-red-700" : "text-ink"}>{state.error || state.success}</p>
   </div>;
 }
 
@@ -82,5 +111,7 @@ export default function TerminalEditor({ terminal, currencies, mode = "live" }: 
     <ConfirmSubmitButton pendingLabel={t("terminals.replacing")} label={t("terminals.newLink")} confirmLabel={t("terminals.replaceLink")} description={t("terminals.replaceDescription")} />
     <p role="status" className={rotated.error ? "text-red-700" : "text-ink"}>{rotated.error || rotated.success}</p>
     {rotated.url ? <NewLink url={rotated.url} /> : null}
-  </form> : null}</div>;
+  </form> : null}
+  {terminal && terminal.enabled ? <p className="border-t border-stroke pt-4 text-sm text-ink-soft">{t("terminals.deleteNote")}</p> : null}
+  {terminal && !terminal.enabled ? <DeleteTerminal id={terminal.id} mode={mode} /> : null}</div>;
 }

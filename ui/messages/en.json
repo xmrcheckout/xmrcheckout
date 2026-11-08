@@ -515,7 +515,9 @@
       "created": "Terminal created.",
       "saved": "Terminal saved.",
       "notConfirmed": "Could not confirm saving. Check the terminal list before trying again.",
-      "notShown": "Could not show the link. Try again."
+      "notShown": "Could not show the link. Try again.",
+      "deleted": "Terminal deleted.",
+      "deleteNotConfirmed": "Could not confirm deleting. Check the terminal list before trying again."
     },
     "actions": {
       "tourNoop": "Demo mode only: no changes are saved.",
@@ -832,7 +834,12 @@
     "back": "All terminals",
     "settings": "Settings",
     "aboutAddresses": "About invoice addresses",
-    "replacing": "Replacing link…"
+    "replacing": "Replacing link…",
+    "delete": "Delete terminal",
+    "deleteWarning": "Deleting permanently removes this terminal and its link. A device that opens the link will see that it is no longer valid. Sales already made are kept as invoices and continue to be checked.",
+    "deletePermanently": "Delete permanently",
+    "deleting": "Deleting…",
+    "deleteNote": "To delete this terminal, disable it first."
   },
   "settings": {
     "requiredConfirmations": "Required confirmations",
@@ -1780,7 +1787,8 @@
       "r181": "Read the merchant’s invoice address pool from local records: addresses in use, cooling down, and available.",
       "r182": "List the store’s BTCPay-compatible invoices (skip and take paging, up to 100 per page).",
       "r183": "Idempotency-Key header (UUID; reuse it to retry safely)",
-      "r184": "Accept: application/json (returns JSON instead of a redirect)"
+      "r184": "Accept: application/json (returns JSON instead of a redirect)",
+      "r185": "Delete a disabled terminal; its link stops working. An enabled terminal returns 409; existing invoices are unaffected."
     },
     "metaTitle": "Monero Payment API Documentation | XMR Checkout",
     "metaDescription": "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",

@@ -512,7 +512,9 @@
       "created": "终端已创建。",
       "saved": "终端已保存。",
       "notConfirmed": "无法确认是否已保存。请先查看终端列表，再重试。",
-      "notShown": "无法显示链接。请重试。"
+      "notShown": "无法显示链接。请重试。",
+      "deleted": "收款终端已删除。",
+      "deleteNotConfirmed": "无法确认是否已删除。请先查看终端列表，再重试。"
     },
     "actions": {
       "tourNoop": "仅为演示模式：不会保存任何更改。",
@@ -824,7 +826,12 @@
     "back": "全部终端",
     "settings": "设置",
     "aboutAddresses": "关于账单地址",
-    "replacing": "正在替换链接…"
+    "replacing": "正在替换链接…",
+    "delete": "删除收款终端",
+    "deleteWarning": "删除后将永久移除此收款终端及其终端链接。打开该链接的设备会看到它已失效。已完成的销售会作为账单保留，并继续被检查。",
+    "deletePermanently": "永久删除",
+    "deleting": "正在删除…",
+    "deleteNote": "要删除此收款终端，请先停用它。"
   },
   "settings": {
     "requiredConfirmations": "所需确认数",
@@ -1767,7 +1774,8 @@
       "r181": "从本地记录读取商家的账单地址池：使用中、冷却中和可用的地址。",
       "r182": "列出商店的 BTCPay 兼容账单（使用 skip 和 take 分页，每页最多 100 条）。",
       "r183": "Idempotency-Key 请求头（UUID；复用它即可安全重试）",
-      "r184": "Accept: application/json（返回 JSON 而不是重定向）"
+      "r184": "Accept: application/json（返回 JSON 而不是重定向）",
+      "r185": "删除已停用的收款终端；其终端链接将失效。启用中的收款终端返回 409；现有账单不受影响。"
     },
     "metaTitle": "门罗币付款 API 文档 | XMR Checkout",
     "metaDescription": "通过 XMR Checkout API、公开账单页面、确认检测和 Webhook 集成自托管的门罗币账单。",

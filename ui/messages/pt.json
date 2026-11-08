@@ -515,7 +515,9 @@
       "created": "Terminal criado.",
       "saved": "Terminal salvo.",
       "notConfirmed": "Não foi possível confirmar o salvamento. Confira a lista de terminais antes de tentar novamente.",
-      "notShown": "Não foi possível mostrar o link. Tente novamente."
+      "notShown": "Não foi possível mostrar o link. Tente novamente.",
+      "deleted": "Terminal excluído.",
+      "deleteNotConfirmed": "Não foi possível confirmar a exclusão. Confira a lista de terminais antes de tentar novamente."
     },
     "actions": {
       "tourNoop": "Apenas modo de demonstração: nenhuma alteração é salva.",
@@ -832,7 +834,12 @@
     "back": "Todos os terminais",
     "settings": "Configurações",
     "aboutAddresses": "Sobre os endereços de fatura",
-    "replacing": "Substituindo link…"
+    "replacing": "Substituindo link…",
+    "delete": "Excluir terminal",
+    "deleteWarning": "Excluir remove permanentemente este terminal e seu link. Um dispositivo que abrir o link verá que ele não é mais válido. As vendas já feitas são mantidas como faturas e continuam sendo verificadas.",
+    "deletePermanently": "Excluir permanentemente",
+    "deleting": "Excluindo…",
+    "deleteNote": "Para excluir este terminal, desative-o primeiro."
   },
   "settings": {
     "requiredConfirmations": "Confirmações exigidas",
@@ -1780,7 +1787,8 @@
       "r181": "Lê o conjunto de endereços de fatura do comerciante a partir dos registros locais: endereços em uso, em espera e disponíveis.",
       "r182": "Lista as faturas compatíveis com BTCPay da loja (paginação com skip e take, até 100 por página).",
       "r183": "Cabeçalho Idempotency-Key (UUID; reutilize-o para repetir com segurança)",
-      "r184": "Accept: application/json (retorna JSON em vez de um redirecionamento)"
+      "r184": "Accept: application/json (retorna JSON em vez de um redirecionamento)",
+      "r185": "Exclui um terminal desativado; o link dele para de funcionar. Um terminal ativo retorna 409; as faturas existentes não são afetadas."
     },
     "metaTitle": "Documentação da API de pagamentos Monero | XMR Checkout",
     "metaDescription": "Integre faturas Monero auto-hospedadas com a API do XMR Checkout, páginas públicas de fatura, detecção de confirmações e webhooks.",

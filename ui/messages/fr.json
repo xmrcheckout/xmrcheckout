@@ -515,7 +515,9 @@
       "created": "Terminal créé.",
       "saved": "Terminal enregistré.",
       "notConfirmed": "Impossible de confirmer l’enregistrement. Vérifiez la liste des terminaux avant de réessayer.",
-      "notShown": "Impossible d’afficher le lien. Réessayez."
+      "notShown": "Impossible d’afficher le lien. Réessayez.",
+      "deleted": "Terminal supprimé.",
+      "deleteNotConfirmed": "Impossible de confirmer la suppression. Vérifiez la liste des terminaux avant de réessayer."
     },
     "actions": {
       "tourNoop": "Mode démo uniquement : aucune modification n’est enregistrée.",
@@ -832,7 +834,12 @@
     "back": "Tous les terminaux",
     "settings": "Paramètres",
     "aboutAddresses": "À propos des adresses de facture",
-    "replacing": "Remplacement du lien…"
+    "replacing": "Remplacement du lien…",
+    "delete": "Supprimer le terminal",
+    "deleteWarning": "La suppression retire définitivement ce terminal et son lien. Un appareil qui ouvre le lien verra qu’il n’est plus valide. Les ventes déjà effectuées sont conservées comme factures et continuent d’être vérifiées.",
+    "deletePermanently": "Supprimer définitivement",
+    "deleting": "Suppression…",
+    "deleteNote": "Pour supprimer ce terminal, désactivez-le d’abord."
   },
   "settings": {
     "requiredConfirmations": "Confirmations requises",
@@ -1780,7 +1787,8 @@
       "r181": "Lire la réserve d’adresses de facture du commerçant à partir des enregistrements locaux : adresses utilisées, en attente et disponibles.",
       "r182": "Lister les factures compatibles BTCPay de la boutique (pagination avec skip et take, jusqu’à 100 par page).",
       "r183": "En-tête Idempotency-Key (UUID ; réutilisez-le pour réessayer sans risque)",
-      "r184": "Accept: application/json (renvoie du JSON au lieu d’une redirection)"
+      "r184": "Accept: application/json (renvoie du JSON au lieu d’une redirection)",
+      "r185": "Supprimer un terminal désactivé ; son lien cesse de fonctionner. Un terminal actif renvoie 409 ; les factures existantes ne sont pas affectées."
     },
     "metaTitle": "Documentation de l’API de paiement Monero | XMR Checkout",
     "metaDescription": "Intégrez des factures Monero auto-hébergées grâce à l’API XMR Checkout, aux pages de facture publiques, à la détection des confirmations et aux webhooks.",

@@ -1111,7 +1111,7 @@
     "metaDescription": "Vytvářejte platební výzvy, sdílejte platební stránky a přijímejte Monero osobně pomocí terminálu na prodejním místě – přímo do své peněženky. Software s otevřeným zdrojovým kódem, který lze hostovat samostatně, s API a webhooky.",
     "kicker": "Platby v Monero pro obchodníky",
     "title": "Přijímejte Monero přímo do své peněženky",
-    "lead": "Vytvářejte platební výzvy, sdílejte platební stránku se zákazníkem nebo přijímejte platby osobně pomocí terminálu na prodejním místě. Sledujte příchozí platby a potvrzení. Volitelně propojte svůj obchod přes API a webhooky.",
+    "lead": "Vytvářejte platební výzvy, sdílejte platební odkaz nebo tlačítko na web pro produkty a dary, nebo přijímejte platby osobně pomocí terminálu na prodejním místě. Sledujte příchozí platby a potvrzení. Volitelně propojte svůj obchod přes API a webhooky.",
     "primaryActions": "Hlavní akce",
     "exploreDemo": "Vyzkoušet demo",
     "demoQ": "Zkoušíte demo?",
@@ -1834,7 +1834,7 @@
     },
     "metaTitle": "Dokumentace platebního API Monero | XMR Checkout",
     "metaDescription": "Integrujte samostatně hostované platební výzvy v Monero pomocí API XMR Checkout, veřejných stránek platebních výzev, detekce potvrzení a webhooků.",
-    "newToSetup": "<strong>Chcete postup krok za krokem?</strong> Přečtěte si <selfhost>návod k vlastnímu hostingu</selfhost> nebo postupujte podle <api>návodu k API a webhookům</api>.",
+    "newToSetup": "<strong>Chcete postup krok za krokem?</strong> Prodávejte nebo přijímejte dary přes <links>platební odkazy</links>, přijímejte platby osobně přes <terminal>terminál</terminal>, nebo si přečtěte <selfhost>návod k vlastnímu hostingu</selfhost> či <api>návod k API a webhookům</api>.",
     "start": {
       "createBody": "Zavolejte <code>POST /api/core/invoices</code> a pošlete zákazníka na URL hostované platební výzvy.",
       "listenBody": "Přihlaste se k odběru webhooků nebo se dotazujte na veřejný endpoint platebních výzev, dokud nenastane <code>invoice.confirmed</code>."

@@ -1087,7 +1087,7 @@
     "metaDescription": "Crie faturas, compartilhe páginas de pagamento e receba Monero presencialmente com um terminal de ponto de venda, direto para a sua carteira. Software de código aberto e auto-hospedável, com APIs e webhooks.",
     "kicker": "Checkout Monero para comerciantes",
     "title": "Aceite Monero diretamente na sua carteira",
-    "lead": "Crie faturas, compartilhe uma página de pagamento com o cliente ou receba presencialmente com um terminal de ponto de venda. Acompanhe os pagamentos recebidos e as confirmações. Se quiser, conecte a sua loja por meio de APIs e webhooks.",
+    "lead": "Crie faturas, compartilhe um link de pagamento ou um botão para o seu site para produtos e doações, ou receba presencialmente com um terminal de ponto de venda. Acompanhe os pagamentos recebidos e as confirmações. Se quiser, conecte a sua loja por meio de APIs e webhooks.",
     "primaryActions": "Ações principais",
     "exploreDemo": "Explorar a demonstração",
     "demoQ": "Explorando a demonstração?",
@@ -1808,7 +1808,7 @@
     },
     "metaTitle": "Documentação da API de pagamentos Monero | XMR Checkout",
     "metaDescription": "Integre faturas Monero auto-hospedadas com a API do XMR Checkout, páginas públicas de fatura, detecção de confirmações e webhooks.",
-    "newToSetup": "<strong>Prefere um passo a passo?</strong> Leia o <selfhost>guia de auto-hospedagem</selfhost> ou siga o <api>guia de API e webhooks</api>.",
+    "newToSetup": "<strong>Prefere um passo a passo?</strong> Venda ou receba doações com <links>links de pagamento</links>, receba presencialmente com um <terminal>terminal</terminal>, ou leia o <selfhost>guia de auto-hospedagem</selfhost> ou o <api>guia de API e webhooks</api>.",
     "start": {
       "createBody": "Chame <code>POST /api/core/invoices</code> e envie o cliente para a URL da fatura hospedada.",
       "listenBody": "Assine webhooks ou consulte periodicamente o endpoint público da fatura até <code>invoice.confirmed</code>."

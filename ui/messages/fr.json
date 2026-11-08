@@ -1087,7 +1087,7 @@
     "metaDescription": "Créez des factures, partagez des pages de paiement et acceptez Monero en personne avec un terminal de point de vente, directement vers votre portefeuille. Logiciel open source et auto-hébergeable, avec API et webhooks.",
     "kicker": "Paiement Monero pour les commerçants",
     "title": "Acceptez Monero directement dans votre portefeuille",
-    "lead": "Créez des factures, partagez une page de paiement avec vos clients ou encaissez en personne avec un terminal de point de vente. Suivez les paiements entrants et leurs confirmations. Connectez éventuellement votre boutique via des API et des webhooks.",
+    "lead": "Créez des factures, partagez un lien de paiement ou un bouton pour votre site pour des produits et des dons, ou encaissez en personne avec un terminal de point de vente. Suivez les paiements entrants et leurs confirmations. Connectez éventuellement votre boutique via des API et des webhooks.",
     "primaryActions": "Actions principales",
     "exploreDemo": "Découvrir la démo",
     "demoQ": "Vous explorez la démo ?",
@@ -1808,7 +1808,7 @@
     },
     "metaTitle": "Documentation de l’API de paiement Monero | XMR Checkout",
     "metaDescription": "Intégrez des factures Monero auto-hébergées grâce à l’API XMR Checkout, aux pages de facture publiques, à la détection des confirmations et aux webhooks.",
-    "newToSetup": "<strong>Vous préférez un guide pas à pas ?</strong> Lisez le <selfhost>guide d’auto-hébergement</selfhost> ou suivez le <api>guide de l’API et des webhooks</api>.",
+    "newToSetup": "<strong>Vous préférez un guide pas à pas ?</strong> Vendez ou recevez des dons avec des <links>liens de paiement</links>, encaissez en personne avec un <terminal>terminal</terminal>, ou lisez le <selfhost>guide d’auto-hébergement</selfhost> ou le <api>guide de l’API et des webhooks</api>.",
     "start": {
       "createBody": "Appelez <code>POST /api/core/invoices</code> et envoyez le client vers l’URL de la facture hébergée.",
       "listenBody": "Abonnez-vous aux webhooks ou interrogez le point de terminaison public de la facture jusqu’à <code>invoice.confirmed</code>."

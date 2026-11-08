@@ -1087,7 +1087,7 @@
     "metaDescription": "Crea facturas, comparte páginas de pago y acepta Monero en persona con un terminal de punto de venta, pagado directamente a tu billetera. Software de código abierto y autoalojable, con API y webhooks.",
     "kicker": "Pagos en Monero para comercios",
     "title": "Acepta Monero directamente en tu billetera",
-    "lead": "Crea facturas, comparte una página de pago con tus clientes o cobra en persona con un terminal de punto de venta. Sigue los pagos entrantes y sus confirmaciones. Si quieres, conecta tu tienda mediante API y webhooks.",
+    "lead": "Crea facturas, comparte un enlace de pago o un botón web para productos y donaciones, o cobra en persona con un terminal de punto de venta. Sigue los pagos entrantes y sus confirmaciones. Si quieres, conecta tu tienda mediante API y webhooks.",
     "primaryActions": "Acciones principales",
     "exploreDemo": "Explora la demostración",
     "demoQ": "¿Exploras la demostración?",
@@ -1808,7 +1808,7 @@
     },
     "metaTitle": "Documentación de la API de pagos con Monero | XMR Checkout",
     "metaDescription": "Integra facturas de Monero autoalojadas con la API de XMR Checkout, las páginas públicas de factura, la detección de confirmaciones y los webhooks.",
-    "newToSetup": "<strong>¿Prefieres una guía paso a paso?</strong> Lee la <selfhost>guía de autoalojamiento</selfhost> o sigue la <api>guía de la API y los webhooks</api>.",
+    "newToSetup": "<strong>¿Prefieres una guía paso a paso?</strong> Vende o recibe donaciones con <links>enlaces de pago</links>, cobra en persona con un <terminal>terminal</terminal>, o lee la <selfhost>guía de autoalojamiento</selfhost> o la <api>guía de la API y los webhooks</api>.",
     "start": {
       "createBody": "Llama a <code>POST /api/core/invoices</code> y envía al cliente a la URL de la factura alojada.",
       "listenBody": "Suscríbete a los webhooks o consulta periódicamente el endpoint público de la factura hasta <code>invoice.confirmed</code>."

@@ -1087,7 +1087,7 @@
     "metaDescription": "Rechnungen erstellen, Checkout-Seiten teilen und Monero vor Ort mit einem Point-of-Sale-Terminal annehmen – direkt an Ihre Wallet. Open-Source-Software zum Selbsthosten, mit APIs und Webhooks.",
     "kicker": "Monero-Checkout für Händler",
     "title": "Empfangen Sie Monero direkt in Ihrer Wallet",
-    "lead": "Erstellen Sie Rechnungen, teilen Sie eine Checkout-Seite mit Kunden oder nehmen Sie Zahlungen vor Ort mit einem Point-of-Sale-Terminal an. Verfolgen Sie eingehende Zahlungen und Bestätigungen. Binden Sie Ihren Shop optional über APIs und Webhooks an.",
+    "lead": "Erstellen Sie Rechnungen, teilen Sie einen Zahlungslink oder Website-Button für Produkte und Spenden, oder nehmen Sie Zahlungen vor Ort mit einem Point-of-Sale-Terminal an. Verfolgen Sie eingehende Zahlungen und Bestätigungen. Binden Sie Ihren Shop optional über APIs und Webhooks an.",
     "primaryActions": "Hauptaktionen",
     "exploreDemo": "Demo ansehen",
     "demoQ": "Sie sehen sich die Demo an?",
@@ -1808,7 +1808,7 @@
     },
     "metaTitle": "Dokumentation der Monero-Zahlungs-API | XMR Checkout",
     "metaDescription": "Integrieren Sie selbst gehostete Monero-Rechnungen mit der XMR-Checkout-API, öffentlichen Rechnungsseiten, Bestätigungserkennung und Webhooks.",
-    "newToSetup": "<strong>Lieber Schritt für Schritt?</strong> Lesen Sie die <selfhost>Anleitung zum Selbsthosten</selfhost> oder folgen Sie der <api>Anleitung zu API und Webhooks</api>.",
+    "newToSetup": "<strong>Lieber Schritt für Schritt?</strong> Verkaufen Sie oder nehmen Sie Spenden mit <links>Zahlungslinks</links> entgegen, nehmen Sie Zahlungen vor Ort mit einem <terminal>Terminal</terminal> an, oder lesen Sie die <selfhost>Anleitung zum Selbsthosten</selfhost> oder die <api>Anleitung zu API und Webhooks</api>.",
     "start": {
       "createBody": "Rufen Sie <code>POST /api/core/invoices</code> auf und schicken Sie den Kunden zur URL der gehosteten Rechnung.",
       "listenBody": "Abonnieren Sie Webhooks oder fragen Sie den öffentlichen Rechnungsendpunkt ab, bis <code>invoice.confirmed</code> eintritt."

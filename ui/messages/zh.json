@@ -1075,7 +1075,7 @@
     "metaDescription": "创建账单、分享顾客结账页面，并用收款终端在线下接收门罗币，款项直接付到你的钱包。开源、可自托管的软件，提供 API 和 Webhook。",
     "kicker": "面向商家的门罗币结账",
     "title": "将门罗币直接收入你的钱包",
-    "lead": "创建账单、分享顾客结账页面，或者用收款终端在线下收款。跟踪转入的付款和确认情况。还可以选择通过 API 和 Webhook 连接你的商店。",
+    "lead": "创建账单，为商品和捐赠分享付款链接或网站按钮，或者用收款终端在线下收款。跟踪转入的付款和确认情况。还可以选择通过 API 和 Webhook 连接你的商店。",
     "primaryActions": "主要操作",
     "exploreDemo": "体验演示",
     "demoQ": "想体验演示？",
@@ -1795,7 +1795,7 @@
     },
     "metaTitle": "门罗币付款 API 文档 | XMR Checkout",
     "metaDescription": "通过 XMR Checkout API、公开账单页面、确认检测和 Webhook 集成自托管的门罗币账单。",
-    "newToSetup": "<strong>想要分步说明？</strong>请阅读<selfhost>自托管指南</selfhost>或按照 <api>API 和 Webhook 指南</api>操作。",
+    "newToSetup": "<strong>想要分步说明？</strong>用<links>付款链接</links>销售或接受捐赠，用<terminal>收款终端</terminal>线下收款，或阅读<selfhost>自托管指南</selfhost>和 <api>API 和 Webhook 指南</api>。",
     "start": {
       "createBody": "调用 <code>POST /api/core/invoices</code>，然后将顾客引导到托管账单 URL。",
       "listenBody": "订阅 Webhook，或轮询公开账单端点，直到出现 <code>invoice.confirmed</code>。"

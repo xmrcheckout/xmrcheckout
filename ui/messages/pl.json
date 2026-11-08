@@ -1111,7 +1111,7 @@
     "metaDescription": "Twórz prośby o płatność, udostępniaj strony płatności i przyjmuj Monero na miejscu za pomocą terminala w punkcie sprzedaży, bezpośrednio na twój portfel. Otwarte oprogramowanie do samodzielnego hostowania, z API i webhookami.",
     "kicker": "Checkout Monero dla sprzedawców",
     "title": "Przyjmuj Monero bezpośrednio na swój portfel",
-    "lead": "Twórz prośby o płatność, udostępniaj klientowi stronę płatności albo przyjmuj płatności na miejscu za pomocą terminala w punkcie sprzedaży. Śledź przychodzące płatności oraz potwierdzenia. Opcjonalnie połącz swój sklep przez API i webhooki.",
+    "lead": "Twórz prośby o płatność, udostępniaj link płatności lub przycisk na stronę dla produktów i darowizn albo przyjmuj płatności na miejscu za pomocą terminala w punkcie sprzedaży. Śledź przychodzące płatności oraz potwierdzenia. Opcjonalnie połącz swój sklep przez API i webhooki.",
     "primaryActions": "Główne działania",
     "exploreDemo": "Wypróbuj demo",
     "demoQ": "Przeglądasz demo?",
@@ -1834,7 +1834,7 @@
     },
     "metaTitle": "Dokumentacja API płatności Monero | XMR Checkout",
     "metaDescription": "Zintegruj samodzielnie hostowane prośby o płatność w Monero z API XMR Checkout, publicznymi stronami płatności, wykrywaniem potwierdzeń i webhookami.",
-    "newToSetup": "<strong>Wolisz instrukcję krok po kroku?</strong> Przeczytaj <selfhost>poradnik samodzielnego hostingu</selfhost> lub <api>poradnik API i webhooków</api>.",
+    "newToSetup": "<strong>Wolisz instrukcję krok po kroku?</strong> Sprzedawaj lub przyjmuj darowizny przez <links>linki płatności</links>, przyjmuj płatności na miejscu przez <terminal>terminal</terminal> albo przeczytaj <selfhost>poradnik samodzielnego hostingu</selfhost> lub <api>poradnik API i webhooków</api>.",
     "start": {
       "createBody": "Wywołaj <code>POST /api/core/invoices</code> i skieruj klienta pod adres URL hostowanej prośby o płatność.",
       "listenBody": "Subskrybuj webhooki lub odpytuj publiczny endpoint prośby o płatność aż do <code>invoice.confirmed</code>."

@@ -1087,7 +1087,7 @@
     "metaDescription": "Create invoices, share customer checkout pages, and take Monero in person with a point-of-sale terminal, paid directly to your wallet. Open-source, self-hostable software with APIs and webhooks.",
     "kicker": "Monero checkout for merchants",
     "title": "Accept Monero directly into your wallet",
-    "lead": "Create invoices, share a customer checkout page, or take payments in person with a point-of-sale terminal. Track incoming payments and confirmations. Optionally connect your store through APIs and webhooks.",
+    "lead": "Create invoices, share a payment link or website button for products and donations, or take payments in person with a point-of-sale terminal. Track incoming payments and confirmations. Optionally connect your store through APIs and webhooks.",
     "primaryActions": "Primary actions",
     "exploreDemo": "Explore the demo",
     "demoQ": "Exploring the demo?",
@@ -1808,7 +1808,7 @@
     },
     "metaTitle": "Monero Payment API Documentation | XMR Checkout",
     "metaDescription": "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
-    "newToSetup": "<strong>Prefer a step-by-step walkthrough?</strong> Read the <selfhost>self-hosting guide</selfhost> or follow the <api>API and webhook guide</api>.",
+    "newToSetup": "<strong>Prefer a step-by-step walkthrough?</strong> Sell or take donations with <links>payment links</links>, take payments in person with a <terminal>terminal</terminal>, or read the <selfhost>self-hosting guide</selfhost> or the <api>API and webhook guide</api>.",
     "start": {
       "createBody": "Call <code>POST /api/core/invoices</code> and send the customer to the hosted invoice URL.",
       "listenBody": "Subscribe to webhooks or poll the public invoice endpoint until <code>invoice.confirmed</code>."

@@ -833,6 +833,8 @@ export default async function DocsPage() {
         <aside className="mt-5 rounded-surface border border-stroke bg-sand/60 px-5 py-4 text-sm text-ink-soft sm:px-6">
           {rich(t("docs.newToSetup"), {
             strong: (text) => <span className="font-semibold text-ink">{text}</span>,
+            links: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-buttons">{text}</Link>,
+            terminal: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/in-person-monero-checkout">{text}</Link>,
             selfhost: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/self-hosted-monero-checkout">{text}</Link>,
             api: (text) => <Link className="font-semibold text-ink underline decoration-clay underline-offset-4" href="/guides/monero-payment-api-webhooks">{text}</Link>,
           })}

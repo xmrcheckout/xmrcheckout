@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { invoiceContext } from "../../../lib/invoice-display";
+import { invoiceContext, invoiceSourceLabel as sourceLabel } from "../../../lib/invoice-display";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -394,9 +394,9 @@ export default async function DashboardPage({
       (delivery.http_status === null || delivery.http_status >= 400),
   ).length;
   const recentInvoiceItems = allInvoices.slice(0, 5).map((invoice) => ({
-    title: invoiceContext(invoice.metadata).title ?? invoice.id,
+    title: invoiceContext(invoice.metadata, (order) => t("dashboard.invoices.orderLabel", { order })).title ?? invoice.id,
     invoiceId: invoice.id,
-    detail: t("dashboard.page.createdAt", { date: utcTimestamp(invoice.created_at, t) }),
+    detail: [sourceLabel(invoiceContext(invoice.metadata).source, t), t("dashboard.page.createdAt", { date: utcTimestamp(invoice.created_at, t) })].filter(Boolean).join(" · "),
     href: `/invoice/${invoice.id}`,
     status: invoiceStatusLabel(
       invoice.status,

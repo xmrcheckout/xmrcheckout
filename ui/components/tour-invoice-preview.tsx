@@ -20,7 +20,7 @@ type TourInvoicePreviewProps = {
     detected_at: string | null;
     confirmed_at: string | null;
     expires_at: string | null;
-    metadata?: Record<string, string> | null;
+    metadata?: Record<string, unknown> | null;
   };
 };
 
@@ -31,6 +31,7 @@ export default function TourInvoicePreview({
   invoice,
 }: TourInvoicePreviewProps) {
   const { t } = useI18n();
+  const description = typeof invoice.metadata?.description === "string" ? invoice.metadata.description : undefined;
   const formatTimestamp = (value: string | null) => formatTimestampFor(value, t);
   const { snapshot, setStatus } = useSimulatedInvoice(invoice.confirmation_target, invoice.status, invoice.created_at, invoice.expires_at);
   const { confirmations, timeline: timelineItems } = snapshot;
@@ -69,7 +70,7 @@ export default function TourInvoicePreview({
         <SimulatedCheckoutDetails
           amount={invoice.amount_xmr}
           target={invoice.confirmation_target}
-          description={invoice.metadata?.description}
+          description={description}
           expiry={formatTimestamp(invoice.expires_at)}
           snapshot={snapshot}
           onStatusChange={setStatus}
@@ -119,13 +120,13 @@ export default function TourInvoicePreview({
                 </dd>
               </div>
             ) : null}
-            {invoice.metadata?.description ? (
+            {description ? (
               <div className="py-3">
                 <dt className="text-xs font-semibold text-ink-soft">
                   {t("dashboard.invoices.description")}
                 </dt>
                 <dd className="mt-1 text-sm font-semibold">
-                  {invoice.metadata.description}
+                  {description}
                 </dd>
               </div>
             ) : null}

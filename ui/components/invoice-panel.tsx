@@ -1,6 +1,6 @@
 "use client";
 
-import { invoiceContext } from "../lib/invoice-display";
+import { invoiceContext, invoiceSourceLabel } from "../lib/invoice-display";
 
 import SimulatedCheckoutPreview from "./simulated-checkout-preview";
 import DiagnosticReference from "./diagnostic-reference";
@@ -1333,7 +1333,7 @@ export default function InvoicePanel({
             <div className="invoice-cards grid min-w-0 grid-cols-1 gap-4">
               {activeList.map((invoice) => {
                 const isExpanded = expandedInvoiceId === invoice.id;
-                const context = invoiceContext(invoice.metadata);
+                const context = invoiceContext(invoice.metadata, (order) => t("dashboard.invoices.orderLabel", { order }));
                 const showPaidAfterExpiry = Boolean(invoice.paid_after_expiry);
                 const isArchivable =
                   !invoice.archived_at &&
@@ -1386,6 +1386,7 @@ export default function InvoicePanel({
                       </div>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {context.source ? <StatusBadge label={invoiceSourceLabel(context.source, t) ?? ""} /> : null}
                       {invoice.archived_at ? (
                         <StatusBadge label={t("dashboard.invoices.archived")} />
                       ) : null}
@@ -1613,7 +1614,7 @@ export default function InvoicePanel({
                 <tbody>
                   {activeList.map((invoice) => {
                     const isExpanded = expandedInvoiceId === invoice.id;
-                const context = invoiceContext(invoice.metadata);
+                const context = invoiceContext(invoice.metadata, (order) => t("dashboard.invoices.orderLabel", { order }));
                     const showPaidAfterExpiry = Boolean(
                       invoice.paid_after_expiry,
                     );
@@ -1655,6 +1656,7 @@ export default function InvoicePanel({
                               </span>
                             </div>
                             <div className="mt-2 flex flex-wrap gap-2">
+                              {context.source ? <StatusBadge label={invoiceSourceLabel(context.source, t) ?? ""} /> : null}
                               {invoice.archived_at ? (
                                 <StatusBadge label={t("dashboard.invoices.archived")} />
                               ) : null}

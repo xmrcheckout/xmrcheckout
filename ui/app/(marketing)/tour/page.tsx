@@ -1,6 +1,6 @@
 import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
-import { invoiceContext } from "../../../lib/invoice-display";
+import { invoiceContext, invoiceSourceLabel as sourceLabel } from "../../../lib/invoice-display";
 import Link from "next/link";
 
 import InvoicePanel from "../../../components/invoice-panel";
@@ -94,7 +94,7 @@ type InvoiceSummary = {
   confirmations?: number | null;
   paid_after_expiry?: boolean;
   paid_after_expiry_at?: string | null;
-  metadata?: Record<string, string> | null;
+  metadata?: Record<string, unknown> | null;
   created_at: string;
   archived_at: string | null;
   detected_at: string | null;
@@ -153,6 +153,21 @@ const buildNowFixture = (t: Translate) => {
       },
     },
     {
+      id: "demo_inv_terminal",
+      address: `${exampleAddress}_005`,
+      subaddress_index: 16,
+      amount_xmr: "0.031",
+      status: "confirmed",
+      confirmation_target: 0,
+      confirmations: 0,
+      created_at: iso(-42 * 60 * 1000),
+      archived_at: null,
+      detected_at: iso(-41.8 * 60 * 1000),
+      confirmed_at: iso(-41.8 * 60 * 1000),
+      expires_at: iso(-27 * 60 * 1000),
+      metadata: { origin: "terminal", terminal: { id: "demo_terminal_counter", name: t("tour.fixture.terminalCounter"), note: null } },
+    },
+    {
       id: "demo_inv_detected",
       address: `${exampleAddress}_002`,
       subaddress_index: 13,
@@ -188,14 +203,14 @@ const buildNowFixture = (t: Translate) => {
       subaddress_index: 15,
       amount_xmr: "0.050",
       status: "expired",
-      confirmation_target: 2,
+      confirmation_target: 1,
       confirmations: 0,
       created_at: iso(-5 * 24 * 60 * 60 * 1000),
       archived_at: iso(-4.5 * 24 * 60 * 60 * 1000),
       detected_at: null,
       confirmed_at: null,
       expires_at: iso(-4.8 * 24 * 60 * 60 * 1000),
-      metadata: { description: t("tour.fixture.abandoned") },
+      metadata: { origin: "payment_link", payment_link: { id: "demo_link_ebook", title: t("tour.fixture.linkEbook") } },
     },
   ];
 
@@ -415,9 +430,9 @@ export default async function TourPage({
     (delivery) => delivery.http_status !== null && delivery.http_status >= 400,
   ).length;
   const recentInvoiceItems = invoices.slice(0, 5).map((invoice) => ({
-    title: invoiceContext(invoice.metadata).title ?? invoice.id,
+    title: invoiceContext(invoice.metadata, (order) => t("dashboard.invoices.orderLabel", { order })).title ?? invoice.id,
     invoiceId: invoice.id,
-    detail: t("dashboard.page.createdAt", { date: utcTimestamp(invoice.created_at, t) }),
+    detail: [sourceLabel(invoiceContext(invoice.metadata).source, t), t("dashboard.page.createdAt", { date: utcTimestamp(invoice.created_at, t) })].filter(Boolean).join(" · "),
     status: invoiceStatusName(invoice.status, t),
     tone:
       invoice.status === "confirmed"

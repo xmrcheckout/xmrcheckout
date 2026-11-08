@@ -746,6 +746,68 @@ class ReconcilerStatusTests(unittest.TestCase):
         )
         self.assertEqual(routes._reconciler_state(row, now=now), "ok")
 
+    def test_recent_heartbeat_keeps_running_pass_available(self):
+        now = datetime.now(timezone.utc)
+        row = SystemStatus(
+            name="reconciler",
+            last_reconcile_started_at=now - timedelta(minutes=3),
+            last_reconcile_completed_at=now - timedelta(minutes=5),
+            last_reconcile_failed_invoices=0,
+            updated_at=now - timedelta(seconds=10),
+        )
+        self.assertEqual(routes._reconciler_state(row, now=now), "ok")
+
+    def test_stale_heartbeat_during_pass_is_unavailable(self):
+        now = datetime.now(timezone.utc)
+        row = SystemStatus(
+            name="reconciler",
+            last_reconcile_started_at=now - timedelta(minutes=5),
+            last_reconcile_completed_at=now - timedelta(minutes=5),
+            last_reconcile_failed_invoices=0,
+            updated_at=now - timedelta(minutes=5),
+        )
+        self.assertEqual(routes._reconciler_state(row, now=now), "unavailable")
+
+
+class ReconcilerHeartbeatTests(unittest.TestCase):
+    def _run(self, *, terminal_only):
+        user_id = "user-1"
+        invoices = [_pending_invoice("one", user_id), _pending_invoice("two", user_id)]
+        user = SimpleNamespace(
+            id=user_id,
+            payment_address="merchant-address",
+            view_key_encrypted="encrypted-view-key",
+        )
+        db = _FakeDb(invoices, user)
+        service = Mock()
+        service.get_transfers_for_address.return_value = []
+        # Every clock read is 20s after the previous one: a slow pass.
+        clock = iter(range(0, 10_000, 20))
+        with (
+            patch.object(reconciler, "SessionLocal", return_value=db),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
+            patch.object(reconciler.time, "monotonic", side_effect=lambda: next(clock)),
+            patch.object(reconciler, "_send_reconciler_heartbeat") as heartbeat,
+        ):
+            reconciler._reconcile_invoices(service, terminal_only=terminal_only)
+        return heartbeat
+
+    def test_slow_full_pass_sends_heartbeats(self):
+        self.assertGreater(self._run(terminal_only=False).call_count, 0)
+
+    def test_terminal_checks_send_no_heartbeat(self):
+        self.assertEqual(self._run(terminal_only=True).call_count, 0)
+
+    def test_heartbeat_sets_updated_at(self):
+        db = Mock()
+        row = SystemStatus(name="reconciler")
+        db.query.return_value.filter.return_value.first.return_value = row
+        at = datetime(2026, 11, 8, 12, 0, tzinfo=timezone.utc)
+        reconciler._update_reconciler_status(db, heartbeat_at=at)
+        self.assertEqual(row.updated_at, at)
+        self.assertIsNone(row.last_reconcile_started_at)
+        db.commit.assert_called_once()
+
 
 class WalletRecoverySafetyTests(unittest.TestCase):
     def test_invoice_lock_key_is_deterministic_and_distinct(self):

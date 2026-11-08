@@ -162,6 +162,9 @@ def _reconciler_state(
     activity_times = [reconciler_status.last_reconcile_started_at]
     if reconciler_status.last_reconcile_completed_at is not None:
         activity_times.append(reconciler_status.last_reconcile_completed_at)
+    # The reconciler refreshes updated_at while a long pass is still running.
+    if reconciler_status.updated_at is not None:
+        activity_times.append(reconciler_status.updated_at)
     normalized_activity_times = [
         value if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
         for value in activity_times

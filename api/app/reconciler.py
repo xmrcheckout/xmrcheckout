@@ -33,6 +33,9 @@ MONERO_CONNECTIVITY_STATUS_NAME = "monero_connectivity"
 _UNSET = object()
 # How often the delivery loop looks for queued or due webhook deliveries.
 WEBHOOK_DELIVERY_INTERVAL_SECONDS = 2
+# How often a running full pass records that it is still alive. Must stay well
+# below the staleness limit in routes._reconciler_state (90s at the minimum).
+RECONCILER_HEARTBEAT_INTERVAL_SECONDS = 15
 
 
 @dataclass(frozen=True)
@@ -71,9 +74,11 @@ def main() -> None:
             status_db = SessionLocal()
             service.begin_reconcile_cycle()
             _safe_update_monero_connectivity_status(status_db, service)
+            started_at = datetime.now(timezone.utc)
             _safe_update_reconciler_status(
                 status_db,
-                started_at=datetime.now(timezone.utc),
+                started_at=started_at,
+                heartbeat_at=started_at,
             )
             summary = _reconcile_invoices(service)
             _record_cycle_result(status_db, summary)
@@ -134,9 +139,11 @@ def _record_cycle_result(status_db: Session, summary: ReconcileSummary) -> None:
     # A finished cycle counts as completed even if some checks failed; the
     # failures are still reported, and each invoice tracks its own last
     # successful check.
+    completed_at = datetime.now(timezone.utc)
     _safe_update_reconciler_status(
         status_db,
-        completed_at=datetime.now(timezone.utc),
+        completed_at=completed_at,
+        heartbeat_at=completed_at,
         error_message=(
             f"{summary.failed} of {summary.attempted} invoice checks failed"
             if summary.failed
@@ -148,8 +155,32 @@ def _record_cycle_result(status_db: Session, summary: ReconcileSummary) -> None:
     )
 
 
+def _send_reconciler_heartbeat() -> None:
+    """Record that a full pass is still running, in its own short session."""
+    db: Session | None = None
+    try:
+        db = SessionLocal()
+        _safe_update_reconciler_status(db, heartbeat_at=datetime.now(timezone.utc))
+    except Exception:
+        logger.warning("Unable to record reconciler heartbeat", exc_info=True)
+    finally:
+        if db is not None:
+            db.close()
+
+
 def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = False) -> ReconcileSummary:
     db: Session = SessionLocal()
+    last_heartbeat = time.monotonic()
+
+    def maybe_heartbeat() -> None:
+        # Long full passes keep the health check fresh between start and completion.
+        nonlocal last_heartbeat
+        if terminal_only:
+            return
+        if time.monotonic() - last_heartbeat >= RECONCILER_HEARTBEAT_INTERVAL_SECONDS:
+            _send_reconciler_heartbeat()
+            last_heartbeat = time.monotonic()
+
     attempted = 0
     succeeded = 0
     failed = 0
@@ -189,6 +220,7 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
             len(user_groups),
         )
         for user_id, user_invoices in user_groups.items():
+            maybe_heartbeat()
             user = db.query(User).filter(User.id == user_id).first()
             if user is None:
                 failed += len(user_invoices)
@@ -233,6 +265,7 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
                         checked_ids.append(invoice.id)
                     else:
                         failed += 1
+                maybe_heartbeat()
             _record_successful_checks(db, checked_ids, checked_at)
         return ReconcileSummary(
             attempted=attempted,
@@ -638,6 +671,7 @@ def _update_reconciler_status(
     attempted_invoices: int | None = None,
     succeeded_invoices: int | None = None,
     failed_invoices: int | None = None,
+    heartbeat_at: datetime | None = None,
 ) -> None:
     status_row = db.query(SystemStatus).filter(SystemStatus.name == "reconciler").first()
     if status_row is None:
@@ -654,6 +688,9 @@ def _update_reconciler_status(
         status_row.last_reconcile_succeeded_invoices = succeeded_invoices
     if failed_invoices is not None:
         status_row.last_reconcile_failed_invoices = failed_invoices
+    if heartbeat_at is not None:
+        # Set explicitly: onupdate does nothing when no other column changes.
+        status_row.updated_at = heartbeat_at
     db.add(status_row)
     db.commit()
 
@@ -723,6 +760,7 @@ def _safe_update_reconciler_status(
     attempted_invoices: int | None = None,
     succeeded_invoices: int | None = None,
     failed_invoices: int | None = None,
+    heartbeat_at: datetime | None = None,
 ) -> None:
     try:
         _update_reconciler_status(
@@ -733,6 +771,7 @@ def _safe_update_reconciler_status(
             attempted_invoices=attempted_invoices,
             succeeded_invoices=succeeded_invoices,
             failed_invoices=failed_invoices,
+            heartbeat_at=heartbeat_at,
         )
     except SQLAlchemyError:
         db.rollback()

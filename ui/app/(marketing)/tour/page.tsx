@@ -8,6 +8,7 @@ import type { PaymentLinkData } from "../../../components/payment-link-editor";
 import { PaymentLinksView } from "../../../components/payment-links";
 import type { TerminalData } from "../../../components/terminal-editor";
 import { TerminalsView } from "../../../components/terminals";
+import SalesChannelCards from "../../../components/sales-channel-cards";
 import PageIntroBand from "../../../components/page-intro-band";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import TourInvoicePreview from "../../../components/tour-invoice-preview";
@@ -688,6 +689,7 @@ export default async function TourPage({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
+                <SalesChannelCards paymentLinks={fixture.paymentLinks} terminals={fixture.terminals} allowance={fixture.paymentLinkUsage} mode="tour" />
                 <section className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft">
                   <p className="text-sm font-semibold text-ink-soft">
                     {t("dashboard.page.navHealth")}

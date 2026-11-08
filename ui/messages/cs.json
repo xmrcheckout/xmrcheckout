@@ -617,6 +617,12 @@
         "many": "{count} endpointu",
         "other": "{count} endpointů"
       },
+      "enabledOf": "Zapnuto: {enabled} z {count}",
+      "linksNone": "Zatím žádné platební odkazy",
+      "linksHelp": "Prodávejte produkty nebo přijímejte dary pomocí opakovaně použitelného odkazu nebo tlačítka na web.",
+      "linksAllowance": "Dostupné veřejné platební výzvy: {remaining} z {limit}",
+      "terminalsNone": "Zatím žádné terminály",
+      "terminalsHelp": "Přijímejte Monero osobně na tabletu nebo telefonu u pokladny.",
       "settingsTab": "Nastavení",
       "secretHelp": "Posílá se s každým doručením v hlavičce <code>X-Webhook-Secret</code>.",
       "navPaymentLinksDetail": "Tlačítka pro dary, produkty a služby",

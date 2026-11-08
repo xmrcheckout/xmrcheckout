@@ -605,6 +605,12 @@
       "endpointCount": {
         "other": "{count} 个端点"
       },
+      "enabledOf": "已启用：{enabled} / {count}",
+      "linksNone": "还没有付款链接",
+      "linksHelp": "用可重复使用的链接或网站按钮销售商品或接受捐赠。",
+      "linksAllowance": "可用公开账单：{remaining} / {limit}",
+      "terminalsNone": "还没有收款终端",
+      "terminalsHelp": "在收银台用平板或手机当面接收门罗币。",
       "settingsTab": "设置",
       "secretHelp": "每次投递时作为 <code>X-Webhook-Secret</code> 请求头发送。",
       "navPaymentLinksDetail": "用于捐赠、商品和服务的按钮",

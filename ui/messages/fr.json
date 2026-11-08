@@ -609,6 +609,12 @@
         "one": "{count} point de terminaison",
         "other": "{count} points de terminaison"
       },
+      "enabledOf": "Activés : {enabled} sur {count}",
+      "linksNone": "Aucun lien de paiement pour l’instant",
+      "linksHelp": "Vendez des produits ou recevez des dons avec un lien réutilisable ou un bouton pour votre site.",
+      "linksAllowance": "Factures publiques disponibles : {remaining} sur {limit}",
+      "terminalsNone": "Aucun terminal pour l’instant",
+      "terminalsHelp": "Acceptez Monero en personne sur une tablette ou un téléphone à votre caisse.",
       "settingsTab": "Paramètres",
       "secretHelp": "Envoyé avec chaque requête dans l’en-tête <code>X-Webhook-Secret</code>.",
       "navPaymentLinksDetail": "Boutons pour dons, produits et services",

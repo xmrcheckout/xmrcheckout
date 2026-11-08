@@ -609,6 +609,12 @@
         "one": "{count} Endpunkt",
         "other": "{count} Endpunkte"
       },
+      "enabledOf": "Aktiviert: {enabled} von {count}",
+      "linksNone": "Noch keine Zahlungslinks",
+      "linksHelp": "Verkaufen Sie Produkte oder nehmen Sie Spenden mit einem wiederverwendbaren Link oder Website-Button entgegen.",
+      "linksAllowance": "Verfügbare öffentliche Rechnungen: {remaining} von {limit}",
+      "terminalsNone": "Noch keine Terminals",
+      "terminalsHelp": "Nehmen Sie Monero vor Ort mit einem Tablet oder Smartphone an der Kasse an.",
       "settingsTab": "Einstellungen",
       "secretHelp": "Wird bei jeder Zustellung als Header <code>X-Webhook-Secret</code> mitgesendet.",
       "navPaymentLinksDetail": "Schaltflächen für Spenden, Produkte und Dienstleistungen",

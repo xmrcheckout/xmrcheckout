@@ -617,6 +617,12 @@
         "many": "{count} endpointów",
         "other": "{count} endpointu"
       },
+      "enabledOf": "Włączone: {enabled} z {count}",
+      "linksNone": "Brak linków płatności",
+      "linksHelp": "Sprzedawaj produkty lub przyjmuj darowizny za pomocą linku wielokrotnego użytku albo przycisku na stronę.",
+      "linksAllowance": "Dostępne publiczne prośby o płatność: {remaining} z {limit}",
+      "terminalsNone": "Brak terminali",
+      "terminalsHelp": "Przyjmuj Monero osobiście na tablecie lub telefonie przy kasie.",
       "settingsTab": "Ustawienia",
       "secretHelp": "Wysyłany z każdym dostarczeniem w nagłówku <code>X-Webhook-Secret</code>.",
       "navPaymentLinksDetail": "Przyciski do darowizn, produktów i usług",

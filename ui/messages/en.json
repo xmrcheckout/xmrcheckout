@@ -609,6 +609,12 @@
         "one": "{count} endpoint",
         "other": "{count} endpoints"
       },
+      "enabledOf": "Enabled: {enabled} of {count}",
+      "linksNone": "No payment links yet",
+      "linksHelp": "Sell products or take donations with a reusable link or website button.",
+      "linksAllowance": "Public invoices available: {remaining} of {limit}",
+      "terminalsNone": "No terminals yet",
+      "terminalsHelp": "Take Monero in person on a tablet or phone at your till.",
       "settingsTab": "Settings",
       "secretHelp": "Sent with each delivery as the <code>X-Webhook-Secret</code> header.",
       "navPaymentLinksDetail": "Buttons for donations, products and services",

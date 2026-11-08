@@ -609,6 +609,12 @@
         "one": "{count} endpoint",
         "other": "{count} endpoint"
       },
+      "enabledOf": "Attivi: {enabled} su {count}",
+      "linksNone": "Ancora nessun link di pagamento",
+      "linksHelp": "Vendi prodotti o ricevi donazioni con un link riutilizzabile o un pulsante per il sito.",
+      "linksAllowance": "Richieste di pagamento pubbliche disponibili: {remaining} su {limit}",
+      "terminalsNone": "Ancora nessun terminale",
+      "terminalsHelp": "Accetta Monero di persona con un tablet o uno smartphone alla cassa.",
       "settingsTab": "Impostazioni",
       "secretHelp": "Inviato con ogni consegna nell'intestazione <code>X-Webhook-Secret</code>.",
       "navPaymentLinksDetail": "Pulsanti per donazioni, prodotti e servizi",

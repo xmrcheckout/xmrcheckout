@@ -28,6 +28,7 @@ import WebhookSecretSection from "../../../components/webhook-secret-section";
 import WebhookSection from "../../../components/webhook-section";
 import PaymentLinks from "../../../components/payment-links";
 import Terminals from "../../../components/terminals";
+import SalesChannelCards from "../../../components/sales-channel-cards";
 import WorkspaceNav from "../../../components/workspace-nav";
 import type { Translate } from "../../../lib/i18n/translate";
 import { rich } from "../../../lib/i18n/rich";
@@ -305,6 +306,23 @@ export default async function DashboardPage({
     if (response.ok) {
       webhookHistory = (await response.json()) as WebhookDeliverySummary[];
     }
+  }
+
+  // The overview keeps payment links and terminals in view; a failed read shows them as unavailable.
+  let overviewLinks: { enabled: boolean }[] | null = null;
+  let overviewTerminals: { enabled: boolean; last_used_at: string | null }[] | null = null;
+  let overviewAllowance: { remaining: number; daily_limit: number } | null = null;
+  if (activeTab === "overview") {
+    const headers = { Authorization: `ApiKey ${apiKey}` };
+    const [linksResponse, terminalsResponse, allowanceResponse] = await Promise.all([
+      fetch(`${apiBaseUrl}/api/core/payment-links`, { headers, cache: "no-store" }).catch(() => null),
+      fetch(`${apiBaseUrl}/api/core/terminals`, { headers, cache: "no-store" }).catch(() => null),
+      fetch(`${apiBaseUrl}/api/core/payment-links/status`, { headers, cache: "no-store" }).catch(() => null),
+    ]);
+    if ([linksResponse, terminalsResponse, allowanceResponse].some((response) => response?.status === 401)) redirect(loginUrl);
+    if (linksResponse?.ok) overviewLinks = await linksResponse.json().catch(() => null);
+    if (terminalsResponse?.ok) overviewTerminals = (await terminalsResponse.json().catch(() => null))?.terminals ?? null;
+    if (allowanceResponse?.ok) overviewAllowance = await allowanceResponse.json().catch(() => null);
   }
 
   let addressStatus: SubaddressStatus | null = null;
@@ -670,6 +688,7 @@ export default async function DashboardPage({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
+                <SalesChannelCards paymentLinks={overviewLinks} terminals={overviewTerminals} allowance={overviewAllowance} />
                 <Link
                   className="rounded-surface border border-stroke bg-white/70 p-5 shadow-soft transition hover:border-ink/40 hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
                   href="/dashboard?tab=health"

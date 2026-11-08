@@ -1380,7 +1380,7 @@
         "title": "Ein Terminal einrichten",
         "step1": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key.",
         "step2": "Öffnen Sie <strong>Dashboard → Terminals</strong> und wählen Sie <strong>Terminal erstellen</strong>. Geben Sie ihm einen Namen wie „Vordere Theke“ und wählen Sie eine Standardwährung.",
-        "step3": "Das Dashboard zeigt den Terminal-Link und einen QR-Code einmalig an. Scannen Sie ihn mit dem Gerät, das Sie an der Kasse verwenden, oder kopieren Sie den Link dorthin.",
+        "step3": "Das Dashboard zeigt den Terminal-Link und einen QR-Code an. Scannen Sie ihn mit dem Gerät, das Sie an der Kasse verwenden, oder kopieren Sie den Link dorthin. Später können Sie den Link auf der Seite des Terminals mit <strong>Link anzeigen</strong> erneut aufrufen.",
         "step4": "Fügen Sie die Seite auf dem Gerät zum Startbildschirm hinzu, um eine Vollbild-Kasse zu erhalten. Das Gerät merkt sich das Terminal, bis Sie <strong>Dieses Terminal vergessen</strong> wählen.",
         "p1": "Damit Kunden wissen, dass sie mit Monero bezahlen können, öffnen Sie einen Zahlungslink unter Dashboard → Zahlungslinks, drucken Sie das Schild im Tab <strong>Gedrucktes Schild</strong> aus und platzieren Sie es an der Kasse. <link>Weitere Möglichkeiten, gefunden zu werden</link>"
       },
@@ -1634,7 +1634,7 @@
       "r011": "Terminals",
       "r012": "API-Schlüssel (Verwaltung) oder Terminal-Schlüssel (Verkäufe)",
       "r013": "Die Terminals des Händlers für den Checkout vor Ort auflisten.",
-      "r014": "Ein Terminal erstellen; liefert 201 mit seinem Link, der nur einmal angezeigt wird.",
+      "r014": "Ein Terminal erstellen; liefert 201 mit seinem Link.",
       "r015": "Ein Terminal umbenennen, aktivieren oder deaktivieren oder seine Standards ändern.",
       "r016": "Den Terminal-Link ersetzen; der vorherige Link funktioniert nicht mehr.",
       "r017": "Terminal-Schlüssel: die Einstellungen des Terminals und freie Rechnungsadressen lesen.",
@@ -1797,7 +1797,8 @@
       "r174": "Aktualisiert eine Webhook-Registrierung.",
       "r175": "Die Version ist zur Kompatibilität mit dem Verhalten der Erstattungs-UI gesetzt.",
       "r176": "Berechtigungen sind Store-bezogene Strings, die an eine Store-ID gebunden sind.",
-      "r177": "Erstattungsberechtigungen sind bewusst weggelassen."
+      "r177": "Erstattungsberechtigungen sind bewusst weggelassen.",
+      "r178": "Den aktuellen Link des Terminals erneut anzeigen."
     },
     "metaTitle": "Dokumentation der Monero-Zahlungs-API | XMR Checkout",
     "metaDescription": "Integrieren Sie selbst gehostete Monero-Rechnungen mit der XMR-Checkout-API, öffentlichen Rechnungsseiten, Bestätigungserkennung und Webhooks.",
@@ -1817,7 +1818,7 @@
       "body": "Ein Terminal ist ein Link, der auf einem Tablet oder Smartphone an der Kasse geöffnet wird. Das Personal tippt einen Betrag ein, und der Kunde scannt den QR-Code mit seiner Wallet. Jeder Verkauf ist eine normale XMR-Rechnung, die direkt an die Wallet des Händlers bezahlt wird. Der Terminal-Link enthält einen eigenen Schlüssel, der nur Rechnungen dieses Terminals erstellen, lesen und stornieren kann, sodass das Gerät nie den API-Schlüssel des Händlers speichert.",
       "guideBody": "<guide>Folgen Sie der Anleitung für den Verkauf vor Ort</guide> zur Einrichtung einer Kasse, Adresskapazität, Bestätigungen und dazu, was Personal und Kunden sehen. Mit den folgenden API-Operationen verwalten Sie Terminals und bauen eine eigene Kasse.",
       "create": "Erstellen Sie ein Terminal mit einem API-Schlüssel des Händlers, der auf Ihrem Server liegt. Bestätigungsziel (0-10, Standard 0) und Ablaufzeit (2-60 Minuten, Standard 15) gelten für jeden Verkauf dieses Terminals.",
-      "createResponse": "Die Antwort 201 enthält die gespeicherten Einstellungen und den Terminal-Link. Der Schlüssel nach #k= wird nur einmal angezeigt; speichern Sie ihn auf dem Kassengerät oder erzeugen Sie für das Terminal einen neuen Link.",
+      "createResponse": "Die Antwort 201 enthält die gespeicherten Einstellungen und den Terminal-Link. Lesen Sie GET /api/core/terminals/{terminal_id}/link, um den Link erneut anzuzeigen, oder erzeugen Sie für das Terminal einen neuen Link, um ihn zu ersetzen.",
       "sale": "Eine Kasse erstellt einen Verkauf mit dem Terminal-Schlüssel. Senden Sie einen Idempotency-Key als UUID und bewahren Sie ihn auf, bis eine Antwort eintrifft; eine Wiederholung liefert 200 mit derselben Rechnung, statt eine weitere zu erstellen.",
       "saleResponse": "Die Antwort enthält diese ausgewählten Felder. Zeigen Sie dem Kunden Adresse und Betrag oder öffnen Sie invoice_url.",
       "polling": "Fragen Sie GET /api/core/terminal/invoices/{invoice_id} ab, um Erkennung und Bestätigungen zu verfolgen. Um einen unbezahlten Verkauf zu beenden, senden Sie POST an seinen Stornierungspfad; er liefert 409, sobald eine Zahlung gesehen wurde oder die Rechnung geschlossen ist.",

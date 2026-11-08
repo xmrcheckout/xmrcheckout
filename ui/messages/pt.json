@@ -1380,7 +1380,7 @@
         "title": "Configure um terminal",
         "step1": "Conecte a sua carteira com o seu endereço principal e a sua chave de visualização privada.",
         "step2": "Abra <strong>Painel → Terminais</strong> e escolha <strong>Criar terminal</strong>. Dê a ele um nome como “Balcão da frente” e escolha uma moeda padrão.",
-        "step3": "O painel mostra o link do terminal e um QR code uma única vez. Escaneie-o com o dispositivo que você usará no caixa ou copie o link para ele.",
+        "step3": "O painel mostra o link do terminal e um QR code. Escaneie-o com o dispositivo que você usará no caixa ou copie o link para ele. Depois, você pode ver o link de novo com <strong>Mostrar link</strong> na página do terminal.",
         "step4": "No dispositivo, adicione a página à tela inicial para ter um caixa em tela cheia. O dispositivo lembra o terminal até você escolher <strong>Esquecer este terminal</strong>.",
         "p1": "Para que os clientes saibam que podem pagar com Monero, abra um link de pagamento em Painel → Links de pagamento, imprima o cartaz da aba <strong>Cartaz impresso</strong> e coloque-o perto do caixa. <link>Mais formas de as pessoas encontrarem você</link>"
       },
@@ -1634,7 +1634,7 @@
       "r011": "Terminais",
       "r012": "Chave de API (gestão) ou chave do terminal (vendas)",
       "r013": "Lista os terminais de pagamento presencial do comerciante.",
-      "r014": "Cria um terminal; retorna 201 com o link dele, mostrado apenas uma vez.",
+      "r014": "Cria um terminal; retorna 201 com o link dele.",
       "r015": "Renomeia, ativa ou desativa um terminal, ou altera os padrões dele.",
       "r016": "Substitui o link do terminal; o link anterior para de funcionar.",
       "r017": "Chave do terminal: lê as configurações do terminal e os endereços de fatura livres.",
@@ -1797,7 +1797,8 @@
       "r174": "Atualiza um registro de webhook.",
       "r175": "A versão é definida para compatibilidade com o comportamento da interface de reembolso.",
       "r176": "As permissões são strings restritas à loja, vinculadas a um ID de loja.",
-      "r177": "As permissões de reembolso são omitidas intencionalmente."
+      "r177": "As permissões de reembolso são omitidas intencionalmente.",
+      "r178": "Mostra novamente o link atual do terminal."
     },
     "metaTitle": "Documentação da API de pagamentos Monero | XMR Checkout",
     "metaDescription": "Integre faturas Monero auto-hospedadas com a API do XMR Checkout, páginas públicas de fatura, detecção de confirmações e webhooks.",
@@ -1817,7 +1818,7 @@
       "body": "Um terminal é um link aberto em um tablet ou celular no caixa. A equipe digita um valor e o cliente escaneia o código QR com a carteira. Cada venda é uma fatura normal em XMR paga diretamente na carteira do comerciante. O link do terminal tem a própria chave, que só pode criar, consultar e cancelar as faturas daquele terminal, então o dispositivo nunca guarda a chave de API do comerciante.",
       "guideBody": "<guide>Siga o guia de checkout presencial</guide> para configurar um caixa, a capacidade de endereços, as confirmações e o que a equipe e os clientes veem. As operações de API abaixo permitem gerenciar terminais e criar um caixa personalizado.",
       "create": "Crie um terminal com uma chave de API do comerciante guardada no seu servidor. A meta de confirmações (0-10, padrão 0) e a expiração (2-60 minutos, padrão 15) valem para todas as vendas desse terminal.",
-      "createResponse": "A resposta 201 inclui as configurações salvas e o link do terminal. A chave depois de #k= é mostrada só uma vez; guarde-a no dispositivo do caixa ou faça a rotação do terminal para obter uma nova.",
+      "createResponse": "A resposta 201 inclui as configurações salvas e o link do terminal. Leia GET /api/core/terminals/{terminal_id}/link para mostrar o link novamente, ou faça a rotação do terminal para substituí-lo.",
       "sale": "Um caixa cria uma venda com a chave do terminal. Envie um Idempotency-Key UUID e guarde-o até chegar uma resposta; repeti-lo retorna 200 com a mesma fatura em vez de criar outra.",
       "saleResponse": "A resposta inclui estes campos selecionados. Mostre o endereço e o valor ao cliente ou abra invoice_url.",
       "polling": "Consulte GET /api/core/terminal/invoices/{invoice_id} para acompanhar a detecção e as confirmações. Para encerrar uma venda não paga, envie POST para o caminho de cancelamento; ele retorna 409 quando um pagamento já foi visto ou a fatura foi encerrada.",

@@ -1380,7 +1380,7 @@
         "title": "Configurer un terminal",
         "step1": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée.",
         "step2": "Ouvrez <strong>Tableau de bord → Terminaux</strong> et choisissez <strong>Créer un terminal</strong>. Donnez-lui un nom tel que « Comptoir principal » et choisissez une devise par défaut.",
-        "step3": "Le tableau de bord affiche une seule fois le lien du terminal et un QR code. Scannez-le avec l’appareil que vous utiliserez à la caisse, ou copiez-y le lien.",
+        "step3": "Le tableau de bord affiche le lien du terminal et un QR code. Scannez-le avec l’appareil que vous utiliserez à la caisse, ou copiez-y le lien. Vous pourrez réafficher le lien plus tard avec <strong>Afficher le lien</strong> sur la page du terminal.",
         "step4": "Sur l’appareil, ajoutez la page à l’écran d’accueil pour obtenir une caisse en plein écran. L’appareil mémorise le terminal jusqu’à ce que vous choisissiez <strong>Oublier ce terminal</strong>.",
         "p1": "Pour que vos clients sachent qu’ils peuvent payer en Monero, ouvrez un lien de paiement dans Tableau de bord → Liens de paiement, imprimez l’affiche depuis son onglet <strong>Affiche imprimée</strong> et placez-la près de la caisse. <link>D’autres façons de vous faire connaître</link>"
       },
@@ -1634,7 +1634,7 @@
       "r011": "Terminaux",
       "r012": "Clé API (gestion) ou clé de terminal (ventes)",
       "r013": "Lister les terminaux de paiement en personne du commerçant.",
-      "r014": "Créer un terminal ; renvoie 201 avec son lien, affiché une seule fois.",
+      "r014": "Créer un terminal ; renvoie 201 avec son lien.",
       "r015": "Renommer, activer ou désactiver un terminal, ou modifier ses valeurs par défaut.",
       "r016": "Remplacer le lien du terminal ; l’ancien lien cesse de fonctionner.",
       "r017": "Clé de terminal : lire les paramètres du terminal et les adresses de facture libres.",
@@ -1797,7 +1797,8 @@
       "r174": "Met à jour un enregistrement de webhook.",
       "r175": "La version est définie pour la compatibilité avec le comportement de l’interface de remboursement.",
       "r176": "Les autorisations sont des chaînes limitées à une boutique, liées à un identifiant de boutique.",
-      "r177": "Les autorisations de remboursement sont volontairement omises."
+      "r177": "Les autorisations de remboursement sont volontairement omises.",
+      "r178": "Afficher à nouveau le lien actuel du terminal."
     },
     "metaTitle": "Documentation de l’API de paiement Monero | XMR Checkout",
     "metaDescription": "Intégrez des factures Monero auto-hébergées grâce à l’API XMR Checkout, aux pages de facture publiques, à la détection des confirmations et aux webhooks.",
@@ -1817,7 +1818,7 @@
       "body": "Un terminal est un lien ouvert sur une tablette ou un téléphone à la caisse. Le personnel saisit un montant, et le client scanne le code QR avec son portefeuille. Chaque vente est une facture XMR normale payée directement sur le portefeuille du commerçant. Le lien du terminal contient sa propre clé, qui peut seulement créer, lire et annuler les factures de ce terminal : l’appareil ne détient donc jamais la clé API du commerçant.",
       "guideBody": "<guide>Suivez le guide de la vente en personne</guide> pour configurer une caisse, la capacité d’adresses, les confirmations et ce que voient le personnel et les clients. Les opérations d’API ci-dessous permettent de gérer les terminaux et de créer une caisse personnalisée.",
       "create": "Créez un terminal avec une clé API du commerçant conservée sur votre serveur. L’objectif de confirmations (0-10, 0 par défaut) et l’expiration (2-60 minutes, 15 par défaut) s’appliquent à chaque vente de ce terminal.",
-      "createResponse": "La réponse 201 inclut les paramètres enregistrés et le lien du terminal. La clé après #k= n’est affichée qu’une fois ; conservez-la sur l’appareil de caisse ou effectuez une rotation du terminal pour en obtenir une nouvelle.",
+      "createResponse": "La réponse 201 inclut les paramètres enregistrés et le lien du terminal. Lisez GET /api/core/terminals/{terminal_id}/link pour afficher à nouveau le lien, ou effectuez une rotation du terminal pour le remplacer.",
       "sale": "Une caisse crée une vente avec la clé du terminal. Envoyez une Idempotency-Key au format UUID et conservez-la jusqu’à la réponse ; la renvoyer renvoie 200 avec la même facture au lieu d’en créer une autre.",
       "saleResponse": "La réponse inclut ces champs sélectionnés. Affichez l’adresse et le montant au client, ou ouvrez invoice_url.",
       "polling": "Interrogez GET /api/core/terminal/invoices/{invoice_id} pour suivre la détection et les confirmations. Pour mettre fin à une vente impayée, envoyez un POST à son chemin d’annulation ; il renvoie 409 dès qu’un paiement a été vu ou que la facture est close.",

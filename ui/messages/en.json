@@ -1380,7 +1380,7 @@
         "title": "Set up a terminal",
         "step1": "Connect your wallet with your primary address and private view key.",
         "step2": "Open <strong>Dashboard → Terminals</strong> and choose <strong>Create terminal</strong>. Give it a name such as “Front counter”, and pick a default currency.",
-        "step3": "The dashboard shows the terminal link and a QR code once. Scan it with the device you will use at the till, or copy the link to it.",
+        "step3": "The dashboard shows the terminal link and a QR code. Scan it with the device you will use at the till, or copy the link to it. You can show the link again later with <strong>Show link</strong> on the terminal’s page.",
         "step4": "On the device, add the page to the home screen for a full-screen till. The device remembers the terminal until you choose <strong>Forget this terminal</strong>.",
         "p1": "To let customers know they can pay with Monero, open a payment link in Dashboard → Payment links, print the sign on its <strong>Printed sign</strong> tab and place it by the till. <link>More ways to let people find you</link>"
       },
@@ -1634,7 +1634,7 @@
       "r011": "Terminals",
       "r012": "API key (management) or terminal key (sales)",
       "r013": "List the merchant’s in-person checkout terminals.",
-      "r014": "Create a terminal; returns 201 with its link, shown only once.",
+      "r014": "Create a terminal; returns 201 with its link.",
       "r015": "Rename, enable or disable, or change a terminal’s defaults.",
       "r016": "Replace the terminal link; the previous link stops working.",
       "r017": "Terminal key: read the terminal’s settings and free invoice addresses.",
@@ -1797,7 +1797,8 @@
       "r174": "Updates a webhook registration.",
       "r175": "Version is set for compatibility with refund UI behavior.",
       "r176": "Permissions are store-scoped strings tied to one store id.",
-      "r177": "Refund permissions are intentionally omitted."
+      "r177": "Refund permissions are intentionally omitted.",
+      "r178": "Show the terminal’s current link again."
     },
     "metaTitle": "Monero Payment API Documentation | XMR Checkout",
     "metaDescription": "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",
@@ -1817,7 +1818,7 @@
       "body": "A terminal is a link opened on a tablet or phone at a till. Staff type an amount, and the customer scans the QR code with their wallet. Each sale is a normal XMR invoice paid directly to the merchant’s wallet. The terminal link carries its own key, which can only create, read, and cancel that terminal’s invoices, so the device never holds the merchant API key.",
       "guideBody": "<guide>Follow the in-person checkout guide</guide> for setting up a till, address capacity, confirmations, and what staff and customers see. The API operations below support managing terminals and building a custom till.",
       "create": "Create a terminal with a merchant API key held on your server. Confirmation target (0-10, default 0) and expiry (2-60 minutes, default 15) apply to every sale from that terminal.",
-      "createResponse": "The 201 response includes the saved settings and the terminal link. The key after #k= is shown only once; store it on the till device or rotate the terminal to get a new one.",
+      "createResponse": "The 201 response includes the saved settings and the terminal link. Read GET /api/core/terminals/{terminal_id}/link to show the link again, or rotate the terminal to replace it.",
       "sale": "A till creates a sale with the terminal key. Send a UUID Idempotency-Key and keep it until a response arrives; replaying it returns 200 with the same invoice instead of creating another.",
       "saleResponse": "The response includes these selected fields. Show the address and amount to the customer, or open invoice_url.",
       "polling": "Read GET /api/core/terminal/invoices/{invoice_id} to follow detection and confirmations. To end an unpaid sale, POST to its cancel path; it returns 409 once a payment was seen or the invoice closed.",

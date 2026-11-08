@@ -1406,7 +1406,7 @@
         "title": "Skonfiguruj terminal",
         "step1": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku.",
         "step2": "Otwórz <strong>Panel → Terminale</strong> i wybierz <strong>Utwórz terminal</strong>. Nadaj mu nazwę, np. „Kasa przy wejściu”, i wybierz domyślną walutę.",
-        "step3": "Panel jednorazowo pokazuje link terminala i kod QR. Zeskanuj go urządzeniem, którego będziesz używać przy kasie, lub skopiuj na nie link.",
+        "step3": "Panel pokazuje link terminala i kod QR. Zeskanuj go urządzeniem, którego będziesz używać przy kasie, lub skopiuj na nie link. Później możesz ponownie wyświetlić link przyciskiem <strong>Pokaż link</strong> na stronie terminala.",
         "step4": "Na urządzeniu dodaj stronę do ekranu głównego, aby mieć kasę na pełnym ekranie. Urządzenie pamięta terminal, dopóki nie wybierzesz <strong>Zapomnij ten terminal</strong>.",
         "p1": "Aby klienci wiedzieli, że mogą zapłacić w Monero, otwórz link płatności w Panel → Linki płatności, wydrukuj plakat z karty <strong>Wydrukowany plakat</strong> i umieść go przy kasie. <link>Więcej sposobów, by dać się znaleźć</link>"
       },
@@ -1660,7 +1660,7 @@
       "r011": "Terminale",
       "r012": "Klucz API (zarządzanie) lub klucz terminala (sprzedaż)",
       "r013": "Wyświetla terminale sprzedawcy do płatności na miejscu.",
-      "r014": "Tworzy terminal; zwraca 201 z jego linkiem, pokazywanym tylko raz.",
+      "r014": "Tworzy terminal; zwraca 201 z jego linkiem.",
       "r015": "Zmienia nazwę terminala, włącza go lub wyłącza albo zmienia jego ustawienia domyślne.",
       "r016": "Zastępuje link terminala; poprzedni link przestaje działać.",
       "r017": "Klucz terminala: odczytuje ustawienia terminala i wolne adresy płatności.",
@@ -1823,7 +1823,8 @@
       "r174": "Aktualizuje rejestrację webhooka.",
       "r175": "Wersja jest ustawiona dla zgodności z zachowaniem interfejsu zwrotów.",
       "r176": "Uprawnienia to ciągi znaków ograniczone do sklepu, powiązane z jednym identyfikatorem sklepu.",
-      "r177": "Uprawnienia do zwrotów zostały celowo pominięte."
+      "r177": "Uprawnienia do zwrotów zostały celowo pominięte.",
+      "r178": "Ponownie pokazuje bieżący link terminala."
     },
     "metaTitle": "Dokumentacja API płatności Monero | XMR Checkout",
     "metaDescription": "Zintegruj samodzielnie hostowane prośby o płatność w Monero z API XMR Checkout, publicznymi stronami płatności, wykrywaniem potwierdzeń i webhookami.",
@@ -1843,7 +1844,7 @@
       "body": "Terminal to link otwierany na tablecie lub telefonie przy kasie. Personel wpisuje kwotę, a klient skanuje kod QR swoim portfelem. Każda sprzedaż to zwykła prośba o płatność w XMR opłacana bezpośrednio do portfela sprzedawcy. Link terminala zawiera własny klucz, który może tylko tworzyć, odczytywać i anulować prośby o płatność tego terminala, więc urządzenie nigdy nie przechowuje klucza API sprzedawcy.",
       "guideBody": "<guide>Skorzystaj z przewodnika po płatnościach stacjonarnych</guide>, aby skonfigurować kasę, pulę adresów, potwierdzenia i sprawdzić, co widzą personel i klienci. Poniższe operacje API pozwalają zarządzać terminalami i zbudować własną kasę.",
       "create": "Utwórz terminal kluczem API sprzedawcy przechowywanym na Twoim serwerze. Wymagana liczba potwierdzeń (0-10, domyślnie 0) i czas ważności (2-60 minut, domyślnie 15) dotyczą każdej sprzedaży z tego terminala.",
-      "createResponse": "Odpowiedź 201 zawiera zapisane ustawienia i link terminala. Klucz po #k= jest pokazywany tylko raz; zapisz go na urządzeniu kasowym lub wygeneruj nowy link terminala.",
+      "createResponse": "Odpowiedź 201 zawiera zapisane ustawienia i link terminala. Odczytaj GET /api/core/terminals/{terminal_id}/link, aby ponownie pokazać link, lub wygeneruj nowy link terminala, aby go zastąpić.",
       "sale": "Kasa tworzy sprzedaż kluczem terminala. Wyślij nagłówek Idempotency-Key z UUID i zachowaj go do otrzymania odpowiedzi; ponowienie z nim zwraca 200 z tą samą prośbą o płatność zamiast tworzyć nową.",
       "saleResponse": "Odpowiedź zawiera te wybrane pola. Pokaż klientowi adres i kwotę albo otwórz invoice_url.",
       "polling": "Odpytuj GET /api/core/terminal/invoices/{invoice_id}, aby śledzić wykrycie i potwierdzenia. Aby zakończyć nieopłaconą sprzedaż, wyślij POST na jej ścieżkę anulowania; zwraca 409, gdy płatność została już zauważona lub prośba o płatność jest zamknięta.",

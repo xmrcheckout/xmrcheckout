@@ -1380,7 +1380,7 @@
         "title": "Configura un terminal",
         "step1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización.",
         "step2": "Abre <strong>Panel → Terminales</strong> y elige <strong>Crear terminal</strong>. Ponle un nombre como «Mostrador principal» y elige una moneda predeterminada.",
-        "step3": "El panel muestra el enlace del terminal y un código QR una sola vez. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él.",
+        "step3": "El panel muestra el enlace del terminal y un código QR. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él. Más tarde puedes volver a ver el enlace con <strong>Mostrar enlace</strong> en la página del terminal.",
         "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal hasta que elijas <strong>Olvidar este terminal</strong>.",
         "p1": "Para que los clientes sepan que pueden pagar con Monero, abre un enlace de pago en Panel → Enlaces de pago, imprime el cartel de su pestaña <strong>Cartel impreso</strong> y colócalo junto a la caja. <link>Más formas de que te encuentren</link>"
       },
@@ -1634,7 +1634,7 @@
       "r011": "Terminales",
       "r012": "Clave de API (gestión) o clave de terminal (ventas)",
       "r013": "Lista los terminales de cobro presencial del comercio.",
-      "r014": "Crea un terminal; devuelve 201 con su enlace, que se muestra una sola vez.",
+      "r014": "Crea un terminal; devuelve 201 con su enlace.",
       "r015": "Cambia el nombre, activa o desactiva, o cambia los valores predeterminados de un terminal.",
       "r016": "Reemplaza el enlace del terminal; el enlace anterior deja de funcionar.",
       "r017": "Clave de terminal: consulta la configuración del terminal y las direcciones de factura libres.",
@@ -1797,7 +1797,8 @@
       "r174": "Actualiza un registro de webhook.",
       "r175": "La versión se define por compatibilidad con el comportamiento de la interfaz de reembolsos.",
       "r176": "Los permisos son cadenas limitadas a una tienda y ligadas a un ID de tienda.",
-      "r177": "Los permisos de reembolso se omiten a propósito."
+      "r177": "Los permisos de reembolso se omiten a propósito.",
+      "r178": "Vuelve a mostrar el enlace actual del terminal."
     },
     "metaTitle": "Documentación de la API de pagos con Monero | XMR Checkout",
     "metaDescription": "Integra facturas de Monero autoalojadas con la API de XMR Checkout, las páginas públicas de factura, la detección de confirmaciones y los webhooks.",
@@ -1817,7 +1818,7 @@
       "body": "Un terminal es un enlace que se abre en una tableta o un teléfono en la caja. El personal escribe un importe y el cliente escanea el código QR con su billetera. Cada venta es una factura normal en XMR pagada directamente a la billetera del comercio. El enlace del terminal lleva su propia clave, que solo puede crear, consultar y cancelar las facturas de ese terminal, así que el dispositivo nunca guarda la clave API del comercio.",
       "guideBody": "<guide>Sigue la guía de cobro presencial</guide> para configurar una caja, la capacidad de direcciones, las confirmaciones y lo que ven el personal y los clientes. Las operaciones de la API que siguen permiten gestionar terminales y crear una caja personalizada.",
       "create": "Crea un terminal con una clave API del comercio guardada en tu servidor. El objetivo de confirmaciones (0-10, 0 por defecto) y la caducidad (2-60 minutos, 15 por defecto) se aplican a cada venta de ese terminal.",
-      "createResponse": "La respuesta 201 incluye la configuración guardada y el enlace del terminal. La clave tras #k= solo se muestra una vez; guárdala en el dispositivo de la caja o rota el terminal para obtener una nueva.",
+      "createResponse": "La respuesta 201 incluye la configuración guardada y el enlace del terminal. Consulta GET /api/core/terminals/{terminal_id}/link para volver a mostrar el enlace, o rota el terminal para reemplazarlo.",
       "sale": "Una caja crea una venta con la clave del terminal. Envía una Idempotency-Key UUID y consérvala hasta recibir una respuesta; repetirla devuelve 200 con la misma factura en lugar de crear otra.",
       "saleResponse": "La respuesta incluye estos campos seleccionados. Muestra la dirección y el importe al cliente, o abre invoice_url.",
       "polling": "Consulta GET /api/core/terminal/invoices/{invoice_id} para seguir la detección y las confirmaciones. Para terminar una venta sin pagar, haz POST a su ruta de cancelación; devuelve 409 cuando ya se vio un pago o la factura se cerró.",

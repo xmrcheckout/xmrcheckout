@@ -1406,7 +1406,7 @@
         "title": "Nastavení terminálu",
         "step1": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení.",
         "step2": "Otevřete <strong>Panel → Terminály</strong> a zvolte <strong>Vytvořit terminál</strong>. Pojmenujte ho, například „Přední pult“, a vyberte výchozí měnu.",
-        "step3": "Panel jednou zobrazí odkaz na terminál a QR kód. Naskenujte ho zařízením, které budete používat u pokladny, nebo do něj odkaz zkopírujte.",
+        "step3": "Panel zobrazí odkaz na terminál a QR kód. Naskenujte ho zařízením, které budete používat u pokladny, nebo do něj odkaz zkopírujte. Později můžete odkaz znovu zobrazit tlačítkem <strong>Zobrazit odkaz</strong> na stránce terminálu.",
         "step4": "Na zařízení přidejte stránku na plochu, abyste měli pokladnu přes celou obrazovku. Zařízení si terminál pamatuje, dokud nezvolíte <strong>Zapomenout tento terminál</strong>.",
         "p1": "Aby zákazníci věděli, že mohou platit v Monero, otevřete platební odkaz v Panel → Platební odkazy, vytiskněte cedulku na kartě <strong>Vytištěná cedulka</strong> a umístěte ji k pokladně. <link>Další způsoby, jak o sobě dát vědět</link>"
       },
@@ -1660,7 +1660,7 @@
       "r011": "Terminály",
       "r012": "API klíč (správa) nebo klíč terminálu (prodeje)",
       "r013": "Vypíše terminály obchodníka pro platby na místě.",
-      "r014": "Vytvoří terminál; vrací 201 s jeho odkazem, který se zobrazí pouze jednou.",
+      "r014": "Vytvoří terminál; vrací 201 s jeho odkazem.",
       "r015": "Přejmenuje, povolí nebo vypne terminál, případně změní jeho výchozí hodnoty.",
       "r016": "Nahradí odkaz na terminál; předchozí odkaz přestane fungovat.",
       "r017": "Klíč terminálu: načte nastavení terminálu a volné adresy pro platební výzvy.",
@@ -1823,7 +1823,8 @@
       "r174": "Aktualizuje registraci webhooku.",
       "r175": "Verze je nastavena kvůli kompatibilitě s chováním rozhraní pro vrácení peněz.",
       "r176": "Oprávnění jsou řetězce omezené na obchod a vázané na jedno ID obchodu.",
-      "r177": "Oprávnění k vracení peněz jsou záměrně vynechána."
+      "r177": "Oprávnění k vracení peněz jsou záměrně vynechána.",
+      "r178": "Znovu zobrazí aktuální odkaz terminálu."
     },
     "metaTitle": "Dokumentace platebního API Monero | XMR Checkout",
     "metaDescription": "Integrujte samostatně hostované platební výzvy v Monero pomocí API XMR Checkout, veřejných stránek platebních výzev, detekce potvrzení a webhooků.",
@@ -1843,7 +1844,7 @@
       "body": "Terminál je odkaz otevřený na tabletu nebo telefonu u pokladny. Obsluha zadá částku a zákazník naskenuje QR kód svou peněženkou. Každý prodej je běžná platební výzva v XMR placená přímo do peněženky obchodníka. Odkaz terminálu nese vlastní klíč, který umí jen vytvářet, číst a rušit platební výzvy tohoto terminálu, takže zařízení nikdy neuchovává API klíč obchodníka.",
       "guideBody": "<guide>Postupujte podle průvodce prodejem na místě</guide> pro nastavení pokladny, zásobu adres, potvrzení a to, co vidí obsluha a zákazníci. Níže uvedené operace API umožňují spravovat terminály a vytvořit vlastní pokladnu.",
       "create": "Vytvořte terminál pomocí API klíče obchodníka uloženého na vašem serveru. Požadovaný počet potvrzení (0-10, výchozí 0) a platnost (2-60 minut, výchozí 15) platí pro každý prodej z tohoto terminálu.",
-      "createResponse": "Odpověď 201 obsahuje uložené nastavení a odkaz terminálu. Klíč za #k= se zobrazí jen jednou; uložte ho do pokladního zařízení, nebo proveďte rotaci terminálu a získejte nový.",
+      "createResponse": "Odpověď 201 obsahuje uložené nastavení a odkaz terminálu. Pro opětovné zobrazení odkazu načtěte GET /api/core/terminals/{terminal_id}/link, pro jeho nahrazení proveďte rotaci terminálu.",
       "sale": "Pokladna vytvoří prodej klíčem terminálu. Pošlete Idempotency-Key ve formátu UUID a uchovejte ho, dokud nepřijde odpověď; jeho opakování vrátí 200 se stejnou platební výzvou místo vytvoření další.",
       "saleResponse": "Odpověď obsahuje tato vybraná pole. Ukažte zákazníkovi adresu a částku, nebo otevřete invoice_url.",
       "polling": "Dotazujte se na GET /api/core/terminal/invoices/{invoice_id} a sledujte detekci a potvrzení. Nezaplacený prodej ukončíte odesláním POST na jeho cestu pro zrušení; vrátí 409, jakmile byla zaznamenána platba nebo je platební výzva uzavřená.",

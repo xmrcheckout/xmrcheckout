@@ -1380,7 +1380,7 @@
         "title": "Configura un terminale",
         "step1": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
         "step2": "Apri <strong>Dashboard → Terminali</strong> e scegli <strong>Crea un terminale</strong>. Dagli un nome come “Bancone principale” e scegli una valuta predefinita.",
-        "step3": "La dashboard mostra una sola volta il link del terminale e un codice QR. Scansionalo con il dispositivo che userai alla cassa o copiaci il link.",
+        "step3": "La dashboard mostra il link del terminale e un codice QR. Scansionalo con il dispositivo che userai alla cassa o copiaci il link. Puoi mostrare di nuovo il link in seguito con <strong>Mostra link</strong> nella pagina del terminale.",
         "step4": "Sul dispositivo, aggiungi la pagina alla schermata Home per avere una cassa a schermo intero. Il dispositivo ricorda il terminale finché non scegli <strong>Dimentica questo terminale</strong>.",
         "p1": "Per far sapere ai clienti che possono pagare con Monero, apri un link di pagamento da Dashboard → Link di pagamento, stampa il cartello dalla sua scheda <strong>Cartello stampato</strong> e mettilo vicino alla cassa. <link>Altri modi per farti trovare</link>"
       },
@@ -1634,7 +1634,7 @@
       "r011": "Terminali",
       "r012": "Chiave API (gestione) o chiave del terminale (vendite)",
       "r013": "Elenca i terminali di pagamento in presenza dell'esercente.",
-      "r014": "Crea un terminale; restituisce 201 con il suo link, mostrato una sola volta.",
+      "r014": "Crea un terminale; restituisce 201 con il suo link.",
       "r015": "Rinomina, attiva o disattiva un terminale, o ne modifica i valori predefiniti.",
       "r016": "Sostituisce il link del terminale; il link precedente smette di funzionare.",
       "r017": "Chiave del terminale: legge le impostazioni del terminale e gli indirizzi di pagamento liberi.",
@@ -1797,7 +1797,8 @@
       "r174": "Aggiorna una registrazione webhook.",
       "r175": "La versione è impostata per compatibilità con il comportamento dell'interfaccia dei rimborsi.",
       "r176": "I permessi sono stringhe limitate al negozio, legate a un ID negozio.",
-      "r177": "I permessi di rimborso sono omessi intenzionalmente."
+      "r177": "I permessi di rimborso sono omessi intenzionalmente.",
+      "r178": "Mostra di nuovo il link attuale del terminale."
     },
     "metaTitle": "Documentazione dell'API di pagamento Monero | XMR Checkout",
     "metaDescription": "Integra richieste di pagamento Monero in self-hosting con l'API di XMR Checkout, pagine pubbliche delle richieste di pagamento, rilevamento delle conferme e webhook.",
@@ -1817,7 +1818,7 @@
       "body": "Un terminale è un link aperto su un tablet o un telefono alla cassa. Il personale inserisce un importo e il cliente scansiona il codice QR con il proprio wallet. Ogni vendita è una normale richiesta di pagamento in XMR pagata direttamente al wallet dell'esercente. Il link del terminale contiene una propria chiave, che può solo creare, leggere e annullare le richieste di pagamento di quel terminale, quindi il dispositivo non conserva mai la chiave API dell'esercente.",
       "guideBody": "<guide>Segui la guida al checkout di persona</guide> per configurare una cassa, la capacità di indirizzi, le conferme e ciò che vedono personale e clienti. Le operazioni API qui sotto permettono di gestire i terminali e creare una cassa personalizzata.",
       "create": "Crea un terminale con una chiave API dell'esercente conservata sul tuo server. L'obiettivo di conferme (0-10, predefinito 0) e la scadenza (2-60 minuti, predefinita 15) valgono per ogni vendita di quel terminale.",
-      "createResponse": "La risposta 201 include le impostazioni salvate e il link del terminale. La chiave dopo #k= viene mostrata una sola volta; conservala sul dispositivo della cassa o ruota il terminale per ottenerne una nuova.",
+      "createResponse": "La risposta 201 include le impostazioni salvate e il link del terminale. Leggi GET /api/core/terminals/{terminal_id}/link per mostrare di nuovo il link, oppure ruota il terminale per sostituirlo.",
       "sale": "Una cassa crea una vendita con la chiave del terminale. Invia una Idempotency-Key UUID e conservala finché non arriva una risposta; ripeterla restituisce 200 con la stessa richiesta di pagamento invece di crearne un'altra.",
       "saleResponse": "La risposta include questi campi selezionati. Mostra indirizzo e importo al cliente oppure apri invoice_url.",
       "polling": "Leggi GET /api/core/terminal/invoices/{invoice_id} per seguire rilevamento e conferme. Per chiudere una vendita non pagata, invia POST al suo percorso di annullamento; restituisce 409 se è già stato visto un pagamento o la richiesta di pagamento è chiusa.",

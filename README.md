@@ -67,7 +67,7 @@ The guides cover four common paths into the project:
 
 ## Screenshots
 
-Post-login UI. Addresses, subaddresses, invoice IDs and QR codes are blacked out.
+Post-login UI. Addresses, subaddresses and invoice IDs are blacked out, and payment QR codes are replaced with a placeholder QR code.
 
 ### Dashboard
 
@@ -95,7 +95,7 @@ Post-login UI. Addresses, subaddresses, invoice IDs and QR codes are blacked out
 
 The terminal page on a phone or tablet at the till: the merchant enters the amount, then the customer scans the payment QR code.
 
-<img src="screenshots/terminal_till.png" width="320" alt="Terminal page with an amount entered on the keypad and a note" /> <img src="screenshots/terminal_payment.png" width="320" alt="Terminal payment page showing the amount and the payment QR code (blacked out) for the customer to scan" />
+<img src="screenshots/terminal_till.png" width="320" alt="Terminal page with an amount entered on the keypad and a note" /> <img src="screenshots/terminal_payment.png" width="320" alt="Terminal payment page showing the amount and a placeholder QR code for the customer to scan" />
 
 ### Public invoice page
 

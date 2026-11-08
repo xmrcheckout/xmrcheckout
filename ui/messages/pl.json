@@ -250,7 +250,7 @@
     "label": "Identyfikator lub link prośby o płatność",
     "placeholder": "Wklej pełny identyfikator lub link",
     "submit": "Sprawdź status",
-    "note": "Podgląd statusu tylko do odczytu. Strona prośby o płatność sprawdza aktualizacje co 30 sekund."
+    "note": "Podgląd statusu tylko do odczytu. Strona prośby o płatność sprawdza aktualizacje co 10 sekund."
   },
   "lookupPage": {
     "metaDescription": "Sprawdź wykrycie i postęp potwierdzeń prośby o płatność w Monero za pomocą jej publicznego identyfikatora.",

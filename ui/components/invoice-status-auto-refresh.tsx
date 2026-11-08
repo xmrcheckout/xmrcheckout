@@ -32,7 +32,7 @@ type InvoiceStatusAutoRefreshProps = {
 
 export default function InvoiceStatusAutoRefresh({
   children,
-  intervalMs = 30000,
+  intervalMs = 10000,
   retrievedAt,
   error = false,
   statusMessage = "",

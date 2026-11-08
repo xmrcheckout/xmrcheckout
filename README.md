@@ -246,9 +246,12 @@ Optional settings (defaults in brackets):
   (burst 3). A malicious visitor can use up the allowance, and raising it does
   not enlarge the [address pool](#invoice-address-reuse).
 - `TERMINAL_RECONCILE_INTERVAL_SECONDS` (`5`): between full reconciliation
-  cycles, how often the reconciler refreshes the wallet and checks open
-  terminal sales. Each refresh is one wallet-rpc call per merchant with an open
-  terminal sale; raise it if wallet-rpc load matters more than speed.
+  cycles, how often the reconciler refreshes wallets and checks open invoices.
+  It opens a wallet for this only when the merchant has an open terminal sale;
+  other merchants' open invoices are included only while their wallet is
+  already open, so they cost no extra wallet switches. Each refresh is one
+  wallet-rpc call per merchant checked; raise it if wallet-rpc load matters
+  more than speed.
 
 3. Choose a Monero daemon (`MONERO_DAEMON_URL` is required; the stack will not
    start without it):

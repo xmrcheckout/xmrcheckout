@@ -250,7 +250,7 @@
     "label": "ID nebo odkaz platební výzvy",
     "placeholder": "Vložte celé ID nebo odkaz platební výzvy",
     "submit": "Zkontrolovat stav",
-    "note": "Zobrazení stavu pouze pro čtení. Stránka platební výzvy kontroluje aktualizace každých 30 sekund."
+    "note": "Zobrazení stavu pouze pro čtení. Stránka platební výzvy kontroluje aktualizace každých 10 sekund."
   },
   "lookupPage": {
     "metaDescription": "Zkontrolujte detekci a průběh potvrzování platební výzvy v Monero pomocí veřejného ID.",

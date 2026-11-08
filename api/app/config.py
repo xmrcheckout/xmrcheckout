@@ -25,7 +25,8 @@ API_KEYS = [
 
 API_KEY_ENCRYPTION_KEY = _get_env("API_KEY_ENCRYPTION_KEY")
 INVOICE_RECONCILE_INTERVAL_SECONDS = int(os.getenv("INVOICE_RECONCILE_INTERVAL_SECONDS", "30"))
-# Short checks for invoices open on an in-person terminal, between full cycles.
+# Quick checks between full cycles: open invoices of merchants with a recent
+# terminal sale, and of merchants whose wallet is already open.
 TERMINAL_RECONCILE_INTERVAL_SECONDS = max(1, int(os.getenv("TERMINAL_RECONCILE_INTERVAL_SECONDS", "5")))
 INVOICE_DEFAULT_EXPIRY_HOURS = int(os.getenv("INVOICE_DEFAULT_EXPIRY_HOURS", "1"))
 INVOICE_ACTIVE_LIMIT = int(os.getenv("INVOICE_ACTIVE_LIMIT", "100"))

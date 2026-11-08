@@ -12,7 +12,7 @@ from decimal import Decimal, ROUND_DOWN
 from fastapi import HTTPException
 from monero.backends.jsonrpc.exceptions import RPCError
 from requests import RequestException
-from sqlalchemy import and_, text
+from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -22,7 +22,7 @@ from .config import (
     TERMINAL_RECONCILE_INTERVAL_SECONDS,
 )
 from .db import SessionLocal, engine
-from .invoice_checks import watched_invoice_criteria
+from .invoice_checks import AWAITING_PAYMENT_STATUSES, watched_invoice_criteria
 from .models import Invoice, InvoiceTransfer, SubaddressAllocation, SystemStatus, User
 from .monero_service import MoneroWalletService, TransferDetail, wallet_error_summary
 from .payment_timing import classify_payment_timing, effective_confirmations
@@ -94,7 +94,7 @@ def main() -> None:
         finally:
             if status_db is not None:
                 status_db.close()
-        _wait_with_terminal_checks(service, INVOICE_RECONCILE_INTERVAL_SECONDS)
+        _wait_with_quick_checks(service, INVOICE_RECONCILE_INTERVAL_SECONDS)
 
 
 def _webhook_delivery_loop() -> None:
@@ -118,8 +118,8 @@ def _retry_webhook_deliveries() -> None:
             db.close()
 
 
-def _wait_with_terminal_checks(service: MoneroWalletService, seconds: float) -> None:
-    """Sleep until the next full cycle, checking open terminal invoices meanwhile."""
+def _wait_with_quick_checks(service: MoneroWalletService, seconds: float) -> None:
+    """Sleep until the next full cycle, running quick checks of open invoices meanwhile."""
     deadline = time.monotonic() + seconds
     while True:
         remaining = deadline - time.monotonic()
@@ -130,9 +130,9 @@ def _wait_with_terminal_checks(service: MoneroWalletService, seconds: float) -> 
             return
         try:
             service.begin_reconcile_cycle()
-            _reconcile_invoices(service, terminal_only=True)
+            _reconcile_invoices(service, quick=True)
         except Exception as exc:
-            logger.warning("Terminal invoice check failed: %s", exc)
+            logger.warning("Quick invoice check failed: %s", exc)
 
 
 def _record_cycle_result(status_db: Session, summary: ReconcileSummary) -> None:
@@ -168,14 +168,21 @@ def _send_reconciler_heartbeat() -> None:
             db.close()
 
 
-def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = False) -> ReconcileSummary:
+def _reconcile_invoices(service: MoneroWalletService, *, quick: bool = False) -> ReconcileSummary:
+    """Check every watched invoice, or with quick=True run the short check between full passes.
+
+    The quick check covers open invoices of merchants with a recent terminal
+    sale (their wallet is opened if needed, because a customer is waiting at
+    the till) and of merchants whose wallet is already open. It never opens a
+    wallet for anyone else, so it adds no wallet switches for them.
+    """
     db: Session = SessionLocal()
     last_heartbeat = time.monotonic()
 
     def maybe_heartbeat() -> None:
         # Long full passes keep the health check fresh between start and completion.
         nonlocal last_heartbeat
-        if terminal_only:
+        if quick:
             return
         if time.monotonic() - last_heartbeat >= RECONCILER_HEARTBEAT_INTERVAL_SECONDS:
             _send_reconciler_heartbeat()
@@ -186,13 +193,8 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
     failed = 0
     try:
         now = datetime.now(timezone.utc)
-        if terminal_only:
-            # Only recent invoices that a terminal screen may still be showing.
-            criteria = and_(
-                Invoice.terminal_id.is_not(None),
-                Invoice.status.in_(["pending", "partially_paid", "payment_detected"]),
-                Invoice.created_at >= now - timedelta(hours=2),
-            )
+        if quick:
+            criteria = Invoice.status.in_(AWAITING_PAYMENT_STATUSES)
         else:
             criteria = watched_invoice_criteria(now=now)
         invoices = (
@@ -201,8 +203,10 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
             .order_by(Invoice.created_at.asc())
             .all()
         )
-        if terminal_only and not invoices:
-            return ReconcileSummary(attempted=0, succeeded=0, failed=0)
+        if quick:
+            invoices = _quick_check_invoices(db, service, invoices, now=now)
+            if not invoices:
+                return ReconcileSummary(attempted=0, succeeded=0, failed=0)
         user_groups: dict[object, list[Invoice]] = {}
         for invoice in invoices:
             attempted += 1
@@ -242,7 +246,7 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
                 )
                 continue
             try:
-                if terminal_only:
+                if quick:
                     service.refresh_wallet(user)
                 else:
                     service.ensure_wallet_ready(user)
@@ -279,6 +283,34 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
         )
     finally:
         db.close()
+
+
+def _quick_check_invoices(
+    db: Session, service: MoneroWalletService, invoices: list[Invoice], *, now: datetime,
+) -> list[Invoice]:
+    """Keep the open invoices of merchants that the quick check covers.
+
+    A merchant is covered when a terminal screen may still show one of their
+    sales (created in the last two hours), or when their wallet is already
+    open. _open_wallets_first then reads the open wallets before any terminal
+    sale switches the wallet on a shared wallet-rpc.
+    """
+    recent = now - timedelta(hours=2)
+    terminal_users = set()
+    for invoice in invoices:
+        created_at = invoice.created_at
+        if created_at is not None and created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+        if invoice.terminal_id is not None and created_at is not None and created_at >= recent:
+            terminal_users.add(invoice.user_id)
+    covered = set(terminal_users)
+    for user_id in {invoice.user_id for invoice in invoices} - terminal_users:
+        if user_id is None:
+            continue
+        user = db.query(User).filter(User.id == user_id).first()
+        if service.wallet_is_open(user):
+            covered.add(user_id)
+    return [invoice for invoice in invoices if invoice.user_id in covered]
 
 
 def _open_wallets_first(service: MoneroWalletService, users: dict) -> list:

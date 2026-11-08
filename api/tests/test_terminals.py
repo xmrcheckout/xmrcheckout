@@ -199,21 +199,28 @@ class TerminalIntegrationTests(unittest.TestCase):
         self.assertFalse(response.json()["low_addresses"])
         self.assertEqual(response.headers.get("cache-control"), "no-store")
 
-    def test_fast_pass_checks_only_open_terminal_invoices(self):
+    def test_quick_check_opens_wallets_only_for_terminal_merchants(self):
         _, auth = self.create_terminal()
         sale = self.sell(auth).json()
         with SessionLocal() as db:
-            db.add(Invoice(user_id=self.user_id, address="plain", amount_xmr=1, status="pending", confirmation_target=1))
+            plain = Invoice(user_id=self.user_id, address="plain", amount_xmr=1, status="pending", confirmation_target=1)
+            db.add(plain)
             db.commit()
+            plain_id = str(plain.id)
         service = MagicMock()
+        # Closed wallets: only a terminal sale may open one.
+        service.wallet_is_open.return_value = False
         checked = []
         with patch.object(reconciler, "_reconcile_invoice", side_effect=lambda db, svc, user, inv: checked.append(str(inv.id)) or True), \
                 patch.object(reconciler, "SessionLocal", SessionLocal):
-            reconciler._reconcile_invoices(service, terminal_only=True)
+            reconciler._reconcile_invoices(service, quick=True)
         self.assertIn(sale["id"], checked)
+        # The wallet is opened for the sale, so the merchant's other open invoices are checked too.
+        self.assertIn(plain_id, checked)
         with SessionLocal() as db:
-            terminal_ids = {str(row.id) for row in db.query(Invoice).filter(Invoice.terminal_id.is_not(None)).all()}
-        self.assertTrue(set(checked) <= terminal_ids)
+            terminal_users = {row.user_id for row in db.query(Invoice).filter(Invoice.terminal_id.is_not(None)).all()}
+            checked_users = {row.user_id for row in db.query(Invoice).filter(Invoice.id.in_([UUID(i) for i in checked])).all()}
+        self.assertTrue(checked_users <= terminal_users)
         service.refresh_wallet.assert_called()
         service.ensure_wallet_ready.assert_not_called()
 

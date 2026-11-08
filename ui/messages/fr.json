@@ -246,7 +246,7 @@
     "label": "Identifiant ou lien de facture",
     "placeholder": "Collez l’identifiant ou le lien complet de la facture",
     "submit": "Vérifier le statut",
-    "note": "Affichage du statut en lecture seule. La page de la facture vérifie les mises à jour toutes les 30 secondes."
+    "note": "Affichage du statut en lecture seule. La page de la facture vérifie les mises à jour toutes les 10 secondes."
   },
   "lookupPage": {
     "metaDescription": "Suivez la détection et la progression des confirmations d’une facture Monero grâce à son identifiant public.",

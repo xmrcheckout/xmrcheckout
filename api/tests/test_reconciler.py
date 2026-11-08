@@ -102,6 +102,8 @@ def _pending_invoice(identifier, user_id):
         confirmed_at=None,
         paid_after_expiry=False,
         paid_after_expiry_at=None,
+        terminal_id=None,
+        created_at=datetime.now(timezone.utc),
     )
 
 
@@ -770,7 +772,7 @@ class ReconcilerStatusTests(unittest.TestCase):
 
 
 class ReconcilerHeartbeatTests(unittest.TestCase):
-    def _run(self, *, terminal_only):
+    def _run(self, *, quick):
         user_id = "user-1"
         invoices = [_pending_invoice("one", user_id), _pending_invoice("two", user_id)]
         user = SimpleNamespace(
@@ -789,14 +791,63 @@ class ReconcilerHeartbeatTests(unittest.TestCase):
             patch.object(reconciler.time, "monotonic", side_effect=lambda: next(clock)),
             patch.object(reconciler, "_send_reconciler_heartbeat") as heartbeat,
         ):
-            reconciler._reconcile_invoices(service, terminal_only=terminal_only)
+            reconciler._reconcile_invoices(service, quick=quick)
         return heartbeat
 
     def test_slow_full_pass_sends_heartbeats(self):
-        self.assertGreater(self._run(terminal_only=False).call_count, 0)
+        self.assertGreater(self._run(quick=False).call_count, 0)
 
-    def test_terminal_checks_send_no_heartbeat(self):
-        self.assertEqual(self._run(terminal_only=True).call_count, 0)
+    def test_quick_checks_send_no_heartbeat(self):
+        self.assertEqual(self._run(quick=True).call_count, 0)
+
+
+class QuickCheckTests(unittest.TestCase):
+    def _run(self, invoice, *, wallet_open):
+        user = SimpleNamespace(
+            id=invoice.user_id,
+            payment_address="merchant-address",
+            view_key_encrypted="encrypted-view-key",
+        )
+        service = Mock()
+        service.wallet_is_open.return_value = wallet_open
+        checked = []
+        with (
+            patch.object(reconciler, "SessionLocal", return_value=_FakeDb([invoice], user)),
+            patch.object(reconciler, "_invoice_advisory_lock", _acquired_invoice_lock),
+            patch.object(
+                reconciler, "_reconcile_invoice",
+                side_effect=lambda _db, _service, _user, inv: checked.append(inv.id) or True,
+            ),
+        ):
+            reconciler._reconcile_invoices(service, quick=True)
+        return service, checked
+
+    def test_open_wallet_invoices_are_checked_without_opening_wallets(self):
+        service, checked = self._run(_pending_invoice("plain", "user-1"), wallet_open=True)
+        self.assertEqual(checked, ["plain"])
+        service.refresh_wallet.assert_called_once()
+        service.ensure_wallet_ready.assert_not_called()
+
+    def test_closed_wallet_invoices_wait_for_the_full_pass(self):
+        service, checked = self._run(_pending_invoice("plain", "user-1"), wallet_open=False)
+        self.assertEqual(checked, [])
+        service.refresh_wallet.assert_not_called()
+        service.ensure_wallet_ready.assert_not_called()
+
+    def test_recent_terminal_sale_is_checked_even_if_wallet_is_closed(self):
+        sale = _pending_invoice("sale", "user-1")
+        sale.terminal_id = "terminal-1"
+        service, checked = self._run(sale, wallet_open=False)
+        self.assertEqual(checked, ["sale"])
+        service.refresh_wallet.assert_called_once()
+
+    def test_old_terminal_sale_does_not_open_a_closed_wallet(self):
+        sale = _pending_invoice("sale", "user-1")
+        sale.terminal_id = "terminal-1"
+        sale.created_at = datetime.now(timezone.utc) - timedelta(hours=3)
+        service, checked = self._run(sale, wallet_open=False)
+        self.assertEqual(checked, [])
+        service.refresh_wallet.assert_not_called()
 
     def test_heartbeat_sets_updated_at(self):
         db = Mock()

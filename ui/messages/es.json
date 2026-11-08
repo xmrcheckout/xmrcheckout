@@ -246,7 +246,7 @@
     "label": "ID o enlace de la factura",
     "placeholder": "Pega el ID o el enlace completo de la factura",
     "submit": "Consultar estado",
-    "note": "Vista de estado de solo lectura. La página de la factura busca actualizaciones cada 30 segundos."
+    "note": "Vista de estado de solo lectura. La página de la factura busca actualizaciones cada 10 segundos."
   },
   "lookupPage": {
     "metaDescription": "Consulta la detección y el progreso de confirmación de una factura de Monero con su ID público.",

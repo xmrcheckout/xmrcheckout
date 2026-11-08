@@ -246,7 +246,7 @@
     "label": "ID ou link da fatura",
     "placeholder": "Cole o ID ou link completo da fatura",
     "submit": "Verificar status",
-    "note": "Visualização de status somente leitura. A página da fatura verifica atualizações a cada 30 segundos."
+    "note": "Visualização de status somente leitura. A página da fatura verifica atualizações a cada 10 segundos."
   },
   "lookupPage": {
     "metaDescription": "Verifique a detecção e o progresso das confirmações de uma fatura Monero usando um ID de fatura público.",

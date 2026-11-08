@@ -246,7 +246,7 @@
     "label": "ID o link della richiesta di pagamento",
     "placeholder": "Incolla l'ID o il link completo della richiesta di pagamento",
     "submit": "Controlla lo stato",
-    "note": "Vista dello stato in sola lettura. La pagina della richiesta di pagamento controlla gli aggiornamenti ogni 30 secondi."
+    "note": "Vista dello stato in sola lettura. La pagina della richiesta di pagamento controlla gli aggiornamenti ogni 10 secondi."
   },
   "lookupPage": {
     "metaDescription": "Controlla il rilevamento e l'avanzamento delle conferme di una richiesta di pagamento Monero usando il suo ID pubblico.",

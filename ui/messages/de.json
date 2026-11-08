@@ -246,7 +246,7 @@
     "label": "Rechnungs-ID oder Link",
     "placeholder": "Vollständige Rechnungs-ID oder Link einfügen",
     "submit": "Status prüfen",
-    "note": "Statusansicht nur zum Lesen. Die Rechnungsseite prüft alle 30 Sekunden auf Aktualisierungen."
+    "note": "Statusansicht nur zum Lesen. Die Rechnungsseite prüft alle 10 Sekunden auf Aktualisierungen."
   },
   "lookupPage": {
     "metaDescription": "Prüfen Sie Erkennung und Bestätigungsfortschritt einer Monero-Rechnung anhand einer öffentlichen Rechnungs-ID.",

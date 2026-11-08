@@ -308,6 +308,18 @@ class MoneroWalletService:
             )
         return backend
 
+    def wallet_is_open(self, user: User | None) -> bool:
+        """Whether this process last saw the merchant's wallet open on its shard (no RPC)."""
+        if user is None or not user.payment_address or not user.view_key_encrypted:
+            return False
+        try:
+            view_key = decrypt_secret(user.view_key_encrypted)
+        except Exception:
+            # The wallet check for this merchant reports the problem; ordering must not.
+            return False
+        wallet_name = self._wallet_name(user, user.payment_address, view_key)
+        return self._backend_for_wallet_name(wallet_name).current_wallet == wallet_name
+
     def get_transfers_for_address(
         self,
         user: User,
@@ -768,6 +780,7 @@ class MoneroWalletService:
             ),
         )
         deadline = time.monotonic() + timeout_seconds
+        refresh_requested = False
         while True:
             daemon_height = self._daemon_height()
             if daemon_height is None:
@@ -793,6 +806,18 @@ class MoneroWalletService:
             if isinstance(wallet_height, int) and wallet_height >= daemon_height:
                 backend.ready_wallet = backend.current_wallet
                 return
+            if not refresh_requested:
+                # Catch up now instead of waiting for wallet-rpc's background
+                # refresh, which can be ~20s away after a wallet is opened.
+                refresh_requested = True
+                try:
+                    backend.client.raw_request("refresh")
+                    continue
+                except (RPCError, RequestException) as exc:
+                    logger.warning(
+                        "Wallet refresh request failed; waiting for background refresh error=%s",
+                        wallet_error_summary(exc),
+                    )
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 raise HTTPException(

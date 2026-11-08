@@ -1190,6 +1190,55 @@ class WalletSyncSafetyTests(unittest.TestCase):
 
         self.assertEqual(client.session.post.call_count, 2)
         self.assertEqual(backend.ready_wallet, backend.current_wallet)
+        client.raw_request.assert_called_once_with("refresh")
+
+    def test_synced_wallet_is_not_refreshed(self):
+        client = Mock()
+        client.session.post.return_value.json.return_value = {
+            "result": {"height": 100}
+        }
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._daemon_height = Mock(return_value=100)
+
+        service._ensure_wallet_synced(backend)
+
+        client.raw_request.assert_not_called()
+
+    def test_failed_refresh_falls_back_to_waiting(self):
+        client = Mock()
+        client.raw_request.side_effect = RequestException("timed out")
+        client.session.post.return_value.json.side_effect = [
+            {"result": {"height": 90}},
+            {"result": {"height": 100}},
+        ]
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._daemon_height = Mock(return_value=100)
+        service._ready_timeout_seconds = 1
+        service._ready_poll_interval_seconds = 0
+
+        service._ensure_wallet_synced(backend)
+
+        client.raw_request.assert_called_once_with("refresh")
+        self.assertEqual(backend.ready_wallet, backend.current_wallet)
+
+    def test_wallet_still_behind_after_refresh_times_out(self):
+        client = Mock()
+        client.session.post.return_value.json.return_value = {
+            "result": {"height": 90}
+        }
+        backend = WalletBackend(client=client, url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._daemon_height = Mock(return_value=100)
+        service._ready_timeout_seconds = 0
+        service._ready_poll_interval_seconds = 0
+
+        with self.assertRaises(HTTPException) as context:
+            service._ensure_wallet_synced(backend)
+
+        self.assertEqual(context.exception.status_code, 503)
+        client.raw_request.assert_called_once_with("refresh")
 
 
 class WalletDaemonSettingTests(unittest.TestCase):
@@ -1291,6 +1340,48 @@ class WalletDaemonSettingTests(unittest.TestCase):
         self._service(daemon_address=None)._ensure_daemon(backend)
 
         client.raw_request.assert_not_called()
+
+
+class OpenWalletOrderTests(unittest.TestCase):
+    def _user(self, user_id):
+        return SimpleNamespace(
+            id=user_id,
+            payment_address=f"address-{user_id}",
+            view_key_encrypted="encrypted-view-key",
+        )
+
+    def test_wallet_is_open_matches_the_shard_current_wallet(self):
+        backend = WalletBackend(client=Mock(), url="http://wallet-rpc:18083")
+        service = object.__new__(MoneroWalletService)
+        service._backends = [backend]
+        open_user, other_user = self._user("open"), self._user("other")
+
+        with patch("app.monero_service.decrypt_secret", return_value="view-key"):
+            backend.current_wallet = MoneroWalletService._wallet_name(
+                open_user, open_user.payment_address, "view-key"
+            )
+            self.assertTrue(service.wallet_is_open(open_user))
+            self.assertFalse(service.wallet_is_open(other_user))
+        self.assertFalse(service.wallet_is_open(None))
+        self.assertFalse(
+            service.wallet_is_open(SimpleNamespace(
+                id="no-key", payment_address="address", view_key_encrypted=None
+            ))
+        )
+
+    def test_unreadable_view_key_does_not_stop_ordering(self):
+        service = object.__new__(MoneroWalletService)
+        service._backends = [WalletBackend(client=Mock(), url="http://wallet-rpc:18083")]
+
+        with patch("app.monero_service.decrypt_secret", side_effect=ValueError("bad key")):
+            self.assertFalse(service.wallet_is_open(self._user("broken")))
+
+    def test_open_wallet_is_checked_first_and_others_keep_their_order(self):
+        users = {user_id: self._user(user_id) for user_id in ("a", "b", "c", "d")}
+        service = Mock()
+        service.wallet_is_open.side_effect = lambda user: user.id == "c"
+
+        self.assertEqual(reconciler._open_wallets_first(service, users), ["c", "a", "b", "d"])
 
 
 if __name__ == "__main__":

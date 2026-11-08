@@ -219,9 +219,14 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
             len(invoices),
             len(user_groups),
         )
-        for user_id, user_invoices in user_groups.items():
+        users = {
+            user_id: db.query(User).filter(User.id == user_id).first()
+            for user_id in user_groups
+        }
+        for user_id in _open_wallets_first(service, users):
+            user_invoices = user_groups[user_id]
             maybe_heartbeat()
-            user = db.query(User).filter(User.id == user_id).first()
+            user = users[user_id]
             if user is None:
                 failed += len(user_invoices)
                 logger.warning(
@@ -274,6 +279,15 @@ def _reconcile_invoices(service: MoneroWalletService, *, terminal_only: bool = F
         )
     finally:
         db.close()
+
+
+def _open_wallets_first(service: MoneroWalletService, users: dict) -> list:
+    """Order merchants so wallets already open are checked before any wallet switch.
+
+    A wallet-rpc shard holds one open wallet, so starting with it saves one
+    slow close-and-open per shard per pass. Otherwise the order is unchanged.
+    """
+    return sorted(users, key=lambda user_id: not service.wallet_is_open(users[user_id]))
 
 
 def _record_successful_checks(db: Session, invoice_ids: list, checked_at: datetime) -> None:

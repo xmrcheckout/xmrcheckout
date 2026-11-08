@@ -67,23 +67,31 @@ The guides cover four common paths into the project:
 
 ## Screenshots
 
-Post-login UI:
+Post-login UI. Addresses, subaddresses, invoice IDs and QR codes are blacked out.
 
 ### Dashboard
 
-![Dashboard overview](screenshots/ui_dashboard.png)
+![Dashboard overview with invoice counts, address availability and recent invoices](screenshots/ui_dashboard.png)
 
 ### Invoices
 
-![Invoice list and status](screenshots/ui_invoices.png)
+![Invoice list with search, filters and status](screenshots/ui_invoices.png)
 
 ### Create invoice
 
-![Create invoice dialog (XMR amount)](screenshots/create_invoice_xmr.png)
+![Create invoice dialog with an XMR amount](screenshots/create_invoice_xmr.png)
 
-![Create invoice dialog (fiat-denominated input, informational estimate)](screenshots/create_invoice_fiat.png)
+![Create invoice dialog with a fiat reference amount and its informational XMR estimate](screenshots/create_invoice_fiat.png)
 
-![Create invoice dialog (summary)](screenshots/create_invoice_summary.png)
+![Create invoice dialog summary](screenshots/create_invoice_summary.png)
+
+### Payment links
+
+![Payment links list with reusable buttons for donations, products and services](screenshots/ui_payment_links.png)
+
+### Terminals
+
+![Terminals list for in-person checkout](screenshots/ui_terminals.png)
 
 ### Public invoice page
 

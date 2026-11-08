@@ -93,9 +93,9 @@ Post-login UI. Addresses, subaddresses, invoice IDs and QR codes are blacked out
 
 ![Terminals list for in-person checkout](screenshots/ui_terminals.png)
 
-The terminal page opened on a phone or tablet at the till:
+The terminal page on a phone or tablet at the till: the merchant enters the amount, then the customer scans the payment QR code.
 
-<img src="screenshots/terminal_till.png" width="320" alt="Terminal page with an amount entered on the keypad and a note" />
+<img src="screenshots/terminal_till.png" width="320" alt="Terminal page with an amount entered on the keypad and a note" /> <img src="screenshots/terminal_payment.png" width="320" alt="Terminal payment page showing the amount and the payment QR code (blacked out) for the customer to scan" />
 
 ### Public invoice page
 

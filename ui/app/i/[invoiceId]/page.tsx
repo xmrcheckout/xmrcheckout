@@ -369,6 +369,18 @@ export default async function BtcpayModalInvoicePage({
               ) : null}
             </div>
           ) : null}
+          {(invoice.status === "expired" || invoice.status === "invalid") && isBtcpayInvoice && returnUrl ? (
+            <div className="mt-6 grid gap-3">
+              <a
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                href={returnUrl}
+                target="_top"
+                rel="noreferrer"
+              >
+                {t("checkout.returnToStore")}
+              </a>
+            </div>
+          ) : null}
         </div>
       )}
     </main>

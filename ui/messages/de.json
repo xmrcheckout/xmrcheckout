@@ -111,6 +111,7 @@
     "details": "Zahlungsdetails",
     "received": "{paid} von {total} XMR eingegangen.",
     "requestNew": "Fordern Sie beim Händler eine neue Rechnung an.",
+    "contactAboutReceived": "Wenden Sie sich wegen der bereits eingegangenen {paid} XMR an den Händler. Bewahren Sie den Link zu dieser Seite auf, damit er diese Rechnung findet.",
     "remainingAmount": "Restbetrag",
     "exactAmount": "Genauer Betrag",
     "copyRemaining": "Restbetrag kopieren",
@@ -215,6 +216,8 @@
     "currency": "Währung",
     "amountHelp": "Geben Sie eine Zahl wie 0.05 ein: bis zu 12 Nachkommastellen für XMR, 2 für andere Währungen.",
     "minimum": "Minimum: {amount} XMR. Beträge in anderen Währungen werden nach der Umrechnung geprüft.",
+    "errorAmount": "Geben Sie einen Betrag größer als null ein, mit bis zu 12 Nachkommastellen für XMR oder 2 für andere Währungen. Es wurde keine Rechnung erstellt.",
+    "errorMinimum": "Dieser Betrag liegt unter dem Minimum von {amount} XMR. Es wurde keine Rechnung erstellt.",
     "estimateXmr": "Etwa {amount} XMR",
     "estimateFiat": "Etwa {amount}",
     "customerFiatNote": "Beträge in anderen Währungen werden zum aktuellen Kurs in XMR umgerechnet, wenn Sie fortfahren. Der Kurs ist nicht festgeschrieben. Die Zahlungsseite zeigt den verwendeten Kurs und seine Quelle."
@@ -232,6 +235,7 @@
     "retry": "Denselben Checkout-Versuch wiederholen",
     "previous": {
       "expired": "Ihre vorherige Rechnung ist abgelaufen.",
+      "partially_paid": "Ihre vorherige Rechnung ist abgelaufen, nachdem ein Teil der Zahlung eingegangen war. Öffnen Sie sie und wenden Sie sich wegen des bereits eingegangenen Betrags an den Händler.",
       "confirmed": "Ihre vorherige Rechnung ist bestätigt.",
       "invalid": "Ihre vorherige Rechnung ist ungültig.",
       "payment_detected": "Für Ihre vorherige Rechnung wurde eine Zahlung erkannt."
@@ -321,6 +325,7 @@
     "eyebrow": "Fehler",
     "title": "Seite nicht verfügbar",
     "description": "Diese Seite konnte nicht geladen werden. Versuchen Sie es erneut. Falls Sie gerade eine Rechnung erstellt haben, prüfen Sie Ihre Rechnungsliste, bevor Sie erneut absenden.",
+    "checkoutDescription": "Diese Seite konnte nicht geladen werden. Versuchen Sie es erneut. Falls Sie gerade bezahlen, bewahren Sie den Link zu dieser Seite auf und wenden Sie sich an den Händler, bevor Sie eine Zahlung senden oder einen neuen Kauf beginnen.",
     "tryAgain": "Erneut versuchen",
     "notFoundEyebrow": "Fehler 404",
     "notFoundTitle": "Seite nicht gefunden",

@@ -463,6 +463,9 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
             below = requests.post(url + "/invoices", json={"amount": "0.5", "currency": "EUR"}, headers={"Accept": "application/json"})
             self.assertEqual(below.status_code, 422, below.text)
             self.assertIn("minimum of 0.01 XMR", below.json()["detail"])
+            below_form = requests.post(url + "/invoices", data={"amount": "0.5", "currency": "EUR"}, allow_redirects=False)
+            self.assertEqual(below_form.status_code, 303, below_form.text)
+            self.assertTrue(below_form.headers["location"].endswith("?error=minimum"), below_form.headers)
         with SessionLocal() as db:
             invoices = db.query(Invoice).filter(Invoice.user_id == self.user_id).order_by(Invoice.created_at).all()
             self.assertEqual([invoice.amount_xmr for invoice in invoices], [Decimal("0.05"), Decimal("0.05")])
@@ -477,7 +480,14 @@ class PaymentLinkIntegrationTests(unittest.TestCase):
                        {"data": {"amount": "1.001", "currency": "EUR"}}, {"data": {"amount": "1", "currency": "XMR", "x": "y" * 300}},
                        {"data": "amount=1&amount=2&currency=XMR", "headers": {"Content-Type": "application/x-www-form-urlencoded"}},
                        {"json": {"amount": 1, "currency": "XMR"}}, {"data": "amount=1", "headers": {"Content-Type": "text/plain"}}, {}):
-            self.assertEqual(requests.post(url + "/invoices", **kwargs).status_code, 400, kwargs)
+            response = requests.post(url + "/invoices", allow_redirects=False, **kwargs)
+            oversized = isinstance(kwargs.get("data"), dict) and "x" in kwargs["data"]
+            if "data" in kwargs and not oversized and "text/plain" not in kwargs.get("headers", {}).get("Content-Type", ""):
+                # Browser forms go back to the link's page with the error shown by the field.
+                self.assertEqual(response.status_code, 303, kwargs)
+                self.assertTrue(response.headers["location"].endswith("/pay/" + url.rsplit("/", 1)[1] + "?error=amount"), response.headers)
+            else:
+                self.assertEqual(response.status_code, 400, kwargs)
         self.assertEqual(requests.post(url + "/invoices?amount=1&currency=XMR").status_code, 400)
         with SessionLocal() as db:
             self.assertEqual(db.query(Invoice).filter(Invoice.user_id == self.user_id).count(), 0)

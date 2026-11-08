@@ -113,6 +113,7 @@
     "details": "Platební údaje",
     "received": "Přijato {paid} z {total} XMR.",
     "requestNew": "Požádejte obchodníka o novou platební výzvu.",
+    "contactAboutReceived": "Kontaktujte obchodníka kvůli již přijatým {paid} XMR. Uschovejte si odkaz na tuto stránku, aby tuto platební výzvu dohledal.",
     "remainingAmount": "Zbývající částka",
     "exactAmount": "Přesná částka",
     "copyRemaining": "Kopírovat zbývající částku",
@@ -219,6 +220,8 @@
     "currency": "Měna",
     "amountHelp": "Zadejte číslo, například 0.05: až 12 desetinných míst pro XMR, 2 pro jiné měny.",
     "minimum": "Minimum: {amount} XMR. Částky v jiných měnách se kontrolují po převodu.",
+    "errorAmount": "Zadejte částku větší než nula, s nejvýše 12 desetinnými místy pro XMR nebo 2 pro jiné měny. Žádná platební výzva nebyla vytvořena.",
+    "errorMinimum": "Tato částka je nižší než minimum {amount} XMR. Žádná platební výzva nebyla vytvořena.",
     "estimateXmr": "Přibližně {amount} XMR",
     "estimateFiat": "Přibližně {amount}",
     "customerFiatNote": "Částky v jiných měnách se přepočtou na XMR aktuálním kurzem ve chvíli, kdy pokračujete. Kurz není zafixován. Platební stránka uvádí použitý kurz a jeho zdroj."
@@ -236,6 +239,7 @@
     "retry": "Zopakovat tentýž pokus o platbu",
     "previous": {
       "expired": "Platnost vaší předchozí platební výzvy vypršela.",
+      "partially_paid": "Platnost vaší předchozí platební výzvy vypršela po přijetí části platby. Otevřete ji a kontaktujte obchodníka kvůli již přijaté částce.",
       "confirmed": "Vaše předchozí platební výzva je potvrzena.",
       "invalid": "Vaše předchozí platební výzva je neplatná.",
       "payment_detected": "U vaší předchozí platební výzvy byla zjištěna platba."
@@ -327,6 +331,7 @@
     "eyebrow": "Chyba",
     "title": "Stránka není k dispozici",
     "description": "Tuto stránku se nepodařilo načíst. Zkuste to znovu. Pokud se vytvářela platební výzva, zkontrolujte před dalším odesláním seznam platebních výzev.",
+    "checkoutDescription": "Tuto stránku se nepodařilo načíst. Zkuste to znovu. Pokud jste platili, uschovejte si odkaz na tuto stránku a před odesláním platby nebo zahájením dalšího nákupu kontaktujte obchodníka.",
     "tryAgain": "Zkusit znovu",
     "notFoundEyebrow": "Chyba 404",
     "notFoundTitle": "Stránka nenalezena",

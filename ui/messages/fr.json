@@ -111,6 +111,7 @@
     "details": "Détails du paiement",
     "received": "{paid} XMR reçus sur {total} XMR.",
     "requestNew": "Contactez le commerçant pour demander une nouvelle facture.",
+    "contactAboutReceived": "Contactez le commerçant au sujet des {paid} XMR déjà reçus. Conservez le lien de cette page pour qu’il puisse retrouver cette facture.",
     "remainingAmount": "Montant restant",
     "exactAmount": "Montant exact",
     "copyRemaining": "Copier le montant restant",
@@ -215,6 +216,8 @@
     "currency": "Devise",
     "amountHelp": "Saisissez un nombre tel que 0.05 : jusqu’à 12 décimales pour XMR, 2 pour les autres devises.",
     "minimum": "Minimum : {amount} XMR. Les montants dans d’autres devises sont vérifiés après conversion.",
+    "errorAmount": "Saisissez un montant supérieur à zéro, avec jusqu’à 12 décimales pour XMR ou 2 pour les autres devises. Aucune facture n’a été créée.",
+    "errorMinimum": "Ce montant est inférieur au minimum de {amount} XMR. Aucune facture n’a été créée.",
     "estimateXmr": "Environ {amount} XMR",
     "estimateFiat": "Environ {amount}",
     "customerFiatNote": "Les montants dans d’autres devises sont convertis en XMR au cours actuel lorsque vous continuez. Le cours n’est pas bloqué. La page de paiement indique le cours utilisé et sa source."
@@ -232,6 +235,7 @@
     "retry": "Relancer la même tentative de paiement",
     "previous": {
       "expired": "Votre facture précédente a expiré.",
+      "partially_paid": "Votre facture précédente a expiré après réception d’une partie du paiement. Ouvrez-la et contactez le commerçant au sujet du montant déjà reçu.",
       "confirmed": "Votre facture précédente est confirmée.",
       "invalid": "Votre facture précédente est invalide.",
       "payment_detected": "Un paiement a été détecté pour votre facture précédente."
@@ -321,6 +325,7 @@
     "eyebrow": "Erreur",
     "title": "Page indisponible",
     "description": "Nous n’avons pas pu charger cette page. Réessayez. Si vous étiez en train de créer une facture, vérifiez votre liste de factures avant de renvoyer le formulaire.",
+    "checkoutDescription": "Nous n’avons pas pu charger cette page. Réessayez. Si vous étiez en train de payer, conservez le lien de cette page et contactez le commerçant avant d’envoyer un paiement ou de commencer un autre achat.",
     "tryAgain": "Réessayer",
     "notFoundEyebrow": "Erreur 404",
     "notFoundTitle": "Page introuvable",

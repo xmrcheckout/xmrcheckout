@@ -111,6 +111,7 @@
     "details": "Dettagli del pagamento",
     "received": "Ricevuti {paid} di {total} XMR.",
     "requestNew": "Contatta l'esercente per ottenere una nuova richiesta di pagamento.",
+    "contactAboutReceived": "Contatta l'esercente per i {paid} XMR già ricevuti. Conserva il link di questa pagina, così potrà trovare questa richiesta di pagamento.",
     "remainingAmount": "Importo rimanente",
     "exactAmount": "Importo esatto",
     "copyRemaining": "Copia l'importo rimanente",
@@ -215,6 +216,8 @@
     "currency": "Valuta",
     "amountHelp": "Inserisci un numero come 0.05: fino a 12 decimali per XMR, 2 per le altre valute.",
     "minimum": "Minimo: {amount} XMR. Gli importi in altre valute vengono verificati dopo la conversione.",
+    "errorAmount": "Inserisci un importo maggiore di zero, con fino a 12 decimali per XMR o 2 per le altre valute. Non è stata creata alcuna richiesta di pagamento.",
+    "errorMinimum": "Questo importo è inferiore al minimo di {amount} XMR. Non è stata creata alcuna richiesta di pagamento.",
     "estimateXmr": "Circa {amount} XMR",
     "estimateFiat": "Circa {amount}",
     "customerFiatNote": "Gli importi in altre valute vengono convertiti in XMR al tasso attuale quando continui. Il tasso non è bloccato. La pagina di pagamento mostra il tasso usato e la sua fonte."
@@ -232,6 +235,7 @@
     "retry": "Ripeti lo stesso tentativo di pagamento",
     "previous": {
       "expired": "La tua richiesta di pagamento precedente è scaduta.",
+      "partially_paid": "La tua richiesta di pagamento precedente è scaduta dopo l'arrivo di parte del pagamento. Aprila e contatta l'esercente per l'importo già ricevuto.",
       "confirmed": "La tua richiesta di pagamento precedente è confermata.",
       "invalid": "La tua richiesta di pagamento precedente non è valida.",
       "payment_detected": "Sulla tua richiesta di pagamento precedente è stato rilevato un pagamento."
@@ -321,6 +325,7 @@
     "eyebrow": "Errore",
     "title": "Pagina non disponibile",
     "description": "Non è stato possibile caricare questa pagina. Riprova. Se stavi creando una richiesta di pagamento, controlla l'elenco delle richieste di pagamento prima di inviare di nuovo.",
+    "checkoutDescription": "Non è stato possibile caricare questa pagina. Riprova. Se stavi pagando, conserva il link di questa pagina e contatta l'esercente prima di inviare un pagamento o iniziare un altro acquisto.",
     "tryAgain": "Riprova",
     "notFoundEyebrow": "Errore 404",
     "notFoundTitle": "Pagina non trovata",

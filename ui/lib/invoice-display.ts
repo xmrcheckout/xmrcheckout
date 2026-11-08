@@ -6,8 +6,10 @@ export function invoiceLookupId(value: string, origin: string): string | null {
   try {
     const url = new URL(input);
     if (!['http:', 'https:'].includes(url.protocol) || url.origin !== origin || url.username || url.password) return null;
-    const match = url.pathname.match(/^\/(?:invoice|i)\/([^/]+)$/);
-    return match && uuid.test(match[1]) ? match[1] : null;
+    // Invoice, BTCPay, receipt and older donation page links all name the invoice.
+    const match = url.pathname.match(/^\/(?:(?:invoice|donate)\/([^/]+)|i\/([^/]+)(?:\/receipt)?)$/);
+    const found = match ? (match[1] ?? match[2]) : null;
+    return found && uuid.test(found) ? found : null;
   } catch { return null; }
 }
 

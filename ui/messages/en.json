@@ -111,6 +111,7 @@
     "details": "Payment details",
     "received": "Received {paid} of {total} XMR.",
     "requestNew": "Contact the merchant to request a new invoice.",
+    "contactAboutReceived": "Contact the merchant about the {paid} XMR already received. Keep this page link so they can find this invoice.",
     "remainingAmount": "Remaining amount",
     "exactAmount": "Exact amount",
     "copyRemaining": "Copy remaining amount",
@@ -215,6 +216,8 @@
     "currency": "Currency",
     "amountHelp": "Enter a number such as 0.05: up to 12 decimal places for XMR, 2 for other currencies.",
     "minimum": "Minimum: {amount} XMR. Amounts in other currencies are checked after conversion.",
+    "errorAmount": "Enter an amount greater than zero, with up to 12 decimal places for XMR or 2 for other currencies. No invoice was created.",
+    "errorMinimum": "This amount is below the minimum of {amount} XMR. No invoice was created.",
     "estimateXmr": "About {amount} XMR",
     "estimateFiat": "About {amount}",
     "customerFiatNote": "Amounts in other currencies are converted to XMR at the current rate when you continue. The rate is not locked. The payment page shows the rate used and its source."
@@ -232,6 +235,7 @@
     "retry": "Retry same checkout attempt",
     "previous": {
       "expired": "Your previous invoice is expired.",
+      "partially_paid": "Your previous invoice expired after part of the payment arrived. Open it and contact the merchant about the amount already received.",
       "confirmed": "Your previous invoice is confirmed.",
       "invalid": "Your previous invoice is invalid.",
       "payment_detected": "Your previous invoice has a detected payment."
@@ -321,6 +325,7 @@
     "eyebrow": "Error",
     "title": "Page unavailable",
     "description": "We could not load this page. Try again. If you were creating an invoice, check your invoice list before submitting again.",
+    "checkoutDescription": "We could not load this page. Try again. If you were paying, keep this page link and contact the merchant before sending payment or starting another purchase.",
     "tryAgain": "Try again",
     "notFoundEyebrow": "Error 404",
     "notFoundTitle": "Page not found",

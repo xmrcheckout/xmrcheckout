@@ -113,6 +113,7 @@
     "details": "Szczegóły płatności",
     "received": "Otrzymano {paid} z {total} XMR.",
     "requestNew": "Skontaktuj się ze sprzedawcą, aby otrzymać nową prośbę o płatność.",
+    "contactAboutReceived": "Skontaktuj się ze sprzedawcą w sprawie już otrzymanych {paid} XMR. Zachowaj link do tej strony, aby mógł odnaleźć tę prośbę o płatność.",
     "remainingAmount": "Pozostała kwota",
     "exactAmount": "Dokładna kwota",
     "copyRemaining": "Kopiuj pozostałą kwotę",
@@ -219,6 +220,8 @@
     "currency": "Waluta",
     "amountHelp": "Wpisz liczbę, np. 0.05: do 12 miejsc po przecinku dla XMR i 2 dla innych walut.",
     "minimum": "Minimum: {amount} XMR. Kwoty w innych walutach są sprawdzane po przeliczeniu.",
+    "errorAmount": "Wpisz kwotę większą od zera, z maksymalnie 12 miejscami po przecinku dla XMR lub 2 dla innych walut. Nie utworzono prośby o płatność.",
+    "errorMinimum": "Ta kwota jest niższa niż minimum {amount} XMR. Nie utworzono prośby o płatność.",
     "estimateXmr": "Około {amount} XMR",
     "estimateFiat": "Około {amount}",
     "customerFiatNote": "Kwoty w innych walutach są przeliczane na XMR według bieżącego kursu w chwili przejścia dalej. Kurs nie jest blokowany. Strona płatności pokazuje użyty kurs i jego źródło."
@@ -236,6 +239,7 @@
     "retry": "Ponów tę samą próbę płatności",
     "previous": {
       "expired": "Twoja poprzednia prośba o płatność wygasła.",
+      "partially_paid": "Twoja poprzednia prośba o płatność wygasła po otrzymaniu części płatności. Otwórz ją i skontaktuj się ze sprzedawcą w sprawie już otrzymanej kwoty.",
       "confirmed": "Twoja poprzednia prośba o płatność jest potwierdzona.",
       "invalid": "Twoja poprzednia prośba o płatność jest nieprawidłowa.",
       "payment_detected": "W twojej poprzedniej prośbie o płatność wykryto płatność."
@@ -327,6 +331,7 @@
     "eyebrow": "Błąd",
     "title": "Strona niedostępna",
     "description": "Nie udało się wczytać tej strony. Spróbuj ponownie. Jeśli była tworzona prośba o płatność, sprawdź listę próśb, zanim wyślesz ponownie.",
+    "checkoutDescription": "Nie udało się wczytać tej strony. Spróbuj ponownie. Jeśli płacisz, zachowaj link do tej strony i skontaktuj się ze sprzedawcą, zanim wyślesz płatność lub rozpoczniesz kolejny zakup.",
     "tryAgain": "Spróbuj ponownie",
     "notFoundEyebrow": "Błąd 404",
     "notFoundTitle": "Nie znaleziono strony",

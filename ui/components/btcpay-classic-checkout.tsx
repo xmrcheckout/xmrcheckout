@@ -424,13 +424,25 @@ export default function BtcpayClassicCheckout({
           </>
         ) : status === "expired" ? (
           <p className="border-l-2 border-red-400 pl-3 text-sm leading-relaxed text-red-700">
-            {t("pay.requestNew")}
+            {hasPartial && formattedPaidAmount
+              ? t("pay.contactAboutReceived", { paid: formattedPaidAmount })
+              : t("pay.requestNew")}
           </p>
         ) : (
           <p className="border-l-2 border-stroke pl-3 text-sm leading-relaxed text-ink-soft">
             {status === "payment_detected" ? t("classic.noFurtherPayment") : t("pay.headingInvalid")}
           </p>
         )}
+        {(status === "expired" || status === "invalid") && redirectUrl ? (
+          <a
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 w-full"
+            href={redirectUrl}
+            target="_top"
+            rel="noreferrer"
+          >
+            {formatReturnLabel(redirectUrl, t)}
+          </a>
+        ) : null}
       </div>
 
       <details className="group border-t border-stroke px-6 py-5">

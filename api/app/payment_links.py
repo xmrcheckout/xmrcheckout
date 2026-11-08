@@ -8,7 +8,7 @@ import re
 import secrets
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, quote
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
@@ -332,6 +332,12 @@ def create_purchase(token: str, request: Request, db: Session, body: bytes = b""
             return JSONResponse({"detail": detail}, status_code=code, headers={**(headers or {}), "Cache-Control": "no-store"})
         return error_page(code, detail, headers)
 
+    # A browser form gets its amount errors back on the link's page, next to the field.
+    is_form = request.headers.get("content-type", "").split(";")[0].strip().lower() == "application/x-www-form-urlencoded"
+    def amount_rejected(code):
+        url = f"{public_origin(request)}/pay/{quote(token, safe='')}?error={code}"
+        return RedirectResponse(url, status_code=303, headers={"Cache-Control": "no-store"})
+
     def success(invoice, replay=False):
         site = public_origin(request)
         url = f"{site}/invoice/{invoice.id}"
@@ -341,6 +347,7 @@ def create_purchase(token: str, request: Request, db: Session, body: bytes = b""
                 status_code=200 if replay else 201, headers={"Cache-Control": "no-store"})
         return RedirectResponse(url, status_code=303, headers={"Cache-Control": "no-store"})
 
+    customer = None
     try:
         raw_attempt = request.headers.get("idempotency-key")
         try:
@@ -350,7 +357,14 @@ def create_purchase(token: str, request: Request, db: Session, body: bytes = b""
         initial = enabled_link(db, token)
         if not initial.customer_amount and body:
             raise HTTPException(400, "This button does not accept price or checkout overrides.")
-        customer = parse_customer_amount(request, body) if initial.customer_amount else None
+        if initial.customer_amount:
+            try:
+                customer = parse_customer_amount(request, body)
+            except HTTPException:
+                if is_form and not wants_json:
+                    db.rollback()
+                    return amount_rejected("amount")
+                raise
         user = db.query(User).filter(User.id == initial.user_id).with_for_update().first()
         if user is None or not user.payment_address or not user.view_key_encrypted:
             raise HTTPException(409, "The merchant checkout is unavailable.")
@@ -386,6 +400,8 @@ def create_purchase(token: str, request: Request, db: Session, body: bytes = b""
         return success(invoice)
     except HTTPException as exc:
         db.rollback()
+        if exc.status_code == 422 and customer and is_form and not wants_json:
+            return amount_rejected("minimum")
         diagnostic = getattr(exc, "diagnostic_id", None)
         detail = str(exc.detail) + (f" Reference ID: {diagnostic}" if diagnostic else "")
         logger.info("Public payment-link creation unavailable status=%s", exc.status_code)

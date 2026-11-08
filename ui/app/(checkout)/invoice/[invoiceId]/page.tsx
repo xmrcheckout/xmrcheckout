@@ -344,7 +344,7 @@ export default async function InvoiceStatusDetailPage({
             {t("checkout.viewReceipt")}
           </a>
         ) : null}
-        {invoice.payment_link_url ? <a href={invoice.payment_link_url} className="inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold">{t("invoicePage.startAnother")}</a> : null}
+        {invoice.payment_link_url && (invoice.status === "confirmed" || (invoice.status === "expired" && !hasPartialAmount(invoice.amount_paid_xmr, invoice.amount_remaining_xmr))) ? <a href={invoice.payment_link_url} className="inline-flex min-h-11 items-center rounded-full border border-stroke px-5 py-3 font-semibold">{t("invoicePage.startAnother")}</a> : null}
         <InvoiceStatusActions />
       </section>
     </main>

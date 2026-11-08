@@ -170,9 +170,8 @@ export default async function BtcpayReceiptPage({
     : t("receipt.returnToInvoice");
   // BTCPay invoices are paid on /i/; every other invoice on /invoice/.
   const isBtcpayInvoice = Boolean(invoice.btcpay_amount && invoice.btcpay_currency);
-  const returnHref =
-    redirectUrl ??
-    `/${isBtcpayInvoice ? "i" : "invoice"}/${encodeURIComponent(invoiceId)}`;
+  const invoiceHref = `/${isBtcpayInvoice ? "i" : "invoice"}/${encodeURIComponent(invoiceId)}`;
+  const returnHref = redirectUrl ?? invoiceHref;
 
   return (
     <main id="main-content" tabIndex={-1} className="min-h-screen bg-cream px-3 py-6 text-ink print:bg-white print:p-0 sm:px-6 sm:py-10">
@@ -208,6 +207,12 @@ export default async function BtcpayReceiptPage({
             <p className="mx-auto mt-8 max-w-md border-l-2 border-clay pl-4 text-left text-sm leading-relaxed text-ink-soft">
               {t("receipt.afterConfirmation")}
             </p>
+            <a
+              className="mt-8 inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-8 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden"
+              href={invoiceHref}
+            >
+              {t("receipt.returnToInvoice")}
+            </a>
           </section>
         ) : (
           <>

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { InvoiceJourney } from "../../components/invoice-journey";
 
 import { LoginTrigger } from "../../components/login-modal";
+import { areDonationsEnabled } from "../../lib/donations";
 import { getI18n } from "../../lib/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,7 +21,7 @@ export default async function MarketingHomePage({
 }) {
   const query = await searchParams;
   const { t } = await getI18n();
-  if (query.donate === "1") {
+  if (query.donate === "1" && areDonationsEnabled()) {
     redirect("/donate");
   }
 

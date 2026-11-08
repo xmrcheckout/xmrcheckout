@@ -5,8 +5,9 @@ const id = '11111111-1111-4111-8111-111111111111';
 const origin = 'https://checkout.example';
 test('lookup accepts IDs and local invoice URLs without following them', () => {
   assert.equal(invoiceLookupId(` ${id} `, origin), id);
-  for (const path of ['invoice', 'i']) assert.equal(invoiceLookupId(`${origin}/${path}/${id}?a=1#receipt`, origin), id);
-  for (const value of [`https://other.example/invoice/${id}`, `${origin}/invoice/${id}/extra`, `javascript:${id}`, `/invoice/${id}`, `${origin}/pay/${id}`, 'broken', `https://user@checkout.example/invoice/${id}`]) assert.equal(invoiceLookupId(value, origin), null);
+  assert.equal(invoiceLookupId(`${origin}/i/${id}/receipt`, origin), id);
+  for (const path of ['invoice', 'i', 'donate']) assert.equal(invoiceLookupId(`${origin}/${path}/${id}?a=1#receipt`, origin), id);
+  for (const value of [`https://other.example/invoice/${id}`, `${origin}/invoice/${id}/extra`, `javascript:${id}`, `/invoice/${id}`, `${origin}/pay/${id}`, `${origin}/invoice/${id}/receipt`, `${origin}/donate/${id}/receipt`, 'broken', `https://user@checkout.example/invoice/${id}`]) assert.equal(invoiceLookupId(value, origin), null);
 });
 test('invoice context uses existing human descriptions and tolerates malformed metadata', () => {
   assert.equal(invoiceContext({description:'Order #1027', payment_link:{title:'Guide'}, order_id:'1027'}).title,'Order #1027');

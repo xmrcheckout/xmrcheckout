@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 import { formatFiatAmount, formatXmrAmount } from "../lib/formatting";
 import { useXmrFiatRate } from "../lib/use-xmr-fiat-rate";
@@ -17,10 +17,19 @@ const AMOUNT_PATTERN = /^[0-9]{1,7}([.][0-9]{1,12})?$/;
 // Reference currency shown when the buyer enters XMR.
 const XMR_REFERENCE_CURRENCY = "USD";
 
-export default function CustomerAmountForm({ link }: { link: CustomerAmountLink }) {
+export type AmountError = "amount" | "minimum";
+
+export default function CustomerAmountForm({
+  link,
+  initialError = null,
+}: {
+  link: CustomerAmountLink;
+  initialError?: AmountError | null;
+}) {
   const { t, locale } = useI18n();
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState("XMR");
+  const [error, setError] = useState<AmountError | null>(initialError);
   const isXmr = currency === "XMR";
   const rateCurrency = isXmr ? XMR_REFERENCE_CURRENCY : currency;
   const { rate } = useXmrFiatRate(rateCurrency);
@@ -38,10 +47,37 @@ export default function CustomerAmountForm({ link }: { link: CustomerAmountLink 
         });
   }
 
+  // Same rules as the API, so a rejected amount never leaves this page.
+  const amountError = (): AmountError | null => {
+    const decimals = isXmr ? 12 : 2;
+    const match = /^[0-9]{1,7}(?:[.]([0-9]+))?$/.exec(trimmed);
+    if (!match || (match[1] ?? "").length > decimals || !(Number.parseFloat(trimmed) > 0)) {
+      return "amount";
+    }
+    if (isXmr && link.minimum_amount_xmr && Number.parseFloat(trimmed) < Number.parseFloat(link.minimum_amount_xmr)) {
+      return "minimum";
+    }
+    return null;
+  };
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const found = amountError();
+    setError(found);
+    if (found) {
+      event.preventDefault();
+      document.getElementById("customer-amount")?.focus();
+    }
+  };
+  const errorText =
+    error === "minimum" && link.minimum_amount_xmr
+      ? t("paymentLink.errorMinimum", { amount: formatXmrAmount(link.minimum_amount_xmr) })
+      : error
+        ? t("paymentLink.errorAmount")
+        : null;
+
   const inputClass = "mt-1 w-full rounded-xl border border-stroke bg-white px-3 py-2 text-ink";
   return (
     <>
-      <form method="post" action={link.action_url} className="grid gap-4">
+      <form method="post" action={link.action_url} className="grid gap-4" noValidate onSubmit={onSubmit}>
         <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
           <div>
             <label htmlFor="customer-amount">{t("paymentLink.amount")}</label>
@@ -50,10 +86,10 @@ export default function CustomerAmountForm({ link }: { link: CustomerAmountLink 
               name="amount"
               type="text"
               inputMode="decimal"
-              pattern="[0-9]{1,7}([.][0-9]{1,12})?"
               autoComplete="off"
               required
-              aria-describedby="customer-amount-help customer-amount-estimate"
+              aria-invalid={error ? true : undefined}
+              aria-describedby={`${error ? "customer-amount-error " : ""}customer-amount-help customer-amount-estimate`}
               className={inputClass}
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
@@ -75,6 +111,11 @@ export default function CustomerAmountForm({ link }: { link: CustomerAmountLink 
             </select>
           </div>
         </div>
+        {errorText ? (
+          <p id="customer-amount-error" role="alert" className="font-semibold text-red-700">
+            {errorText}
+          </p>
+        ) : null}
         <p id="customer-amount-estimate" aria-live="polite" className="min-h-6 text-ink">
           {estimate}
         </p>

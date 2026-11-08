@@ -3,5 +3,5 @@
 import PageError from "../../components/page-error";
 
 export default function CheckoutError() {
-  return <PageError />;
+  return <PageError checkout />;
 }

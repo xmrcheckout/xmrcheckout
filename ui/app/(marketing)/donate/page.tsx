@@ -1,4 +1,4 @@
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { donationLink } from "../../../lib/donations";
 
@@ -10,5 +10,6 @@ export default function DonatePage() {
   if (!link) {
     notFound();
   }
-  permanentRedirect(link);
+  // Temporary, so browsers follow a changed DONATION_LINK.
+  redirect(link);
 }

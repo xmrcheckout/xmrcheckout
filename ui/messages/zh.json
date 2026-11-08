@@ -110,6 +110,7 @@
     "details": "付款详情",
     "received": "已收到 {paid} / {total} XMR。",
     "requestNew": "请联系商家申请新的账单。",
+    "contactAboutReceived": "请就已收到的 {paid} XMR 联系商家。请保存此页面链接，以便商家找到这张账单。",
     "remainingAmount": "剩余金额",
     "exactAmount": "准确金额",
     "copyRemaining": "复制剩余金额",
@@ -213,6 +214,8 @@
     "currency": "货币",
     "amountHelp": "请输入数字，例如 0.05：XMR 最多 12 位小数，其他货币最多 2 位。",
     "minimum": "最低：{amount} XMR。其他货币的金额会在换算后检查。",
+    "errorAmount": "请输入大于零的金额：XMR 最多 12 位小数，其他货币最多 2 位小数。未创建账单。",
+    "errorMinimum": "此金额低于最低金额 {amount} XMR。未创建账单。",
     "estimateXmr": "约{amount} XMR",
     "estimateFiat": "约{amount}",
     "customerFiatNote": "其他货币的金额会在你继续时按当前汇率换算为 XMR。汇率不会锁定。付款页面会显示所用汇率及其来源。"
@@ -230,6 +233,7 @@
     "retry": "重试同一次结账尝试",
     "previous": {
       "expired": "你之前的账单已过期。",
+      "partially_paid": "你之前的账单在收到部分付款后已过期。请打开它，并就已收到的金额联系商家。",
       "confirmed": "你之前的账单已确认。",
       "invalid": "你之前的账单无效。",
       "payment_detected": "你之前的账单已检测到付款。"
@@ -318,6 +322,7 @@
     "eyebrow": "错误",
     "title": "页面不可用",
     "description": "无法加载此页面。请重试。如果你正在创建账单，请先查看你的账单列表，再重新提交。",
+    "checkoutDescription": "无法加载此页面。请重试。如果你正在付款，请保存此页面链接，并在发送付款或开始新的购买前联系商家。",
     "tryAgain": "重试",
     "notFoundEyebrow": "错误 404",
     "notFoundTitle": "未找到页面",

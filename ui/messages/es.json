@@ -111,6 +111,7 @@
     "details": "Detalles del pago",
     "received": "Recibido {paid} de {total} XMR.",
     "requestNew": "Pide al comercio una factura nueva.",
+    "contactAboutReceived": "Contacta con el comercio por los {paid} XMR ya recibidos. Guarda el enlace de esta página para que pueda encontrar esta factura.",
     "remainingAmount": "Importe restante",
     "exactAmount": "Importe exacto",
     "copyRemaining": "Copiar importe restante",
@@ -215,6 +216,8 @@
     "currency": "Moneda",
     "amountHelp": "Introduce un número usando punto decimal, por ejemplo 0.05: hasta 12 decimales para XMR y 2 para otras monedas.",
     "minimum": "Mínimo: {amount} XMR. Los importes en otras monedas se comprueban después de la conversión.",
+    "errorAmount": "Introduce un importe mayor que cero, con hasta 12 decimales para XMR o 2 para otras monedas. No se ha creado ninguna factura.",
+    "errorMinimum": "Este importe es inferior al mínimo de {amount} XMR. No se ha creado ninguna factura.",
     "estimateXmr": "Aproximadamente {amount} XMR",
     "estimateFiat": "Aproximadamente {amount}",
     "customerFiatNote": "Los importes en otras monedas se convierten a XMR al tipo de cambio actual cuando continúas. El tipo de cambio no queda fijado. La página de pago muestra el tipo de cambio usado y su fuente."
@@ -232,6 +235,7 @@
     "retry": "Reintentar el mismo intento de pago",
     "previous": {
       "expired": "Tu factura anterior está vencida.",
+      "partially_paid": "Tu factura anterior venció después de recibir parte del pago. Ábrela y contacta con el comercio por el importe ya recibido.",
       "confirmed": "Tu factura anterior está confirmada.",
       "invalid": "Tu factura anterior no es válida.",
       "payment_detected": "Tu factura anterior tiene un pago detectado."
@@ -321,6 +325,7 @@
     "eyebrow": "Error",
     "title": "Página no disponible",
     "description": "No pudimos cargar esta página. Inténtalo de nuevo. Si estabas creando una factura, revisa tu lista de facturas antes de volver a enviarla.",
+    "checkoutDescription": "No pudimos cargar esta página. Inténtalo de nuevo. Si estabas pagando, guarda el enlace de esta página y contacta con el comercio antes de enviar el pago o iniciar otra compra.",
     "tryAgain": "Intentar de nuevo",
     "notFoundEyebrow": "Error 404",
     "notFoundTitle": "Página no encontrada",

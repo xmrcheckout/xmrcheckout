@@ -7,7 +7,7 @@ import { useI18n } from "./i18n-provider";
 type Result = { invoice_url: string; status: string; expires_at: string | null };
 const previousStatusKeys: Record<string, string> = {
   pending: "expired",
-  partially_paid: "expired",
+  partially_paid: "partially_paid",
   expired: "expired",
   confirmed: "confirmed",
   invalid: "invalid",

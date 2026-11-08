@@ -212,7 +212,9 @@ export default function InvoicePaymentDetails({
         ) : null}
         {isInvalid || isExpired ? (
           <p className="mt-4 border-l-2 border-red-300 pl-3 text-sm font-semibold text-red-100">
-            {t("pay.requestNew")}
+            {isExpiredUnderpaid && formattedPaid
+              ? t("pay.contactAboutReceived", { paid: formattedPaid })
+              : t("pay.requestNew")}
           </p>
         ) : null}
       </header>

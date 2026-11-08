@@ -139,7 +139,6 @@ The [guides](https://xmrcheckout.com/guides) cover four common paths into the pr
 
 - `ui/`: web UI
 - `api/`: API service (Python)
-- `scripts/`: operational helper scripts
 - `tests/`: stack checks that run against the Docker images
 - `docker-compose.yml`: local stack and self-hosted deployment
 - `nginx/`: optional reverse proxy / TLS termination (used by Docker Compose)
@@ -185,6 +184,19 @@ The terminal page on a phone or tablet at the till: the merchant enters the amou
 ### Full stack (Docker Compose)
 
 ```
+cp .env.example .env
+```
+
+Fill in the required values in `.env` (see [step 2 below](#self-hosted-deployment-docker-compose)): at least
+`API_KEY_ENCRYPTION_KEY`, the wallet RPC credentials, and `MONERO_DAEMON_URL`. Generate the encryption key with:
+
+```
+python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'
+```
+
+Then start the stack:
+
+```
 docker compose up --build
 ```
 
@@ -196,9 +208,6 @@ In the default Compose configuration, only `nginx` is published to the host. The
 If you prefer not to run `nginx`, you can publish `ui` and `api` ports directly instead (you will also need to serve `qr/` at `/qr/` on your site URL).
 
 ## Self-hosted deployment (Docker Compose)
-
-See [UI request protection](nginx/REQUEST_PROTECTION.md) for multipart validation,
-POST rate limits, trusted ingress configuration, verification, and rollback.
 
 1. Copy the environment template and fill in required values:
 
@@ -568,6 +577,7 @@ server {
 ```
 export DATABASE_URL=postgresql://xmrcheckout:xmrcheckout@localhost:5432/xmrcheckout
 export API_KEYS=change-me-1
+export API_KEY_ENCRYPTION_KEY=<a Fernet key; see "If you need a new API_KEY_ENCRYPTION_KEY value" above>
 ```
 
 2. Install dependencies:
@@ -589,11 +599,11 @@ The API listens on `http://127.0.0.1:8000`.
 
 ### Running the tests
 
-The API tests load files from `scripts/` and `docker/`, so run them in the API
-image with those folders mounted:
+The API tests load files from `docker/`, so run them in the API image with that
+folder mounted:
 
 ```
-docker compose run --rm --no-deps -T -v "$PWD/api:/src:ro" -v "$PWD/scripts:/scripts:ro" -v "$PWD/docker:/docker:ro" -w /src --entrypoint python api -B -m unittest discover -s tests
+docker compose run --rm --no-deps -T -v "$PWD/api:/src:ro" -v "$PWD/docker:/docker:ro" -w /src --entrypoint python api -B -m unittest discover -s tests
 ```
 
 Point the suite at a throwaway PostgreSQL database named `payment_link_tests`

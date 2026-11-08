@@ -67,8 +67,7 @@
     "merchantMessage": "Message from the merchant",
     "merchantMessageNote": "Written by the merchant. Contact them with your invoice ID if anything is missing.",
     "startAnother": "Start another purchase",
-    "linkUnavailableTitle": "Invoice link unavailable",
-    "linkUnavailableHelp": "The invoice ID is invalid or does not match an invoice. Enter the complete ID in UUID format, or contact the merchant for a valid link. Do not send payment."
+    "linkUnavailableTitle": "Invoice link unavailable"
   },
   "checkout": {
     "metaTitle": "Payment Request",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. {confirmations}/{target} confirmations.",
     "statusUnavailable": "Status unavailable",
     "loadFailed": "We could not load this invoice status. Refresh the page or try again later.",
-    "invalidId": "Invalid invoice ID",
-    "notFound": "Invoice not found",
     "invalidIdHelp": "Enter the complete invoice ID in UUID format.",
     "notFoundHelp": "Check that you have the complete invoice link.",
     "doNotPay": "Do not send payment. Contact the merchant for a valid invoice link.",
@@ -186,7 +183,6 @@
   "receipt": {
     "metaTitle": "Receipt",
     "eyebrow": "Payment receipt",
-    "notFoundHelp": "The invoice ID does not match a known invoice. Check the ID and try again.",
     "close": "Close",
     "returnToInvoice": "Return to invoice",
     "orderIdValue": "Order ID: {id}",
@@ -202,6 +198,7 @@
   },
   "paymentLink": {
     "metaTitle": "Purchase with Monero",
+    "eyebrow": "Payment link",
     "unavailableTitle": "Payment link unavailable",
     "unavailableHelp": "Do not send payment. Contact the merchant for a new payment link.",
     "checkoutUnavailable": "Checkout unavailable",
@@ -299,11 +296,13 @@
     "expired": "Sale expired",
     "receivedCheck": "{amount} XMR was received for this invoice. Check it in the dashboard.",
     "noPayment": "No payment was seen.",
+    "stillWatching": "Still checking for a late payment for a few minutes.",
     "partial": "Partial payment received. Send the remaining amount.",
     "qrAlt": "Monero payment QR code for {amount} XMR",
     "expiresIn": "Expires in {time}",
     "watching": "Watching for payment…",
     "cancel": "Cancel sale",
+    "cancelPartial": "This sale can't be cancelled because part of the payment has arrived.",
     "lowAddresses": {
       "one": "Only {count} invoice address is free. Unpaid and cancelled sales hold an address for three days by default.",
       "other": "Only {count} invoice addresses are free. Unpaid and cancelled sales hold an address for three days by default."

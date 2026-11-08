@@ -67,8 +67,7 @@
     "merchantMessage": "商家留言",
     "merchantMessageNote": "由商家撰写。如有任何缺失，请凭账单 ID 联系商家。",
     "startAnother": "开始新的购买",
-    "linkUnavailableTitle": "账单链接不可用",
-    "linkUnavailableHelp": "账单 ID 无效或与任何账单都不匹配。请输入 UUID 格式的完整 ID，或联系商家获取有效链接。请勿付款。"
+    "linkUnavailableTitle": "账单链接不可用"
   },
   "checkout": {
     "metaTitle": "付款请求",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}。{confirmations}/{target} 个确认。",
     "statusUnavailable": "状态不可用",
     "loadFailed": "无法加载此账单的状态。请刷新页面或稍后再试。",
-    "invalidId": "账单 ID 无效",
-    "notFound": "未找到账单",
     "invalidIdHelp": "请输入 UUID 格式的完整账单 ID。",
     "notFoundHelp": "请确认你拥有完整的账单链接。",
     "doNotPay": "请勿付款。请联系商家获取有效的账单链接。",
@@ -184,7 +181,6 @@
   "receipt": {
     "metaTitle": "收据",
     "eyebrow": "付款收据",
-    "notFoundHelp": "该账单 ID 与任何已知账单都不匹配。请检查 ID 后重试。",
     "close": "关闭",
     "returnToInvoice": "返回账单",
     "orderIdValue": "订单 ID：{id}",
@@ -200,6 +196,7 @@
   },
   "paymentLink": {
     "metaTitle": "使用门罗币购买",
+    "eyebrow": "付款链接",
     "unavailableTitle": "付款链接不可用",
     "unavailableHelp": "请勿付款。请联系商家获取新的付款链接。",
     "checkoutUnavailable": "结账不可用",
@@ -297,11 +294,13 @@
     "expired": "销售已过期",
     "receivedCheck": "此账单已收到 {amount} XMR。请在控制台中查看。",
     "noPayment": "未看到任何付款。",
+    "stillWatching": "仍会在几分钟内继续检查是否有延迟到账的付款。",
     "partial": "已收到部分付款。请发送剩余金额。",
     "qrAlt": "{amount} XMR 的门罗币付款二维码",
     "expiresIn": "{time} 后过期",
     "watching": "正在等待付款…",
     "cancel": "取消销售",
+    "cancelPartial": "部分付款已到账，因此无法取消此次销售。",
     "lowAddresses": {
       "other": "仅剩 {count} 个空闲的账单地址。未付款和已取消的销售默认会占用地址三天。"
     },

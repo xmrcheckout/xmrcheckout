@@ -67,8 +67,7 @@
     "merchantMessage": "Wiadomość od sprzedawcy",
     "merchantMessageNote": "Napisana przez sprzedawcę. Jeśli czegoś brakuje, skontaktuj się z nim, podając identyfikator prośby o płatność.",
     "startAnother": "Rozpocznij kolejny zakup",
-    "linkUnavailableTitle": "Link do prośby o płatność jest niedostępny",
-    "linkUnavailableHelp": "Identyfikator prośby o płatność jest nieprawidłowy lub nie pasuje do żadnej prośby. Wpisz pełny identyfikator w formacie UUID albo poproś sprzedawcę o prawidłowy link. Nie wysyłaj płatności."
+    "linkUnavailableTitle": "Link do prośby o płatność jest niedostępny"
   },
   "checkout": {
     "metaTitle": "Prośba o płatność",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. Potwierdzenia: {confirmations}/{target}.",
     "statusUnavailable": "Status niedostępny",
     "loadFailed": "Nie udało się wczytać statusu tej prośby o płatność. Odśwież stronę lub spróbuj ponownie później.",
-    "invalidId": "Nieprawidłowy identyfikator prośby o płatność",
-    "notFound": "Nie znaleziono prośby o płatność",
     "invalidIdHelp": "Wpisz pełny identyfikator prośby o płatność w formacie UUID.",
     "notFoundHelp": "Sprawdź, czy masz pełny link do prośby o płatność.",
     "doNotPay": "Nie wysyłaj płatności. Poproś sprzedawcę o prawidłowy link do prośby o płatność.",
@@ -190,7 +187,6 @@
   "receipt": {
     "metaTitle": "Potwierdzenie płatności",
     "eyebrow": "Potwierdzenie płatności",
-    "notFoundHelp": "Identyfikator nie pasuje do żadnej znanej prośby o płatność. Sprawdź identyfikator i spróbuj ponownie.",
     "close": "Zamknij",
     "returnToInvoice": "Wróć do prośby o płatność",
     "orderIdValue": "Identyfikator zamówienia: {id}",
@@ -206,6 +202,7 @@
   },
   "paymentLink": {
     "metaTitle": "Kup za Monero",
+    "eyebrow": "Link płatności",
     "unavailableTitle": "Link płatności jest niedostępny",
     "unavailableHelp": "Nie wysyłaj płatności. Poproś sprzedawcę o nowy link płatności.",
     "checkoutUnavailable": "Płatność niedostępna",
@@ -303,11 +300,13 @@
     "expired": "Sprzedaż wygasła",
     "receivedCheck": "Dla tej prośby o płatność otrzymano {amount} XMR. Sprawdź ją w panelu.",
     "noPayment": "Nie zauważono żadnej płatności.",
+    "stillWatching": "Przez kilka minut nadal sprawdzana jest spóźniona płatność.",
     "partial": "Otrzymano częściową płatność. Wyślij pozostałą kwotę.",
     "qrAlt": "Kod QR płatności Monero na {amount} XMR",
     "expiresIn": "Wygasa za {time}",
     "watching": "Oczekiwanie na płatność…",
     "cancel": "Anuluj sprzedaż",
+    "cancelPartial": "Tej sprzedaży nie można anulować, ponieważ dotarła już część płatności.",
     "lowAddresses": {
       "one": "Wolny jest tylko {count} adres płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują adres na trzy dni.",
       "few": "Wolne są tylko {count} adresy płatności. Nieopłacone i anulowane sprzedaże domyślnie blokują adres na trzy dni.",

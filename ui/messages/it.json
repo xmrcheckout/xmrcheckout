@@ -67,8 +67,7 @@
     "merchantMessage": "Messaggio dell'esercente",
     "merchantMessageNote": "Scritto dall'esercente. Contattalo indicando l'ID della richiesta di pagamento se manca qualcosa.",
     "startAnother": "Inizia un altro acquisto",
-    "linkUnavailableTitle": "Link della richiesta di pagamento non disponibile",
-    "linkUnavailableHelp": "L'ID della richiesta di pagamento non è valido o non corrisponde a nessuna richiesta di pagamento. Inserisci l'ID completo in formato UUID oppure chiedi all'esercente un link valido. Non inviare il pagamento."
+    "linkUnavailableTitle": "Link della richiesta di pagamento non disponibile"
   },
   "checkout": {
     "metaTitle": "Richiesta di pagamento",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. {confirmations}/{target} conferme.",
     "statusUnavailable": "Stato non disponibile",
     "loadFailed": "Non è stato possibile caricare lo stato di questa richiesta di pagamento. Aggiorna la pagina o riprova più tardi.",
-    "invalidId": "ID della richiesta di pagamento non valido",
-    "notFound": "Richiesta di pagamento non trovata",
     "invalidIdHelp": "Inserisci l'ID completo della richiesta di pagamento in formato UUID.",
     "notFoundHelp": "Verifica di avere il link completo della richiesta di pagamento.",
     "doNotPay": "Non inviare il pagamento. Chiedi all'esercente un link valido a una richiesta di pagamento.",
@@ -186,7 +183,6 @@
   "receipt": {
     "metaTitle": "Ricevuta",
     "eyebrow": "Ricevuta di pagamento",
-    "notFoundHelp": "L'ID della richiesta di pagamento non corrisponde a nessuna richiesta di pagamento nota. Controlla l'ID e riprova.",
     "close": "Chiudi",
     "returnToInvoice": "Torna alla richiesta di pagamento",
     "orderIdValue": "ID ordine: {id}",
@@ -202,6 +198,7 @@
   },
   "paymentLink": {
     "metaTitle": "Acquista con Monero",
+    "eyebrow": "Link di pagamento",
     "unavailableTitle": "Link di pagamento non disponibile",
     "unavailableHelp": "Non inviare il pagamento. Chiedi all'esercente un nuovo link di pagamento.",
     "checkoutUnavailable": "Pagamento non disponibile",
@@ -299,11 +296,13 @@
     "expired": "Vendita scaduta",
     "receivedCheck": "Per questa richiesta di pagamento sono stati ricevuti {amount} XMR. Controllala nella dashboard.",
     "noPayment": "Non è stato visto nessun pagamento.",
+    "stillWatching": "Il controllo di un pagamento in ritardo continua ancora per qualche minuto.",
     "partial": "Pagamento parziale ricevuto. Invia l'importo rimanente.",
     "qrAlt": "Codice QR di pagamento Monero per {amount} XMR",
     "expiresIn": "Scade tra {time}",
     "watching": "In attesa del pagamento…",
     "cancel": "Annulla la vendita",
+    "cancelPartial": "Questa vendita non può essere annullata perché è già arrivata parte del pagamento.",
     "lowAddresses": {
       "one": "Solo {count} indirizzo di pagamento è libero. Le vendite non pagate e annullate tengono occupato un indirizzo per tre giorni come impostazione predefinita.",
       "other": "Solo {count} indirizzi di pagamento sono liberi. Le vendite non pagate e annullate tengono occupato un indirizzo per tre giorni come impostazione predefinita."

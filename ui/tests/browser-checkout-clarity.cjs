@@ -42,6 +42,14 @@ async function state(invoiceStatus,checkoutStyle='standard') {
       assert.equal(await page.getByRole('link',{name:'Open wallet',exact:true}).count(),0);
       await page.close();
     }
+    // A live till sale shows its address with a copy button for buyers who cannot scan.
+    const till = await browser.newPage({viewport:{width:390,height:844}});
+    await till.goto(base+'/terminal#k=fixture-key',{waitUntil:'networkidle'});
+    await till.getByRole('button',{name:'5',exact:true}).click();
+    await till.getByRole('button',{name:'Charge',exact:true}).click();
+    await till.getByRole('button',{name:'Copy payment address',exact:true}).waitFor();
+    assert.ok((await till.getByRole('main').innerText()).includes('4'+'1'.repeat(94)),'till shows the payment address');
+    await till.close();
     console.log('Checkout placement, timestamps, state copy, and terminal polling passed.');
   } finally {await state('pending');await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1});

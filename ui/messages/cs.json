@@ -67,8 +67,7 @@
     "merchantMessage": "Zpráva od obchodníka",
     "merchantMessageNote": "Napsáno obchodníkem. Pokud něco chybí, kontaktujte jej s ID platební výzvy.",
     "startAnother": "Zahájit další nákup",
-    "linkUnavailableTitle": "Odkaz na platební výzvu není k dispozici",
-    "linkUnavailableHelp": "ID platební výzvy je neplatné nebo neodpovídá žádné platební výzvě. Zadejte celé ID ve formátu UUID, nebo si od obchodníka vyžádejte platný odkaz. Neposílejte platbu."
+    "linkUnavailableTitle": "Odkaz na platební výzvu není k dispozici"
   },
   "checkout": {
     "metaTitle": "Platební výzva",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. Potvrzení: {confirmations}/{target}.",
     "statusUnavailable": "Stav není k dispozici",
     "loadFailed": "Stav této platební výzvy se nepodařilo načíst. Obnovte stránku nebo to zkuste později.",
-    "invalidId": "Neplatné ID platební výzvy",
-    "notFound": "Platební výzva nenalezena",
     "invalidIdHelp": "Zadejte celé ID platební výzvy ve formátu UUID.",
     "notFoundHelp": "Zkontrolujte, že máte celý odkaz na platební výzvu.",
     "doNotPay": "Neposílejte platbu. Vyžádejte si od obchodníka platný odkaz na platební výzvu.",
@@ -190,7 +187,6 @@
   "receipt": {
     "metaTitle": "Potvrzení o platbě",
     "eyebrow": "Potvrzení o platbě",
-    "notFoundHelp": "ID neodpovídá žádné známé platební výzvě. Zkontrolujte ID a zkuste to znovu.",
     "close": "Zavřít",
     "returnToInvoice": "Zpět na platební výzvu",
     "orderIdValue": "ID objednávky: {id}",
@@ -206,6 +202,7 @@
   },
   "paymentLink": {
     "metaTitle": "Nákup za Monero",
+    "eyebrow": "Platební odkaz",
     "unavailableTitle": "Platební odkaz není k dispozici",
     "unavailableHelp": "Neposílejte platbu. Vyžádejte si od obchodníka nový platební odkaz.",
     "checkoutUnavailable": "Platba není k dispozici",
@@ -303,11 +300,13 @@
     "expired": "Platnost prodeje vypršela",
     "receivedCheck": "Pro tuto platební výzvu bylo přijato {amount} XMR. Zkontrolujte ji v panelu.",
     "noPayment": "Žádná platba nebyla zachycena.",
+    "stillWatching": "Ještě několik minut se kontroluje případná opožděná platba.",
     "partial": "Přijata částečná platba. Pošlete zbývající částku.",
     "qrAlt": "QR kód platby v Monero na {amount} XMR",
     "expiresIn": "Platnost vyprší za {time}",
     "watching": "Sleduje se platba…",
     "cancel": "Zrušit prodej",
+    "cancelPartial": "Tento prodej nelze zrušit, protože už dorazila část platby.",
     "lowAddresses": {
       "one": "Volná je jen {count} adresa pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu ve výchozím nastavení tři dny.",
       "few": "Volné jsou jen {count} adresy pro platební výzvy. Nezaplacené a zrušené prodeje drží adresu ve výchozím nastavení tři dny.",

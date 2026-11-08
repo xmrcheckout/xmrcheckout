@@ -325,7 +325,7 @@ export default async function InvoiceStatusDetailPage({
       <section className="mt-6 flex flex-wrap gap-3">
         {checkoutContinueAvailable ? (
           <a
-            className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
             href={`/api/core/public/invoice/${encodeURIComponent(invoiceId)}/continue`}
             rel="noreferrer"
           >

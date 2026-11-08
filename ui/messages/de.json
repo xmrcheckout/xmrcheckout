@@ -67,8 +67,7 @@
     "merchantMessage": "Nachricht vom Händler",
     "merchantMessageNote": "Vom Händler verfasst. Wenden Sie sich mit Ihrer Rechnungs-ID an den Händler, falls etwas fehlt.",
     "startAnother": "Weiteren Kauf starten",
-    "linkUnavailableTitle": "Rechnungslink nicht verfügbar",
-    "linkUnavailableHelp": "Die Rechnungs-ID ist ungültig oder passt zu keiner Rechnung. Geben Sie die vollständige ID im UUID-Format ein oder fordern Sie beim Händler einen gültigen Link an. Senden Sie keine Zahlung."
+    "linkUnavailableTitle": "Rechnungslink nicht verfügbar"
   },
   "checkout": {
     "metaTitle": "Zahlungsanforderung",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. {confirmations}/{target} Bestätigungen.",
     "statusUnavailable": "Status nicht verfügbar",
     "loadFailed": "Der Status dieser Rechnung konnte nicht geladen werden. Aktualisieren Sie die Seite oder versuchen Sie es später erneut.",
-    "invalidId": "Ungültige Rechnungs-ID",
-    "notFound": "Rechnung nicht gefunden",
     "invalidIdHelp": "Geben Sie die vollständige Rechnungs-ID im UUID-Format ein.",
     "notFoundHelp": "Prüfen Sie, ob Sie den vollständigen Rechnungslink haben.",
     "doNotPay": "Senden Sie keine Zahlung. Fordern Sie beim Händler einen gültigen Rechnungslink an.",
@@ -186,7 +183,6 @@
   "receipt": {
     "metaTitle": "Beleg",
     "eyebrow": "Zahlungsbeleg",
-    "notFoundHelp": "Die Rechnungs-ID passt zu keiner bekannten Rechnung. Prüfen Sie die ID und versuchen Sie es erneut.",
     "close": "Schließen",
     "returnToInvoice": "Zurück zur Rechnung",
     "orderIdValue": "Bestell-ID: {id}",
@@ -202,6 +198,7 @@
   },
   "paymentLink": {
     "metaTitle": "Mit Monero kaufen",
+    "eyebrow": "Zahlungslink",
     "unavailableTitle": "Zahlungslink nicht verfügbar",
     "unavailableHelp": "Senden Sie keine Zahlung. Fordern Sie beim Händler einen neuen Zahlungslink an.",
     "checkoutUnavailable": "Checkout nicht verfügbar",
@@ -299,11 +296,13 @@
     "expired": "Verkauf abgelaufen",
     "receivedCheck": "Für diese Rechnung sind {amount} XMR eingegangen. Prüfen Sie sie im Dashboard.",
     "noPayment": "Es wurde keine Zahlung gesehen.",
+    "stillWatching": "Noch einige Minuten wird auf eine verspätete Zahlung geprüft.",
     "partial": "Teilzahlung eingegangen. Senden Sie den Restbetrag.",
     "qrAlt": "Monero-Zahlungs-QR-Code über {amount} XMR",
     "expiresIn": "Läuft ab in {time}",
     "watching": "Warte auf Zahlung…",
     "cancel": "Verkauf stornieren",
+    "cancelPartial": "Dieser Verkauf kann nicht storniert werden, weil bereits ein Teil der Zahlung eingegangen ist.",
     "lowAddresses": {
       "one": "Nur noch {count} Rechnungsadresse ist frei. Unbezahlte und stornierte Verkäufe belegen eine Adresse standardmäßig drei Tage lang.",
       "other": "Nur noch {count} Rechnungsadressen sind frei. Unbezahlte und stornierte Verkäufe belegen eine Adresse standardmäßig drei Tage lang."

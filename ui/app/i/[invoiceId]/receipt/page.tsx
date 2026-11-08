@@ -91,7 +91,7 @@ const receiptTitle = (
 };
 
 const closeLinkClassName =
-  "inline-flex items-center justify-center rounded-full border border-stroke bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden";
+  "inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 print:hidden";
 
 export default async function BtcpayReceiptPage({
   params,
@@ -296,7 +296,7 @@ export default async function BtcpayReceiptPage({
 
             <footer className="flex justify-center border-t border-stroke bg-sand/50 px-6 py-5 print:hidden">
               <a
-                className="inline-flex items-center justify-center rounded-full bg-ink px-8 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-8 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
                 href={returnHref}
                 target={redirectUrl ? "_top" : undefined}
                 rel={redirectUrl ? "noreferrer" : undefined}

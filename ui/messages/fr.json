@@ -67,8 +67,7 @@
     "merchantMessage": "Message du commerçant",
     "merchantMessageNote": "Rédigé par le commerçant. Contactez-le avec l’identifiant de votre facture s’il manque quelque chose.",
     "startAnother": "Commencer un autre achat",
-    "linkUnavailableTitle": "Lien de facture indisponible",
-    "linkUnavailableHelp": "L’identifiant de facture est invalide ou ne correspond à aucune facture. Saisissez l’identifiant complet au format UUID ou demandez un lien valide au commerçant. N’envoyez pas de paiement."
+    "linkUnavailableTitle": "Lien de facture indisponible"
   },
   "checkout": {
     "metaTitle": "Demande de paiement",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. {confirmations}/{target} confirmations.",
     "statusUnavailable": "Statut indisponible",
     "loadFailed": "Nous n’avons pas pu charger le statut de cette facture. Actualisez la page ou réessayez plus tard.",
-    "invalidId": "Identifiant de facture invalide",
-    "notFound": "Facture introuvable",
     "invalidIdHelp": "Saisissez l’identifiant complet de la facture au format UUID.",
     "notFoundHelp": "Vérifiez que vous disposez du lien complet de la facture.",
     "doNotPay": "N’envoyez pas de paiement. Demandez un lien de facture valide au commerçant.",
@@ -186,7 +183,6 @@
   "receipt": {
     "metaTitle": "Reçu",
     "eyebrow": "Reçu de paiement",
-    "notFoundHelp": "L’identifiant ne correspond à aucune facture connue. Vérifiez l’identifiant et réessayez.",
     "close": "Fermer",
     "returnToInvoice": "Retour à la facture",
     "orderIdValue": "N° de commande : {id}",
@@ -202,6 +198,7 @@
   },
   "paymentLink": {
     "metaTitle": "Acheter avec Monero",
+    "eyebrow": "Lien de paiement",
     "unavailableTitle": "Lien de paiement indisponible",
     "unavailableHelp": "N’envoyez pas de paiement. Demandez un nouveau lien de paiement au commerçant.",
     "checkoutUnavailable": "Paiement indisponible",
@@ -299,11 +296,13 @@
     "expired": "Vente expirée",
     "receivedCheck": "{amount} XMR ont été reçus pour cette facture. Vérifiez-la dans le tableau de bord.",
     "noPayment": "Aucun paiement n’a été repéré.",
+    "stillWatching": "La vérification d’un paiement tardif continue encore quelques minutes.",
     "partial": "Paiement partiel reçu. Envoyez le montant restant.",
     "qrAlt": "QR code de paiement Monero pour {amount} XMR",
     "expiresIn": "Expire dans {time}",
     "watching": "Surveillance du paiement…",
     "cancel": "Annuler la vente",
+    "cancelPartial": "Cette vente ne peut pas être annulée, car une partie du paiement est déjà arrivée.",
     "lowAddresses": {
       "one": "Il ne reste que {count} adresse de facture libre. Les ventes impayées et annulées réservent une adresse pendant trois jours par défaut.",
       "other": "Il ne reste que {count} adresses de facture libres. Les ventes impayées et annulées réservent une adresse pendant trois jours par défaut."

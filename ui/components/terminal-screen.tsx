@@ -8,6 +8,7 @@ import { useI18n } from "./i18n-provider";
 import Link from "next/link";
 import LanguageSwitcher from "./language-switcher";
 import { demoRates } from "../lib/simulated-invoice";
+import CopyIconButton from "./copy-icon-button";
 
 type TerminalStatus = {
   name: string; default_currency: string; confirmation_target: number; expiry_minutes: number;
@@ -22,6 +23,8 @@ type Sale = {
 
 const STORAGE_KEY = "xmrcheckout_terminal_key";
 const POLL_MS = 2000;
+// The reconciler still records payments that arrive just after expiry; keep the till listening briefly.
+const LATE_PAYMENT_WATCH_MS = 10 * 60 * 1000;
 // Sample settings for the public demo till; nothing here reaches the API.
 const DEMO_TERMINAL: TerminalStatus = {
   name: "", default_currency: "EUR", confirmation_target: 1, expiry_minutes: 15,
@@ -131,7 +134,10 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
   }, [dueUri]);
   const qr = qrImage && qrImage.uri === dueUri ? qrImage.url : null;
 
-  const open = sale && ["pending", "partially_paid", "payment_detected"].includes(sale.status);
+  const watchingLate = Boolean(
+    sale && !demo && sale.status === "expired" && sale.expires_at && now < Date.parse(sale.expires_at) + LATE_PAYMENT_WATCH_MS,
+  );
+  const open = sale && (["pending", "partially_paid", "payment_detected"].includes(sale.status) || watchingLate);
   useEffect(() => {
     if (!open || !sale) return;
     const timer = window.setInterval(async () => {
@@ -267,6 +273,7 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
       return <main className={shell}>{banner}<div className="max-w-md text-center">
         <h1 className="font-sans text-3xl font-semibold">{sale.status === "invalid" ? t("terminal.invalid") : t("terminal.expired")}</h1>
         {sale.amount_paid_xmr && Number(sale.amount_paid_xmr) > 0 ? <p className="mt-3">{t("terminal.receivedCheck", { amount: formatXmrAmount(sale.amount_paid_xmr) })}</p> : <p className="mt-3">{t("terminal.noPayment")}</p>}
+        {watchingLate ? <p className="mt-2 text-sm text-ink-soft">{t("terminal.stillWatching")}</p> : null}
         <button onClick={newSale} className="mt-8 min-h-14 w-full rounded-full bg-ink px-8 text-lg text-cream">{t("terminal.newSale")}</button>
       </div></main>;
     }
@@ -277,11 +284,16 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
         <p className="font-sans text-4xl font-semibold break-all">{formatXmrAmount(due)} XMR</p>
         {remaining ? <p className="font-semibold text-amber-800">{t("terminal.partial")}</p> : fiat ? <p className="text-lg text-ink-soft">{t("pay.merchantPrice", { price: fiat })}</p> : null}
         {demo ? <div className="grid aspect-square w-full max-w-[360px] place-items-center rounded-2xl border-2 border-dashed border-stroke bg-white p-6 text-sm">{t("demo.qrPlaceholder")}</div> : qr ? <Image src={qr} alt={t("terminal.qrAlt", { amount: formatXmrAmount(due) })} width={320} height={320} unoptimized className="w-full max-w-[min(80vw,360px)] rounded-2xl bg-white p-3" /> : <div className="aspect-square w-full max-w-[360px] animate-pulse rounded-2xl bg-white" />}
+        {!demo ? <div className="flex w-full items-center gap-2">
+          <p className="min-w-0 flex-1 break-all rounded-xl bg-white px-3 py-2 text-left font-mono text-xs">{sale.address}</p>
+          <CopyIconButton value={sale.address} label={t("pay.copyAddress")} />
+        </div> : null}
         {sale.note ? <p className="text-ink-soft">{sale.note}</p> : null}
         <p className="text-sm text-ink-soft" aria-live="off">{seconds !== null ? t("terminal.expiresIn", { time: `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` }) : null}{!demo ? <>{seconds !== null ? " · " : ""}{t("terminal.watching")}</> : null}</p>
         {demoControls([["payment_detected", t("terminal.demoSimulateSeen")], ["confirmed", t("terminal.demoSimulateConfirmed")], ["expired", t("terminal.demoSimulateExpired")]])}
         {error ? <p role="alert" className="text-red-700">{error}</p> : null}
-        <button onClick={cancel} disabled={busy || Boolean(remaining)} className="min-h-12 w-full rounded-full border border-stroke px-6 disabled:opacity-50">{t("terminal.cancel")}</button>
+        <button onClick={cancel} disabled={busy || Boolean(remaining)} aria-describedby={remaining ? "terminal-cancel-partial" : undefined} className="min-h-12 w-full rounded-full border border-stroke px-6 disabled:opacity-50">{t("terminal.cancel")}</button>
+        {remaining ? <p id="terminal-cancel-partial" className="text-sm text-ink-soft">{t("terminal.cancelPartial")}</p> : null}
       </div>
     </main>;
   }

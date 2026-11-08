@@ -67,8 +67,7 @@
     "merchantMessage": "Mensaje del comercio",
     "merchantMessageNote": "Escrito por el comercio. Contacta con el comercio indicando el ID de la factura si falta algo.",
     "startAnother": "Iniciar otra compra",
-    "linkUnavailableTitle": "Enlace de factura no disponible",
-    "linkUnavailableHelp": "El ID de factura no es válido o no corresponde a ninguna factura. Introduce el ID completo en formato UUID o pide al comercio un enlace válido. No envíes ningún pago."
+    "linkUnavailableTitle": "Enlace de factura no disponible"
   },
   "checkout": {
     "metaTitle": "Solicitud de pago",
@@ -77,8 +76,6 @@
     "statusAnnouncement": "{status}. {confirmations}/{target} confirmaciones.",
     "statusUnavailable": "Estado no disponible",
     "loadFailed": "No pudimos cargar el estado de esta factura. Actualiza la página o inténtalo más tarde.",
-    "invalidId": "ID de factura no válido",
-    "notFound": "Factura no encontrada",
     "invalidIdHelp": "Introduce el ID de factura completo en formato UUID.",
     "notFoundHelp": "Comprueba que tienes el enlace completo de la factura.",
     "doNotPay": "No envíes ningún pago. Pide al comercio un enlace de factura válido.",
@@ -186,7 +183,6 @@
   "receipt": {
     "metaTitle": "Recibo",
     "eyebrow": "Recibo de pago",
-    "notFoundHelp": "El ID no corresponde a ninguna factura conocida. Comprueba el ID e inténtalo de nuevo.",
     "close": "Cerrar",
     "returnToInvoice": "Volver a la factura",
     "orderIdValue": "ID del pedido: {id}",
@@ -202,6 +198,7 @@
   },
   "paymentLink": {
     "metaTitle": "Comprar con Monero",
+    "eyebrow": "Enlace de pago",
     "unavailableTitle": "Enlace de pago no disponible",
     "unavailableHelp": "No envíes ningún pago. Pide al comercio un enlace de pago nuevo.",
     "checkoutUnavailable": "Pago no disponible",
@@ -299,11 +296,13 @@
     "expired": "Venta vencida",
     "receivedCheck": "Se recibieron {amount} XMR para esta factura. Revísala en el panel.",
     "noPayment": "No se vio ningún pago.",
+    "stillWatching": "Se sigue comprobando durante unos minutos si llega un pago tardío.",
     "partial": "Pago parcial recibido. Envía el importe restante.",
     "qrAlt": "Código QR de pago Monero por {amount} XMR",
     "expiresIn": "Vence en {time}",
     "watching": "Esperando el pago…",
     "cancel": "Cancelar venta",
+    "cancelPartial": "Esta venta no se puede cancelar porque ya llegó parte del pago.",
     "lowAddresses": {
       "one": "Solo queda {count} dirección de factura libre. Las ventas sin pagar y canceladas reservan una dirección durante tres días de forma predeterminada.",
       "other": "Solo quedan {count} direcciones de factura libres. Las ventas sin pagar y canceladas reservan una dirección durante tres días de forma predeterminada."

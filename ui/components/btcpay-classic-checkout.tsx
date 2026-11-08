@@ -103,7 +103,8 @@ const statusMessage = (
     return t("pay.headingExpired");
   }
   if (status === "confirmed") {
-    return t("classic.confirmedAt", { count: confirmationTarget });
+    // A zero-confirmation target means the payment was seen, not yet mined.
+    return confirmationTarget === 0 ? t("pay.headingSeen") : t("classic.confirmedAt", { count: confirmationTarget });
   }
   if (status === "payment_detected") {
     return t("classic.detectedAwaiting");
@@ -306,14 +307,14 @@ export default function BtcpayClassicCheckout({
 
         <div className="grid gap-3 border-t border-stroke bg-sand/50 px-6 py-5">
           <a
-            className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
             href={`/i/${encodeURIComponent(invoiceId)}/receipt`}
           >
             {t("checkout.viewReceipt")}
           </a>
           {redirectUrl ? (
             <a
-              className="inline-flex items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-stroke bg-white px-6 py-3 text-sm font-semibold text-ink transition hover:border-ink/30 hover:bg-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
               href={redirectUrl}
               target="_top"
               rel="noreferrer"
@@ -365,7 +366,7 @@ export default function BtcpayClassicCheckout({
       {canSendPayment ? (
         <div className="border-t border-stroke bg-sand/50 px-6 py-5">
           <a
-            className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream shadow-soft transition hover:bg-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2"
             href={uri}
           >
             {t("pay.openWallet")}

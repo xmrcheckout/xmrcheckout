@@ -15,10 +15,10 @@ const assertBranded = async (page,label) => {
       const page = await browser.newPage({viewport:{width,height:844},reducedMotion:'reduce'});
       await page.clock.install();
       for (const [path,heading,code] of [
-        ['/i/bad-id','Invalid invoice ID',404],
-        ['/i/00000000-0000-4000-8000-000000000999','Invoice not found',404],
-        ['/i/bad-id/receipt','Invalid invoice ID',404],
-        ['/i/00000000-0000-4000-8000-000000000999/receipt','Invoice not found',404],
+        ['/i/bad-id','Invoice link unavailable',404],
+        ['/i/00000000-0000-4000-8000-000000000999','Invoice link unavailable',404],
+        ['/i/bad-id/receipt','Invoice link unavailable',404],
+        ['/i/00000000-0000-4000-8000-000000000999/receipt','Invoice link unavailable',404],
         ['/invoice/bad-id','Invoice link unavailable',404],
         ['/invoice/00000000-0000-4000-8000-000000000999','Invoice link unavailable',404],
         ['/pay/dead-token','Payment link unavailable',404],
@@ -37,6 +37,7 @@ const assertBranded = async (page,label) => {
         if(path==='/missing-page') await assertBranded(page,path);
         if(path.startsWith('/invoice/')) await page.getByLabel('Invoice ID or link').waitFor();
         if(path.startsWith('/pay/')) assert.match(await page.getByRole('main').innerText(),/Do not send payment.*Contact the merchant/s);
+        if(path.startsWith('/pay/')) assert.equal(await page.getByRole('main').getByRole('link',{name:'Return home'}).count(),0,'no homepage link on a buyer page');
         await page.evaluate(()=>document.documentElement.style.fontSize='200%');
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),path+' enlarged overflow');
         page.off('request',onRequest);
@@ -79,7 +80,8 @@ const assertBranded = async (page,label) => {
     for (const path of ['/i/bad-id', '/i/bad-id/receipt', '/i/00000000-0000-4000-8000-000000000999', '/i/00000000-0000-4000-8000-000000000999/receipt']) {
       assert.equal((await noScript.request.head(base+path)).status(),404);
       assert.equal((await staticPage.goto(base+path)).status(),404);
-      await staticPage.getByRole('heading',{name:path.includes('bad-id')?'Invalid invoice ID':'Invoice not found',exact:true}).waitFor();
+      await staticPage.getByRole('heading',{name:'Invoice link unavailable',exact:true}).waitFor();
+      if(path.includes('bad-id')) assert.match(await staticPage.getByRole('main').innerText(),/UUID format/);
       await assertBranded(staticPage,path+' without JavaScript');
     }
     assert.equal((await staticPage.goto(base+'/invoice/bad-id')).status(),404);

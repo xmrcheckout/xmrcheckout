@@ -32,6 +32,7 @@ let terminals = [{ id: "fixture-terminal", name: "Fixture terminal", default_cur
 const archived = new Set();
 let webhookDeliveries = [];
 let healthCompletedAt = null;
+let healthNeverStarted = false;
 let paymentLink = { id: "00000000-0000-4000-8000-000000000777", title: "Fixture product", button_text: "Buy with Monero", description: "Manual delivery", amount_xmr: "0.1", amount_fiat: null, currency: null, confirmation_target: 2, checkout_continue_url: null, confirmation_message: null, enabled: true,
   url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/pay/fixture-token`,
   action_url: `http://127.0.0.1:${process.env.FIXTURE_API_PORT || 8000}/api/core/public/payment-links/fixture-token/invoices` };
@@ -95,6 +96,7 @@ const server = http.createServer((request, response) => {
       }
       webhookDeliveries = options.webhookDeliveries ?? webhookDeliveries;
       if (Object.hasOwn(options, "healthCompletedAt")) healthCompletedAt = options.healthCompletedAt;
+      if (Object.hasOwn(options, "healthNeverStarted")) healthNeverStarted = options.healthNeverStarted;
       availabilityDelay = options.delay ?? 0;
       transferMode = options.transferMode ?? transferMode;
       transferDelay = options.transferDelay ?? 0;
@@ -108,6 +110,13 @@ const server = http.createServer((request, response) => {
       };
       if (dashboardFailure.delay) setTimeout(fail, dashboardFailure.delay); else fail();
       return;
+    } else if (path === "/api/core/terminal/status") {
+      result = { name: terminals[0].name, default_currency: "XMR", confirmation_target: 0, expiry_minutes: 15, currencies: ["XMR"], available_addresses: 50, low_addresses: false };
+    } else if (path.startsWith("/api/core/terminal/invoices")) {
+      // One pending till sale, enough to render the live payment screen.
+      result = { id: fixtureInvoice, address, amount_xmr: "0.5", amount_paid_xmr: null, amount_remaining_xmr: null, status: "pending",
+        confirmation_target: 0, confirmations: 0, expires_at: new Date(Date.now() + 900000).toISOString(), note: null, quote: null,
+        invoice_url: `${process.env.FIXTURE_UI_URL || "http://127.0.0.1:3300"}/invoice/${fixtureInvoice}` };
     } else if (path === "/api/core/terminals" && request.method === "GET") {
       result = { terminals };
     } else if (path.startsWith("/api/core/terminals") && ["POST", "PATCH"].includes(request.method)) {
@@ -201,6 +210,7 @@ const server = http.createServer((request, response) => {
       result = [];
     } else if (path === "/api/core/system/status") {
       result = { wallet_rpc: "ok", daemon: "ok", reconciler: "ok", daemon_height: 3788216, invoice_reconcile_interval_seconds: 30,
+        ...(healthNeverStarted ? { reconciler: "unavailable" } : {}),
         last_reconcile_started_at: healthCompletedAt, last_reconcile_completed_at: healthCompletedAt, last_reconcile_error: null,
         last_reconcile_attempted_invoices: 4, last_reconcile_succeeded_invoices: 4, last_reconcile_failed_invoices: 0 };
     } else if (path.startsWith("/api/core/public/rates/")) {

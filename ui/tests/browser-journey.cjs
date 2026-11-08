@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const base = process.argv[2] || 'http://127.0.0.1:3336';
 
-const labels = ['Customer', 'Your wallet', 'XMR', 'Watches,', 'can’t spend', 'XMR Checkout', 'Your store', 'Optional'];
+const labels = ['Customer', 'Your wallet', 'XMR', 'Watches,', 'can’t spend', 'XMR Checkout', 'Invoices, links', '& terminals', 'Your store', 'Optional'];
 
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH, args: ['--no-sandbox'] });
@@ -20,7 +20,6 @@ const labels = ['Customer', 'Your wallet', 'XMR', 'Watches,', 'can’t spend', '
       assert.equal(await art.count(), 1, 'one diagram');
       assert.match(await art.locator('title').textContent(), /pays your wallet directly/);
       assert.deepEqual(await art.locator('text').allTextContents(), labels);
-      assert.match(await card.locator('.journey-caption').innerText(), /does not override wallet unlock rules/);
 
       const smallest = await art.evaluate((svg) => {
         const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;

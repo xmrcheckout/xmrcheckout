@@ -1,51 +1,14 @@
-import { publicPageMetadata } from "../../../lib/site-metadata";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
-import DonationForm from "../../../components/donation-form";
-import PageIntroBand from "../../../components/page-intro-band";
-import { areDonationsEnabled } from "../../../lib/donations";
-import { getI18n } from "../../../lib/i18n/server";
+import { donationLink } from "../../../lib/donations";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { locale, t } = await getI18n();
-  return publicPageMetadata({ title: t("donate.metaTitle"), description: t("donate.metaDescription"), path: "/donate", locale });
-}
+export const dynamic = "force-dynamic";
 
-export default async function DonatePage() {
-  if (!areDonationsEnabled()) {
+// Donations go through one of the founder's payment links.
+export default function DonatePage() {
+  const link = donationLink();
+  if (!link) {
     notFound();
   }
-  const { t } = await getI18n();
-
-  return (
-    <main id="main-content" tabIndex={-1} className="px-[6vw] pb-20 pt-8 text-ink">
-      <div className="mx-auto w-full max-w-7xl">
-      <PageIntroBand
-        description={t("donate.introDescription")}
-        eyebrow={t("donate.introEyebrow")}
-        id="donate-title"
-        title={t("donate.introTitle")}
-      />
-
-      <section className="mt-6 max-w-3xl">
-        <div className="rounded-surface border border-stroke bg-card p-6 shadow-soft sm:p-7">
-          <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-            <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />
-            {t("donate.amountHeading")}
-          </p>
-          <h2 className="mt-2 font-sans text-2xl font-semibold">
-            {t("donate.formTitle")}
-          </h2>
-          <p className="mt-2 max-w-2xl text-ink-soft">
-            {t("donate.formDescription")}
-          </p>
-          <div className="mt-6">
-            <DonationForm />
-          </div>
-        </div>
-      </section>
-      </div>
-    </main>
-  );
+  permanentRedirect(link);
 }

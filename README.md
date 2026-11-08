@@ -428,14 +428,13 @@ docker compose --profile db-backup up --build -d
 Retention defaults to 7 days. To override:
 - Set `BACKUP_RETENTION_DAYS` in `.env`
 
-### Optional: donations (disabled by default)
+### Optional: donation link (off by default)
 
-Donation endpoints and UI are off by default for self-hosted deployments.
-To enable donations:
-- Set `DONATIONS_ENABLED=true`
-- Set `FOUNDER_PAYMENT_ADDRESS` and `FOUNDER_VIEW_KEY`
+Donations use an ordinary payment link. To show a "Donate" link in the header and footer:
+- Connect your wallet and create a payment link with "Customer enters the amount"
+- Set `DONATION_LINK` to its path, for example `DONATION_LINK=/pay/<token>`, then rebuild the UI
 
-The UI uses the same flag (via Compose), so `/donate` stays unavailable unless donations are explicitly enabled.
+`/donate` then redirects to that payment link. Without `DONATION_LINK`, `/donate` is not found and no "Donate" link is shown.
 
 ## Self-hosted deployment (no Docker)
 
@@ -510,7 +509,7 @@ npm ci
 # Optional but recommended to keep these explicit in non-Docker deployments
 export API_BASE_URL="${API_BASE_URL:-http://127.0.0.1:8000}"
 export NEXT_PUBLIC_SITE_URL="${SITE_URL:-http://127.0.0.1:3000}"
-export NEXT_PUBLIC_DONATIONS_ENABLED="${DONATIONS_ENABLED:-false}"
+export NEXT_PUBLIC_DONATION_LINK="${DONATION_LINK:-}"
 
 npm run build
 npm prune --omit=dev

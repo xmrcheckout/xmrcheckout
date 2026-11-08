@@ -22,7 +22,7 @@ async function noOverflow(page, label) {
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
         page.on('console', message => { if (/hydration|didn't match|did not match/i.test(message.text())) errors.push(message.text()); });
-        for (const [path, checkoutStyle] of [[`/invoice/${id}`, 'standard'], [`/i/${id}`, 'standard'], [`/i/${id}`, 'btcpay_classic'], [`/donate/${id}`, 'standard']]) {
+        for (const [path, checkoutStyle] of [[`/invoice/${id}`, 'standard'], [`/i/${id}`, 'standard'], [`/i/${id}`, 'btcpay_classic']]) {
           await fixture({ invoiceStatus: 'pending', invoiceExpiry: deadline, checkoutStyle });
           for (const width of [320, 390, 768, 1440]) {
             await page.setViewportSize({ width, height: 844 });

@@ -8,9 +8,8 @@ const id = '00000000-0000-4000-8000-000000000456';
   try {
     const context = await browser.newContext({ reducedMotion: 'reduce' });
     const page = await context.newPage();
-    for (const path of ['/', '/invoice', '/faq', '/tour', '/docs', '/docs/integrations', '/guides', '/guides/self-hosted-monero-checkout', '/guides/monero-payment-api-webhooks', '/guides/monero-payment-buttons', '/guides/in-person-monero-checkout', '/donate']) {
+    for (const path of ['/', '/invoice', '/faq', '/tour', '/docs', '/docs/integrations', '/guides', '/guides/self-hosted-monero-checkout', '/guides/monero-payment-api-webhooks', '/guides/monero-payment-buttons', '/guides/in-person-monero-checkout']) {
       const response = await page.goto(base + path, { waitUntil: 'networkidle' });
-      if (path === '/donate' && response.status() === 404) continue;
       assert.equal(response.status(), 200, path);
       const title = await page.title();
       assert.ok(title.endsWith(' | XMR Checkout'), path + ' site title');

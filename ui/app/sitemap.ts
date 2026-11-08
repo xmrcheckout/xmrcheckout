@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 
-import { areDonationsEnabled } from "../lib/donations";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -47,11 +46,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
   entries.push({ url: `${normalizedSiteUrl}/tour`, lastModified });
-  if (areDonationsEnabled()) {
-    entries.push({
-      url: `${normalizedSiteUrl}/donate`,
-      lastModified,
-    });
-  }
   return entries;
 }

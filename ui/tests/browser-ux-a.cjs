@@ -5,7 +5,7 @@ const base = process.argv[2] || "http://127.0.0.1:3336";
 const fixture = process.argv[3] || "http://127.0.0.1:8035";
 const id = "00000000-0000-4000-8000-000000000456";
 const paymentLinkId = "00000000-0000-4000-8000-000000000777";
-const buyerRoutes = ["/invoice/", "/donate/", "/i/"];
+const buyerRoutes = ["/invoice/", "/i/"];
 const defaultState = {
   invoiceStatus: "pending", invoiceResponseStatus: 200, invoiceExpiry: "default",
   confirmationTarget: 2, confirmations: null, checkingDelayed: false,
@@ -107,16 +107,14 @@ async function main() {
           assert.equal(await page.getByText(/^Approx\. USD reference: /).count(), 0, route + " completed/unavailable invoice has no current estimate");
           assert.equal(await page.getByText("Exact amount", { exact: true }).count(), 0);
         }
-        if (route !== "/donate/") {
-          await state({ invoiceStatus });
-          await goto(page, route + id);
-          await page.getByText(/^Merchant price: /).waitFor();
-          await page.getByText("About this price", { exact: true }).click();
-          await page.getByText(/Converted to XMR at 200 EUR\/XMR \(fixture\) at 2026-10-30 12:00:00 UTC\./).waitFor();
-        }
+        await state({ invoiceStatus });
+        await goto(page, route + id);
+        await page.getByText(/^Merchant price: /).waitFor();
+        await page.getByText("About this price", { exact: true }).click();
+        await page.getByText(/Converted to XMR at 200 EUR\/XMR \(fixture\) at 2026-10-30 12:00:00 UTC\./).waitFor();
       }
     }
-    for (const route of ["/invoice/", "/donate/"]) {
+    for (const route of ["/invoice/"]) {
       for (const invoiceStatus of ["pending", "partially_paid", "payment_detected"]) {
         await state({ invoiceStatus, checkingDelayed: true });
         await goto(page, route + id);
@@ -126,13 +124,10 @@ async function main() {
       await goto(page, route + id);
       assert.equal(await page.getByText(delayedText, { exact: true }).count(), 0);
     }
-    for (const invoiceResponseStatus of [404, 503]) {
-      await state({ invoiceResponseStatus });
-      await goto(page, "/donate/" + id);
-      await page.getByRole("heading", { name: invoiceResponseStatus === 404 ? "Donation invoice not found" : "Status unavailable", exact: true }).waitFor();
-      assert.equal(await page.getByLabel("Invoice ID or link", { exact: true }).count(), 0, "Donation errors must not offer the general invoice lookup");
-      assert.equal(await page.locator('form[action="/invoice"]').count(), 0);
-    }
+    // Older donation links now open the ordinary invoice page.
+    await state();
+    await goto(page, "/donate/" + id);
+    await page.waitForURL(base + "/invoice/" + id);
 
     await state();
     originalPaymentLink = (await (await fetch(fixture + "/api/core/payment-links")).json())[0];
@@ -155,7 +150,7 @@ async function main() {
     assert.equal((await page.getByRole("main").innerText()).includes("Watching for payment"), false, "Demo must not claim network checking");
     assert.match(await page.getByRole("main").innerText(), /simulated/i);
     await context.close();
-    console.log("Buyer UX: receipt safety, confirmation wording, amount labels, quotes, delays, donation errors, link amounts, and demo honesty passed.");
+    console.log("Buyer UX: receipt safety, confirmation wording, amount labels, quotes, delays, old donation links, link amounts, and demo honesty passed.");
   } finally {
     if (originalPaymentLink) {
       await fetch(fixture + "/api/core/payment-links/" + paymentLinkId, {

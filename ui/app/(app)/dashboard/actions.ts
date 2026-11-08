@@ -175,7 +175,7 @@ export async function createInvoiceAction(
   const amount = Number(amountRaw);
   if (Number.isNaN(amount) || amount <= 0) {
     return {
-      error: isFiat ? t("dashboard.actions.invalidFiat") : t("donate.invalidAmount"),
+      error: isFiat ? t("dashboard.actions.invalidFiat") : t("dashboard.actions.invalidXmr"),
       invoiceId: null,
       address: null,
       amount: null,

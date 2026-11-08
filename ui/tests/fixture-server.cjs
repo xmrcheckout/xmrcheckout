@@ -143,7 +143,7 @@ const server = http.createServer((request, response) => {
         return;
       }
       status = 405;
-    } else if ([`/api/core/public/invoice/${fixtureInvoice}`, `/api/core/public/donation/${fixtureInvoice}`].includes(path)) {
+    } else if (path === `/api/core/public/invoice/${fixtureInvoice}`) {
       if (invoiceTransportFailure) {
         console.log("fixture", request.method, path, "disconnected");
         request.socket.destroy();

@@ -64,7 +64,7 @@ async function fits(page) {
     }
     const publicPages = ['/', '/invoice', '/faq', '/docs', '/docs/integrations', '/guides',
       '/guides/self-hosted-monero-checkout', '/guides/monero-payment-api-webhooks',
-      '/guides/monero-payment-buttons', '/tour', '/donate',
+      '/guides/monero-payment-buttons', '/tour',
       '/invoice/00000000-0000-4000-8000-000000000456', '/pay/fixture-token'];
     for (const width of [320,390,768,1440]) {
       await page.setViewportSize({width,height:1000});

@@ -102,17 +102,27 @@ const count = async () => (await (await fetch(fixture + '/__fixture')).json()).m
       await page.goto(base + '/dashboard?tab=' + tab);
       await page.waitForURL(url => url.searchParams.get('login') === '1');
       assert.equal(new URL(page.url()).searchParams.get('next'), '/dashboard?tab=' + tab);
+      // A rejected key ends the session: the stale cookie is gone and the dialog says why.
+      assert.equal(new URL(page.url()).searchParams.get('expired'), '1');
+      assert.equal((await context.cookies(base)).some(cookie => cookie.name === 'xmrcheckout_api_key'), false, 'stale sign-in cookie cleared');
+      await page.getByText('Your session ended', { exact: false }).waitFor();
+      await context.addCookies([{ name: 'xmrcheckout_api_key', value: 'fixture-key', url: base }]);
       await configure({ dashboardFailure: { path: '/api/core/' + tab, method: 'GET', status: 503 } });
       await page.goto(base + '/dashboard?tab=' + tab);
       await page.getByRole('alert').filter({ hasText: /unavailable/i }).waitFor();
       assert.equal(new URL(page.url()).pathname, '/dashboard');
     }
     await configure({ dashboardFailure: null });
-    await page.goto(base + '/welcome');
-    await page.waitForURL('**/dashboard');
+    // A failed CSV export returns to the Invoices tab with a message, not raw API text.
+    await configure({ dashboardFailure: { path: '/api/core/invoices/export.csv', method: 'GET', status: 503 } });
+    await page.goto(base + '/dashboard/invoices.csv');
+    await page.waitForURL(url => url.searchParams.get('export_failed') === '1');
+    await page.getByRole('alert').filter({ hasText: 'Could not export' }).waitFor();
+    await configure({ dashboardFailure: null });
     await context.clearCookies();
-    await page.goto(base + '/welcome');
-    await page.waitForURL('**/?login=1');
+    await page.goto(base + '/dashboard');
+    await page.waitForURL(url => url.searchParams.get('login') === '1');
+    assert.equal(new URL(page.url()).searchParams.get('expired'), null, 'a first visit is not called an ended session');
     await context.close();
   } finally { await configure({ dashboardFailure: null, resetDashboard: true }); await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

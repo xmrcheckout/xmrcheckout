@@ -137,8 +137,20 @@ async function fits(page, label) {
       await healthContext.close();
     }
     console.log('PASS health UTC timestamps across browser zones, missing and invalid timestamps');
+
+    // Before the first payment check ever runs, health says so instead of "Unavailable".
+    await fixture({ healthCompletedAt: null, healthNeverStarted: true });
+    const freshContext = await contextFor(browser, { locale: 'en-GB', viewport: { width: 390, height: 1000 } });
+    const freshPage = await freshContext.newPage();
+    for (const tab of ['health', 'overview']) {
+      await freshPage.goto(base + '/dashboard?tab=' + tab, { waitUntil: 'networkidle' });
+      assert.ok(await freshPage.getByText(en.health.notStarted, { exact: true }).count() > 0, `${tab} shows not started`);
+    }
+    await freshContext.close();
+    await fixture({ healthNeverStarted: false });
+    console.log('PASS health before the first check');
   } finally {
-    await fixture({ profileStyle: null, webhookDeliveries: [], healthCompletedAt: null });
+    await fixture({ profileStyle: null, webhookDeliveries: [], healthCompletedAt: null, healthNeverStarted: false });
     await browser.close();
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

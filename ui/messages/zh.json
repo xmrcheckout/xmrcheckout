@@ -471,8 +471,7 @@
     "copy": "复制参考 ID"
   },
   "meta": {
-    "connectWallet": "连接钱包",
-    "welcome": "欢迎"
+    "connectWallet": "连接钱包"
   },
   "credentials": {
     "yourApiKey": "你的 API 密钥",
@@ -748,6 +747,7 @@
       "statusFilters": "账单状态筛选",
       "noMatch": "没有符合这些筛选条件的账单。",
       "noMatchHelp": "请调整搜索或状态筛选条件，或在准备好测试流程时创建新账单。",
+      "exportFailed": "无法导出账单。请刷新页面后重试。",
       "firstRunHelp": "使用上方的“创建账单”自行创建一张，或设置<links>付款链接</links>或<terminals>收款终端</terminals>，让顾客自行发起付款。",
       "archived": "已归档",
       "paidAfterExpiry": "过期后付款",
@@ -968,6 +968,7 @@
   },
   "health": {
     "unavailable": "不可用",
+    "notStarted": "尚未开始",
     "needsReview": "需要查看",
     "operational": "运行正常",
     "connected": "已连接",

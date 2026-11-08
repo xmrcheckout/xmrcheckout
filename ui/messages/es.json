@@ -474,8 +474,7 @@
     "copy": "Copiar ID de referencia"
   },
   "meta": {
-    "connectWallet": "Conectar billetera",
-    "welcome": "Bienvenida"
+    "connectWallet": "Conectar billetera"
   },
   "credentials": {
     "yourApiKey": "Tu clave de API",
@@ -754,6 +753,7 @@
       "statusFilters": "Filtros de estado de facturas",
       "noMatch": "Ninguna factura coincide con estos filtros.",
       "noMatchHelp": "Ajusta la búsqueda o el filtro de estado, o crea una factura nueva cuando quieras probar el flujo.",
+      "exportFailed": "No se pudieron exportar las facturas. Actualiza la página e inténtalo de nuevo.",
       "firstRunHelp": "Usa Crear factura arriba para crear una tú mismo, o configura un <links>enlace de pago</links> o un <terminals>terminal</terminals> para que los clientes puedan iniciar un pago por su cuenta.",
       "archived": "Archivada",
       "paidAfterExpiry": "Pagada tras el vencimiento",
@@ -979,6 +979,7 @@
   },
   "health": {
     "unavailable": "No disponible",
+    "notStarted": "Aún no ha empezado",
     "needsReview": "Requiere revisión",
     "operational": "Operativo",
     "connected": "Conectado",

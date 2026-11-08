@@ -474,8 +474,7 @@
     "copy": "Referenz-ID kopieren"
   },
   "meta": {
-    "connectWallet": "Wallet verbinden",
-    "welcome": "Willkommen"
+    "connectWallet": "Wallet verbinden"
   },
   "credentials": {
     "yourApiKey": "Ihr API-Schlüssel",
@@ -754,6 +753,7 @@
       "statusFilters": "Statusfilter für Rechnungen",
       "noMatch": "Keine Rechnungen entsprechen diesen Filtern.",
       "noMatchHelp": "Passen Sie Suche oder Statusfilter an oder erstellen Sie eine neue Rechnung, wenn Sie den Ablauf testen möchten.",
+      "exportFailed": "Die Rechnungen konnten nicht exportiert werden. Aktualisieren Sie die Seite und versuchen Sie es erneut.",
       "firstRunHelp": "Erstellen Sie oben mit „Rechnung erstellen“ selbst eine, oder richten Sie einen <links>Zahlungslink</links> oder ein <terminals>Terminal</terminals> ein, damit Kunden selbst eine Zahlung starten können.",
       "archived": "Archiviert",
       "paidAfterExpiry": "Nach Ablauf bezahlt",
@@ -979,6 +979,7 @@
   },
   "health": {
     "unavailable": "Nicht verfügbar",
+    "notStarted": "Noch nicht gestartet",
     "needsReview": "Prüfung nötig",
     "operational": "In Betrieb",
     "connected": "Verbunden",

@@ -474,8 +474,7 @@
     "copy": "Copia l'ID di riferimento"
   },
   "meta": {
-    "connectWallet": "Collega il portafoglio",
-    "welcome": "Benvenuto"
+    "connectWallet": "Collega il portafoglio"
   },
   "credentials": {
     "yourApiKey": "La tua chiave API",
@@ -754,6 +753,7 @@
       "statusFilters": "Filtri di stato della richiesta di pagamento",
       "noMatch": "Nessuna richiesta di pagamento corrisponde a questi filtri.",
       "noMatchHelp": "Modifica la ricerca o il filtro di stato, oppure crea una nuova richiesta di pagamento quando sei pronto a provare il flusso.",
+      "exportFailed": "Non è stato possibile esportare le richieste di pagamento. Aggiorna la pagina e riprova.",
       "firstRunHelp": "Usa Crea richiesta di pagamento qui sopra per crearne una tu, oppure configura un <links>link di pagamento</links> o un <terminals>terminale</terminals> così i clienti possono avviare un pagamento da soli.",
       "archived": "Archiviata",
       "paidAfterExpiry": "Pagata dopo la scadenza",
@@ -979,6 +979,7 @@
   },
   "health": {
     "unavailable": "Non disponibile",
+    "notStarted": "Non ancora avviato",
     "needsReview": "Da controllare",
     "operational": "Operativo",
     "connected": "Collegato",

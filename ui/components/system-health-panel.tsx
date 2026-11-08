@@ -24,7 +24,14 @@ type SystemHealthPanelProps = {
   status: SystemStatusSummary | null;
 };
 
+// Payment checking has never run yet (for example right after install): not a failure.
+export const reconcilerNotStarted = (status: SystemStatusSummary | null) =>
+  Boolean(status && status.reconciler === "unavailable" && !status.last_reconcile_started_at);
+
 const healthBadge = (status: SystemStatusSummary | null, t: Translate) => {
+  if (reconcilerNotStarted(status)) {
+    return { label: t("health.notStarted"), tone: "pending" as StatusTone };
+  }
   if (!status || status.reconciler === "unavailable") {
     return { label: t("health.unavailable"), tone: "pending" as StatusTone };
   }

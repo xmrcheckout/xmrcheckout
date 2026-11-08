@@ -480,8 +480,7 @@
     "copy": "Kopírovat referenční ID"
   },
   "meta": {
-    "connectWallet": "Připojit peněženku",
-    "welcome": "Vítejte"
+    "connectWallet": "Připojit peněženku"
   },
   "credentials": {
     "yourApiKey": "Váš API klíč",
@@ -766,6 +765,7 @@
       "statusFilters": "Filtry stavu platebních výzev",
       "noMatch": "Těmto filtrům neodpovídají žádné platební výzvy.",
       "noMatchHelp": "Upravte hledání nebo filtr stavu, případně vytvořte novou platební výzvu, až budete chtít postup vyzkoušet.",
+      "exportFailed": "Platební výzvy se nepodařilo exportovat. Obnovte stránku a zkuste to znovu.",
       "firstRunHelp": "Tlačítkem „Vytvořit platební výzvu“ výše ji vytvořte sami, nebo nastavte <links>platební odkaz</links> či <terminals>terminál</terminals>, aby zákazníci mohli platbu zahájit sami.",
       "archived": "Archivováno",
       "paidAfterExpiry": "Zaplaceno po vypršení",
@@ -1001,6 +1001,7 @@
   },
   "health": {
     "unavailable": "Nedostupné",
+    "notStarted": "Zatím nespuštěno",
     "needsReview": "Vyžaduje kontrolu",
     "operational": "V provozu",
     "connected": "Připojeno",

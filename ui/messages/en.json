@@ -474,8 +474,7 @@
     "copy": "Copy reference ID"
   },
   "meta": {
-    "connectWallet": "Connect wallet",
-    "welcome": "Welcome"
+    "connectWallet": "Connect wallet"
   },
   "credentials": {
     "yourApiKey": "Your API key",
@@ -754,6 +753,7 @@
       "statusFilters": "Invoice status filters",
       "noMatch": "No invoices match these filters.",
       "noMatchHelp": "Adjust the search or status filter, or create a new invoice when you are ready to test the flow.",
+      "exportFailed": "Could not export invoices. Refresh the page and try again.",
       "firstRunHelp": "Use Create invoice above to make one yourself, or set up a <links>payment link</links> or <terminals>terminal</terminals> so customers can start a payment on their own.",
       "archived": "Archived",
       "paidAfterExpiry": "Paid after expiry",
@@ -979,6 +979,7 @@
   },
   "health": {
     "unavailable": "Unavailable",
+    "notStarted": "Not started yet",
     "needsReview": "Needs review",
     "operational": "Operational",
     "connected": "Connected",

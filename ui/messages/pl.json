@@ -480,8 +480,7 @@
     "copy": "Kopiuj identyfikator referencyjny"
   },
   "meta": {
-    "connectWallet": "Połącz portfel",
-    "welcome": "Witaj"
+    "connectWallet": "Połącz portfel"
   },
   "credentials": {
     "yourApiKey": "Twój klucz API",
@@ -766,6 +765,7 @@
       "statusFilters": "Filtry statusu",
       "noMatch": "Żadna prośba o płatność nie pasuje do tych filtrów.",
       "noMatchHelp": "Zmień wyszukiwanie lub filtr statusu albo utwórz nową prośbę o płatność, gdy zechcesz przetestować cały proces.",
+      "exportFailed": "Nie udało się wyeksportować próśb o płatność. Odśwież stronę i spróbuj ponownie.",
       "firstRunHelp": "Użyj powyżej przycisku „Utwórz prośbę o płatność”, aby utworzyć ją samodzielnie, albo skonfiguruj <links>link płatności</links> lub <terminals>terminal</terminals>, aby klienci mogli sami rozpocząć płatność.",
       "archived": "Zarchiwizowana",
       "paidAfterExpiry": "Opłacona po wygaśnięciu",
@@ -1001,6 +1001,7 @@
   },
   "health": {
     "unavailable": "Niedostępny",
+    "notStarted": "Jeszcze nie uruchomiono",
     "needsReview": "Wymaga przeglądu",
     "operational": "Działa",
     "connected": "Połączony",

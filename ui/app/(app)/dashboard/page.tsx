@@ -21,6 +21,7 @@ import InvoiceAddressAvailability, { type SubaddressStatus } from "../../../comp
 import InvoicePanel from "../../../components/invoice-panel";
 import StatusBadge, { type StatusTone } from "../../../components/status-badge";
 import SystemHealthPanel, {
+  reconcilerNotStarted,
   type SystemStatusSummary,
 } from "../../../components/system-health-panel";
 import WebhookHistoryPanel from "../../../components/webhook-history-panel";
@@ -135,6 +136,9 @@ const dashboardNavItems = (t: Translate) => [
 ];
 
 const reconcilerBadge = (systemStatus: SystemStatusSummary | null, t: Translate) => {
+  if (reconcilerNotStarted(systemStatus)) {
+    return { tone: "pending" as StatusTone, label: t("health.notStarted") };
+  }
   if (!systemStatus || systemStatus.reconciler === "unavailable") {
     return { tone: "pending" as StatusTone, label: t("dashboard.page.reconcilerUnavailable") };
   }
@@ -155,9 +159,11 @@ export default async function DashboardPage({
   for (const [key, value] of Object.entries(resolvedSearchParams)) {
     if (typeof value === "string") destinationParams.set(key, value);
   }
-  const signInUrl = `/?login=1&next=${encodeURIComponent(dashboardDestination(`/dashboard?${destinationParams}`))}`;
-  // A rejected key means the session ended (for example after an API key reset); the modal says so.
-  const loginUrl = `${signInUrl}&expired=1`;
+  const destination = encodeURIComponent(dashboardDestination(`/dashboard?${destinationParams}`));
+  const signInUrl = `/?login=1&next=${destination}`;
+  // A rejected key means the session ended (for example after an API key reset):
+  // this route clears the stale cookie, then the sign-in dialog says what happened.
+  const loginUrl = `/session-ended?next=${destination}`;
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   const webhookSecret =
     (await cookies()).get("xmrcheckout_webhook_secret")?.value ?? null;
@@ -543,6 +549,11 @@ export default async function DashboardPage({
           {dataUnavailable ? (
             <p role="alert" className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
               {t("dashboard.page.dataUnavailable")}
+            </p>
+          ) : null}
+          {activeTab === "invoices" && resolvedSearchParams.export_failed === "1" ? (
+            <p role="alert" className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+              {t("dashboard.invoices.exportFailed")}
             </p>
           ) : null}
           {activeTab === "overview" ? (

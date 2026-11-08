@@ -474,8 +474,7 @@
     "copy": "Copiar ID de referência"
   },
   "meta": {
-    "connectWallet": "Conectar carteira",
-    "welcome": "Boas-vindas"
+    "connectWallet": "Conectar carteira"
   },
   "credentials": {
     "yourApiKey": "A sua chave de API",
@@ -754,6 +753,7 @@
       "statusFilters": "Filtros de status da fatura",
       "noMatch": "Nenhuma fatura corresponde a estes filtros.",
       "noMatchHelp": "Ajuste a pesquisa ou o filtro de status, ou crie uma nova fatura quando estiver pronto para testar o fluxo.",
+      "exportFailed": "Não foi possível exportar as faturas. Atualize a página e tente novamente.",
       "firstRunHelp": "Use Criar fatura acima para criar uma você mesmo, ou configure um <links>link de pagamento</links> ou um <terminals>terminal</terminals> para que os clientes possam iniciar um pagamento por conta própria.",
       "archived": "Arquivada",
       "paidAfterExpiry": "Paga após a expiração",
@@ -979,6 +979,7 @@
   },
   "health": {
     "unavailable": "Indisponível",
+    "notStarted": "Ainda não iniciado",
     "needsReview": "Requer revisão",
     "operational": "Operacional",
     "connected": "Conectado",

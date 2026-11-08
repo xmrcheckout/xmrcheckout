@@ -1151,8 +1151,9 @@
     "selfHostBody": "XMR Checkout má otevřený zdrojový kód a lze ho hostovat samostatně. Než k ní připojíte peněženku, nasaďte si vlastní instanci.",
     "selfHostCta": "Hostovat XMR Checkout samostatně",
     "journey": {
-      "description": "Zákazník platí přímo do vaší peněženky. XMR Checkout vytváří platební výzvy a potvrzuje platby s přístupem pouze pro prohlížení, nemůže utrácet a volitelně může aktualizovat váš obchod.",
-      "card": "Platební výzvy a potvrzení",
+      "description": "Zákazník platí přímo do vaší peněženky, přes platební stránku, platební odkaz nebo terminál. XMR Checkout vytváří platební výzvy a potvrzuje platby s přístupem pouze pro prohlížení, nemůže utrácet a volitelně může aktualizovat váš obchod.",
+      "cardLine1": "Platební výzvy,",
+      "cardLine2": "odkazy a terminály",
       "title": "Jak se platba dostane do vaší peněženky",
       "customer": "Zákazník",
       "yourWallet": "Vaše peněženka",

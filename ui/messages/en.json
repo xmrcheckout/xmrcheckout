@@ -1127,8 +1127,9 @@
     "selfHostBody": "XMR Checkout is open source and self-hostable. Deploy your own instance before connecting your wallet there.",
     "selfHostCta": "Self-host XMR Checkout",
     "journey": {
-      "description": "A customer pays your wallet directly. XMR Checkout creates invoices and confirms payments using view-only access, cannot spend, and can optionally update your store.",
-      "card": "Invoices & confirmations",
+      "description": "A customer pays your wallet directly, from a checkout page, payment link or terminal. XMR Checkout creates invoices and confirms payments using view-only access, cannot spend, and can optionally update your store.",
+      "cardLine1": "Invoices, links",
+      "cardLine2": "& terminals",
       "title": "How a payment reaches your wallet",
       "customer": "Customer",
       "yourWallet": "Your wallet",

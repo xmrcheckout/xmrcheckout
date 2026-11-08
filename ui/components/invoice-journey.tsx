@@ -44,7 +44,8 @@ export function InvoiceJourney({ t }: { t: Translate }) {
           <rect x="34" y="184" width="208" height="92" rx="14" fill="#101217" />
           <image href="/logo.png" x="62" y="198" width="32" height="32" preserveAspectRatio="xMidYMid meet" />
           <text className="journey-text-card" x="100" y="220">XMR Checkout</text>
-          <text className="journey-text-card-sub" x="138" y="257" textAnchor="middle">{t("home.journey.card")}</text>
+          <text className="journey-text-card-sub" x="138" y="250" textAnchor="middle">{t("home.journey.cardLine1")}</text>
+          <text className="journey-text-card-sub" x="138" y="267" textAnchor="middle">{t("home.journey.cardLine2")}</text>
 
           <path d="M242 228H282" fill="none" stroke={infoColor} strokeWidth="2" strokeDasharray="5 5" markerEnd={`url(#${id}-info)`} />
           <rect x="286" y="180" width="106" height="96" rx="12" fill="#fffaf2" stroke="#8a735b" strokeWidth="1.25" strokeDasharray="4 4" />

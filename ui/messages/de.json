@@ -1127,8 +1127,9 @@
     "selfHostBody": "XMR Checkout ist Open Source und selbst hostbar. Betreiben Sie Ihre eigene Instanz, bevor Sie Ihre Wallet dort verbinden.",
     "selfHostCta": "XMR Checkout selbst hosten",
     "journey": {
-      "description": "Ein Kunde bezahlt direkt an Ihre Wallet. XMR Checkout erstellt Rechnungen und bestätigt Zahlungen mit reinem Lesezugriff, kann nichts ausgeben und kann optional Ihren Shop aktualisieren.",
-      "card": "Rechnungen & Bestätigungen",
+      "description": "Ein Kunde bezahlt direkt an Ihre Wallet, über eine Checkout-Seite, einen Zahlungslink oder ein Terminal. XMR Checkout erstellt Rechnungen und bestätigt Zahlungen mit reinem Lesezugriff, kann nichts ausgeben und kann optional Ihren Shop aktualisieren.",
+      "cardLine1": "Rechnungen, Links",
+      "cardLine2": "& Terminals",
       "title": "Wie eine Zahlung Ihre Wallet erreicht",
       "customer": "Kunde",
       "yourWallet": "Ihre Wallet",

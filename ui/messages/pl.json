@@ -1151,8 +1151,9 @@
     "selfHostBody": "XMR Checkout to otwarte oprogramowanie do samodzielnego hostowania. Wdróż własną instancję, zanim połączysz z nią portfel.",
     "selfHostCta": "Hostuj XMR Checkout samodzielnie",
     "journey": {
-      "description": "Klient płaci bezpośrednio na twój portfel. XMR Checkout tworzy prośby o płatność i potwierdza płatności z dostępem tylko do odczytu, nie może wydawać środków i opcjonalnie może aktualizować twój sklep.",
-      "card": "Prośby o płatność i potwierdzenia",
+      "description": "Klient płaci bezpośrednio na twój portfel, przez stronę płatności, link płatności lub terminal. XMR Checkout tworzy prośby o płatność i potwierdza płatności z dostępem tylko do odczytu, nie może wydawać środków i opcjonalnie może aktualizować twój sklep.",
+      "cardLine1": "Prośby o płatność,",
+      "cardLine2": "linki i terminale",
       "title": "Jak płatność trafia do twojego portfela",
       "customer": "Klient",
       "yourWallet": "Twój portfel",

@@ -1127,8 +1127,9 @@
     "selfHostBody": "XMR Checkout est open source et auto-hébergeable. Déployez votre propre instance avant d’y connecter votre portefeuille.",
     "selfHostCta": "Auto-héberger XMR Checkout",
     "journey": {
-      "description": "Un client paie directement votre portefeuille. XMR Checkout crée des factures et confirme les paiements grâce à un accès en lecture seule, ne peut pas dépenser et peut, si vous le souhaitez, mettre à jour votre boutique.",
-      "card": "Factures et confirmations",
+      "description": "Un client paie directement votre portefeuille, depuis une page de paiement, un lien de paiement ou un terminal. XMR Checkout crée des factures et confirme les paiements grâce à un accès en lecture seule, ne peut pas dépenser et peut, si vous le souhaitez, mettre à jour votre boutique.",
+      "cardLine1": "Factures, liens",
+      "cardLine2": "et terminaux",
       "title": "Comment un paiement arrive dans votre portefeuille",
       "customer": "Client",
       "yourWallet": "Votre portefeuille",

@@ -1115,8 +1115,9 @@
     "selfHostBody": "XMR Checkout 是开源的，可以自托管。请先部署你自己的实例，再将钱包连接到该实例。",
     "selfHostCta": "自托管 XMR Checkout",
     "journey": {
-      "description": "顾客直接向你的钱包付款。XMR Checkout 通过只读访问创建账单并确认付款，无法花费资金，并可选择更新你的商店。",
-      "card": "账单与确认",
+      "description": "顾客通过结账页面、付款链接或收款终端直接向你的钱包付款。XMR Checkout 通过只读访问创建账单并确认付款，无法花费资金，并可选择更新你的商店。",
+      "cardLine1": "账单、链接",
+      "cardLine2": "与收款终端",
       "title": "付款如何到达你的钱包",
       "customer": "顾客",
       "yourWallet": "你的钱包",

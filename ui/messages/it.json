@@ -1127,8 +1127,9 @@
     "selfHostBody": "XMR Checkout è open source e ospitabile in autonomia. Installa la tua istanza prima di collegarvi il tuo portafoglio.",
     "selfHostCta": "Ospita XMR Checkout in autonomia",
     "journey": {
-      "description": "Un cliente paga direttamente il tuo portafoglio. XMR Checkout crea richieste di pagamento e conferma i pagamenti con accesso in sola lettura, non può spendere e, facoltativamente, può aggiornare il tuo negozio.",
-      "card": "Richieste di pagamento e conferme",
+      "description": "Un cliente paga direttamente il tuo portafoglio, da una pagina di pagamento, un link di pagamento o un terminale. XMR Checkout crea richieste di pagamento e conferma i pagamenti con accesso in sola lettura, non può spendere e, facoltativamente, può aggiornare il tuo negozio.",
+      "cardLine1": "Richieste di pagamento,",
+      "cardLine2": "link e terminali",
       "title": "Come un pagamento arriva al tuo portafoglio",
       "customer": "Cliente",
       "yourWallet": "Il tuo portafoglio",

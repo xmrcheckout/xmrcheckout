@@ -1127,8 +1127,9 @@
     "selfHostBody": "XMR Checkout es de código abierto y autoalojable. Despliega tu propia instancia antes de conectar allí tu billetera.",
     "selfHostCta": "Aloja tú mismo XMR Checkout",
     "journey": {
-      "description": "Un cliente paga directamente a tu billetera. XMR Checkout crea facturas y confirma pagos con acceso de solo lectura, no puede gastar y, si quieres, puede actualizar tu tienda.",
-      "card": "Facturas y confirmaciones",
+      "description": "Un cliente paga directamente a tu billetera, desde una página de pago, un enlace de pago o un terminal. XMR Checkout crea facturas y confirma pagos con acceso de solo lectura, no puede gastar y, si quieres, puede actualizar tu tienda.",
+      "cardLine1": "Facturas, enlaces",
+      "cardLine2": "y terminales",
       "title": "Cómo llega un pago a tu billetera",
       "customer": "Cliente",
       "yourWallet": "Tu billetera",

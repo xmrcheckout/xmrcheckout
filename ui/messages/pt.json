@@ -1127,8 +1127,9 @@
     "selfHostBody": "O XMR Checkout é de código aberto e auto-hospedável. Implante a sua própria instância antes de conectar a sua carteira a ela.",
     "selfHostCta": "Auto-hospedar o XMR Checkout",
     "journey": {
-      "description": "Um cliente paga diretamente na sua carteira. O XMR Checkout cria faturas e confirma pagamentos com acesso somente leitura, não pode gastar e, opcionalmente, pode atualizar a sua loja.",
-      "card": "Faturas e confirmações",
+      "description": "Um cliente paga diretamente na sua carteira, por uma página de pagamento, um link de pagamento ou um terminal. O XMR Checkout cria faturas e confirma pagamentos com acesso somente leitura, não pode gastar e, opcionalmente, pode atualizar a sua loja.",
+      "cardLine1": "Faturas, links",
+      "cardLine2": "e terminais",
       "title": "Como um pagamento chega à sua carteira",
       "customer": "Cliente",
       "yourWallet": "A sua carteira",

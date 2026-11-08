@@ -327,7 +327,6 @@
     "connectionLost": "Connessione persa. Riprova.",
     "unavailable": "Terminale non disponibile",
     "openFromDashboard": "Apri il link del terminale dalla tua dashboard su questo dispositivo.",
-    "forget": "Dimentica questo terminale",
     "seen": "Pagamento visto",
     "waiting": "In attesa delle conferme: {confirmations} di {target}",
     "notInBlock": "Visto sulla rete, non ancora in un blocco.",
@@ -351,7 +350,6 @@
     "creating": "Creazione della richiesta di pagamento…",
     "charge": "Incassa",
     "conversionNote": "Gli importi in {currency} vengono convertiti in XMR a un tasso di riferimento quando viene creata la richiesta di pagamento.",
-    "forgetConfirm": "Rimuovere questo terminale da questo dispositivo? Per usarlo di nuovo ti servirà ancora il link del terminale.",
     "demoBack": "Torna alla demo",
     "demoName": "Cassa demo",
     "demoMetaTitle": "Cassa demo",
@@ -1389,7 +1387,7 @@
         "step1": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
         "step2": "Apri <strong>Dashboard → Terminali</strong> e scegli <strong>Crea un terminale</strong>. Dagli un nome come “Bancone principale” e scegli una valuta predefinita.",
         "step3": "La dashboard mostra il link del terminale e un codice QR. Scansionalo con il dispositivo che userai alla cassa o copiaci il link. Puoi mostrare di nuovo il link in seguito con <strong>Mostra link</strong> nella pagina del terminale.",
-        "step4": "Sul dispositivo, aggiungi la pagina alla schermata Home per avere una cassa a schermo intero. Il dispositivo ricorda il terminale finché non scegli <strong>Dimentica questo terminale</strong>.",
+        "step4": "Sul dispositivo, aggiungi la pagina alla schermata Home per avere una cassa a schermo intero. Il dispositivo ricorda il terminale, quindi devi aprire il link una sola volta.",
         "p1": "Per far sapere ai clienti che possono pagare con Monero, apri un link di pagamento da Dashboard → Link di pagamento, stampa il cartello dalla sua scheda <strong>Cartello stampato</strong> e mettilo vicino alla cassa. <link>Altri modi per farti trovare</link>"
       },
       "sale": {

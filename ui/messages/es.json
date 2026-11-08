@@ -327,7 +327,6 @@
     "connectionLost": "Se perdió la conexión. Inténtalo de nuevo.",
     "unavailable": "Terminal no disponible",
     "openFromDashboard": "Abre en este dispositivo el enlace del terminal desde tu panel.",
-    "forget": "Olvidar este terminal",
     "seen": "Pago visto",
     "waiting": "Esperando confirmaciones: {confirmations} de {target}",
     "notInBlock": "Visto en la red, todavía no incluido en un bloque.",
@@ -351,7 +350,6 @@
     "creating": "Creando factura…",
     "charge": "Cobrar",
     "conversionNote": "Los importes en {currency} se convierten a XMR con un tipo de cambio de referencia al crear la factura.",
-    "forgetConfirm": "¿Quitar este terminal de este dispositivo? Necesitarás de nuevo el enlace del terminal para usarlo.",
     "demoBack": "Volver a la demostración",
     "demoName": "Caja de demostración",
     "demoMetaTitle": "Caja de demostración",
@@ -1389,7 +1387,7 @@
         "step1": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización.",
         "step2": "Abre <strong>Panel → Terminales</strong> y elige <strong>Crear terminal</strong>. Ponle un nombre como «Mostrador principal» y elige una moneda predeterminada.",
         "step3": "El panel muestra el enlace del terminal y un código QR. Escanéalo con el dispositivo que usarás en la caja o copia el enlace en él. Más tarde puedes volver a ver el enlace con <strong>Mostrar enlace</strong> en la página del terminal.",
-        "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal hasta que elijas <strong>Olvidar este terminal</strong>.",
+        "step4": "En el dispositivo, añade la página a la pantalla de inicio para usar la caja a pantalla completa. El dispositivo recuerda el terminal, así que solo necesitas abrir el enlace una vez.",
         "p1": "Para que los clientes sepan que pueden pagar con Monero, abre un enlace de pago en Panel → Enlaces de pago, imprime el cartel de su pestaña <strong>Cartel impreso</strong> y colócalo junto a la caja. <link>Más formas de que te encuentren</link>"
       },
       "sale": {

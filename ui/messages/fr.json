@@ -327,7 +327,6 @@
     "connectionLost": "Connexion perdue. Réessayez.",
     "unavailable": "Terminal indisponible",
     "openFromDashboard": "Ouvrez le lien du terminal depuis votre tableau de bord sur cet appareil.",
-    "forget": "Oublier ce terminal",
     "seen": "Paiement repéré",
     "waiting": "En attente des confirmations : {confirmations} sur {target}",
     "notInBlock": "Repéré sur le réseau, pas encore inclus dans un bloc.",
@@ -351,7 +350,6 @@
     "creating": "Création de la facture…",
     "charge": "Encaisser",
     "conversionNote": "Les montants en {currency} sont convertis en XMR à un cours de référence lors de la création de la facture.",
-    "forgetConfirm": "Supprimer ce terminal de cet appareil ? Vous aurez de nouveau besoin du lien du terminal pour l’utiliser.",
     "demoBack": "Retour à la démo",
     "demoName": "Caisse de démo",
     "demoMetaTitle": "Caisse de démo",
@@ -1389,7 +1387,7 @@
         "step1": "Connectez votre portefeuille avec votre adresse principale et votre clé de visualisation privée.",
         "step2": "Ouvrez <strong>Tableau de bord → Terminaux</strong> et choisissez <strong>Créer un terminal</strong>. Donnez-lui un nom tel que « Comptoir principal » et choisissez une devise par défaut.",
         "step3": "Le tableau de bord affiche le lien du terminal et un QR code. Scannez-le avec l’appareil que vous utiliserez à la caisse, ou copiez-y le lien. Vous pourrez réafficher le lien plus tard avec <strong>Afficher le lien</strong> sur la page du terminal.",
-        "step4": "Sur l’appareil, ajoutez la page à l’écran d’accueil pour obtenir une caisse en plein écran. L’appareil mémorise le terminal jusqu’à ce que vous choisissiez <strong>Oublier ce terminal</strong>.",
+        "step4": "Sur l’appareil, ajoutez la page à l’écran d’accueil pour obtenir une caisse en plein écran. L’appareil mémorise le terminal : vous n’avez besoin d’ouvrir le lien qu’une seule fois.",
         "p1": "Pour que vos clients sachent qu’ils peuvent payer en Monero, ouvrez un lien de paiement dans Tableau de bord → Liens de paiement, imprimez l’affiche depuis son onglet <strong>Affiche imprimée</strong> et placez-la près de la caisse. <link>D’autres façons de vous faire connaître</link>"
       },
       "sale": {

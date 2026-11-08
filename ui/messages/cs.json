@@ -331,7 +331,6 @@
     "connectionLost": "Spojení ztraceno. Zkuste to znovu.",
     "unavailable": "Terminál není k dispozici",
     "openFromDashboard": "Otevřete odkaz na terminál ze svého panelu na tomto zařízení.",
-    "forget": "Zapomenout tento terminál",
     "seen": "Platba zachycena",
     "waiting": "Čeká se na potvrzení: {confirmations} z {target}",
     "notInBlock": "Zachyceno v síti, zatím ne v bloku.",
@@ -357,7 +356,6 @@
     "creating": "Vytváří se platební výzva…",
     "charge": "Účtovat",
     "conversionNote": "Částky v {currency} se při vytvoření platební výzvy převedou na XMR orientačním kurzem.",
-    "forgetConfirm": "Odebrat tento terminál z tohoto zařízení? Pro další použití budete znovu potřebovat odkaz na terminál.",
     "demoBack": "Zpět na demo",
     "demoName": "Ukázková pokladna",
     "demoMetaTitle": "Ukázková pokladna",
@@ -1415,7 +1413,7 @@
         "step1": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení.",
         "step2": "Otevřete <strong>Panel → Terminály</strong> a zvolte <strong>Vytvořit terminál</strong>. Pojmenujte ho, například „Přední pult“, a vyberte výchozí měnu.",
         "step3": "Panel zobrazí odkaz na terminál a QR kód. Naskenujte ho zařízením, které budete používat u pokladny, nebo do něj odkaz zkopírujte. Později můžete odkaz znovu zobrazit tlačítkem <strong>Zobrazit odkaz</strong> na stránce terminálu.",
-        "step4": "Na zařízení přidejte stránku na plochu, abyste měli pokladnu přes celou obrazovku. Zařízení si terminál pamatuje, dokud nezvolíte <strong>Zapomenout tento terminál</strong>.",
+        "step4": "Na zařízení přidejte stránku na plochu, abyste měli pokladnu přes celou obrazovku. Zařízení si terminál pamatuje, takže odkaz stačí otevřít jen jednou.",
         "p1": "Aby zákazníci věděli, že mohou platit v Monero, otevřete platební odkaz v Panel → Platební odkazy, vytiskněte cedulku na kartě <strong>Vytištěná cedulka</strong> a umístěte ji k pokladně. <link>Další způsoby, jak o sobě dát vědět</link>"
       },
       "sale": {

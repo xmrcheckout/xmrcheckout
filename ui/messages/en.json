@@ -327,7 +327,6 @@
     "connectionLost": "Connection lost. Try again.",
     "unavailable": "Terminal unavailable",
     "openFromDashboard": "Open the terminal link from your dashboard on this device.",
-    "forget": "Forget this terminal",
     "seen": "Payment seen",
     "waiting": "Waiting for confirmations: {confirmations} of {target}",
     "notInBlock": "Seen on the network, not yet in a block.",
@@ -351,7 +350,6 @@
     "creating": "Creating invoice…",
     "charge": "Charge",
     "conversionNote": "{currency} amounts are converted to XMR at a reference rate when the invoice is created.",
-    "forgetConfirm": "Remove this terminal from this device? You will need the terminal link again to use it.",
     "demoBack": "Back to the demo",
     "demoName": "Demo till",
     "demoMetaTitle": "Demo till",
@@ -1389,7 +1387,7 @@
         "step1": "Connect your wallet with your primary address and private view key.",
         "step2": "Open <strong>Dashboard → Terminals</strong> and choose <strong>Create terminal</strong>. Give it a name such as “Front counter”, and pick a default currency.",
         "step3": "The dashboard shows the terminal link and a QR code. Scan it with the device you will use at the till, or copy the link to it. You can show the link again later with <strong>Show link</strong> on the terminal’s page.",
-        "step4": "On the device, add the page to the home screen for a full-screen till. The device remembers the terminal until you choose <strong>Forget this terminal</strong>.",
+        "step4": "On the device, add the page to the home screen for a full-screen till. The device remembers the terminal, so you only need to open the link once.",
         "p1": "To let customers know they can pay with Monero, open a payment link in Dashboard → Payment links, print the sign on its <strong>Printed sign</strong> tab and place it by the till. <link>More ways to let people find you</link>"
       },
       "sale": {

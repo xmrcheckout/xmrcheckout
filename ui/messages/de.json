@@ -327,7 +327,6 @@
     "connectionLost": "Verbindung unterbrochen. Versuchen Sie es erneut.",
     "unavailable": "Terminal nicht verfügbar",
     "openFromDashboard": "Öffnen Sie den Terminal-Link aus Ihrem Dashboard auf diesem Gerät.",
-    "forget": "Dieses Terminal vergessen",
     "seen": "Zahlung gesehen",
     "waiting": "Warte auf Bestätigungen: {confirmations} von {target}",
     "notInBlock": "Im Netzwerk gesehen, noch nicht in einem Block.",
@@ -351,7 +350,6 @@
     "creating": "Rechnung wird erstellt…",
     "charge": "Kassieren",
     "conversionNote": "{currency}-Beträge werden bei Erstellung der Rechnung zu einem Richtkurs in XMR umgerechnet.",
-    "forgetConfirm": "Dieses Terminal von diesem Gerät entfernen? Sie benötigen den Terminal-Link erneut, um es zu verwenden.",
     "demoBack": "Zurück zur Demo",
     "demoName": "Demo-Kasse",
     "demoMetaTitle": "Demo-Kasse",
@@ -1389,7 +1387,7 @@
         "step1": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key.",
         "step2": "Öffnen Sie <strong>Dashboard → Terminals</strong> und wählen Sie <strong>Terminal erstellen</strong>. Geben Sie ihm einen Namen wie „Vordere Theke“ und wählen Sie eine Standardwährung.",
         "step3": "Das Dashboard zeigt den Terminal-Link und einen QR-Code an. Scannen Sie ihn mit dem Gerät, das Sie an der Kasse verwenden, oder kopieren Sie den Link dorthin. Später können Sie den Link auf der Seite des Terminals mit <strong>Link anzeigen</strong> erneut aufrufen.",
-        "step4": "Fügen Sie die Seite auf dem Gerät zum Startbildschirm hinzu, um eine Vollbild-Kasse zu erhalten. Das Gerät merkt sich das Terminal, bis Sie <strong>Dieses Terminal vergessen</strong> wählen.",
+        "step4": "Fügen Sie die Seite auf dem Gerät zum Startbildschirm hinzu, um eine Vollbild-Kasse zu erhalten. Das Gerät merkt sich das Terminal, sodass Sie den Link nur einmal öffnen müssen.",
         "p1": "Damit Kunden wissen, dass sie mit Monero bezahlen können, öffnen Sie einen Zahlungslink unter Dashboard → Zahlungslinks, drucken Sie das Schild im Tab <strong>Gedrucktes Schild</strong> aus und platzieren Sie es an der Kasse. <link>Weitere Möglichkeiten, gefunden zu werden</link>"
       },
       "sale": {

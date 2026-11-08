@@ -331,7 +331,6 @@
     "connectionLost": "Utracono połączenie. Spróbuj ponownie.",
     "unavailable": "Terminal niedostępny",
     "openFromDashboard": "Otwórz link terminala z panelu na tym urządzeniu.",
-    "forget": "Zapomnij ten terminal",
     "seen": "Płatność zauważona",
     "waiting": "Oczekiwanie na potwierdzenia: {confirmations} z {target}",
     "notInBlock": "Widoczna w sieci, jeszcze nie w bloku.",
@@ -357,7 +356,6 @@
     "creating": "Tworzenie prośby o płatność…",
     "charge": "Pobierz płatność",
     "conversionNote": "Kwoty w {currency} są przeliczane na XMR po kursie orientacyjnym w chwili utworzenia prośby o płatność.",
-    "forgetConfirm": "Usunąć ten terminal z tego urządzenia? Aby go używać, znów będziesz potrzebować linku terminala.",
     "demoBack": "Wróć do demo",
     "demoName": "Kasa demo",
     "demoMetaTitle": "Kasa demo",
@@ -1415,7 +1413,7 @@
         "step1": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku.",
         "step2": "Otwórz <strong>Panel → Terminale</strong> i wybierz <strong>Utwórz terminal</strong>. Nadaj mu nazwę, np. „Kasa przy wejściu”, i wybierz domyślną walutę.",
         "step3": "Panel pokazuje link terminala i kod QR. Zeskanuj go urządzeniem, którego będziesz używać przy kasie, lub skopiuj na nie link. Później możesz ponownie wyświetlić link przyciskiem <strong>Pokaż link</strong> na stronie terminala.",
-        "step4": "Na urządzeniu dodaj stronę do ekranu głównego, aby mieć kasę na pełnym ekranie. Urządzenie pamięta terminal, dopóki nie wybierzesz <strong>Zapomnij ten terminal</strong>.",
+        "step4": "Na urządzeniu dodaj stronę do ekranu głównego, aby mieć kasę na pełnym ekranie. Urządzenie pamięta terminal, więc link wystarczy otworzyć tylko raz.",
         "p1": "Aby klienci wiedzieli, że mogą zapłacić w Monero, otwórz link płatności w Panel → Linki płatności, wydrukuj plakat z karty <strong>Wydrukowany plakat</strong> i umieść go przy kasie. <link>Więcej sposobów, by dać się znaleźć</link>"
       },
       "sale": {

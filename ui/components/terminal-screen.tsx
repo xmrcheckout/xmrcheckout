@@ -32,8 +32,8 @@ const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"];
 function readStoredKey(): string | null {
   try { return window.localStorage.getItem(STORAGE_KEY); } catch { return null; }
 }
-function storeKey(value: string | null) {
-  try { if (value) window.localStorage.setItem(STORAGE_KEY, value); else window.localStorage.removeItem(STORAGE_KEY); } catch { /* storage unavailable */ }
+function storeKey(value: string) {
+  try { window.localStorage.setItem(STORAGE_KEY, value); } catch { /* storage unavailable */ }
 }
 function initialKey(): string | null {
   const match = window.location.hash.match(/k=([A-Za-z0-9_-]+)/);
@@ -65,7 +65,7 @@ function errorDetail(data: unknown, fallback: string) {
 export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
   const { locale, t } = useI18n();
   // Rendered client-only, so the fragment and storage are available on first render.
-  const [key, setKey] = useState<string | null>(() => demo ? null : initialKey());
+  const [key] = useState<string | null>(() => demo ? null : initialKey());
   const [terminal, setTerminal] = useState<TerminalStatus | null>(() => demo ? { ...DEMO_TERMINAL, name: t("terminal.demoName") } : null);
   const [fatal, setFatal] = useState("");
   const [amount, setAmount] = useState("");
@@ -226,10 +226,6 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
     if (!demo) void loadStatus();
   }
 
-  function forget() {
-    storeKey(null); setKey(null); setTerminal(null); setFatal("");
-  }
-
   function simulate(status: Sale["status"]) {
     setSale(current => current && { ...current, status, confirmations: status === "confirmed" ? current.confirmation_target : 0 });
   }
@@ -244,7 +240,6 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
   if (!demo && (!key || fatal)) return <main className={shell}><div className="max-w-md text-center">
     <h1 className="font-sans text-3xl font-semibold">{t("terminal.unavailable")}</h1>
     <p className="mt-4" role="alert">{fatal || t("terminal.openFromDashboard")}</p>
-    {fatal ? <button onClick={forget} className="mt-6 min-h-12 rounded-full border border-stroke px-6">{t("terminal.forget")}</button> : null}
   </div></main>;
 
   if (sale) {
@@ -310,7 +305,6 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
       {error ? <p role="alert" className="text-red-700">{error}</p> : null}
       <button onClick={charge} disabled={busy || !terminal} className="min-h-16 rounded-full bg-ink text-xl font-semibold text-cream disabled:opacity-60">{busy ? t("terminal.creating") : t("terminal.charge")}</button>
       {currency !== "XMR" ? <p className="text-center text-xs text-ink-soft">{t("terminal.conversionNote", { currency })}</p> : null}
-      {demo ? null : <button onClick={() => { if (window.confirm(t("terminal.forgetConfirm"))) forget(); }} className="mx-auto min-h-11 px-4 text-sm text-ink-soft underline underline-offset-4">{t("terminal.forget")}</button>}
       <LanguageSwitcher className="mx-auto text-ink-soft" />
     </div>
   </main>;

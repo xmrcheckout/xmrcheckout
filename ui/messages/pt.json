@@ -327,7 +327,6 @@
     "connectionLost": "Conexão perdida. Tente novamente.",
     "unavailable": "Terminal indisponível",
     "openFromDashboard": "Abra o link do terminal a partir do seu painel neste dispositivo.",
-    "forget": "Esquecer este terminal",
     "seen": "Pagamento visto",
     "waiting": "Aguardando confirmações: {confirmations} de {target}",
     "notInBlock": "Visto na rede, ainda não incluído em um bloco.",
@@ -351,7 +350,6 @@
     "creating": "Criando fatura…",
     "charge": "Cobrar",
     "conversionNote": "Valores em {currency} são convertidos para XMR a uma cotação de referência quando a fatura é criada.",
-    "forgetConfirm": "Remover este terminal deste dispositivo? Você precisará do link do terminal novamente para usá-lo.",
     "demoBack": "Voltar à demonstração",
     "demoName": "Caixa de demonstração",
     "demoMetaTitle": "Caixa de demonstração",
@@ -1389,7 +1387,7 @@
         "step1": "Conecte a sua carteira com o seu endereço principal e a sua chave de visualização privada.",
         "step2": "Abra <strong>Painel → Terminais</strong> e escolha <strong>Criar terminal</strong>. Dê a ele um nome como “Balcão da frente” e escolha uma moeda padrão.",
         "step3": "O painel mostra o link do terminal e um QR code. Escaneie-o com o dispositivo que você usará no caixa ou copie o link para ele. Depois, você pode ver o link de novo com <strong>Mostrar link</strong> na página do terminal.",
-        "step4": "No dispositivo, adicione a página à tela inicial para ter um caixa em tela cheia. O dispositivo lembra o terminal até você escolher <strong>Esquecer este terminal</strong>.",
+        "step4": "No dispositivo, adicione a página à tela inicial para ter um caixa em tela cheia. O dispositivo lembra o terminal, então você só precisa abrir o link uma vez.",
         "p1": "Para que os clientes saibam que podem pagar com Monero, abra um link de pagamento em Painel → Links de pagamento, imprima o cartaz da aba <strong>Cartaz impresso</strong> e coloque-o perto do caixa. <link>Mais formas de as pessoas encontrarem você</link>"
       },
       "sale": {

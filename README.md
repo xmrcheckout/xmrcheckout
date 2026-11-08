@@ -93,6 +93,10 @@ Post-login UI. Addresses, subaddresses, invoice IDs and QR codes are blacked out
 
 ![Terminals list for in-person checkout](screenshots/ui_terminals.png)
 
+The terminal page opened on a phone or tablet at the till:
+
+<img src="screenshots/terminal_till.png" width="320" alt="Terminal page with an amount entered on the keypad and a note" />
+
 ### Public invoice page
 
 ![Public invoice page awaiting on-chain payment](screenshots/public_invoice_pending_payment.png)

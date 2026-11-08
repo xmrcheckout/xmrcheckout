@@ -16,14 +16,18 @@ It uses a wallet address and private view key to detect payments. It does not si
 
 - [Who it's for](#who-its-for)
 - [How it works](#how-it-works)
-- [Wallet access and fund flow](#wallet-access-and-fund-flow)
-- [Documentation and guides](#documentation-and-guides)
+- [Features](#features)
+  - [Invoices and hosted checkout](#invoices-and-hosted-checkout)
+  - [Reusable payment links](#reusable-payment-links)
+  - [In-person terminals](#in-person-terminals)
+  - [Confirmations](#confirmations)
+- [Guides](#guides)
 - [Repository layout](#repository-layout)
 - [Screenshots](#screenshots)
 - [Quick start](#quick-start)
-- [Self-hosted deployment](#self-hosted-deployment-docker-compose)
+- [Self-hosted deployment (Docker Compose)](#self-hosted-deployment-docker-compose)
 - [Self-hosted deployment (no Docker)](#self-hosted-deployment-no-docker)
-- [Development (API)](#development-api-python)
+- [Development (API, Python)](#development-api-python)
 - [Translating the UI](#translating-the-ui)
 
 ## Who it's for
@@ -34,23 +38,97 @@ It fits merchants who need a hosted checkout page, teams that want API and webho
 
 ## How it works
 
+Funds move from the customer straight to the merchant wallet. XMR Checkout is
+configured with a wallet address and private view key only; it watches for the
+payment and reports what it sees.
+
 Typical flow:
 1. Your integration creates an invoice (defined in XMR).
 2. The hosted page shows the customer the address, amount, QR code, and wallet URI.
 3. The reconciler checks the wallet and daemon for matching incoming payments.
 4. Your store reads invoice status through the API or receives webhook events.
 
-## Wallet access and fund flow
+## Features
 
-Funds move from the customer to the merchant wallet. XMR Checkout watches for the payment and reports what it sees.
+### Invoices and hosted checkout
 
-Configure the app with a wallet address and private view key only.
+Create invoices from the dashboard or the [API](https://xmrcheckout.com/docs).
+Each invoice gets a hosted payment page, and status changes are available
+through the API and [webhooks](#webhooks). A BTCPay-compatible API is also
+available for existing integrations; see the
+[integration recipes](https://xmrcheckout.com/docs/integrations).
 
-## Documentation and guides
+### Reusable payment links
 
-The [XMR Checkout website](https://xmrcheckout.com) includes the [interactive tour](https://xmrcheckout.com/tour), [API documentation](https://xmrcheckout.com/docs), [integration recipes](https://xmrcheckout.com/docs/integrations), [guides](https://xmrcheckout.com/guides), and [FAQ](https://xmrcheckout.com/faq).
+Sell an item or take donations from a link or button on your website, without
+writing API code.
+[Setup guide](https://xmrcheckout.com/guides/monero-payment-buttons) · [API reference](https://xmrcheckout.com/docs)
 
-The guides cover four common paths into the project:
+- Create a link in **Dashboard → Payment links** with a fixed XMR amount, a fiat
+  reference amount (for example 20 EUR), or an amount the customer enters. Copy
+  the button HTML, or use the URL with your own button. No API key or wallet
+  credential goes in the snippet.
+- Visitors see a review page first. The setting *Skip review and create invoice
+  automatically* opens checkout directly instead; the same browser tab then
+  resumes its unpaid invoice, and *Start another purchase* creates a separate
+  order.
+- Fiat reference amounts become XMR invoices using an informational quote taken
+  at creation time. No exchange rate or fiat outcome is guaranteed, and no
+  invoice is created while the quote source is unavailable.
+- Invoices from links appear in the normal invoice list and webhook events, with
+  a snapshot of the link in `metadata.payment_link`. Arrange fulfilment using the
+  invoice ID; a return URL does not protect a download.
+- Anyone with the link can create invoices, including automated browsers.
+  Creation counts against your invoice and address limits and a daily allowance
+  shared by all links (`PUBLIC_PAYMENT_LINK_DAILY_LIMIT`, default 30 per rolling
+  24 hours). The dashboard shows how much is left.
+- Editing a link affects future invoices only. Disabling it stops new purchases;
+  existing invoices stay valid and are still checked.
+
+For API clients creating invoices from a link:
+
+- A plain HTML form cannot detect a duplicate submission, so each submit may
+  create another invoice. Don't retry an interrupted request automatically;
+  creation may have succeeded.
+- To retry safely, send a UUID `Idempotency-Key` header (with
+  `Accept: application/json`). Save the key before sending and reuse it on every
+  retry; a replay returns the original invoice without using more allowance or
+  addresses. Keys belong to one payment link; never put them in a reusable URL.
+
+### In-person terminals
+
+Take payments at a till from a phone or tablet.
+[In-person checkout guide](https://xmrcheckout.com/guides/in-person-monero-checkout) · [API reference](https://xmrcheckout.com/docs)
+
+- Create a terminal in **Dashboard → Terminals** and open its link on the device
+  at the till. The terminal key is in the link's URL fragment, is shown once and
+  is stored only as a hash; *Create new link* replaces it.
+- A terminal key can only create invoices, read their status, and cancel its own
+  unpaid ones. It cannot read other invoices, change settings, or use the
+  merchant API. Resetting the merchant API key does not change terminal links;
+  disable or replace them separately.
+- Terminal sales default to a 15-minute expiry and a confirmation target of 0,
+  so the till shows the payment within seconds. Read
+  [Confirmations](#confirmations) before taking larger amounts.
+- Sales appear in the normal invoice list, CSV export, and webhook events, tagged
+  with `terminal_id` and `metadata.terminal`. Your invoice limits and address
+  capacity apply; the payment-link allowance does not.
+
+### Confirmations
+
+An invoice is checked until it reaches its confirmation target.
+`invoice.confirmed` is then sent once and the invoice is not checked again.
+
+With a target of 0 (the terminal default), a payment counts as confirmed as soon
+as it is seen on the network, before it is in a block. With a target of 0 or 1,
+a payment that later fails to confirm (for example, a double-spend) or is
+removed by a chain reorganization still shows as confirmed, and no further event
+is sent. Use a higher target for amounts you can't afford to lose; Monero
+outputs become spendable after 10 confirmations.
+
+## Guides
+
+The [guides](https://xmrcheckout.com/guides) cover four common paths into the project:
 
 - [Monero Payment Buttons](https://xmrcheckout.com/guides/monero-payment-buttons): reusable payment links, website buttons, and invoice tracking without an API integration.
 - [In-Person Monero Checkout](https://xmrcheckout.com/guides/in-person-monero-checkout): terminal setup, customer payment screens, and confirmation policies.
@@ -62,6 +140,7 @@ The guides cover four common paths into the project:
 - `ui/`: web UI
 - `api/`: API service (Python)
 - `scripts/`: operational helper scripts
+- `tests/`: stack checks that run against the Docker images
 - `docker-compose.yml`: local stack and self-hosted deployment
 - `nginx/`: optional reverse proxy / TLS termination (used by Docker Compose)
 
@@ -132,25 +211,35 @@ cp .env.example .env
 - `API_KEYS`, `API_KEY_ENCRYPTION_KEY`
 - `SITE_URL` (public URL for the UI)
 - Monero view-only wallet settings (`MONERO_WALLET_RPC_*`)
-- `MONERO_DAEMON_URL` (choose one of the options below)
-- `LATE_PAYMENT_LOOKBACK_HOURS` keeps recently expired invoices eligible for
-  late-payment detection (default: `48`). After an outage, reconciliation
-  temporarily widens this window from the last fully successful cycle so an
-  availability gap does not create a blind spot.
-- `INVOICE_DEFAULT_EXPIRY_HOURS` sets how long a new invoice stays open when
-  the request does not set its own expiry (default: `1`).
-- `PAYMENT_LINK_EXPIRY_MINUTES` sets how long invoices created from payment
-  links stay open (default: `30`, allowed `1`-`1440`). Late payments to them are
-  still detected within `LATE_PAYMENT_LOOKBACK_HOURS`.
-- Invoice creation is protected by per-user limits: `INVOICE_ACTIVE_LIMIT`
-  (default `100` active invoices), `INVOICE_CREATION_RATE_LIMIT` (default
-  `60` creations), and `INVOICE_CREATION_RATE_WINDOW_SECONDS` (default
-  `60`). These checks are atomic across API workers; raise them deliberately
-  for higher-volume integrations.
-- `SIGNUP_ENABLED` (default `true`) controls whether a wallet without an
-  existing merchant record can connect. If the instance is only for you,
-  connect your own wallet once, then set it to `false` and restart the API.
-  Existing merchants can always log in.
+- `MONERO_DAEMON_URL` (choose one of the options in step 3)
+
+Optional settings (defaults in brackets):
+- `SIGNUP_ENABLED` (`true`) controls whether a wallet without an existing
+  merchant record can connect. If the instance is only for you, connect your
+  own wallet once, then set it to `false` and restart the API. Existing
+  merchants can always log in.
+- `INVOICE_DEFAULT_EXPIRY_HOURS` (`1`): how long a new invoice stays open when
+  the request does not set its own expiry.
+- `LATE_PAYMENT_LOOKBACK_HOURS` (`48`) keeps recently expired invoices eligible
+  for late-payment detection. After an outage, reconciliation temporarily
+  widens this window from the last fully successful cycle so an availability
+  gap does not create a blind spot.
+- Per-user invoice limits: `INVOICE_ACTIVE_LIMIT` (`100` active invoices) and
+  `INVOICE_CREATION_RATE_LIMIT` (`60` creations) per
+  `INVOICE_CREATION_RATE_WINDOW_SECONDS` (`60`). These checks are atomic across
+  API workers; raise them deliberately for higher-volume integrations.
+- `PAYMENT_LINK_EXPIRY_MINUTES` (`30`, allowed `1`-`1440`): how long invoices
+  created from payment links stay open. Late payments to them are still
+  detected within `LATE_PAYMENT_LOOKBACK_HOURS`.
+- `PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (`30`): successful public payment-link
+  creations per rolling 24 hours, across all of a merchant's links. Nginx also
+  limits the public creation endpoint to 6 requests per minute per client IP
+  (burst 3). A malicious visitor can use up the allowance, and raising it does
+  not enlarge the [address pool](#invoice-address-reuse).
+- `TERMINAL_RECONCILE_INTERVAL_SECONDS` (`5`): between full reconciliation
+  cycles, how often the reconciler refreshes the wallet and checks open
+  terminal sales. Each refresh is one wallet-rpc call per merchant with an open
+  terminal sale; raise it if wallet-rpc load matters more than speed.
 
 3. Choose a Monero daemon (`MONERO_DAEMON_URL` is required; the stack will not
    start without it):
@@ -197,20 +286,24 @@ docker compose up --build -d
 
 Each merchant uses a pool of up to 199 invoice subaddresses (indices 1-199) in
 account 0, all within the default range every Monero wallet watches, so
-merchants never need to raise their wallet's subaddress lookahead. Never-issued
-addresses are used first; an address is reused only after all its previous
-invoices are confirmed or expired and a cooldown has passed. Archiving an
-invoice does not release its address, and pending or payment-detected invoices
-keep reserving theirs until reconciliation closes them.
+merchants never need to raise their wallet's subaddress lookahead.
 
-Set `SUBADDRESS_REUSE_COOLDOWN_SECONDS` to change the three-day default
-(`259200`); it must be longer than `LATE_PAYMENT_LOOKBACK_HOURS` so an address
-is never reused while its previous invoice is still watched for late payments.
-When every address is reserved or cooling down, invoice creation returns HTTP
-429 with `Retry-After`. Reuse also requires a fresh view-only wallet snapshot;
-snapshot failure returns HTTP 503 without creating an invoice. A genuinely new
-late or repeated payment intended for an older invoice can still be mistaken for
-the new one; cooldown reduces this risk but cannot eliminate it.
+- Never-issued addresses are used first. An address is reused only after all
+  its previous invoices are confirmed or expired and a cooldown has passed.
+- Archiving an invoice does not release its address. Pending or
+  payment-detected invoices keep reserving theirs until reconciliation closes
+  them.
+- `SUBADDRESS_REUSE_COOLDOWN_SECONDS` sets the cooldown (default three days,
+  `259200`). It must be longer than `LATE_PAYMENT_LOOKBACK_HOURS` so an address
+  is never reused while its previous invoice is still watched for late
+  payments.
+- When every address is reserved or cooling down, invoice creation returns HTTP
+  429 with `Retry-After`. Reuse also needs a fresh view-only wallet snapshot;
+  if that fails, creation returns HTTP 503 and no invoice is made.
+- A genuinely new late or repeated payment intended for an older invoice can
+  still be mistaken for the new one. The cooldown reduces this risk but cannot
+  remove it. A new invoice, including one from a payment link, does not
+  guarantee a never-used address.
 
 Authenticated merchants can inspect the pool with
 `GET /api/core/subaddresses/status`; it reads local records only and never
@@ -219,18 +312,6 @@ contacts wallet RPC or consumes quota. Allocation failures carry a `code`
 `diagnostic_id` for the correlated operator logs. The
 [self-hosting guide](https://xmrcheckout.com/guides/self-hosted-monero-checkout)
 covers the conceptual walkthrough.
-
-The additive `subaddress_allocations` and `snapshot_status` tables are created
-at API startup; when upgrading, deploy the API before the reconciler and UI, and
-do not run an older reconciler against the new API. Late-payment timing uses the
-on-chain time cumulative transfers first reach the invoice amount. After an
-upgrade you can review and repair stored timing with the reconciler's idempotent
-maintenance command (omit `--apply` to preview):
-
-```
-docker compose exec -T reconciler python -m app.reclassify_invoice_timing
-docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
-```
 
 ### Webhooks
 
@@ -254,12 +335,27 @@ HTTPS `WEBHOOK_RELAY_URL`, and a `WEBHOOK_RELAY_TOKEN` of at least 32 characters
 the API then POSTs each delivery to the relay as a JSON envelope (target URL,
 base64 body, selected headers, timeout) with the token as a bearer credential.
 
-An invoice is checked until it reaches its confirmation target. `invoice.confirmed`
-is then sent once and the invoice is not checked again. With a target of 0 or 1,
-a payment that later fails to confirm (for example, a double-spend) or is removed
-by a chain reorganization still shows as confirmed, and no further event is sent.
-Use a higher target for amounts you can't afford to lose; Monero outputs become
-spendable after 10 confirmations.
+When `invoice.confirmed` is sent depends on the invoice's
+[confirmation target](#confirmations).
+
+### Upgrading
+
+New tables (such as `subaddress_allocations`, `snapshot_status` and the
+payment-link tables) are added at API startup and leave existing data alone.
+When upgrading, deploy the API before the reconciler and UI, then rebuild and
+restart; do not run an older reconciler against a newer API.
+
+To roll back payment links, disable the links and restore the preceding images;
+the added tables and invoice records can stay.
+
+Late-payment timing uses the on-chain time cumulative transfers first reach the
+invoice amount. After an upgrade you can review and repair stored timing with
+the reconciler's idempotent maintenance command (omit `--apply` to preview):
+
+```
+docker compose exec -T reconciler python -m app.reclassify_invoice_timing
+docker compose exec -T reconciler python -m app.reclassify_invoice_timing --apply
+```
 
 ### Troubleshooting first payment detection
 
@@ -466,27 +562,6 @@ server {
 }
 ```
 
-## Translating the UI
-
-The UI picks its language from the visitor's choice in the footer language
-menu (stored in the `xmrcheckout_locale` cookie), else the browser's
-`Accept-Language` header, else English. Supported: English, Spanish, Russian, German, French, Portuguese, Italian, Polish, Simplified Chinese, Ukrainian and Czech.
-
-UI text lives in `ui/messages/<locale>.json`. `en.json` is the source; any key
-missing from another catalog shows in English. To add a language:
-
-1. Copy `ui/messages/en.json` to `ui/messages/<code>.json` and translate the
-   values, following `ui/messages/GLOSSARY.md`. Keep `{placeholders}` and
-   `<tag>` markers unchanged.
-2. Add the code to `locales` and `localeNames` in `ui/lib/i18n/config.ts`, and
-   to `ui/lib/i18n/catalogs.ts`.
-3. Add the language's forbidden terms to `ui/messages/GLOSSARY.md` and to
-   `ui/tests/i18n.test.mjs`.
-4. Run `npm test` in `ui/`.
-
-XMR amounts, addresses, payment URIs and IDs are never localized. Amounts
-always use `.` as the decimal separator so copied values stay valid in wallets.
-
 ## Development (API, Python)
 
 1. Set environment variables (see `api/.env.example`):
@@ -513,128 +588,52 @@ uvicorn app.main:app --reload
 
 The API listens on `http://127.0.0.1:8000`.
 
+### Running the tests
 
-### Reusable payment links
+The API tests load files from `scripts/` and `docker/`, so run them in the API
+image with those folders mounted:
 
-Follow the [payment button setup guide](https://xmrcheckout.com/guides/monero-payment-buttons) for the merchant walkthrough, embedding instructions, and limitations.
+```
+docker compose run --rm --no-deps -T -v "$PWD/api:/src:ro" -v "$PWD/scripts:/scripts:ro" -v "$PWD/docker:/docker:ro" -w /src --entrypoint python api -B -m unittest discover -s tests
+```
 
-In Dashboard → Payment links, configure a fixed XMR amount or a fiat-reference
-amount (for example 20 EUR). Preview the branded graphic and copy its linked-image
-HTML into your website, or use the reusable URL with your own button.
-By default the URL opens a review page. The per-link setting
-“Skip review and create invoice automatically” (`auto_create_invoice`, default false)
-lets an active, visible browser create an invoice and open checkout directly.
-GET/HEAD remain read-only; automatic creation uses POST. Visits by automated
-browsers can consume public allowance and address capacity too.
-In automatic mode the same tab resumes its current unpaid invoice. Use
-“Start another purchase” to deliberately create a separate order. Completed,
-expired, or invalid previous invoices show a choice to view them or start again.
-Without JavaScript or browser storage, customers use the manual review button.
-No API key or wallet credential belongs in the snippet.
+Point the suite at a throwaway PostgreSQL database named `payment_link_tests`
+to enable the payment-link HTTP and concurrency tests, and set
+`SUBADDRESS_DATABASE_TESTS=1` for the address-allocation integration tests.
+Never point these tests at a merchant database.
 
-Fiat-reference inputs produce XMR invoices using an informational quote at
-creation time, with source and timestamp. No exchange rate or fiat outcome is
-guaranteed. A quote outage prevents creation. Editing settings affects future
-invoices only. Disabling a link prevents new purchases; existing invoices remain
-valid and continue detection. Full-settings PATCH requests use the same fields as creation; enabled-state-only
-PATCH requests can disable a link without changing its product settings.
-
-Public creations share the merchant's existing invoice and address limits and
-`PUBLIC_PAYMENT_LINK_DAILY_LIMIT` (default 30 successful creations per rolling
-24 hours, across all links). The public POST endpoint is additionally limited at
-Nginx to 6 requests per minute per client IP, burst 3. A malicious visitor can
-consume the public allowance. Existing address reuse and three-day cooldown
-still apply; a fresh invoice does not guarantee a never-used address. Raising
-the daily allowance does not expand the address pool.
-
-Plain HTML provides no duplicate-submission recovery: each separate submission
-can create another invoice. Do not automatically retry an interrupted request;
-creation may have succeeded. Keep the invoice URL or contact the merchant before
-submitting again. Customer details and protected digital delivery are outside
-this feature. Merchants arrange fulfillment using the invoice ID; a return URL
-does not protect a download.
-
-Management API: authenticated GET/POST `/api/core/payment-links` and PATCH
-`/api/core/payment-links/{id}`. Public GET
-`/api/core/public/payment-links/{token}` exposes product details; public POST
-`/api/core/public/payment-links/{token}/invoices` accepts an empty HTML form and
-returns a 303 redirect, or an HTML error with applicable Retry-After information.
-Clients may supply a UUID `Idempotency-Key` header and `Accept: application/json`.
-Creation returns 201; replay returns 200 with the original `invoice_url`, current
-`status`, and `expires_at`, without consuming additional allowance or addresses.
-Save the attempt key before sending the request and retain it after errors;
-explicit retries must reuse it. Keys are scoped to a payment link and must not
-be placed in reusable URLs. JSON errors preserve Retry-After guidance.
-Price, receiving wallet, confirmation, and URL overrides are rejected. Generated
-invoices appear in the normal invoice list and webhook events, with a snapshot
-in `metadata.payment_link`; search invoice metadata for the product or link ID.
-
-Deploy the additive API schema before the UI, then rebuild and restart. For
-rollback, disable links and restore the preceding images; additive tables and
-invoice records can remain.
-
-### In-person terminals
-
-Follow the [in-person checkout guide](https://xmrcheckout.com/guides/in-person-monero-checkout) for the merchant walkthrough.
-
-In Dashboard → Terminals, create a terminal and open its link (`/terminal#k=…`)
-on the device at the till. The terminal key travels in the URL fragment, is
-stored only as a hash, and is shown once; "Create new link" replaces it. A
-terminal key can create invoices, read the status of its own invoices, and
-cancel its own unpaid invoices (by expiring them now). It cannot read other
-invoices, change settings, or use the merchant API. Resetting the merchant API
-key does not change terminal links; disable or replace them separately.
-
-Terminal invoices use the terminal's confirmation target (default 0) and expiry
-(default 15 minutes), are tagged with `terminal_id` and `metadata.terminal`, and
-appear in the normal invoice list, CSV export, and webhook events. Merchant
-invoice limits and address capacity apply; the public payment-link allowance
-does not. Between full reconciliation cycles the reconciler refreshes the wallet
-and checks open terminal invoices every `TERMINAL_RECONCILE_INTERVAL_SECONDS`
-(default 5), so unconfirmed payments are reported within seconds. Each refresh
-is a wallet-rpc call per merchant with an open terminal sale; raise the interval
-if wallet-rpc load matters more than speed.
-
-With the default target of 0, a sale is confirmed as soon as its payment is seen
-on the network, before it is in a block, and is not checked again. A payment
-that never confirms still shows as paid, so set a higher target on terminals
-that take larger amounts.
-
-Management API: authenticated GET/POST `/api/core/terminals`, PATCH
-`/api/core/terminals/{id}`, and POST `/api/core/terminals/{id}/rotate`.
-Terminal API (`Authorization: Terminal <key>`): GET `/api/core/terminal/status`,
-POST `/api/core/terminal/invoices` (amount, currency, optional note, optional
-UUID `Idempotency-Key`), GET `/api/core/terminal/invoices/{id}`, and POST
-`/api/core/terminal/invoices/{id}/cancel`.
-
-Payment-link verification uses isolated fixtures. Run the Python suite against a
-throwaway PostgreSQL database named `payment_link_tests` to enable its HTTP and
-concurrency tests; set `SUBADDRESS_DATABASE_TESTS=1` for allocation integration
-coverage. Mount the repository's `scripts/` and `docker/` paths when testing in
-the API image. Never point these tests at a merchant database.
-
-Payment-link reliability checks build and use the UI/API/Nginx images. Run:
+The payment-link browser check builds the UI, API and Nginx images and runs them
+with PostgreSQL on an isolated Docker network, serving the merchant button from
+a different origin. Wallet allocation, QR generation, quotes and webhooks use
+fixtures, and temporary containers and networks are removed afterwards:
 
 ```sh
 CHROMIUM_PATH=/path/to/chrome python3 tests/check_payment_links.py --playwright-module /path/to/playwright
 ```
 
-This starts PostgreSQL, the real API, the UI, and Nginx on an isolated internal
-Docker network, then serves the merchant button from a different loopback
-origin. Wallet allocation, QR generation, quotes, and webhooks use fixtures.
-The test verifies the cross-origin POST and 303 redirect with JavaScript disabled,
-field errors and preserved input, allowance/address failures, and no invoice-list
-fetch on the Payment links tab. Temporary containers and networks are removed.
+It checks the cross-origin form POST and redirect with JavaScript disabled,
+field errors with preserved input, allowance and address failures, and that the
+Payment links tab does not fetch the invoice list.
 
-Authenticated GET `/api/core/payment-links/status` returns the curated currency
-choices and current rolling allowance (`daily_limit`, `used`, `remaining`,
-`window_hours`, `retrieved_at`). The dashboard shows these alongside the existing
-address status; refresh retrieves both without reserving capacity. Failed status
-requests are shown as unavailable, not zero capacity.
+UI tests (message catalogs and translations) run with `npm test` in `ui/`.
 
-Payment-link saves validate currencies against this curated server list without
-contacting the quote provider. Existing unsupported settings remain visible for
-correction. PATCH also accepts only `{"enabled": false}` to disable such a link;
-`{"enabled": true}` validates all saved settings before enabling. Full-settings
-PATCH requests remain compatible. The purchase operation runs in a worker
-thread with its own database session, preserving atomic merchant/template locks.
+## Translating the UI
+
+The UI picks its language from the visitor's choice in the footer language
+menu (stored in the `xmrcheckout_locale` cookie), else the browser's
+`Accept-Language` header, else English. Supported: English, Spanish, Russian, German, French, Portuguese, Italian, Polish, Simplified Chinese, Ukrainian and Czech.
+
+UI text lives in `ui/messages/<locale>.json`. `en.json` is the source; any key
+missing from another catalog shows in English. To add a language:
+
+1. Copy `ui/messages/en.json` to `ui/messages/<code>.json` and translate the
+   values, following `ui/messages/GLOSSARY.md`. Keep `{placeholders}` and
+   `<tag>` markers unchanged.
+2. Add the code to `locales` and `localeNames` in `ui/lib/i18n/config.ts`, and
+   to `ui/lib/i18n/catalogs.ts`.
+3. Add the language's forbidden terms to `ui/messages/GLOSSARY.md` and to
+   `ui/tests/i18n.test.mjs`.
+4. Run `npm test` in `ui/`.
+
+XMR amounts, addresses, payment URIs and IDs are never localized. Amounts
+always use `.` as the decimal separator so copied values stay valid in wallets.

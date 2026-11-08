@@ -7,7 +7,6 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from .db import Base, engine
-from .config import DONATIONS_ENABLED
 from .btcpay_routes import router as btcpay_router
 from .payment_links import router as payment_links_router
 from .terminals import router as terminals_router
@@ -24,9 +23,6 @@ async def allocation_error_response(request, exc):
     content = {"detail": exc.detail, "code": exc.code, "diagnostic_id": exc.diagnostic_id}
     if exc.retry_after_seconds is not None:
         content["retry_after_seconds"] = exc.retry_after_seconds
-    if request.url.path == "/api/core/donations":
-        content = {"detail": "Donation invoice creation is unavailable. Try again later.",
-                   "diagnostic_id": exc.diagnostic_id}
     return JSONResponse(content, status_code=exc.status_code,
                         headers={**(exc.headers or {}), "Cache-Control": "no-store"})
 
@@ -40,9 +36,6 @@ def custom_openapi():
         description=app.description,
         routes=app.routes,
     )
-    openapi_schema.get("paths", {}).pop("/api/core/donations", None)
-    if not DONATIONS_ENABLED:
-        openapi_schema.get("paths", {}).pop("/api/core/public/donation/{invoice_id}", None)
     openapi_schema.get("paths", {}).pop("/api/core/auth/validate", None)
     openapi_schema.get("paths", {}).pop("/api/core/profile", None)
     app.openapi_schema = openapi_schema

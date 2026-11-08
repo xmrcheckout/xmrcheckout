@@ -337,11 +337,8 @@ class StatusDatabaseTests(unittest.TestCase):
         headers = self.fixture_auth()
         base = self.start_http()
         routes_to_test = [("/api/core/invoices", {"amount_xmr": "0.1"}, 201),
-                          (f"/api/v1/stores/{self.user_id}/invoices", {"amount": "0.1", "currency": "XMR"}, 200),
-                          ("/api/core/donations", {"amount_xmr": "0.1"}, 201)]
-        patches = [patch.object(routes, "DONATIONS_ENABLED", True),
-                   patch.object(routes, "_get_founder_user", side_effect=lambda db: db.get(User, self.user_id)),
-                   patch.object(routes, "ensure_invoice_qr_png"), patch.object(btcpay_routes, "ensure_invoice_qr_png"),
+                          (f"/api/v1/stores/{self.user_id}/invoices", {"amount": "0.1", "currency": "XMR"}, 200)]
+        patches = [patch.object(routes, "ensure_invoice_qr_png"), patch.object(btcpay_routes, "ensure_invoice_qr_png"),
                    patch.object(routes, "dispatch_webhooks"), patch.object(btcpay_routes, "dispatch_webhooks"),
                    patch.object(btcpay_routes, "dispatch_btcpay_webhooks")]
         for item in patches:
@@ -363,9 +360,8 @@ class StatusDatabaseTests(unittest.TestCase):
                 self.assertEqual(exhausted.status_code, 429)
                 self.assertIsInstance(exhausted.json()["detail"], str)
                 self.assertIn("Retry-After", exhausted.headers)
-                if "donations" not in path:
-                    self.assertEqual(exhausted.json()["code"], "pool_exhausted")
-                    self.assertGreater(exhausted.json()["retry_after_seconds"], 0)
+                self.assertEqual(exhausted.json()["code"], "pool_exhausted")
+                self.assertGreater(exhausted.json()["retry_after_seconds"], 0)
                 with self.Session.begin() as db:
                     for invoice in db.query(Invoice).all():
                         invoice.expires_at -= timedelta(days=8)
@@ -378,11 +374,7 @@ class StatusDatabaseTests(unittest.TestCase):
                 self.assertNotIn("fixture-secret", failed.text + " ".join(logs.output))
                 with self.Session() as db:
                     self.assertEqual(str(db.get(SnapshotStatus, self.user_id).attempt_id), reference)
-                if "donations" in path:
-                    self.assertNotIn("code", failed.json())
-                    self.assertNotIn("snapshot", failed.text)
-                else:
-                    self.assertEqual(failed.json()["code"], "snapshot_failed")
+                self.assertEqual(failed.json()["code"], "snapshot_failed")
                 self.snapshot_mock.side_effect = None
                 recovered = requests.post(base + path, json=payload, headers=headers, timeout=5)
                 self.assertEqual(recovered.status_code, success_status)

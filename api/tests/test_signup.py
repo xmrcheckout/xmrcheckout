@@ -130,16 +130,6 @@ class ViewKeyFormTests(unittest.TestCase):
             routes.login_user(payload, db)
         self.assertEqual(db.add.call_args.args[0].view_key_encrypted, _encrypted(self.view_key))
 
-    def test_founder_key_case_does_not_rewrite_the_stored_key(self):
-        user = SimpleNamespace(id="founder", view_key_encrypted="enc")
-        db = _db(user)
-        with patch.object(routes, "FOUNDER_PAYMENT_ADDRESS", self.address), \
-                patch.object(routes, "FOUNDER_VIEW_KEY", self.view_key.upper()), \
-                patch.object(routes, "decrypt_secret", return_value=self.view_key), \
-                patch.object(routes, "_ensure_webhook_secret", return_value="secret"):
-            self.assertIs(routes._get_founder_user(db), user)
-        self.assertEqual(user.view_key_encrypted, "enc")
-        db.commit.assert_not_called()
 
 
 if __name__ == "__main__":

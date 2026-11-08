@@ -19,11 +19,6 @@ from sqlalchemy.types import String as SqlString
 from sqlalchemy.orm import Session
 
 from .config import (
-    DONATION_ACTIVE_INVOICE_LIMIT,
-    DONATION_EXPIRY_MINUTES,
-    DONATIONS_ENABLED,
-    FOUNDER_PAYMENT_ADDRESS,
-    FOUNDER_VIEW_KEY,
     INVOICE_DEFAULT_EXPIRY_HOURS,
     INVOICE_RECONCILE_INTERVAL_SECONDS,
     QR_STORAGE_DIR,
@@ -47,12 +42,11 @@ from monero.address import Address, IntegratedAddress, SubAddress
 from monero.ed25519 import scalar_reduce
 from .monero_service import MoneroWalletService
 from .rates import UnsupportedCurrencyError, get_xmr_rate
-from .subaddress_allocator import MAX_SUBADDRESS_INDEX, create_subaddress_for_user
+from .subaddress_allocator import create_subaddress_for_user
 from .subaddress_status import merchant_status
 from .schemas import (
     ApiCredentialsResetRequest,
     ApiCredentialsResetResponse,
-    DonationCreate,
     InvoiceCreateUser,
     InvoiceListResponse,
     InvoiceResponse,
@@ -100,13 +94,6 @@ WEBHOOK_EVENTS = (
     "invoice.expired",
 )
 
-
-def _require_donations_enabled() -> None:
-    if not DONATIONS_ENABLED:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Donations are disabled",
-)
 
 MONERO_CONNECTIVITY_STATUS_NAME = "monero_connectivity"
 
@@ -273,43 +260,6 @@ def _load_public_system_status(db: Session) -> SystemStatusResponse:
     return _status_response_from_rows(monero_status, reconciler_status)
 
 
-def _get_founder_user(db: Session) -> User:
-    if not FOUNDER_PAYMENT_ADDRESS or not FOUNDER_VIEW_KEY:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Donations are not configured",
-        )
-    founder_view_key = _validate_payment_address_and_view_key(
-        FOUNDER_PAYMENT_ADDRESS, FOUNDER_VIEW_KEY
-    )
-    user = (
-        db.query(User)
-        .filter(User.payment_address == FOUNDER_PAYMENT_ADDRESS)
-        .first()
-    )
-    if user is None:
-        api_key = generate_api_key()
-        webhook_secret = generate_webhook_secret()
-        user = User(
-            payment_address=FOUNDER_PAYMENT_ADDRESS,
-            view_key_encrypted=encrypt_secret(founder_view_key),
-            api_key_hash=hash_api_key(api_key),
-            api_key_encrypted=encrypt_api_key(api_key),
-            webhook_secret_encrypted=encrypt_secret(webhook_secret),
-        )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return user
-    if decrypt_secret(user.view_key_encrypted).lower() != founder_view_key:
-        user.view_key_encrypted = encrypt_secret(founder_view_key)
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    _ensure_webhook_secret(db, user)
-    return user
-
-
 def _default_invoice_expiry() -> datetime:
     return datetime.now(timezone.utc) + timedelta(hours=INVOICE_DEFAULT_EXPIRY_HOURS)
 
@@ -326,19 +276,6 @@ def _resolve_invoice_expiry(requested: datetime | None) -> datetime:
             detail="expires_at must be in the future",
         )
     return requested
-
-
-def _donation_invoice_expiry() -> datetime:
-    return datetime.now(timezone.utc) + timedelta(minutes=DONATION_EXPIRY_MINUTES)
-
-
-def _is_donation_invoice(invoice: Invoice) -> bool:
-    metadata = invoice.metadata_json or {}
-    return isinstance(metadata, dict) and metadata.get("origin") == "donation"
-
-
-def _merchant_invoice_filter():
-    return func.coalesce(Invoice.metadata_json["origin"].as_string(), "") != "donation"
 
 
 def _get_confirmation_message(invoice: Invoice) -> str | None:
@@ -443,8 +380,7 @@ def _resolve_webhook_payload(
 
 
 def _invoice_url(invoice: Invoice, request: Request) -> str:
-    path_prefix = "/donate" if _is_donation_invoice(invoice) else "/invoice"
-    return f"{public_origin(request)}{path_prefix}/{invoice.id}"
+    return f"{public_origin(request)}/invoice/{invoice.id}"
 
 
 def _qr_url(invoice: Invoice, request: Request) -> str:
@@ -672,59 +608,6 @@ def _validate_payment_address_and_view_key(payment_address: str, view_key: str) 
     return normalized
 
 
-@router.post(
-    "/api/core/donations",
-    response_model=InvoiceResponse,
-    status_code=201,
-    include_in_schema=False,
-)
-def create_donation_invoice(
-    payload: DonationCreate,
-    request: Request,
-    db: Session = Depends(get_db),
-):
-    _require_donations_enabled()
-    user = _get_founder_user(db)
-    expires_at = _donation_invoice_expiry()
-    active_limit = min(max(1, DONATION_ACTIVE_INVOICE_LIMIT), MAX_SUBADDRESS_INDEX)
-    user = reserve_invoice_creation(
-        db,
-        user=user,
-        active_limit=active_limit,
-    )
-    resolved_amount, warnings, _ = _resolve_invoice_amount(
-        db,
-        user=user,
-        requested_amount_xmr=payload.amount_xmr,
-    )
-    invoice_id = uuid.uuid4()
-    address, subaddress_index = create_subaddress_for_user(db, user=user, invoice_id=invoice_id)
-    invoice = Invoice(
-        id=invoice_id,
-        user_id=user.id,
-        wallet_address=user.payment_address,
-        address=address,
-        subaddress_index=subaddress_index,
-        amount_xmr=resolved_amount,
-        status="pending",
-        confirmation_target=payload.confirmation_target,
-        metadata_json={"origin": "donation"},
-        expires_at=expires_at,
-    )
-    db.add(invoice)
-    db.commit()
-    db.refresh(invoice)
-    try:
-        ensure_invoice_qr_png(
-            invoice=invoice,
-            storage_dir=QR_STORAGE_DIR,
-            settings=resolve_qr_settings(invoice),
-        )
-    except HTTPException:
-        pass
-    return _invoice_response(invoice, request, warnings=warnings)
-
-
 @router.get(
     "/api/core/public/invoice/{invoice_id}",
     response_model=InvoiceStatusResponse,
@@ -737,7 +620,7 @@ def get_invoice_status(
 ):
     response.headers["Cache-Control"] = "no-store"
     invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
-    if invoice is None or _is_donation_invoice(invoice):
+    if invoice is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invoice not found",
@@ -762,7 +645,7 @@ def continue_invoice_after_confirmation(
     db: Session = Depends(get_db),
 ):
     invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
-    if invoice is None or _is_donation_invoice(invoice):
+    if invoice is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invoice not found",
@@ -781,39 +664,6 @@ def continue_invoice_after_confirmation(
     response = RedirectResponse(url=continue_url, status_code=status.HTTP_302_FOUND)
     response.headers["Cache-Control"] = "no-store"
     return response
-
-
-@router.get(
-    "/api/core/public/donation/{invoice_id}",
-    response_model=InvoiceStatusResponse,
-    include_in_schema=False,
-)
-def get_donation_status(
-    invoice_id: uuid.UUID,
-    request: Request,
-    db: Session = Depends(get_db),
-):
-    _require_donations_enabled()
-    founder = _get_founder_user(db)
-    invoice = db.query(Invoice).filter(Invoice.id == invoice_id).first()
-    if (
-        invoice is None
-        or not _is_donation_invoice(invoice)
-        or invoice.user_id != founder.id
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Donation invoice not found",
-        )
-    try:
-        ensure_invoice_qr_png(
-            invoice=invoice,
-            storage_dir=QR_STORAGE_DIR,
-            settings=resolve_qr_settings(invoice),
-        )
-    except HTTPException:
-        pass
-    return _public_invoice_status_response(db, invoice, request)
 
 
 @router.get("/api/core/public/system/status", response_model=SystemStatusResponse)
@@ -1480,7 +1330,7 @@ def list_invoices_for_user(
         q=q, created_from=created_from, created_to=created_to,
     )
     query = _filter_merchant_invoices(
-        db.query(Invoice).filter(Invoice.user_id == user.id, _merchant_invoice_filter()), **filters
+        db.query(Invoice).filter(Invoice.user_id == user.id), **filters
     )
 
     sort_keys = {
@@ -1505,7 +1355,6 @@ def list_invoices_for_user(
     total_query = _filter_merchant_invoices(
         db.query(func.count(Invoice.id)).filter(
             Invoice.user_id == user.id,
-            _merchant_invoice_filter(),
         ),
         **filters,
     )
@@ -1537,7 +1386,7 @@ def export_invoices_csv(
         )
 
     query = _filter_merchant_invoices(
-        db.query(Invoice).filter(Invoice.user_id == user.id, _merchant_invoice_filter()),
+        db.query(Invoice).filter(Invoice.user_id == user.id),
         include_archived=include_archived, status_filter=status_filter, active_only=active_only,
         q=q, created_from=created_from, created_to=created_to,
     )
@@ -1642,7 +1491,6 @@ def get_invoice_for_user(
             Invoice.id == invoice_id,
             Invoice.user_id == user.id,
             Invoice.archived_at.is_(None),
-            _merchant_invoice_filter(),
         )
         .first()
     )
@@ -1671,7 +1519,6 @@ def _get_merchant_invoice_for_transfers(
         .filter(
             Invoice.id == invoice_id,
             Invoice.user_id == user.id,
-            _merchant_invoice_filter(),
         )
         .first()
     )
@@ -1732,7 +1579,6 @@ def archive_invoice_for_user(
             Invoice.id == invoice_id,
             Invoice.user_id == user.id,
             Invoice.archived_at.is_(None),
-            _merchant_invoice_filter(),
         )
         .first()
     )

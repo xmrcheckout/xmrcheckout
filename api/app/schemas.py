@@ -74,11 +74,6 @@ class InvoiceCreate(BaseModel):
         raise ValueError("checkout_continue_url must use https (http is allowed for localhost)")
 
 
-class DonationCreate(BaseModel):
-    amount_xmr: Decimal = Field(gt=0)
-    confirmation_target: conint(ge=0, le=10) = 1
-
-
 class InvoiceResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

@@ -14,6 +14,7 @@ import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { utcTimestamp } from "../lib/timestamps";
 import type { Translate } from "../lib/i18n/translate";
 import { useI18n } from "./i18n-provider";
+import { rich } from "../lib/i18n/rich";
 import {
   hasPartialAmount,
   invoiceStatusLabel,
@@ -75,6 +76,8 @@ type InvoicePanelProps = {
   page?: number;
   pageSize?: number;
   total?: number;
+  // True when the merchant has no invoices at all, not just none matching the filters.
+  noInvoicesYet?: boolean;
 };
 
 const initialState: InvoiceState = {
@@ -934,6 +937,7 @@ export default function InvoicePanel({
   page = 1,
   pageSize = 25,
   total = activeInvoices.length,
+  noInvoicesYet = false,
 }: InvoicePanelProps) {
   const { locale, t } = useI18n();
   const formatTimestamp = (value: string | null) => formatTimestampFor(value, t);
@@ -1319,7 +1323,19 @@ export default function InvoicePanel({
           ))}
         </div>
 
-        {activeList.length === 0 ? (
+        {activeList.length === 0 && noInvoicesYet ? (
+          <div className="rounded-surface border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
+            <p className="font-semibold text-ink">
+              {t("dashboard.page.noInvoices")}
+            </p>
+            <p className="mt-1">
+              {rich(t("dashboard.invoices.firstRunHelp"), {
+                links: (text) => <Link className="font-semibold text-ink underline underline-offset-4" href="/dashboard?tab=payment-links">{text}</Link>,
+                terminals: (text) => <Link className="font-semibold text-ink underline underline-offset-4" href="/dashboard?tab=terminals">{text}</Link>,
+              })}
+            </p>
+          </div>
+        ) : activeList.length === 0 ? (
           <div className="rounded-surface border border-stroke bg-white/70 p-5 text-sm text-ink-soft shadow-soft">
             <p className="font-semibold text-ink">
               {t("dashboard.invoices.noMatch")}

@@ -27,6 +27,7 @@ export type InvoiceState = {
 export type ApiKeyState = {
   apiKey: string;
   error: string | null;
+  success?: string | null;
 };
 
 export type InvoiceTransfersState = {
@@ -426,7 +427,7 @@ export async function resetApiKeyAction(
     path: "/",
   });
   
-  return { apiKey: data.api_key, error: null };
+  return { apiKey: data.api_key, error: null, success: t("dashboard.actions.apiKeyResetDone") };
 }
 
 export async function resetWebhookSecretAction(

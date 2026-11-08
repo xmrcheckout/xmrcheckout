@@ -50,6 +50,7 @@ export default function LoginModal() {
   const closeModal = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete(loginParam);
+    params.delete("expired");
     const query = params.toString();
     router.replace(query ? `${pathname}?${query}` : pathname);
   }, [pathname, router, searchParams]);
@@ -94,6 +95,11 @@ export default function LoginModal() {
         </button>
       </div>
       <div className="p-4 sm:p-5">
+        {searchParams.get("expired") === "1" ? (
+          <p role="status" className="mb-3 rounded-lg border border-stroke bg-sand/60 px-3 py-2 text-sm font-semibold text-ink">
+            {t("login.sessionEnded")}
+          </p>
+        ) : null}
         <div
           id="login-description"
           className="border-l-2 border-sage pl-3 text-xs leading-relaxed text-ink-soft sm:text-sm"

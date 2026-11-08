@@ -34,6 +34,11 @@ export default function ApiKeySection({ apiKey }: ApiKeySectionProps) {
           {state.error}
         </p>
       ) : null}
+      {state.success ? (
+        <p role="status" className="rounded-lg border border-stroke bg-sand/60 px-3 py-2 text-sm font-semibold text-ink">
+          {state.success}
+        </p>
+      ) : null}
       <form action={formAction} className="flex justify-end">
         <ConfirmSubmitButton
           pendingLabel={t("common.resetting")}

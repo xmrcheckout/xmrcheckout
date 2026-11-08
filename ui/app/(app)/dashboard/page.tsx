@@ -155,12 +155,14 @@ export default async function DashboardPage({
   for (const [key, value] of Object.entries(resolvedSearchParams)) {
     if (typeof value === "string") destinationParams.set(key, value);
   }
-  const loginUrl = `/?login=1&next=${encodeURIComponent(dashboardDestination(`/dashboard?${destinationParams}`))}`;
+  const signInUrl = `/?login=1&next=${encodeURIComponent(dashboardDestination(`/dashboard?${destinationParams}`))}`;
+  // A rejected key means the session ended (for example after an API key reset); the modal says so.
+  const loginUrl = `${signInUrl}&expired=1`;
   const apiKey = (await cookies()).get("xmrcheckout_api_key")?.value;
   const webhookSecret =
     (await cookies()).get("xmrcheckout_webhook_secret")?.value ?? null;
   if (!apiKey) {
-    redirect(loginUrl);
+    redirect(signInUrl);
   }
 
   const tabParam = resolvedSearchParams?.tab;
@@ -220,6 +222,9 @@ export default async function DashboardPage({
   const apiKeyData = activeTab === "profile" ? { api_key: apiKey } : null;
   let webhooksData: WebhookSummary[] = [];
   let webhookHistory: WebhookDeliverySummary[] = [];
+  // A failed read must not look like "nothing here": the page says the data is incomplete.
+  let dataUnavailable = false;
+  let webhooksUnavailable = false;
 
   const invoicePageSize = 25;
   const invoiceLimit = activeTab === "invoices" ? invoicePageSize : 100;
@@ -253,11 +258,12 @@ export default async function DashboardPage({
         Authorization: `ApiKey ${apiKey}`,
       },
       cache: "no-store",
-    });
-    if (response.status === 401) {
+    }).catch(() => null);
+    if (response?.status === 401) {
       redirect(loginUrl);
     }
-    if (!response.ok) {
+    if (!response?.ok) {
+      dataUnavailable = true;
       break;
     }
     const data = (await response.json()) as {
@@ -270,6 +276,24 @@ export default async function DashboardPage({
   } while (activeTab !== "invoices" && offset < total);
   invoicesData = { items, total };
 
+  // An empty filtered list may still hide older invoices; check once before showing first-run help.
+  let noInvoicesYet = false;
+  if (activeTab === "invoices" && !dataUnavailable && total === 0) {
+    if (includeArchived && invoiceStatusFilter === "all" && !invoiceSearchQuery) {
+      noInvoicesYet = true;
+    } else {
+      const anyUrl = new URL(`${apiBaseUrl}/api/core/invoices`);
+      anyUrl.searchParams.set("limit", "1");
+      anyUrl.searchParams.set("include_archived", "true");
+      const response = await fetch(anyUrl.toString(), {
+        headers: { Authorization: `ApiKey ${apiKey}` },
+        cache: "no-store",
+      }).catch(() => null);
+      const data = response?.ok ? ((await response.json().catch(() => null)) as { total?: number } | null) : null;
+      noInvoicesYet = data?.total === 0;
+    }
+  }
+
   // The overview shows the endpoint count, so it needs the list too.
   if (
     activeTab === "overview" ||
@@ -280,12 +304,16 @@ export default async function DashboardPage({
         Authorization: `ApiKey ${apiKey}`,
       },
       cache: "no-store",
-    });
-    if (response.status === 401) {
+    }).catch(() => null);
+    if (response?.status === 401) {
       redirect(loginUrl);
     }
-    if (response.ok) {
-      webhooksData = (await response.json()) as WebhookSummary[];
+    const data = response?.ok ? ((await response.json().catch(() => null)) as WebhookSummary[] | null) : null;
+    if (data) {
+      webhooksData = data;
+    } else {
+      dataUnavailable = true;
+      webhooksUnavailable = true;
     }
   }
   if (
@@ -299,12 +327,15 @@ export default async function DashboardPage({
         Authorization: `ApiKey ${apiKey}`,
       },
       cache: "no-store",
-    });
-    if (response.status === 401) {
+    }).catch(() => null);
+    if (response?.status === 401) {
       redirect(loginUrl);
     }
-    if (response.ok) {
-      webhookHistory = (await response.json()) as WebhookDeliverySummary[];
+    const data = response?.ok ? ((await response.json().catch(() => null)) as WebhookDeliverySummary[] | null) : null;
+    if (data) {
+      webhookHistory = data;
+    } else {
+      dataUnavailable = true;
     }
   }
 
@@ -345,12 +376,13 @@ export default async function DashboardPage({
         Authorization: `ApiKey ${apiKey}`,
       },
       cache: "no-store",
-    });
-    if (response.status === 401) {
+    }).catch(() => null);
+    if (response?.status === 401) {
       redirect(loginUrl);
     }
-    if (response.ok) {
-      profileData = (await response.json()) as ProfileSummary;
+    profileData = response?.ok ? ((await response.json().catch(() => null)) as ProfileSummary | null) : null;
+    if (!profileData) {
+      dataUnavailable = true;
     }
   }
   if (activeTab === "overview" || activeTab === "health") {
@@ -360,9 +392,9 @@ export default async function DashboardPage({
         Authorization: `ApiKey ${apiKey}`,
       },
       cache: "no-store",
-    });
-    if (response.ok) {
-      systemStatus = (await response.json()) as SystemStatusSummary;
+    }).catch(() => null);
+    if (response?.ok) {
+      systemStatus = (await response.json().catch(() => null)) as SystemStatusSummary | null;
     }
   }
 
@@ -508,6 +540,11 @@ export default async function DashboardPage({
         />
 
         <div className="min-w-0">
+          {dataUnavailable ? (
+            <p role="alert" className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+              {t("dashboard.page.dataUnavailable")}
+            </p>
+          ) : null}
           {activeTab === "overview" ? (
             <section
               className="grid gap-6"
@@ -713,7 +750,9 @@ export default async function DashboardPage({
                 >
                   <p className="text-sm font-semibold text-ink-soft">{t("dashboard.page.endpoints")}</p>
                   <p className="mt-2 font-sans text-xl font-semibold">
-                    {webhooksData.length === 0
+                    {webhooksUnavailable
+                      ? t("dashboard.page.reconcilerUnavailable")
+                      : webhooksData.length === 0
                       ? t("dashboard.page.noEndpoints")
                       : t("dashboard.page.endpointCount", { count: webhooksData.length })}
                   </p>
@@ -747,6 +786,7 @@ export default async function DashboardPage({
                 page={invoicePage}
                 pageSize={invoicePageSize}
                 total={invoicesData?.total ?? 0}
+                noInvoicesYet={noInvoicesYet}
                 defaultConfirmationTarget={
                   profileData?.default_confirmation_target ?? 1
                 }
@@ -886,7 +926,7 @@ export default async function DashboardPage({
                   </Link>
                 ))}
               </nav>
-              {activeWebhookTab === "settings" ? (
+              {activeWebhookTab === "settings" && !webhooksUnavailable ? (
                 <WebhookSection webhooks={webhooksData} />
               ) : null}
               {activeWebhookTab === "history" ? (

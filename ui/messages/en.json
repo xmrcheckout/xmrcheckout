@@ -933,7 +933,7 @@
       "keyChars": "Use only hexadecimal characters (0–9 and a–f) for the private view key."
     },
     "walletConnection": "Wallet connection",
-    "modalTitle": "Connect your wallet to create invoices",
+    "modalTitle": "Connect your wallet to accept Monero",
     "returning": "Connected before? Enter the same address and view key to sign in.",
     "closeModal": "Close login modal",
     "beforeContinue": "Before you continue",
@@ -1117,7 +1117,7 @@
     "targetBody": "Choose how many confirmations an invoice requires. Payment detection and reaching that target are separate states.",
     "startKicker": "Getting started",
     "startTitle": "Start here, and integrate when you’re ready",
-    "startBody": "Connect your wallet to this instance to create invoices and share customer checkout pages. A store connection is optional; add API calls or configure webhooks only if you want your store to receive invoice updates.",
+    "startBody": "Connect your wallet to this instance to create invoices, payment links and point-of-sale terminals. A store connection is optional; add API calls or configure webhooks only if you want your store to receive invoice updates.",
     "startLinks": "Getting started links",
     "readApiGuide": "Read the API guide",
     "linksTitle": "Payment and donation links without programming",

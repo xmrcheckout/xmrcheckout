@@ -933,7 +933,7 @@
       "keyChars": "Usa solo caratteri esadecimali (0–9 e a–f) per la chiave di visualizzazione privata."
     },
     "walletConnection": "Collegamento del portafoglio",
-    "modalTitle": "Collega il tuo portafoglio per creare richieste di pagamento",
+    "modalTitle": "Collega il tuo portafoglio per accettare Monero",
     "returning": "Hai già collegato questo portafoglio? Inserisci lo stesso indirizzo e la stessa chiave di visualizzazione per accedere.",
     "closeModal": "Chiudi la finestra di accesso",
     "beforeContinue": "Prima di continuare",
@@ -1117,7 +1117,7 @@
     "targetBody": "Scegli quante conferme servono per ogni richiesta di pagamento. Il rilevamento del pagamento e il raggiungimento di quell'obiettivo sono stati distinti.",
     "startKicker": "Per iniziare",
     "startTitle": "Inizia da qui e integra quando sei pronto",
-    "startBody": "Collega il tuo portafoglio a questa istanza per creare richieste di pagamento e condividere pagine di pagamento con i clienti. Il collegamento di un negozio è facoltativo; aggiungi chiamate API o configura webhook solo se vuoi che il tuo negozio riceva gli aggiornamenti delle richieste di pagamento.",
+    "startBody": "Collega il tuo portafoglio a questa istanza per creare richieste di pagamento, link di pagamento e terminali per il punto vendita. Il collegamento di un negozio è facoltativo; aggiungi chiamate API o configura webhook solo se vuoi che il tuo negozio riceva gli aggiornamenti delle richieste di pagamento.",
     "startLinks": "Link per iniziare",
     "readApiGuide": "Leggi la guida API",
     "linksTitle": "Link di pagamento e donazione senza programmare",

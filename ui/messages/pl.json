@@ -951,7 +951,7 @@
       "keyChars": "W prywatnym kluczu widoku używaj tylko znaków szesnastkowych (0–9 i a–f)."
     },
     "walletConnection": "Połączenie portfela",
-    "modalTitle": "Połącz portfel, aby tworzyć prośby o płatność",
+    "modalTitle": "Połącz portfel, aby przyjmować Monero",
     "returning": "Łączysz się ponownie? Wpisz ten sam adres i klucz widoku, aby się zalogować.",
     "closeModal": "Zamknij okno logowania",
     "beforeContinue": "Zanim przejdziesz dalej",
@@ -1141,7 +1141,7 @@
     "targetBody": "Wybierz, ilu potwierdzeń wymaga prośba o płatność. Wykrycie płatności i osiągnięcie tej liczby to dwa osobne stany.",
     "startKicker": "Pierwsze kroki",
     "startTitle": "Zacznij tutaj i integruj, kiedy zechcesz",
-    "startBody": "Połącz portfel z tą instancją, aby tworzyć prośby o płatność i udostępniać klientom strony płatności. Połączenie sklepu jest opcjonalne; dodaj wywołania API lub skonfiguruj webhooki tylko wtedy, gdy chcesz, aby sklep otrzymywał aktualizacje próśb o płatność.",
+    "startBody": "Połącz portfel z tą instancją, aby tworzyć prośby o płatność, linki płatności i terminale sprzedaży. Połączenie sklepu jest opcjonalne; dodaj wywołania API lub skonfiguruj webhooki tylko wtedy, gdy chcesz, aby sklep otrzymywał aktualizacje próśb o płatność.",
     "startLinks": "Linki na start",
     "readApiGuide": "Przeczytaj poradnik API",
     "linksTitle": "Linki płatności i darowizn bez programowania",

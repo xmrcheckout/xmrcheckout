@@ -951,7 +951,7 @@
       "keyChars": "Pro soukromý klíč pro prohlížení používejte pouze hexadecimální znaky (0–9 a a–f)."
     },
     "walletConnection": "Připojení peněženky",
-    "modalTitle": "Připojte peněženku a vytvářejte platební výzvy",
+    "modalTitle": "Připojte peněženku a přijímejte Monero",
     "returning": "Připojujete se znovu? Zadejte stejnou adresu a klíč pro prohlížení a přihlaste se.",
     "closeModal": "Zavřít přihlašovací okno",
     "beforeContinue": "Než budete pokračovat",
@@ -1141,7 +1141,7 @@
     "targetBody": "Zvolte, kolik potvrzení platební výzva vyžaduje. Zjištění platby a dosažení tohoto počtu jsou samostatné stavy.",
     "startKicker": "Začínáme",
     "startTitle": "Začněte tady a integrujte, až budete chtít",
-    "startBody": "Připojte peněženku k této instanci, abyste mohli vytvářet platební výzvy a sdílet platební stránky se zákazníky. Propojení obchodu je volitelné; volání API přidejte nebo webhooky nastavte jen tehdy, pokud chcete, aby váš obchod dostával aktualizace platebních výzev.",
+    "startBody": "Připojte peněženku k této instanci, abyste mohli vytvářet platební výzvy, platební odkazy a pokladní terminály. Propojení obchodu je volitelné; volání API přidejte nebo webhooky nastavte jen tehdy, pokud chcete, aby váš obchod dostával aktualizace platebních výzev.",
     "startLinks": "Odkazy pro začátek",
     "readApiGuide": "Přečíst návod k API",
     "linksTitle": "Platební a darovací odkazy bez programování",

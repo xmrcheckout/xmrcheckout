@@ -933,7 +933,7 @@
       "keyChars": "Utilisez uniquement des caractères hexadécimaux (0–9 et a–f) pour la clé de visualisation privée."
     },
     "walletConnection": "Connexion du portefeuille",
-    "modalTitle": "Connectez votre portefeuille pour créer des factures",
+    "modalTitle": "Connectez votre portefeuille pour accepter Monero",
     "returning": "Portefeuille déjà connecté ? Saisissez la même adresse et la même clé de visualisation pour vous reconnecter.",
     "closeModal": "Fermer la fenêtre de connexion",
     "beforeContinue": "Avant de continuer",
@@ -1117,7 +1117,7 @@
     "targetBody": "Choisissez combien de confirmations une facture exige. La détection du paiement et l’atteinte de cet objectif sont deux états distincts.",
     "startKicker": "Premiers pas",
     "startTitle": "Commencez ici et intégrez quand vous êtes prêt",
-    "startBody": "Connectez votre portefeuille à cette instance pour créer des factures et partager des pages de paiement avec vos clients. La connexion d’une boutique est facultative ; ajoutez des appels d’API ou configurez des webhooks uniquement si vous voulez que votre boutique reçoive les mises à jour des factures.",
+    "startBody": "Connectez votre portefeuille à cette instance pour créer des factures, des liens de paiement et des terminaux de point de vente. La connexion d’une boutique est facultative ; ajoutez des appels d’API ou configurez des webhooks uniquement si vous voulez que votre boutique reçoive les mises à jour des factures.",
     "startLinks": "Liens pour bien démarrer",
     "readApiGuide": "Lire le guide de l’API",
     "linksTitle": "Liens de paiement et de don sans programmation",

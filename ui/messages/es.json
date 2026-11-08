@@ -933,7 +933,7 @@
       "keyChars": "Usa solo caracteres hexadecimales (0–9 y a–f) en la clave privada de visualización."
     },
     "walletConnection": "Conexión de billetera",
-    "modalTitle": "Conecta tu billetera para crear facturas",
+    "modalTitle": "Conecta tu billetera para aceptar Monero",
     "returning": "¿Ya te conectaste antes? Introduce la misma dirección y clave de visualización para iniciar sesión.",
     "closeModal": "Cerrar la ventana de inicio de sesión",
     "beforeContinue": "Antes de continuar",
@@ -1117,7 +1117,7 @@
     "targetBody": "Elige cuántas confirmaciones requiere una factura. La detección del pago y alcanzar ese objetivo son estados distintos.",
     "startKicker": "Primeros pasos",
     "startTitle": "Empieza aquí e intégralo cuando quieras",
-    "startBody": "Conecta tu billetera a esta instancia para crear facturas y compartir páginas de pago con tus clientes. Conectar una tienda es opcional; añade llamadas a la API o configura webhooks solo si quieres que tu tienda reciba actualizaciones de las facturas.",
+    "startBody": "Conecta tu billetera a esta instancia para crear facturas, enlaces de pago y terminales de punto de venta. Conectar una tienda es opcional; añade llamadas a la API o configura webhooks solo si quieres que tu tienda reciba actualizaciones de las facturas.",
     "startLinks": "Enlaces de primeros pasos",
     "readApiGuide": "Lee la guía de la API",
     "linksTitle": "Enlaces de pago y de donación sin programar",

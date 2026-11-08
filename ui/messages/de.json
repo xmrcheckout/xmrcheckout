@@ -933,7 +933,7 @@
       "keyChars": "Verwenden Sie für den privaten View-Key nur Hexadezimalzeichen (0–9 und a–f)."
     },
     "walletConnection": "Wallet-Verbindung",
-    "modalTitle": "Verbinden Sie Ihre Wallet, um Rechnungen zu erstellen",
+    "modalTitle": "Verbinden Sie Ihre Wallet, um Monero zu empfangen",
     "returning": "Schon einmal verbunden? Geben Sie dieselbe Adresse und denselben View-Key ein, um sich anzumelden.",
     "closeModal": "Anmeldedialog schließen",
     "beforeContinue": "Bevor Sie fortfahren",
@@ -1117,7 +1117,7 @@
     "targetBody": "Legen Sie fest, wie viele Bestätigungen eine Rechnung erfordert. Zahlungserkennung und das Erreichen dieses Ziels sind getrennte Zustände.",
     "startKicker": "Erste Schritte",
     "startTitle": "Hier starten und integrieren, wenn Sie so weit sind",
-    "startBody": "Verbinden Sie Ihre Wallet mit dieser Instanz, um Rechnungen zu erstellen und Checkout-Seiten mit Kunden zu teilen. Eine Shop-Anbindung ist optional; fügen Sie API-Aufrufe hinzu oder konfigurieren Sie Webhooks nur, wenn Ihr Shop Rechnungsaktualisierungen erhalten soll.",
+    "startBody": "Verbinden Sie Ihre Wallet mit dieser Instanz, um Rechnungen, Zahlungslinks und Kassen-Terminals zu erstellen. Eine Shop-Anbindung ist optional; fügen Sie API-Aufrufe hinzu oder konfigurieren Sie Webhooks nur, wenn Ihr Shop Rechnungsaktualisierungen erhalten soll.",
     "startLinks": "Links für den Einstieg",
     "readApiGuide": "API-Anleitung lesen",
     "linksTitle": "Zahlungs- und Spendenlinks ohne Programmierung",

@@ -933,7 +933,7 @@
       "keyChars": "Use apenas caracteres hexadecimais (0–9 e a–f) na chave de visualização privada."
     },
     "walletConnection": "Conexão da carteira",
-    "modalTitle": "Conecte a sua carteira para criar faturas",
+    "modalTitle": "Conecte a sua carteira para aceitar Monero",
     "returning": "Já se conectou antes? Digite o mesmo endereço e a mesma chave de visualização para entrar.",
     "closeModal": "Fechar janela de login",
     "beforeContinue": "Antes de continuar",
@@ -1117,7 +1117,7 @@
     "targetBody": "Escolha quantas confirmações uma fatura exige. A detecção do pagamento e o alcance dessa meta são estados separados.",
     "startKicker": "Primeiros passos",
     "startTitle": "Comece aqui e integre quando estiver pronto",
-    "startBody": "Conecte a sua carteira a esta instância para criar faturas e compartilhar páginas de pagamento com clientes. Conectar uma loja é opcional; adicione chamadas de API ou configure webhooks apenas se quiser que a sua loja receba atualizações das faturas.",
+    "startBody": "Conecte a sua carteira a esta instância para criar faturas, links de pagamento e terminais de ponto de venda. Conectar uma loja é opcional; adicione chamadas de API ou configure webhooks apenas se quiser que a sua loja receba atualizações das faturas.",
     "startLinks": "Links de primeiros passos",
     "readApiGuide": "Ler o guia da API",
     "linksTitle": "Links de pagamento e doação sem programação",

@@ -1192,5 +1192,106 @@ class WalletSyncSafetyTests(unittest.TestCase):
         self.assertEqual(backend.ready_wallet, backend.current_wallet)
 
 
+class WalletDaemonSettingTests(unittest.TestCase):
+    def _service(self, daemon_address="daemon:18081"):
+        service = object.__new__(MoneroWalletService)
+        service._daemon_address = daemon_address
+        return service
+
+    def _set_daemon_calls(self, client):
+        return [
+            call for call in client.raw_request.call_args_list
+            if call.args[0] == "set_daemon"
+        ]
+
+    def test_daemon_is_set_once_per_open_wallet(self):
+        client = Mock()
+        backend = WalletBackend(
+            client=client, url="http://wallet-rpc:18083", current_wallet="wallet-one"
+        )
+        service = self._service()
+
+        service._ensure_daemon(backend)
+        service._ensure_daemon(backend)
+
+        self.assertEqual(len(self._set_daemon_calls(client)), 1)
+        self.assertEqual(backend.daemon_wallet, "wallet-one")
+
+    def test_daemon_is_set_again_after_another_wallet_is_opened(self):
+        client = Mock()
+        client.session.post.return_value.json.return_value = {
+            "result": {"address": "other-address"}
+        }
+        backend = WalletBackend(
+            client=client,
+            url="http://wallet-rpc:18083",
+            current_wallet="wallet-one",
+            daemon_wallet="wallet-one",
+        )
+        service = self._service()
+
+        service._ensure_wallet_open(
+            backend=backend,
+            wallet_name="wallet-two",
+            payment_address="merchant-address",
+            view_key="view-key",
+        )
+        service._ensure_daemon(backend)
+
+        self.assertEqual(backend.current_wallet, "wallet-two")
+        self.assertEqual(len(self._set_daemon_calls(client)), 1)
+        self.assertEqual(backend.daemon_wallet, "wallet-two")
+
+    def test_adopting_the_open_wallet_keeps_the_daemon_setting(self):
+        client = Mock()
+        client.session.post.return_value.json.return_value = {
+            "result": {"address": "merchant-address"}
+        }
+        backend = WalletBackend(
+            client=client,
+            url="http://wallet-rpc:18083",
+            current_wallet="wallet-one",
+            daemon_wallet="wallet-one",
+        )
+        service = self._service()
+
+        service._ensure_wallet_open(
+            backend=backend,
+            wallet_name="wallet-one",
+            payment_address="merchant-address",
+            view_key="view-key",
+        )
+        service._ensure_daemon(backend)
+
+        client.raw_request.assert_not_called()
+
+    def test_failed_daemon_setting_is_retried(self):
+        client = Mock()
+        client.raw_request.side_effect = [RequestException("busy"), {}]
+        backend = WalletBackend(
+            client=client, url="http://wallet-rpc:18083", current_wallet="wallet-one"
+        )
+        service = self._service()
+
+        with self.assertRaises(HTTPException):
+            service._ensure_daemon(backend)
+        self.assertIsNone(backend.daemon_wallet)
+
+        service._ensure_daemon(backend)
+
+        self.assertEqual(len(self._set_daemon_calls(client)), 2)
+        self.assertEqual(backend.daemon_wallet, "wallet-one")
+
+    def test_no_daemon_configured_sends_nothing(self):
+        client = Mock()
+        backend = WalletBackend(
+            client=client, url="http://wallet-rpc:18083", current_wallet="wallet-one"
+        )
+
+        self._service(daemon_address=None)._ensure_daemon(backend)
+
+        client.raw_request.assert_not_called()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -97,6 +97,9 @@ class WalletBackend:
     lock_key: int | None = None
     current_wallet: str | None = None
     ready_wallet: str | None = None
+    # The open wallet that set_daemon last succeeded for. set_daemon is slow
+    # (it waits for wallet-rpc's background refresh), so send it once per open.
+    daemon_wallet: str | None = None
 
 
 class MoneroWalletService:
@@ -636,6 +639,7 @@ class MoneroWalletService:
         ):
             return
         backend.ready_wallet = None
+        backend.daemon_wallet = None
         close_start = time.monotonic()
         try:
             backend.client.raw_request("close_wallet")
@@ -737,6 +741,8 @@ class MoneroWalletService:
     def _ensure_daemon(self, backend: WalletBackend) -> None:
         if not self._daemon_address:
             return
+        if backend.current_wallet and backend.daemon_wallet == backend.current_wallet:
+            return
         try:
             backend.client.raw_request(
                 "set_daemon",
@@ -744,6 +750,7 @@ class MoneroWalletService:
             )
         except (RPCError, RequestException) as exc:
             self._raise_wallet_rpc_error(exc)
+        backend.daemon_wallet = backend.current_wallet
 
     def _ensure_wallet_synced(self, backend: WalletBackend) -> None:
         if backend.current_wallet and backend.ready_wallet == backend.current_wallet:

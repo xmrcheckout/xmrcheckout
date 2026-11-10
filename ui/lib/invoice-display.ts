@@ -43,3 +43,20 @@ export function invoiceSourceLabel(source: InvoiceSource | null, t: (key: string
   if (source === 'payment_link') return t('dashboard.invoices.sourcePaymentLink');
   return null;
 }
+
+// "direct" covers invoices made in the dashboard or through the API (including Greenfield).
+export type InvoiceSourceFilter = 'all' | 'direct' | InvoiceSource;
+export const invoiceSourceFilters: readonly InvoiceSourceFilter[] = ['all', 'direct', 'payment_link', 'terminal'];
+
+// Reads the `source` URL parameter; anything unexpected shows every invoice.
+export function invoiceSourceFilter(value: unknown): InvoiceSourceFilter {
+  const first = Array.isArray(value) ? value[0] : value;
+  return invoiceSourceFilters.includes(first as InvoiceSourceFilter) ? first as InvoiceSourceFilter : 'all';
+}
+
+// The tour filters its demo invoices in the browser; the dashboard asks the API.
+export function matchesInvoiceSource(metadata: unknown, filter: InvoiceSourceFilter): boolean {
+  if (filter === 'all') return true;
+  const source = invoiceContext(metadata).source;
+  return filter === 'direct' ? source === null : source === filter;
+}

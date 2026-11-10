@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { invoiceContext, invoiceSourceLabel as sourceLabel } from "../../../lib/invoice-display";
+import { invoiceContext, invoiceSourceFilter, invoiceSourceLabel as sourceLabel } from "../../../lib/invoice-display";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -205,6 +205,8 @@ export default async function DashboardPage({
           : includeArchived
             ? "all"
             : "active";
+  const invoiceSource =
+    activeTab === "invoices" ? invoiceSourceFilter(resolvedSearchParams?.source) : "all";
   const pageParam = resolvedSearchParams?.page;
   const pageValue = Array.isArray(pageParam) ? pageParam[0] : pageParam;
   const invoicePage =
@@ -253,6 +255,9 @@ export default async function DashboardPage({
     } else if (invoiceStatusFilter !== "all") {
       invoiceUrl.searchParams.set("status", invoiceStatusFilter);
     }
+    if (invoiceSource !== "all") {
+      invoiceUrl.searchParams.set("source", invoiceSource);
+    }
     if (invoiceSort) {
       invoiceUrl.searchParams.set("sort", invoiceSort);
     }
@@ -285,7 +290,7 @@ export default async function DashboardPage({
   // An empty filtered list may still hide older invoices; check once before showing first-run help.
   let noInvoicesYet = false;
   if (activeTab === "invoices" && !dataUnavailable && total === 0) {
-    if (includeArchived && invoiceStatusFilter === "all" && !invoiceSearchQuery) {
+    if (includeArchived && invoiceStatusFilter === "all" && invoiceSource === "all" && !invoiceSearchQuery) {
       noInvoicesYet = true;
     } else {
       const anyUrl = new URL(`${apiBaseUrl}/api/core/invoices`);
@@ -792,6 +797,7 @@ export default async function DashboardPage({
                 includeArchived={includeArchived}
                 searchQuery={invoiceSearchQuery}
                 statusFilter={invoiceStatusFilter}
+                sourceFilter={invoiceSource}
                 sort={invoiceSort}
                 order={invoiceOrder}
                 page={invoicePage}

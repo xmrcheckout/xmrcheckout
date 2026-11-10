@@ -1,6 +1,6 @@
 "use client";
 
-import { invoiceContext, invoiceSourceLabel } from "../lib/invoice-display";
+import { invoiceContext, invoiceSourceFilters, invoiceSourceLabel, matchesInvoiceSource, type InvoiceSourceFilter } from "../lib/invoice-display";
 
 import SimulatedCheckoutPreview from "./simulated-checkout-preview";
 import DiagnosticReference from "./diagnostic-reference";
@@ -70,6 +70,7 @@ type InvoicePanelProps = {
   includeArchived: boolean;
   searchQuery: string;
   statusFilter: InvoiceItem["status"] | "active" | "all";
+  sourceFilter?: InvoiceSourceFilter;
   sort: string;
   order: string;
   defaultConfirmationTarget: number;
@@ -107,6 +108,13 @@ const formatStatus = (invoice: InvoiceItem, t: Translate) =>
 
 const formatTimestampFor = (value: string | null, t: Translate) =>
   value ? utcTimestamp(value, t) : "-";
+
+const invoiceSourceOptionLabels: Record<InvoiceSourceFilter, string> = {
+  all: "dashboard.invoices.filterAll",
+  direct: "dashboard.invoices.sourceDirect",
+  payment_link: "dashboard.invoices.sourcePaymentLink",
+  terminal: "dashboard.invoices.sourceTerminal",
+};
 
 const invoiceStatusOptions = (t: Translate): {
   value: InvoiceItem["status"] | "active" | "all";
@@ -931,6 +939,7 @@ export default function InvoicePanel({
   includeArchived,
   searchQuery,
   statusFilter,
+  sourceFilter = "all",
   sort,
   order,
   defaultConfirmationTarget,
@@ -1003,6 +1012,9 @@ export default function InvoicePanel({
     if (statusFilter !== "all" && statusFilter !== "active") {
       list = list.filter((invoice) => invoice.status === statusFilter);
     }
+    if (sourceFilter !== "all") {
+      list = list.filter((invoice) => matchesInvoiceSource(invoice.metadata, sourceFilter));
+    }
     if (statusFilter === "active") {
       list = list.filter((invoice) =>
         ["pending", "partially_paid", "payment_detected", "confirmed"].includes(
@@ -1062,7 +1074,7 @@ export default function InvoicePanel({
       list.reverse();
     }
     return list;
-  }, [activeInvoices, mode, order, searchQuery, sort, statusFilter]);
+  }, [activeInvoices, mode, order, searchQuery, sort, sourceFilter, statusFilter]);
 
   const buildInvoicesHref = (next: {
     q?: string;
@@ -1070,6 +1082,7 @@ export default function InvoicePanel({
     order?: string;
     includeArchived?: boolean;
     status?: InvoiceItem["status"] | "active" | "all";
+    source?: InvoiceSourceFilter;
     page?: number;
   }) => {
     const params = new URLSearchParams();
@@ -1085,6 +1098,10 @@ export default function InvoicePanel({
     const nextStatus = next.status ?? statusFilter;
     if (nextStatus && nextStatus !== "all") {
       params.set("status", nextStatus);
+    }
+    const nextSource = next.source ?? sourceFilter;
+    if (nextSource !== "all") {
+      params.set("source", nextSource);
     }
     const nextSort = next.sort ?? sort;
     if (nextSort) {
@@ -1121,6 +1138,9 @@ export default function InvoicePanel({
       params.set("active_only", "true");
     } else if (statusFilter !== "all") {
       params.set("status", statusFilter);
+    }
+    if (sourceFilter !== "all") {
+      params.set("source", sourceFilter);
     }
     if (sort) {
       params.set("sort", sort);
@@ -1290,6 +1310,11 @@ export default function InvoicePanel({
           <label className="grid min-w-0 gap-2 break-words text-xs font-semibold invoice-status-select">{t("dashboard.invoices.status")}
             <select aria-label={t("dashboard.invoices.status")} className={inputClass} value={statusFilter} onChange={event => router.push(buildInvoicesHref({ status: event.target.value as InvoicePanelProps["statusFilter"] }))}>
               {invoiceStatusOptions(t).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+          <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">{t("dashboard.invoices.source")}
+            <select aria-label={t("dashboard.invoices.source")} className={inputClass} value={sourceFilter} onChange={event => router.push(buildInvoicesHref({ source: event.target.value as InvoiceSourceFilter }))}>
+              {invoiceSourceFilters.map(value => <option key={value} value={value}>{t(invoiceSourceOptionLabels[value])}</option>)}
             </select>
           </label>
           <label className="grid min-w-0 gap-2 break-words text-xs font-semibold">{t("dashboard.invoices.sortBy")}

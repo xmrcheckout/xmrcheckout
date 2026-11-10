@@ -737,6 +737,8 @@
       "orderLabel": "Zamówienie {order}",
       "sourcePaymentLink": "Link płatności",
       "sourceTerminal": "Terminal",
+      "source": "Źródło",
+      "sourceDirect": "Panel lub API",
       "continueUrl": "Adres Kontynuuj",
       "continueHelp": "Po potwierdzeniu hostowana strona prośby o płatność może pokazać przycisk Kontynuuj.",
       "qrLogo": "Logo kodu QR",
@@ -1814,7 +1816,8 @@
       "r182": "Wyświetla prośby o płatność sklepu zgodne z BTCPay (stronicowanie przez skip i take, do 100 na stronę).",
       "r183": "Nagłówek Idempotency-Key (UUID; użyj go ponownie, by bezpiecznie ponowić)",
       "r184": "Accept: application/json (zwraca JSON zamiast przekierowania)",
-      "r185": "Usuwa wyłączony terminal; jego link przestaje działać. Dla aktywnego terminala zwracany jest 409; istniejące prośby o płatność pozostają bez zmian."
+      "r185": "Usuwa wyłączony terminal; jego link przestaje działać. Dla aktywnego terminala zwracany jest 409; istniejące prośby o płatność pozostają bez zmian.",
+      "r186": "source (payment_link, terminal lub direct dla próśb o płatność utworzonych w panelu lub przez API)"
     },
     "metaTitle": "Dokumentacja API płatności Monero | XMR Checkout",
     "metaDescription": "Zintegruj samodzielnie hostowane prośby o płatność w Monero z API XMR Checkout, publicznymi stronami płatności, wykrywaniem potwierdzeń i webhookami.",

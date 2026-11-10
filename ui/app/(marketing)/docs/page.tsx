@@ -537,6 +537,7 @@ const endpointRequirementsFor = (t: Translate): EndpointRequirement[] => [
       t("docs.ref.r124"),
       t("docs.ref.r125"),
       t("docs.ref.r126"),
+      t("docs.ref.r186"),
     ],
     notes: [
       t("docs.ref.r127"),
@@ -557,6 +558,7 @@ const endpointRequirementsFor = (t: Translate): EndpointRequirement[] => [
       "order",
       "created_from",
       "created_to",
+      "source",
     ],
     notes: [t("docs.ref.r130")],
   },

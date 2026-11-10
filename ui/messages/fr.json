@@ -725,6 +725,8 @@
       "orderLabel": "Commande {order}",
       "sourcePaymentLink": "Lien de paiement",
       "sourceTerminal": "Terminal",
+      "source": "Origine",
+      "sourceDirect": "Tableau de bord ou API",
       "continueUrl": "URL Continuer",
       "continueHelp": "Après confirmation, la page de facture hébergée peut afficher un bouton Continuer.",
       "qrLogo": "Logo du QR code",
@@ -1788,7 +1790,8 @@
       "r182": "Lister les factures compatibles BTCPay de la boutique (pagination avec skip et take, jusqu’à 100 par page).",
       "r183": "En-tête Idempotency-Key (UUID ; réutilisez-le pour réessayer sans risque)",
       "r184": "Accept: application/json (renvoie du JSON au lieu d’une redirection)",
-      "r185": "Supprimer un terminal désactivé ; son lien cesse de fonctionner. Un terminal actif renvoie 409 ; les factures existantes ne sont pas affectées."
+      "r185": "Supprimer un terminal désactivé ; son lien cesse de fonctionner. Un terminal actif renvoie 409 ; les factures existantes ne sont pas affectées.",
+      "r186": "source (payment_link, terminal ou direct pour les factures créées dans le tableau de bord ou via l’API)"
     },
     "metaTitle": "Documentation de l’API de paiement Monero | XMR Checkout",
     "metaDescription": "Intégrez des factures Monero auto-hébergées grâce à l’API XMR Checkout, aux pages de facture publiques, à la détection des confirmations et aux webhooks.",

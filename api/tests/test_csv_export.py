@@ -36,7 +36,7 @@ class InvoiceCsvExportTests(unittest.IsolatedAsyncioTestCase):
             response = routes.export_invoices_csv(
                 include_archived=False, status_filter=None, active_only=False,
                 q=None, sort="created_at", order="desc", created_from=None,
-                created_to=None, db=db, api_key="fixture",
+                created_to=None, source=None, db=db, api_key="fixture",
             )
             chunks = [chunk async for chunk in response.body_iterator]
         rows = list(csv.DictReader(io.StringIO("".join(chunks))))
@@ -46,12 +46,12 @@ class InvoiceCsvExportTests(unittest.IsolatedAsyncioTestCase):
 
 
 class InvoiceSearchConsistencyTests(unittest.IsolatedAsyncioTestCase):
-    def sql(self, q):
+    def sql(self, q, source=None):
         from sqlalchemy.orm import Session
         from app.models import Invoice
         query = routes._filter_merchant_invoices(
             Session().query(Invoice), include_archived=False, status_filter=None,
-            active_only=False, q=q, created_from=None, created_to=None,
+            active_only=False, q=q, created_from=None, created_to=None, source=source,
         )
         return str(query.statement.compile(compile_kwargs={"literal_binds": True}))
 
@@ -59,6 +59,18 @@ class InvoiceSearchConsistencyTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("amount_xmr = 0.125", self.sql("0.125"))
         self.assertNotIn("amount_xmr =", self.sql("NaN"))
         self.assertNotIn("amount_xmr =", self.sql("shop order"))
+
+    def test_source_filters_on_the_link_and_terminal_ids(self):
+        self.assertIn("payment_link_id IS NOT NULL", self.sql(None, "payment_link"))
+        self.assertNotIn("terminal_id IS", self.sql(None, "payment_link"))
+        self.assertIn("terminal_id IS NOT NULL", self.sql(None, "terminal"))
+        self.assertNotIn("payment_link_id IS", self.sql(None, "terminal"))
+        direct = self.sql(None, "direct")
+        self.assertIn("payment_link_id IS NULL", direct)
+        self.assertIn("terminal_id IS NULL", direct)
+        for unfiltered in (self.sql(None), self.sql(None, None)):
+            self.assertNotIn("payment_link_id IS", unfiltered)
+            self.assertNotIn("terminal_id IS", unfiltered)
 
     async def test_list_and_export_use_the_same_filters(self):
         query = MagicMock()
@@ -70,7 +82,8 @@ class InvoiceSearchConsistencyTests(unittest.IsolatedAsyncioTestCase):
         db = MagicMock()
         db.query.return_value = query
         args = dict(include_archived=True, status_filter="pending", active_only=False, q="0.125",
-                    created_from=None, created_to=None, sort="created_at", order="desc", db=db, api_key="k")
+                    created_from=None, created_to=None, source="terminal", sort="created_at", order="desc",
+                    db=db, api_key="k")
         calls = []
         def record(base_query, **filters):
             calls.append(filters)
@@ -83,3 +96,4 @@ class InvoiceSearchConsistencyTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(calls), 3)
         self.assertEqual(calls[0], calls[1])
         self.assertEqual(calls[0], calls[2])
+        self.assertEqual(calls[0]["source"], "terminal")

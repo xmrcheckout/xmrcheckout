@@ -725,6 +725,8 @@
       "orderLabel": "Order {order}",
       "sourcePaymentLink": "Payment link",
       "sourceTerminal": "Terminal",
+      "source": "Created from",
+      "sourceDirect": "Dashboard or API",
       "continueUrl": "Continue URL",
       "continueHelp": "After confirmation, the hosted invoice page can show a Continue button.",
       "qrLogo": "QR logo",
@@ -1788,7 +1790,8 @@
       "r182": "List the store’s BTCPay-compatible invoices (skip and take paging, up to 100 per page).",
       "r183": "Idempotency-Key header (UUID; reuse it to retry safely)",
       "r184": "Accept: application/json (returns JSON instead of a redirect)",
-      "r185": "Delete a disabled terminal; its link stops working. An enabled terminal returns 409; existing invoices are unaffected."
+      "r185": "Delete a disabled terminal; its link stops working. An enabled terminal returns 409; existing invoices are unaffected.",
+      "r186": "source (payment_link, terminal, or direct for invoices created in the dashboard or API)"
     },
     "metaTitle": "Monero Payment API Documentation | XMR Checkout",
     "metaDescription": "Integrate self-hosted Monero invoices with the XMR Checkout API, public invoice pages, confirmation detection, and webhooks.",

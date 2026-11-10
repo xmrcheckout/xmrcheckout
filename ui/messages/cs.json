@@ -737,6 +737,8 @@
       "orderLabel": "Objednávka {order}",
       "sourcePaymentLink": "Platební odkaz",
       "sourceTerminal": "Terminál",
+      "source": "Zdroj",
+      "sourceDirect": "Panel nebo API",
       "continueUrl": "URL pro pokračování",
       "continueHelp": "Po potvrzení může hostovaná stránka platební výzvy zobrazit tlačítko Pokračovat.",
       "qrLogo": "Logo v QR kódu",
@@ -1814,7 +1816,8 @@
       "r182": "Vypíše platební výzvy obchodu kompatibilní s BTCPay (stránkování přes skip a take, až 100 na stránku).",
       "r183": "Hlavička Idempotency-Key (UUID; znovu ji použijte pro bezpečné opakování)",
       "r184": "Accept: application/json (vrací JSON místo přesměrování)",
-      "r185": "Smaže vypnutý terminál; jeho odkaz přestane fungovat. Zapnutý terminál vrátí 409; existující platební výzvy zůstanou beze změny."
+      "r185": "Smaže vypnutý terminál; jeho odkaz přestane fungovat. Zapnutý terminál vrátí 409; existující platební výzvy zůstanou beze změny.",
+      "r186": "source (payment_link, terminal nebo direct pro platební výzvy vytvořené v panelu nebo přes API)"
     },
     "metaTitle": "Dokumentace platebního API Monero | XMR Checkout",
     "metaDescription": "Integrujte samostatně hostované platební výzvy v Monero pomocí API XMR Checkout, veřejných stránek platebních výzev, detekce potvrzení a webhooků.",

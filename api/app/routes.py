@@ -1,7 +1,7 @@
 from .public_origin import public_origin
 import uuid
 from uuid import UUID
-from typing import Any
+from typing import Any, Literal
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, ROUND_DOWN, InvalidOperation
 import csv
@@ -1271,10 +1271,21 @@ def create_invoice_for_merchant(
     return _invoice_response(invoice, request, warnings=warnings)
 
 
+InvoiceSourceFilter = Literal["payment_link", "terminal", "direct"]
+
+
 def _filter_merchant_invoices(
-    query, *, include_archived, status_filter, active_only, q, created_from, created_to
+    query, *, include_archived, status_filter, active_only, q, created_from, created_to,
+    source=None,
 ):
     """Filters shared by the invoice list, its total and the CSV export."""
+    # The link and terminal ids stay on an invoice after the link or terminal is deleted.
+    if source == "payment_link":
+        query = query.filter(Invoice.payment_link_id.isnot(None))
+    elif source == "terminal":
+        query = query.filter(Invoice.terminal_id.isnot(None))
+    elif source == "direct":
+        query = query.filter(Invoice.payment_link_id.is_(None), Invoice.terminal_id.is_(None))
     if not include_archived:
         query = query.filter(Invoice.archived_at.is_(None))
     if status_filter:
@@ -1319,6 +1330,7 @@ def list_invoices_for_user(
     order: str = Query(default="desc"),
     created_from: datetime | None = Query(default=None),
     created_to: datetime | None = Query(default=None),
+    source: InvoiceSourceFilter | None = Query(default=None),
     db: Session = Depends(get_db),
     api_key: str = Depends(require_api_key),
 ):
@@ -1330,7 +1342,7 @@ def list_invoices_for_user(
         )
     filters = dict(
         include_archived=include_archived, status_filter=status_filter, active_only=active_only,
-        q=q, created_from=created_from, created_to=created_to,
+        q=q, created_from=created_from, created_to=created_to, source=source,
     )
     query = _filter_merchant_invoices(
         db.query(Invoice).filter(Invoice.user_id == user.id), **filters
@@ -1378,6 +1390,7 @@ def export_invoices_csv(
     order: str = Query(default="desc"),
     created_from: datetime | None = Query(default=None),
     created_to: datetime | None = Query(default=None),
+    source: InvoiceSourceFilter | None = Query(default=None),
     db: Session = Depends(get_db),
     api_key: str = Depends(require_api_key),
 ):
@@ -1391,7 +1404,7 @@ def export_invoices_csv(
     query = _filter_merchant_invoices(
         db.query(Invoice).filter(Invoice.user_id == user.id),
         include_archived=include_archived, status_filter=status_filter, active_only=active_only,
-        q=q, created_from=created_from, created_to=created_to,
+        q=q, created_from=created_from, created_to=created_to, source=source,
     )
 
     sort_keys = {

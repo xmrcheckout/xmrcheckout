@@ -719,6 +719,8 @@
       "orderLabel": "订单 {order}",
       "sourcePaymentLink": "付款链接",
       "sourceTerminal": "收款终端",
+      "source": "来源",
+      "sourceDirect": "控制台或 API",
       "continueUrl": "继续 URL",
       "continueHelp": "确认后，托管的账单页面可以显示“继续”按钮。",
       "qrLogo": "二维码标志",
@@ -1775,7 +1777,8 @@
       "r182": "列出商店的 BTCPay 兼容账单（使用 skip 和 take 分页，每页最多 100 条）。",
       "r183": "Idempotency-Key 请求头（UUID；复用它即可安全重试）",
       "r184": "Accept: application/json（返回 JSON 而不是重定向）",
-      "r185": "删除已停用的收款终端；其终端链接将失效。启用中的收款终端返回 409；现有账单不受影响。"
+      "r185": "删除已停用的收款终端；其终端链接将失效。启用中的收款终端返回 409；现有账单不受影响。",
+      "r186": "source（payment_link、terminal，或 direct：在控制台或通过 API 创建的账单）"
     },
     "metaTitle": "门罗币付款 API 文档 | XMR Checkout",
     "metaDescription": "通过 XMR Checkout API、公开账单页面、确认检测和 Webhook 集成自托管的门罗币账单。",

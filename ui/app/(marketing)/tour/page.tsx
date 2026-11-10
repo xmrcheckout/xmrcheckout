@@ -1,6 +1,6 @@
 import { publicPageMetadata } from "../../../lib/site-metadata";
 import type { Metadata } from "next";
-import { invoiceContext, invoiceSourceLabel as sourceLabel } from "../../../lib/invoice-display";
+import { invoiceContext, invoiceSourceFilter, invoiceSourceLabel as sourceLabel } from "../../../lib/invoice-display";
 import Link from "next/link";
 
 import InvoicePanel from "../../../components/invoice-panel";
@@ -384,6 +384,8 @@ export default async function TourPage({
     invoiceStatuses.includes(statusValue as InvoiceStatus)
       ? (statusValue as InvoiceStatus)
       : "all";
+  const invoiceSource =
+    activeTab === "invoices" ? invoiceSourceFilter(resolvedSearchParams?.source) : "all";
 
   const sortParam = resolvedSearchParams?.sort;
   const sortValue = Array.isArray(sortParam) ? sortParam[0] : sortParam;
@@ -745,6 +747,7 @@ export default async function TourPage({
               includeArchived={includeArchived}
               searchQuery={invoiceSearchQuery}
               statusFilter={invoiceStatusFilter}
+              sourceFilter={invoiceSource}
               sort={invoiceSort}
               order={invoiceOrder}
               defaultConfirmationTarget={fixture.defaultConfirmationTarget}

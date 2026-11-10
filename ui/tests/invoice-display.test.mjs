@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { invoiceContext, invoiceLookupId } from '../lib/invoice-display.ts';
+import { invoiceContext, invoiceLookupId, invoiceSourceFilter, matchesInvoiceSource } from '../lib/invoice-display.ts';
 const id = '11111111-1111-4111-8111-111111111111';
 const origin = 'https://checkout.example';
 test('lookup accepts IDs and local invoice URLs without following them', () => {
@@ -25,4 +25,18 @@ test('invoice context reports where the invoice came from', () => {
   assert.equal(invoiceContext({description:'Manual'}).source,null);
   assert.equal(invoiceContext({origin:'other', payment_link:{title:'Guide'}}).source,null);
   assert.equal(invoiceContext({order_id:'42'}, (order) => `Pedido ${order}`).title,'Pedido 42');
+});
+test('source filter reads the URL value and falls back to every invoice', () => {
+  for (const value of ['direct', 'payment_link', 'terminal', 'all']) assert.equal(invoiceSourceFilter(value), value);
+  assert.equal(invoiceSourceFilter(['terminal', 'direct']), 'terminal');
+  for (const value of [undefined, null, '', 'Terminal', 'api', ['other'], {}]) assert.equal(invoiceSourceFilter(value), 'all');
+});
+test('source filter puts each invoice in exactly one bucket', () => {
+  const link = {origin:'payment_link', payment_link:{title:'Guide'}};
+  const sale = {origin:'terminal', terminal:{name:'Front counter'}};
+  const direct = {description:'Manual'};
+  for (const metadata of [link, sale, direct, null]) assert.equal(matchesInvoiceSource(metadata, 'all'), true);
+  assert.deepEqual([link, sale, direct, null].map((metadata) => matchesInvoiceSource(metadata, 'payment_link')), [true, false, false, false]);
+  assert.deepEqual([link, sale, direct, null].map((metadata) => matchesInvoiceSource(metadata, 'terminal')), [false, true, false, false]);
+  assert.deepEqual([link, sale, direct, null].map((metadata) => matchesInvoiceSource(metadata, 'direct')), [false, false, true, true]);
 });

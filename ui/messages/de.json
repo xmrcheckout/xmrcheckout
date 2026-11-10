@@ -725,6 +725,8 @@
       "orderLabel": "Bestellung {order}",
       "sourcePaymentLink": "Zahlungslink",
       "sourceTerminal": "Terminal",
+      "source": "Erstellt über",
+      "sourceDirect": "Dashboard oder API",
       "continueUrl": "Weiter-URL",
       "continueHelp": "Nach der Bestätigung kann die gehostete Rechnungsseite eine Schaltfläche „Weiter“ anzeigen.",
       "qrLogo": "QR-Logo",
@@ -1788,7 +1790,8 @@
       "r182": "Die BTCPay-kompatiblen Rechnungen des Shops auflisten (Paginierung mit skip und take, bis zu 100 pro Seite).",
       "r183": "Header Idempotency-Key (UUID; für sichere Wiederholungen erneut verwenden)",
       "r184": "Accept: application/json (liefert JSON statt einer Weiterleitung)",
-      "r185": "Ein deaktiviertes Terminal löschen; sein Link funktioniert nicht mehr. Ein aktives Terminal liefert 409; bestehende Rechnungen bleiben unverändert."
+      "r185": "Ein deaktiviertes Terminal löschen; sein Link funktioniert nicht mehr. Ein aktives Terminal liefert 409; bestehende Rechnungen bleiben unverändert.",
+      "r186": "source (payment_link, terminal oder direct für Rechnungen, die im Dashboard oder über die API erstellt wurden)"
     },
     "metaTitle": "Dokumentation der Monero-Zahlungs-API | XMR Checkout",
     "metaDescription": "Integrieren Sie selbst gehostete Monero-Rechnungen mit der XMR-Checkout-API, öffentlichen Rechnungsseiten, Bestätigungserkennung und Webhooks.",

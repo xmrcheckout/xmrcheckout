@@ -725,6 +725,8 @@
       "orderLabel": "Pedido {order}",
       "sourcePaymentLink": "Enlace de pago",
       "sourceTerminal": "Terminal",
+      "source": "Origen",
+      "sourceDirect": "Panel o API",
       "continueUrl": "URL para continuar",
       "continueHelp": "Tras la confirmación, la página de la factura puede mostrar un botón Continuar.",
       "qrLogo": "Logotipo del QR",
@@ -1788,7 +1790,8 @@
       "r182": "Lista las facturas compatibles con BTCPay de la tienda (paginación con skip y take, hasta 100 por página).",
       "r183": "Cabecera Idempotency-Key (UUID; reutilízala para reintentar con seguridad)",
       "r184": "Accept: application/json (devuelve JSON en lugar de una redirección)",
-      "r185": "Elimina un terminal desactivado; su enlace deja de funcionar. Un terminal activo devuelve 409; las facturas existentes no se ven afectadas."
+      "r185": "Elimina un terminal desactivado; su enlace deja de funcionar. Un terminal activo devuelve 409; las facturas existentes no se ven afectadas.",
+      "r186": "source (payment_link, terminal o direct para facturas creadas en el panel o la API)"
     },
     "metaTitle": "Documentación de la API de pagos con Monero | XMR Checkout",
     "metaDescription": "Integra facturas de Monero autoalojadas con la API de XMR Checkout, las páginas públicas de factura, la detección de confirmaciones y los webhooks.",

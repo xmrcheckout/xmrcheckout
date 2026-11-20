@@ -38,7 +38,10 @@ function flatten(messages, prefix = '', out = new Map()) {
 }
 const strings = (value) => (typeof value === 'string' ? [value] : Object.values(value));
 const placeholders = (value) => new Set(strings(value).flatMap((text) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1])));
-const tags = (value) => strings(value).flatMap((text) => splitRich(text).map((s) => s.tag).filter(Boolean)).sort().join();
+// The <tag> markers of one string, e.g. "link,strong". Plural forms are
+// compared one by one, since languages have different numbers of forms.
+const tags = (text) => splitRich(text).map((s) => s.tag).filter(Boolean).sort().join();
+const sourceText = (value) => (typeof value === 'string' ? value : value.other);
 
 test('locale matching follows Accept-Language preference and falls back to English', () => {
   assert.equal(matchLocale(null), 'en');
@@ -81,8 +84,21 @@ test('every translation has exactly the English keys, placeholders, and tags', (
     for (const [key, value] of source) {
       const other = translated.get(key);
       assert.deepEqual(placeholders(other), placeholders(value), `${locale} ${key} placeholders`);
-      assert.equal(tags(other), tags(value), `${locale} ${key} tags`);
+      for (const text of strings(other)) assert.equal(tags(text), tags(sourceText(value)), `${locale} ${key} tags`);
       assert.equal(isPlural(other), isPlural(value), `${locale} ${key} plural shape`);
+    }
+  }
+});
+
+test('plural messages have every form their language uses for whole numbers', () => {
+  for (const [locale, messages] of Object.entries({ en, ...catalogs })) {
+    const rules = new Intl.PluralRules(locale);
+    for (const [key, value] of flatten(messages)) {
+      if (!isPlural(value)) continue;
+      for (let n = 0; n <= 200; n++) {
+        const form = rules.select(n);
+        assert.ok(form in value, `${locale} ${key} lacks the "${form}" form (n=${n})`);
+      }
     }
   }
 });

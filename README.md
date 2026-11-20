@@ -642,7 +642,8 @@ missing from another catalog shows in English. To add a language:
 
 1. Copy `ui/messages/en.json` to `ui/messages/<code>.json` and translate the
    values, following `ui/messages/GLOSSARY.md`. Keep `{placeholders}` and
-   `<tag>` markers unchanged.
+   `<tag>` markers unchanged. Give each plural message every form the
+   language uses, such as `few` and `many` in Polish.
 2. Add the code to `locales` and `localeNames` in `ui/lib/i18n/config.ts`, and
    to `ui/lib/i18n/catalogs.ts`. Add the global error page's strings, copied
    from the new catalog, to `ui/lib/i18n/global-error-messages.ts`.

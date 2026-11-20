@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { matchLocale } from '../lib/i18n/config.ts';
+import { locales, matchLocale } from '../lib/i18n/config.ts';
+import { globalErrorMessages } from '../lib/i18n/global-error-messages.ts';
 import { createTranslator, mergeMessages, splitRich } from '../lib/i18n/translate.ts';
 
 const root = new URL('..', import.meta.url).pathname;
 const load = (locale) => JSON.parse(readFileSync(join(root, 'messages', `${locale}.json`), 'utf8'));
 const en = load('en');
-const catalogs = { es: load('es'), ru: load('ru'), de: load('de'), fr: load('fr'), pt: load('pt'), it: load('it'), pl: load('pl'), zh: load('zh'), uk: load('uk'), cs: load('cs') };
+const catalogs = Object.fromEntries(locales.filter((locale) => locale !== 'en').map((locale) => [locale, load(locale)]));
 
 // Forbidden terms per messages/GLOSSARY.md.
 // Each entry is [pattern, allowed negation pattern or null].
@@ -96,6 +97,20 @@ test('catalogs avoid custody and payments-industry terms', () => {
         }
       }
     }
+  }
+});
+
+test('every language has a forbidden-terms entry and a global error message', () => {
+  for (const locale of locales) {
+    assert.ok(forbidden[locale], `add ${locale} to the forbidden table`);
+    // The global error page carries its own copy of these strings (see lib/i18n/global-error-messages.ts).
+    const t = createTranslator(locale, mergeMessages(en, locale === 'en' ? {} : catalogs[locale]));
+    assert.deepEqual(globalErrorMessages[locale], {
+      title: t('error.title'),
+      description: t('error.description'),
+      tryAgain: t('error.tryAgain'),
+      returnHome: t('common.returnHome'),
+    }, `${locale} global error messages`);
   }
 });
 

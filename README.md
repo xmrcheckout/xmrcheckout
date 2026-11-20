@@ -644,7 +644,8 @@ missing from another catalog shows in English. To add a language:
    values, following `ui/messages/GLOSSARY.md`. Keep `{placeholders}` and
    `<tag>` markers unchanged.
 2. Add the code to `locales` and `localeNames` in `ui/lib/i18n/config.ts`, and
-   to `ui/lib/i18n/catalogs.ts`.
+   to `ui/lib/i18n/catalogs.ts`. Add the global error page's strings, copied
+   from the new catalog, to `ui/lib/i18n/global-error-messages.ts`.
 3. Add the language's forbidden terms to `ui/messages/GLOSSARY.md` and to
    `ui/tests/i18n.test.mjs`.
 4. Run `npm test` in `ui/`.

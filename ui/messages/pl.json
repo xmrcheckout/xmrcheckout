@@ -168,6 +168,7 @@
     "amountPaid": "Zapłacona kwota"
   },
   "common": {
+    "mainnetWalletRequired": "Wymagany jest adres główny w głównej sieci Monero.",
     "print": "Drukuj",
     "copyFailed": "Nie udało się skopiować. Zaznacz i skopiuj tekst ręcznie.",
     "copiedToClipboard": "Skopiowano do schowka: {label}",

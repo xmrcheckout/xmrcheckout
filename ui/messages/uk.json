@@ -168,6 +168,7 @@
     "amountPaid": "Сплачена сума"
   },
   "common": {
+    "mainnetWalletRequired": "Потрібна основна адреса в основній мережі Monero.",
     "print": "Друк",
     "copyFailed": "Не вдалося скопіювати. Виділіть і скопіюйте текст вручну.",
     "copiedToClipboard": "{label} скопійовано в буфер обміну",

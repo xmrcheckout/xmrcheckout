@@ -164,6 +164,7 @@
     "amountPaid": "Importo pagato"
   },
   "common": {
+    "mainnetWalletRequired": "È richiesto un indirizzo primario sulla rete principale di Monero.",
     "print": "Stampa",
     "copyFailed": "Impossibile copiare. Seleziona e copia il testo manualmente.",
     "copiedToClipboard": "{label} copiato negli appunti",

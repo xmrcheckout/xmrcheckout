@@ -5,6 +5,7 @@ from unittest.mock import patch
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from monero.seed import Seed
 from decimal import Decimal
 from app.rates import QuoteResult
 from sqlalchemy.engine import make_url
@@ -17,7 +18,7 @@ assert make_url(str(engine.url)).database == "payment_link_tests"
 Base.metadata.create_all(engine)
 with SessionLocal() as db:
     if not db.query(PaymentLink).filter(PaymentLink.token == "fixture-token").first():
-        user = User(payment_address="4" + "1" * 94, view_key_encrypted="fixture", api_key_hash=hash_api_key("fixture-only-api-key"), api_key_encrypted="fixture")
+        user = User(payment_address=str(Seed().public_address()), view_key_encrypted="fixture", api_key_hash=hash_api_key("fixture-only-api-key"), api_key_encrypted="fixture")
         db.add(user)
         db.flush()
         link = PaymentLink(user_id=user.id, token="fixture-token", title="Fixture product", description="Manual delivery", amount_xmr="0.1", confirmation_target=2, enabled=True)

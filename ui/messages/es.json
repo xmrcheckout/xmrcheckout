@@ -164,6 +164,7 @@
     "amountPaid": "Importe pagado"
   },
   "common": {
+    "mainnetWalletRequired": "Necesitas una dirección principal de la red principal de Monero.",
     "print": "Imprimir",
     "copyFailed": "No se pudo copiar. Selecciona y copia el texto manualmente.",
     "copiedToClipboard": "{label}: copiado al portapapeles",

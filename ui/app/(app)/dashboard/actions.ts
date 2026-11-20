@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getI18n } from "../../../lib/i18n/server";
+import { isMainnetWalletRequired } from "../../../lib/wallet-connection";
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
 
@@ -349,7 +350,14 @@ export async function createInvoiceAction(
 
   if (!response.ok) {
     const detail = await response.json().catch(() => null);
-    const message = response.status === 401 ? t("dashboard.actions.authExpired") : response.status >= 500 && !detail?.code ? t("dashboard.actions.invoiceNotConfirmed") : typeof detail?.detail === "string" ? detail.detail : t("dashboard.actions.invoiceNotConfirmed");
+    let message = t("dashboard.actions.invoiceNotConfirmed");
+    if (response.status === 401) {
+      message = t("dashboard.actions.authExpired");
+    } else if (isMainnetWalletRequired(response)) {
+      message = t("common.mainnetWalletRequired");
+    } else if (typeof detail?.detail === "string" && (response.status < 500 || detail.code)) {
+      message = detail.detail;
+    }
     revalidatePath("/dashboard");
     return {
       code: typeof detail?.code === "string" ? detail.code : null,

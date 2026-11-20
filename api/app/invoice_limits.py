@@ -13,6 +13,7 @@ from .config import (
     INVOICE_CREATION_RATE_WINDOW_SECONDS,
 )
 from .models import Invoice, User
+from .wallet_network import require_mainnet_wallet
 
 
 def reserve_invoice_creation(
@@ -35,6 +36,7 @@ def reserve_invoice_creation(
     )
     if locked is None:
         raise ValueError("User not found")
+    require_mainnet_wallet(locked.payment_address, status_code=status.HTTP_409_CONFLICT)
 
     now = datetime.now(timezone.utc)
     configured_active_limit = (

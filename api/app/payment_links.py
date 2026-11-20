@@ -25,6 +25,7 @@ from .schemas import InvoiceCreateUser, check_amount_precision
 from .security import require_api_key
 from .public_origin import public_origin
 from .rates import SUPPORTED_CURRENCIES
+from .wallet_network import MainnetWalletRequired
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -398,6 +399,9 @@ def create_purchase(token: str, request: Request, db: Session, body: bytes = b""
         invoice = db.query(Invoice).filter(Invoice.id == invoice.id).one()
         logger.info("Public payment-link invoice created link=%s invoice=%s", link.id, invoice.id)
         return success(invoice)
+    except MainnetWalletRequired as exc:
+        db.rollback()
+        return failure(exc.status_code, "The merchant checkout is unavailable.")
     except HTTPException as exc:
         db.rollback()
         if exc.status_code == 422 and customer and is_form and not wants_json:

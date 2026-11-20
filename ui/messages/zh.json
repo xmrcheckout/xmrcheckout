@@ -162,6 +162,7 @@
     "amountPaid": "已付金额"
   },
   "common": {
+    "mainnetWalletRequired": "需要使用 Monero 主网的主地址。",
     "print": "打印",
     "copyFailed": "无法复制。请手动选中并复制文本。",
     "copiedToClipboard": "{label}已复制到剪贴板",

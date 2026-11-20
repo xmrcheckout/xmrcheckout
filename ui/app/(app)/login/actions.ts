@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { dashboardDestination } from "../../../lib/wallet-connection";
+import { dashboardDestination, isMainnetWalletRequired } from "../../../lib/wallet-connection";
 import { getI18n } from "../../../lib/i18n/server";
 
 const apiBaseUrl = process.env.API_BASE_URL ?? "http://localhost:8000";
@@ -35,6 +35,9 @@ export async function loginAction(
   }
 
   if (!response.ok) {
+    if (isMainnetWalletRequired(response)) {
+      return { error: t("common.mainnetWalletRequired") };
+    }
     const detail = await response.json().catch(() => null);
     const message = detail?.detail ?? t("login.unableToConnect");
     return { error: message };

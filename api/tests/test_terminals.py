@@ -10,6 +10,7 @@ from uuid import UUID, uuid4
 import requests
 import uvicorn
 from fastapi import FastAPI
+from monero.seed import Seed
 from sqlalchemy.engine import make_url
 
 from app import payment_links, reconciler, routes, terminals
@@ -49,7 +50,7 @@ class TerminalIntegrationTests(unittest.TestCase):
         from app.security import hash_api_key
         self.key = str(uuid4())
         with SessionLocal() as db:
-            user = User(payment_address=str(uuid4()), view_key_encrypted="fixture", api_key_hash=hash_api_key(self.key), api_key_encrypted="fixture")
+            user = User(payment_address=str(Seed().public_address()), view_key_encrypted="fixture", api_key_hash=hash_api_key(self.key), api_key_encrypted="fixture")
             db.add(user)
             db.commit()
             self.user_id = user.id

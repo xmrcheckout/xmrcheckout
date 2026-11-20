@@ -28,6 +28,7 @@ from .db import get_db
 from .formatting import atomic_to_xmr, format_xmr_amount, invoice_amounts
 from .invoice_checks import AWAITING_PAYMENT_STATUSES, check_is_delayed, watched_invoice_criteria
 from .invoice_limits import reserve_invoice_creation
+from .wallet_network import require_mainnet_wallet
 from .models import (
     Invoice,
     InvoiceTransfer,
@@ -939,6 +940,7 @@ def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="New accounts are not accepted on this instance.",
             )
+        require_mainnet_wallet(payment_address)
         api_key = generate_api_key()
         webhook_secret = generate_webhook_secret()
         user = User(
@@ -983,6 +985,7 @@ def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
 def validate_login(payload: LoginRequest) -> Response:
     payment_address = payload.payment_address.strip()
     _validate_payment_address_and_view_key(payment_address, payload.view_key)
+    require_mainnet_wallet(payment_address)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

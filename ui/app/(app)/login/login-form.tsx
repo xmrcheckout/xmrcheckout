@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 
-import { dashboardDestination, walletFormatErrors } from "../../../lib/wallet-connection";
+import { dashboardDestination, isMainnetWalletRequired, walletFormatErrors } from "../../../lib/wallet-connection";
 
 import PendingSubmitButton from "../../../components/pending-submit-button";
 
@@ -86,8 +86,9 @@ export default function LoginForm({ nextDestination }: { nextDestination?: strin
 
         if (!response.ok) {
           const detail = await response.json().catch(() => null);
-          const message =
-            detail?.detail ?? t("login.validationFailed");
+          const message = isMainnetWalletRequired(response)
+            ? t("common.mainnetWalletRequired")
+            : detail?.detail ?? t("login.validationFailed");
           setValidationStatus("invalid");
           setValidationMessage(message);
           return;

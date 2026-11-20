@@ -4,9 +4,12 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from fastapi import HTTPException
+from monero.seed import Seed
 
 from app import invoice_limits
 from app.models import Invoice, User
+
+MAINNET_ADDRESS = str(Seed().public_address())
 
 
 class _FakeQuery:
@@ -53,6 +56,7 @@ class _FakeDb:
 def _user(**overrides):
     values = {
         "id": "user-1",
+        "payment_address": MAINNET_ADDRESS,
         "invoice_creation_window_started_at": None,
         "invoice_creation_count": 0,
     }
@@ -61,6 +65,18 @@ def _user(**overrides):
 
 
 class InvoiceLimitTests(unittest.TestCase):
+    def test_non_mainnet_wallet_is_rejected_before_reserving_an_invoice(self):
+        user = _user(payment_address=str(Seed().public_address(net="stage")))
+        db = _FakeDb(user, active_count=0)
+
+        with self.assertRaises(HTTPException) as context:
+            invoice_limits.reserve_invoice_creation(db, user=user)
+
+        self.assertEqual(context.exception.status_code, 409)
+        self.assertEqual(context.exception.headers["X-Checkout-Error"], "mainnet_wallet_required")
+        self.assertEqual(user.invoice_creation_count, 0)
+        self.assertEqual(db.added, [])
+
     def test_reservation_initializes_a_window_and_locks_user(self):
         user = _user()
         db = _FakeDb(user, active_count=0)

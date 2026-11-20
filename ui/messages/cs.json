@@ -168,6 +168,7 @@
     "amountPaid": "Zaplacená částka"
   },
   "common": {
+    "mainnetWalletRequired": "Je vyžadována primární adresa v hlavní síti Monero.",
     "print": "Tisk",
     "copyFailed": "Kopírování se nezdařilo. Označte a zkopírujte text ručně.",
     "copiedToClipboard": "{label} zkopírováno do schránky",

@@ -12,6 +12,7 @@ from unittest.mock import Mock, patch
 from uuid import uuid4
 
 from fastapi import HTTPException
+from monero.seed import Seed
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
@@ -105,7 +106,7 @@ class AllocationDatabaseTests(unittest.TestCase):
         self.Session = sessionmaker(bind=self.engine, expire_on_commit=False)
         self.user_id = uuid4()
         with self.Session.begin() as db:
-            db.add(User(id=self.user_id, payment_address="merchant", view_key_encrypted="view",
+            db.add(User(id=self.user_id, payment_address=str(Seed().public_address()), view_key_encrypted="view",
                         api_key_hash="hash", api_key_encrypted="key"))
         self.decrypt = patch.object(pool_status, "decrypt_secret", return_value="view")
         self.derive = patch.object(pool_status, "derive_subaddress", side_effect=lambda **kw: f"address-{kw['address_index']}")
@@ -273,15 +274,17 @@ class AllocationDatabaseTests(unittest.TestCase):
             with patch.object(reconciler, "dispatch_webhooks") as hooks, patch.object(reconciler, "dispatch_btcpay_webhooks"):
                 reconciler._reconcile_invoice(db, service, user, invoice)
                 self.assertEqual(invoice.total_paid_atomic, 40)
-                self.assertEqual(invoice.status, "pending")
-                hooks.assert_not_called()
+                self.assertEqual(invoice.status, "partially_paid")
+                hooks.assert_called_once_with(db, str(user.id), "invoice.partially_paid", invoice, queue=True)
                 service.get_transfers_for_address.return_value.append(
                     TransferDetail("top-up", 60, 2, None, invoice.address, 102))
                 reconciler._reconcile_invoice(db, service, user, invoice)
                 self.assertEqual(invoice.status, "confirmed")
-                self.assertEqual(hooks.call_count, 2)
+                self.assertEqual([event.args[2] for event in hooks.call_args_list], [
+                    "invoice.partially_paid", "invoice.payment_detected", "invoice.confirmed",
+                ])
                 reconciler._reconcile_invoice(db, service, user, invoice)
-                self.assertEqual(hooks.call_count, 2)
+                self.assertEqual(hooks.call_count, 3)
                 old = db.query(Invoice).filter(Invoice.address == invoice.address, Invoice.id != invoice.id).first()
                 service.reset_mock()
                 reconciler._reconcile_invoice(db, service, user, old)

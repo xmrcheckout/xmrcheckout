@@ -8,7 +8,7 @@ from monero.seed import Seed
 from app import routes
 from app.schemas import LoginRequest
 
-ADDRESS = "4" + "A" * 94
+ADDRESS = str(Seed().public_address())
 
 
 def _db(existing):
@@ -47,6 +47,37 @@ class SignupSwitchTests(unittest.TestCase):
             result = self.login(db, enabled=True)
         db.add.assert_called_once()
         self.assertIn("api_key", result)
+
+    def test_new_accounts_and_validation_require_mainnet(self):
+        seed = Seed()
+        for network in ("stage", "test"):
+            payload = LoginRequest(
+                payment_address=str(seed.public_address(net=network)),
+                view_key=seed.secret_view_key(),
+            )
+            db = _db(None)
+            with self.subTest(network=network), patch.object(routes, "SIGNUP_ENABLED", True):
+                with self.assertRaises(HTTPException) as signup:
+                    routes.login_user(payload, db)
+                self.assertEqual(signup.exception.status_code, 400)
+                with self.assertRaises(HTTPException) as validation:
+                    routes.validate_login(payload)
+                self.assertEqual(validation.exception.status_code, 400)
+                db.add.assert_not_called()
+
+    def test_existing_stagenet_account_can_still_authenticate(self):
+        seed = Seed()
+        payload = LoginRequest(
+            payment_address=str(seed.public_address(net="stage")),
+            view_key=seed.secret_view_key(),
+        )
+        user = SimpleNamespace(id="existing", view_key_encrypted="enc", api_key_encrypted="key")
+        with (
+            patch.object(routes, "decrypt_secret", return_value=payload.view_key),
+            patch.object(routes, "decrypt_api_key", return_value="api-key"),
+            patch.object(routes, "_ensure_webhook_secret", return_value="secret"),
+        ):
+            self.assertEqual(routes.login_user(payload, _db(user))["api_key"], "api-key")
 
 
 # Order of the ed25519 base point group.

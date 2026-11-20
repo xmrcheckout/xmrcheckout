@@ -164,6 +164,7 @@
     "amountPaid": "Montant payé"
   },
   "common": {
+    "mainnetWalletRequired": "Une adresse principale sur le réseau principal de Monero est requise.",
     "print": "Imprimer",
     "copyFailed": "Copie impossible. Sélectionnez et copiez le texte manuellement.",
     "copiedToClipboard": "{label} copié dans le presse-papiers",

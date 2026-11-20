@@ -164,6 +164,7 @@
     "amountPaid": "Gezahlter Betrag"
   },
   "common": {
+    "mainnetWalletRequired": "Eine primäre Adresse im Monero-Mainnet ist erforderlich.",
     "print": "Drucken",
     "copyFailed": "Kopieren fehlgeschlagen. Markieren und kopieren Sie den Text manuell.",
     "copiedToClipboard": "{label} in die Zwischenablage kopiert",

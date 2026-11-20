@@ -8,6 +8,7 @@ import { useI18n } from "./i18n-provider";
 import Link from "next/link";
 import LanguageSwitcher from "./language-switcher";
 import { demoRates } from "../lib/simulated-invoice";
+import { isMainnetWalletRequired } from "../lib/wallet-connection";
 import CopyIconButton from "./copy-icon-button";
 
 type TerminalStatus = {
@@ -209,6 +210,7 @@ export default function TerminalScreen({ demo = false }: { demo?: boolean }) {
       });
       attempt.current = null;
       if (response.ok) setSale(data);
+      else if (isMainnetWalletRequired(response)) setError(t("common.mainnetWalletRequired"));
       else setError(errorDetail(data, t("terminal.createFailed")));
     } catch (exc) {
       // Retrying with the same key returns the same invoice if the first request succeeded.

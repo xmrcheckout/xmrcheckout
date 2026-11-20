@@ -10,7 +10,8 @@ import zh from "../../messages/zh.json";
 import uk from "../../messages/uk.json";
 import cs from "../../messages/cs.json";
 import type { Locale } from "./config";
-import { createTranslator, mergeMessages, type Messages, type Translate } from "./translate";
+import { createTranslator, mergeMessages, type Messages } from "./translate";
+import type { T } from "./types";
 
 const catalogs: Record<Locale, Messages> = {
   en,
@@ -28,5 +29,5 @@ const catalogs: Record<Locale, Messages> = {
 
 export const getCatalog = (locale: Locale): Messages => catalogs[locale];
 
-export const getTranslator = (locale: Locale): Translate =>
+export const getTranslator = (locale: Locale): T =>
   createTranslator(locale, catalogs[locale]);

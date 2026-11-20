@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { getI18n } from "../lib/i18n/server";
-import type { Translate } from "../lib/i18n/translate";
+import type { T } from "../lib/i18n/types";
 import { utcTimestamp } from "../lib/timestamps";
 import StatusBadge, { type StatusTone } from "./status-badge";
 import StatusRefreshButton from "./status-refresh-button";
@@ -28,7 +28,7 @@ type SystemHealthPanelProps = {
 export const reconcilerNotStarted = (status: SystemStatusSummary | null) =>
   Boolean(status && status.reconciler === "unavailable" && !status.last_reconcile_started_at);
 
-const healthBadge = (status: SystemStatusSummary | null, t: Translate) => {
+const healthBadge = (status: SystemStatusSummary | null, t: T) => {
   if (reconcilerNotStarted(status)) {
     return { label: t("health.notStarted"), tone: "pending" as StatusTone };
   }
@@ -43,7 +43,7 @@ const healthBadge = (status: SystemStatusSummary | null, t: Translate) => {
 
 const connectionBadge = (
   value: "ok" | "unreachable" | "unknown" | undefined,
-  t: Translate,
+  t: T,
 ) => {
   if (value === "ok") {
     return { label: t("health.connected"), tone: "success" as StatusTone };

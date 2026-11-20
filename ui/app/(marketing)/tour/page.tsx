@@ -20,7 +20,7 @@ import { invoiceStatusName } from "../../../lib/invoice-status";
 import { rich } from "../../../lib/i18n/rich";
 import { getI18n } from "../../../lib/i18n/server";
 import { utcTimestamp } from "../../../lib/timestamps";
-import type { Translate } from "../../../lib/i18n/translate";
+import type { T } from "../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -40,7 +40,7 @@ type TourTab = (typeof tabs)[number];
 type WebhookTab = (typeof webhookTabs)[number];
 type InvoiceStatus = (typeof invoiceStatuses)[number];
 
-const tabDetails = (t: Translate): Record<
+const tabDetails = (t: T): Record<
   TourTab,
   { index: string; label: string; detail: string }
 > => ({
@@ -76,7 +76,7 @@ const tabDetails = (t: Translate): Record<
   },
 });
 
-const tourNavItems = (t: Translate) => tabs.map((tab) => ({
+const tourNavItems = (t: T) => tabs.map((tab) => ({
   value: tab,
   href: `/tour?tab=${tab}`,
   ...tabDetails(t)[tab],
@@ -127,7 +127,7 @@ type WebhookDeliverySummary = {
   created_at: string;
 };
 
-const buildNowFixture = (t: Translate) => {
+const buildNowFixture = (t: T) => {
   const now = Date.now();
   const iso = (offsetMs: number) => new Date(now + offsetMs).toISOString();
   const exampleAddress =

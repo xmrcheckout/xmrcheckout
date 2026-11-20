@@ -12,7 +12,7 @@ import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { formatUsdAmount, formatXmrAmount } from "../lib/formatting";
 import { utcTimestamp } from "../lib/timestamps";
-import type { Translate } from "../lib/i18n/translate";
+import type { MessageKey, T } from "../lib/i18n/types";
 import { useI18n } from "./i18n-provider";
 import { rich } from "../lib/i18n/rich";
 import {
@@ -98,7 +98,7 @@ const initialArchiveState: ArchiveInvoiceState = {
   archivedId: null,
 };
 
-const formatStatus = (invoice: InvoiceItem, t: Translate) =>
+const formatStatus = (invoice: InvoiceItem, t: T) =>
   invoiceStatusLabel(
     invoice.status,
     invoice.amount_paid_xmr,
@@ -106,17 +106,17 @@ const formatStatus = (invoice: InvoiceItem, t: Translate) =>
     t,
   );
 
-const formatTimestampFor = (value: string | null, t: Translate) =>
+const formatTimestampFor = (value: string | null, t: T) =>
   value ? utcTimestamp(value, t) : "-";
 
-const invoiceSourceOptionLabels: Record<InvoiceSourceFilter, string> = {
+const invoiceSourceOptionLabels: Record<InvoiceSourceFilter, MessageKey> = {
   all: "dashboard.invoices.filterAll",
   direct: "dashboard.invoices.sourceDirect",
   payment_link: "dashboard.invoices.sourcePaymentLink",
   terminal: "dashboard.invoices.sourceTerminal",
 };
 
-const invoiceStatusOptions = (t: Translate): {
+const invoiceStatusOptions = (t: T): {
   value: InvoiceItem["status"] | "active" | "all";
   label: string;
 }[] => [

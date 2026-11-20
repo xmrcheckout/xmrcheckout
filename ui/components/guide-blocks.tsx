@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode } from "react";
 
 import { rich } from "../lib/i18n/rich";
-import type { Translate } from "../lib/i18n/translate";
+import type { MessageKey, T } from "../lib/i18n/types";
 
 /**
  * Prose blocks for guide and documentation pages. Text comes from the message
@@ -33,7 +33,7 @@ export function GuideBlocks({
 }: {
   blocks: GuideBlock[];
   prefix: string;
-  t: Translate;
+  t: T;
   tags: RichTags;
 }) {
   // Text blocks are numbered in order; node blocks are skipped.
@@ -45,7 +45,8 @@ export function GuideBlocks({
     <>
       {blocks.map((block, index) => {
         if (block.kind === "node") return <Fragment key={`node-${index}`}>{block.node}</Fragment>;
-        const key = `${prefix}.${numbers[index]}`;
+        // Numbered keys are built at run time, so tsc cannot check them.
+        const key = `${prefix}.${numbers[index]}` as MessageKey;
         const className = block.className ?? defaults[block.kind];
         if (block.kind === "p" || block.kind === "h3") {
           const Text = block.kind;
@@ -56,7 +57,7 @@ export function GuideBlocks({
         return (
           <List key={key} className={className}>
             {range(items).map((item) => (
-              <li key={item}>{rich(t(`${key}.${item}`), tags)}</li>
+              <li key={item}>{rich(t(`${key}.${item}` as MessageKey), tags)}</li>
             ))}
           </List>
         );

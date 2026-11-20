@@ -5,6 +5,7 @@ import Link from "next/link";
 import PageIntroBand from "../../../../components/page-intro-band";
 import { rich } from "../../../../lib/i18n/rich";
 import { getI18n } from "../../../../lib/i18n/server";
+import type { MessageKey } from "../../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -37,11 +38,11 @@ export default async function InPersonGuide() {
           <h2 id={`${id}-title`} className="font-sans text-2xl font-semibold">{t(`${k}.${id}.title`)}</h2>
           {steps ? (
             <ol className="mt-4 list-decimal space-y-3 pl-5">
-              {range(steps).map((index) => <li key={index}>{rich(t(`${k}.${id}.step${index}`), tags)}</li>)}
+              {range(steps).map((index) => <li key={index}>{rich(t(`${k}.${id}.step${index}` as MessageKey), tags)}</li>)}
             </ol>
           ) : null}
           {range(paragraphs).map((index) => (
-            <p key={index} className={index === 1 ? "mt-4" : "mt-3"}>{rich(t(`${k}.${id}.p${index}`), tags)}</p>
+            <p key={index} className={index === 1 ? "mt-4" : "mt-3"}>{rich(t(`${k}.${id}.p${index}` as MessageKey), tags)}</p>
           ))}
         </section>
       ))}

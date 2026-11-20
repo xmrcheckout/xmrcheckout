@@ -1,5 +1,5 @@
 import type { StatusTone } from "../components/status-badge";
-import type { Translate } from "./i18n/translate";
+import type { T } from "./i18n/types";
 
 export const invoiceStatuses = [
   "pending",
@@ -13,7 +13,7 @@ export const invoiceStatuses = [
 export type InvoiceStatus = (typeof invoiceStatuses)[number];
 
 /** Plain status name, e.g. "Awaiting payment". */
-export const invoiceStatusName = (status: InvoiceStatus, t: Translate): string =>
+export const invoiceStatusName = (status: InvoiceStatus, t: T): string =>
   t(`invoiceStatus.${status}`);
 
 export const invoiceStatusTones: Record<InvoiceStatus, StatusTone> = {
@@ -45,7 +45,7 @@ export const invoiceStatusLabel = (
   status: InvoiceStatus,
   amountPaidXmr: string | null | undefined,
   amountRemainingXmr: string | null | undefined,
-  t: Translate,
+  t: T,
 ): string =>
   status === "expired" && hasPartialAmount(amountPaidXmr, amountRemainingXmr)
     ? t("invoiceStatus.expiredUnderpaid")

@@ -16,7 +16,7 @@ import {
 } from "../../../lib/invoice-status";
 import { safeHttpUrl } from "../../../lib/linkify";
 import { getI18n } from "../../../lib/i18n/server";
-import type { Translate } from "../../../lib/i18n/translate";
+import type { T } from "../../../lib/i18n/types";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
@@ -78,7 +78,7 @@ const awaitingPaymentStatuses: InvoiceStatus[] = [
 const paymentCheckNotice = (
   systemStatus: SystemStatusResponse | null,
   invoice: InvoiceStatusResponse,
-  t: Translate,
+  t: T,
 ) => {
   if (!awaitingPaymentStatuses.includes(invoice.status)) {
     return null;

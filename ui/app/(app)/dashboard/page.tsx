@@ -31,7 +31,7 @@ import PaymentLinks from "../../../components/payment-links";
 import Terminals from "../../../components/terminals";
 import SalesChannelCards from "../../../components/sales-channel-cards";
 import WorkspaceNav from "../../../components/workspace-nav";
-import type { Translate } from "../../../lib/i18n/translate";
+import type { T } from "../../../lib/i18n/types";
 import { rich } from "../../../lib/i18n/rich";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -100,7 +100,7 @@ type ProfileSummary = {
   created_at: string;
 };
 
-const dashboardNavItems = (t: Translate) => [
+const dashboardNavItems = (t: T) => [
   { value: "payment-links", href: "/dashboard?tab=payment-links", label: t("dashboard.page.navPaymentLinks"), detail: t("dashboard.page.navPaymentLinksDetail") },
   { value: "terminals", href: "/dashboard?tab=terminals", label: t("dashboard.page.navTerminals"), detail: t("dashboard.page.navTerminalsDetail") },
   {
@@ -135,7 +135,7 @@ const dashboardNavItems = (t: Translate) => [
   },
 ];
 
-const reconcilerBadge = (systemStatus: SystemStatusSummary | null, t: Translate) => {
+const reconcilerBadge = (systemStatus: SystemStatusSummary | null, t: T) => {
   if (reconcilerNotStarted(systemStatus)) {
     return { tone: "pending" as StatusTone, label: t("health.notStarted") };
   }

@@ -1,8 +1,8 @@
-import type { Translate } from "./i18n/translate";
+import type { T } from "./i18n/types";
 
 const addressPattern = /^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$/;
 
-export function walletFormatErrors(address: string, viewKey: string, t: Translate) {
+export function walletFormatErrors(address: string, viewKey: string, t: T) {
   const primary = address.trim();
   const key = viewKey.trim();
   return {

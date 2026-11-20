@@ -127,11 +127,13 @@ test('every translation key used in the UI exists in en.json', () => {
   };
   for (const dir of ['app', 'components', 'lib']) walk(join(root, dir));
   const unknown = [];
+  // tsc also rejects unknown keys (MessageKey in lib/i18n/types.ts); this
+  // check covers keys in either quote style and dynamic keys tsc cannot see.
   for (const file of files) {
     const source = readFileSync(file, 'utf8');
-    for (const [, key] of source.matchAll(/\bt\("([\w.]+)"/g)) if (!keys.has(key)) unknown.push(`${file}: ${key}`);
+    for (const [, key] of source.matchAll(/\bt\(\s*['"]([\w.]+)['"]/g)) if (!keys.has(key)) unknown.push(`${file}: ${key}`);
     // Dynamic keys such as t(`invoiceStatus.${status}`) must name an existing group.
-    for (const [, prefix] of source.matchAll(/\bt\(`([\w.]+\.)\$\{/g)) if (!prefixes.has(prefix)) unknown.push(`${file}: ${prefix}*`);
+    for (const [, prefix] of source.matchAll(/\bt\(\s*`([\w.]+\.)\$\{/g)) if (!prefixes.has(prefix)) unknown.push(`${file}: ${prefix}*`);
   }
   assert.deepEqual(unknown, []);
 });

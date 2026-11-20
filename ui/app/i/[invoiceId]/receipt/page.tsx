@@ -15,7 +15,7 @@ import {
   type InvoiceStatus,
 } from "../../../../lib/invoice-status";
 import { getI18n } from "../../../../lib/i18n/server";
-import type { Translate } from "../../../../lib/i18n/translate";
+import type { T } from "../../../../lib/i18n/types";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
@@ -74,7 +74,7 @@ const formatFiatAmount = (value: string, currency: string, locale: string) => {
 const receiptTitle = (
   productTitle: string | null | undefined,
   redirectUrl: string | null | undefined,
-  t: Translate,
+  t: T,
 ) => {
   if (productTitle?.trim()) {
     return productTitle.trim();

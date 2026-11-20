@@ -7,7 +7,7 @@ import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
 import { rich } from "../../../../lib/i18n/rich";
 import { getI18n } from "../../../../lib/i18n/server";
-import type { Translate } from "../../../../lib/i18n/translate";
+import type { T } from "../../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -41,7 +41,7 @@ function RecipeHeader({
   id: string;
   index: string;
   title: string;
-  t: Translate;
+  t: T;
 }) {
   return (
     <header className="max-w-[54rem]">

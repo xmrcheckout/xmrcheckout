@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import PageIntroBand from "../../../../components/page-intro-band";
 import { getI18n } from "../../../../lib/i18n/server";
-import type { Translate } from "../../../../lib/i18n/translate";
+import type { T } from "../../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -17,7 +17,7 @@ const sectionClass =
 const codeClass =
   "mt-4 overflow-x-auto rounded-surface border border-ink bg-ink px-5 py-4 text-xs leading-relaxed text-cream shadow-soft";
 
-const sectionsFor = (t: Translate) => [
+const sectionsFor = (t: T) => [
   ["#architecture", t("guides.selfHost.navFlow")],
   ["#requirements", t("guides.selfHost.navHost")],
   ["#docker", t("guides.selfHost.navDocker")],

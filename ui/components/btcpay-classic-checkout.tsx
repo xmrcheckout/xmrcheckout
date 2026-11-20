@@ -16,7 +16,7 @@ import {
   invoiceStatusTones,
   type InvoiceStatus,
 } from "../lib/invoice-status";
-import type { Translate } from "../lib/i18n/translate";
+import type { T } from "../lib/i18n/types";
 import { useI18n } from "./i18n-provider";
 
 
@@ -73,7 +73,7 @@ const formatFiatAmount = (value: string, currency: string, locale: string) => {
   }
 };
 
-const formatReturnLabel = (redirectUrl: string, t: Translate) => {
+const formatReturnLabel = (redirectUrl: string, t: T) => {
   try {
     const parsed = new URL(redirectUrl);
     return parsed.hostname
@@ -88,7 +88,7 @@ const statusMessage = (
   status: InvoiceStatus,
   confirmationTarget: number,
   hasPartial: boolean,
-  t: Translate,
+  t: T,
 ): string => {
   if (status === "invalid") {
     return t("pay.headingInvalid");

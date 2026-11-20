@@ -1,3 +1,5 @@
+import type { T } from './i18n/types';
+
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function invoiceLookupId(value: string, origin: string): string | null {
@@ -38,7 +40,7 @@ export function invoiceContext(
   return { title: details[0] ?? null, details: [...new Set(details)], source };
 }
 
-export function invoiceSourceLabel(source: InvoiceSource | null, t: (key: string) => string): string | null {
+export function invoiceSourceLabel(source: InvoiceSource | null, t: T): string | null {
   if (source === 'terminal') return t('dashboard.invoices.sourceTerminal');
   if (source === 'payment_link') return t('dashboard.invoices.sourcePaymentLink');
   return null;

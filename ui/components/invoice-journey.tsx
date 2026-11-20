@@ -1,13 +1,13 @@
 import { useId } from "react";
 
 import { JourneyIcon, MoneroCoin } from "./invoice-journey-icons";
-import type { Translate } from "../lib/i18n/translate";
+import type { T } from "../lib/i18n/types";
 
 const payColor = "#b65b25";
 const infoColor = "#4d6a5a";
 const warmTint = "#e6a36f";
 
-export function InvoiceJourney({ t }: { t: Translate }) {
+export function InvoiceJourney({ t }: { t: T }) {
   const id = useId();
 
   return (

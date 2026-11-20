@@ -650,5 +650,9 @@ missing from another catalog shows in English. To add a language:
    `ui/tests/i18n.test.mjs`.
 4. Run `npm test` in `ui/`.
 
+Keys passed to `t()` are typed from `en.json` (`ui/lib/i18n/types.ts`), so the
+TypeScript check rejects a key that does not exist. An object with an `other`
+string is read as a plural message, so never name any other key `other`.
+
 XMR amounts, addresses, payment URIs and IDs are never localized. Amounts
 always use `.` as the decimal separator so copied values stay valid in wallets.

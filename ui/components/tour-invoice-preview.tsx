@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { SimulatedCheckoutDetails, useSimulatedInvoice } from "./simulated-checkout-preview";
 import { useI18n } from "./i18n-provider";
-import type { Translate } from "../lib/i18n/translate";
+import type { T } from "../lib/i18n/types";
 import { utcTimestamp } from "../lib/timestamps";
 
 type TourInvoicePreviewProps = {
@@ -24,7 +24,7 @@ type TourInvoicePreviewProps = {
   };
 };
 
-const formatTimestampFor = (value: string | null, t: Translate) =>
+const formatTimestampFor = (value: string | null, t: T) =>
   value ? utcTimestamp(value, t) : "-";
 
 export default function TourInvoicePreview({

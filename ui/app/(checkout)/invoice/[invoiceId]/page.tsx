@@ -15,7 +15,7 @@ import {
   type InvoiceStatus,
 } from "../../../../lib/invoice-status";
 import { getI18n } from "../../../../lib/i18n/server";
-import type { Translate } from "../../../../lib/i18n/translate";
+import type { T } from "../../../../lib/i18n/types";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
@@ -55,7 +55,7 @@ type InvoiceStatusResponse = {
 const statusDescription = (
   status: InvoiceStatus,
   hasPartial: boolean,
-  t: Translate,
+  t: T,
 ) => {
   if (status === "pending") {
     return t("invoicePage.statusPending");

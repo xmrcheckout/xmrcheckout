@@ -8,7 +8,7 @@ import CopyCodeBlock from "../../../components/copy-code-block";
 import StatusBadge from "../../../components/status-badge";
 import { rich } from "../../../lib/i18n/rich";
 import { getI18n } from "../../../lib/i18n/server";
-import type { Translate } from "../../../lib/i18n/translate";
+import type { T } from "../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -36,7 +36,7 @@ const methodStyles: Record<string, string> = {
 const codeBlockClass =
   "min-w-0 max-w-full overflow-x-auto rounded-xl border border-cream/20 bg-ink px-5 py-4 pr-24 text-xs leading-relaxed text-cream shadow-soft sm:px-6 sm:py-5";
 
-const endpointGroupsFor = (t: Translate) => [
+const endpointGroupsFor = (t: T) => [
 {
   "title": t("docs.ref.r001"),
   "auth": t("docs.ref.r002"),
@@ -339,7 +339,7 @@ const endpointGroupsFor = (t: Translate) => [
   },
 ];
 
-const endpointRequirementsFor = (t: Translate): EndpointRequirement[] => [
+const endpointRequirementsFor = (t: T): EndpointRequirement[] => [
 {
   "method": "GET",
   "path": "/api/core/payment-links",

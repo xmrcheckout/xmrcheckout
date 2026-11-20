@@ -7,7 +7,7 @@ import PageIntroBand from "../../../components/page-intro-band";
 import { areDonationsEnabled } from "../../../lib/donations";
 import { rich } from "../../../lib/i18n/rich";
 import { getI18n } from "../../../lib/i18n/server";
-import type { Translate } from "../../../lib/i18n/translate";
+import type { MessageKey, T } from "../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -82,30 +82,31 @@ const faqTags = {
 
 const range = (count: number) => Array.from({ length: count }, (_, index) => index + 1);
 
-function faqItems(t: Translate): FaqItem[] {
+function faqItems(t: T): FaqItem[] {
   return faqDefs.map((def) => {
-    const k = `faq.items.${def.key}`;
+    // Answers have a varying number of parts, so their keys are built at run time.
+    const k = (part: string) => `faq.items.${def.key}.${part}` as MessageKey;
     return {
       id: def.id,
       category: def.category,
-      question: t(`${k}.q`),
+      question: t(k("q")),
       answer: (
         <>
           {range(def.paragraphs)
             .filter((index) => def.showParagraph?.(index) ?? true)
             .map((index) => (
-              <p className="text-ink-soft" key={`p${index}`}>{rich(t(`${k}.p${index}`), faqTags)}</p>
+              <p className="text-ink-soft" key={`p${index}`}>{rich(t(k(`p${index}`)), faqTags)}</p>
             ))}
           {def.listItems ? (
             <ul className="mt-4 grid gap-2 text-sm text-ink-soft">
               {range(def.listItems).map((index) => (
-                <li key={`li${index}`}>{rich(t(`${k}.li${index}`), faqTags)}</li>
+                <li key={`li${index}`}>{rich(t(k(`li${index}`)), faqTags)}</li>
               ))}
             </ul>
           ) : null}
-          {def.after ? <p className="mt-4 text-ink-soft">{t(`${k}.after`)}</p> : null}
+          {def.after ? <p className="mt-4 text-ink-soft">{t(k("after"))}</p> : null}
           {def.cta ? (
-            <p className="mt-3"><Link className={ctaClass} href={def.cta}>{t(`${k}.cta`)}</Link></p>
+            <p className="mt-3"><Link className={ctaClass} href={def.cta}>{t(k("cta"))}</Link></p>
           ) : null}
         </>
       ),

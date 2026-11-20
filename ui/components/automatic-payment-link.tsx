@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useI18n } from "./i18n-provider";
 
 type Result = { invoice_url: string; status: string; expires_at: string | null };
-const previousStatusKeys: Record<string, string> = {
+type PreviousStatus = "expired" | "partially_paid" | "confirmed" | "invalid" | "payment_detected";
+const previousStatusKeys: Record<string, PreviousStatus> = {
   pending: "expired",
   partially_paid: "partially_paid",
   expired: "expired",

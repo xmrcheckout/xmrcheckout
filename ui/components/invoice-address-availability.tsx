@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { utcTimestamp } from "../lib/timestamps";
 import { getI18n } from "../lib/i18n/server";
-import type { Translate } from "../lib/i18n/translate";
+import type { T } from "../lib/i18n/types";
 import DiagnosticReference from "./diagnostic-reference";
 import StatusRefreshButton from "./status-refresh-button";
 
@@ -34,11 +34,15 @@ export type SubaddressStatus = {
 // Hours of the reuse wait, rounded up so a partial hour is never understated.
 export const cooldownHours = (status: SubaddressStatus) => Math.max(1, Math.ceil(status.cooldown_seconds / 3600));
 
-const timestamp = (value: string | null, t: Translate) => value ? utcTimestamp(value, t) : t("time.notRecorded");
+const timestamp = (value: string | null, t: T) => value ? utcTimestamp(value, t) : t("time.notRecorded");
 
-const explanationCodes = new Set(["never_issued", "cooldown_complete", "active_invoice", "awaiting_invoice_status_update", "reuse_cooldown", "inconsistent_history", "invalid_prior_invoice", "missing_closure_time"]);
+const explanationCodes = ["never_issued", "cooldown_complete", "active_invoice", "awaiting_invoice_status_update", "reuse_cooldown", "inconsistent_history", "invalid_prior_invoice", "missing_closure_time"] as const;
 
-const failureCodes = new Set(["wallet_busy", "wallet_syncing", "wallet_unavailable", "daemon_unavailable", "incomplete_snapshot", "rpc_error", "snapshot_unavailable"]);
+const failureCodes = ["wallet_busy", "wallet_syncing", "wallet_unavailable", "daemon_unavailable", "incomplete_snapshot", "rpc_error", "snapshot_unavailable"] as const;
+
+// Codes from the API are shown only when listed above, and each listed code has a message.
+const isListed = <C extends string>(codes: readonly C[], value: string | null): value is C =>
+  (codes as readonly (string | null)[]).includes(value);
 
 export default async function InvoiceAddressAvailability({ status, full = false, showRefresh = true, compact = false }: {
   status: SubaddressStatus | null;
@@ -112,7 +116,7 @@ export default async function InvoiceAddressAvailability({ status, full = false,
                 <p>{t("addresses.latestAttempt", { time: timestamp(snapshot.attempted_at, t), outcome: snapshot.outcome === "succeeded" ? t("addresses.successful") : snapshot.outcome === "failed" ? t("addresses.failed") : t("addresses.inProgress") })}</p>
                 <p>{t("addresses.completed", { time: timestamp(snapshot.completed_at, t) })}{snapshot.duration_ms !== null ? ` (${snapshot.duration_ms} ms)` : ""}</p>
                 <p>{t("addresses.lastSuccess", { time: timestamp(snapshot.last_success_at, t) })}</p>
-                {snapshot.outcome === "failed" ? <p className="text-red-700">{t(`addresses.failure.${failureCodes.has(snapshot.failure_category ?? "") ? snapshot.failure_category : "snapshot_unavailable"}`)} {t("addresses.noReuseOnFailure")}</p> : null}
+                {snapshot.outcome === "failed" ? <p className="text-red-700">{t(`addresses.failure.${isListed(failureCodes, snapshot.failure_category) ? snapshot.failure_category : "snapshot_unavailable"}`)} {t("addresses.noReuseOnFailure")}</p> : null}
                 <DiagnosticReference value={snapshot.attempt_id} />
               </div>
             ) : <p className="mt-2 text-sm">{t("addresses.noSnapshot")}</p>}
@@ -123,7 +127,7 @@ export default async function InvoiceAddressAvailability({ status, full = false,
             <ul className="divide-y divide-stroke">
               {status.addresses.map((address) => (
                 <li key={address.index} className="min-w-0 py-3 text-sm">
-                  <p className="font-semibold">{t("addresses.indexLine", { index: address.index, explanation: explanationCodes.has(address.code) ? t(`addresses.code.${address.code}`) : t("addresses.needsReview") })}</p>
+                  <p className="font-semibold">{t("addresses.indexLine", { index: address.index, explanation: isListed(explanationCodes, address.code) ? t(`addresses.code.${address.code}`) : t("addresses.needsReview") })}</p>
                   {address.latest_closure_at ? <p>{t("addresses.latestClosure", { time: timestamp(address.latest_closure_at, t) })}</p> : null}
                   {address.cooldown_complete_at ? <p>{t(address.category === "eligible_for_reuse" ? "addresses.eligibleSince" : "addresses.estimatedEligibility", { time: timestamp(address.cooldown_complete_at, t) })}</p> : null}
                   {address.code === "awaiting_invoice_status_update" ? <p>{t("addresses.pendingExpired")}</p> : null}

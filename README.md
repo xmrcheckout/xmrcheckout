@@ -12,6 +12,8 @@ XMR Checkout is open source and self-hostable. It creates XMR invoices, shows a 
 
 It uses a wallet address and private view key to detect payments. It does not sign transactions or move funds.
 
+No KYC or email is required to connect a merchant wallet. Buyers can pay without creating an XMR Checkout account.
+
 ## Contents
 
 - [Who it's for](#who-its-for)

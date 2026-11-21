@@ -1074,7 +1074,7 @@
     "demoQ": "Sie sehen sich die Demo an?",
     "demoA": "Alle Zahlungen sind simuliert. Es ist keine Wallet-Verbindung nötig.",
     "readyQ": "Bereit, Zahlungen anzunehmen?",
-    "readyA": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key.",
+    "readyA": "Verbinden Sie Ihre Wallet mit Ihrer Hauptadresse und Ihrem privaten View-Key. Keine Identitätsprüfung (KYC) und keine E-Mail-Adresse erforderlich.",
     "processKicker": "Checkout für Kunden",
     "processTitle": "Bieten Sie Kunden einen klaren Zahlungsweg",
     "step1": "Rechnung erstellen und teilen",
@@ -1271,8 +1271,8 @@
         "p1": "Eine Monero-Wallet, die Sie selbst kontrollieren. Verbinden Sie sie mit ihrer Hauptadresse und ihrem privaten View-Key (ohne E-Mail oder Passwort) und erstellen Sie dann Rechnungen, Zahlungslinks oder Terminals im Dashboard, oder nutzen Sie die API."
       },
       "email": {
-        "q": "Benötigen Sie eine E-Mail-Adresse oder persönliche Daten?",
-        "p1": "Nein. Wir benötigen weder E-Mail-Adresse noch persönliche Daten. Ihre Hauptadresse dient zusammen mit Ihrem privaten View-Key als Zugangskennung."
+        "q": "Verlangt XMR Checkout eine Identitätsprüfung (KYC)?",
+        "p1": "Für die Verbindung einer Händler-Wallet verlangt XMR Checkout weder eine Identitätsprüfung noch Ausweisdokumente oder eine E-Mail-Adresse. Verbinden Sie Ihre Wallet mit Ihrer Monero-Hauptadresse und Ihrem privaten View-Key. Käufer können mit ihrer eigenen Monero-Wallet bezahlen, ohne ein XMR Checkout-Konto zu erstellen oder Ausweisdokumente einzureichen."
       },
       "cost": {
         "q": "Was kostet XMR Checkout?",

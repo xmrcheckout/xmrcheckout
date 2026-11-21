@@ -1098,7 +1098,7 @@
     "demoQ": "Przeglądasz demo?",
     "demoA": "Wszystkie płatności są symulowane. Nie trzeba łączyć portfela.",
     "readyQ": "Chcesz przyjmować płatności?",
-    "readyA": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku.",
+    "readyA": "Połącz portfel za pomocą adresu głównego i prywatnego klucza widoku. Weryfikacja tożsamości (KYC) i adres e-mail nie są wymagane.",
     "processKicker": "Płatność klienta",
     "processTitle": "Daj klientom jasny sposób zapłaty",
     "step1": "Utwórz i udostępnij prośbę o płatność",
@@ -1295,8 +1295,8 @@
         "p1": "Portfela Monero pod twoją kontrolą. Połącz go za pomocą adresu głównego i prywatnego klucza widoku (bez e-maila i hasła), a potem twórz prośby o płatność, linki płatności lub terminale w panelu albo korzystaj z API."
       },
       "email": {
-        "q": "Czy wymagacie e-maila lub danych osobowych?",
-        "p1": "Nie. Nie wymagamy e-maila ani danych osobowych. Identyfikatorem dostępu jest twój adres główny wraz z prywatnym kluczem widoku."
+        "q": "Czy XMR Checkout wymaga weryfikacji tożsamości (KYC)?",
+        "p1": "Aby połączyć portfel sprzedawcy, XMR Checkout nie wymaga weryfikacji tożsamości, dokumentów tożsamości ani adresu e-mail. Połącz portfel za pomocą głównego adresu Monero i prywatnego klucza widoku. Klienci mogą płacić z własnego portfela Monero bez zakładania konta w XMR Checkout ani okazywania dokumentów tożsamości."
       },
       "cost": {
         "q": "Ile kosztuje XMR Checkout?",

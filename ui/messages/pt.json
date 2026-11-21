@@ -1074,7 +1074,7 @@
     "demoQ": "Explorando a demonstração?",
     "demoA": "Todos os pagamentos são simulados. Não é necessário conectar uma carteira.",
     "readyQ": "Pronto para aceitar pagamentos?",
-    "readyA": "Conecte a sua carteira usando o seu endereço principal e a sua chave de visualização privada.",
+    "readyA": "Conecte a sua carteira usando o seu endereço principal e a sua chave de visualização privada. Não é preciso verificar a identidade (KYC) nem informar um e-mail.",
     "processKicker": "Pagamento do cliente",
     "processTitle": "Ofereça aos clientes uma forma clara de pagar",
     "step1": "Crie e compartilhe uma fatura",
@@ -1271,8 +1271,8 @@
         "p1": "Uma carteira Monero que você controla. Conecte-a com o endereço principal e a chave de visualização privada (sem e-mail nem senha) e depois crie faturas, links de pagamento ou terminais no painel, ou use a API."
       },
       "email": {
-        "q": "Vocês exigem e-mail ou dados pessoais?",
-        "p1": "Não. Não exigimos e-mail nem dados pessoais. O seu endereço principal é o identificador de acesso, junto com a sua chave de visualização privada."
+        "q": "O XMR Checkout exige verificação de identidade (KYC)?",
+        "p1": "Para conectar a carteira de um comerciante, o XMR Checkout não exige verificação de identidade, documentos de identidade nem e-mail. Conecte a carteira usando seu endereço principal do Monero e sua chave de visualização privada. Os clientes podem pagar com a própria carteira Monero sem criar uma conta no XMR Checkout nem apresentar documentos de identidade."
       },
       "cost": {
         "q": "Quanto custa o XMR Checkout?",

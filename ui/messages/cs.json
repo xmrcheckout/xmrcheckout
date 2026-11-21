@@ -1098,7 +1098,7 @@
     "demoQ": "Zkoušíte demo?",
     "demoA": "Všechny platby jsou simulované. Připojení peněženky není potřeba.",
     "readyQ": "Chcete začít přijímat platby?",
-    "readyA": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení.",
+    "readyA": "Připojte peněženku pomocí primární adresy a soukromého klíče pro prohlížení. Ověření totožnosti (KYC) ani e-mail nejsou potřeba.",
     "processKicker": "Platba zákazníka",
     "processTitle": "Dejte zákazníkům jasný způsob, jak zaplatit",
     "step1": "Vytvořte a sdílejte platební výzvu",
@@ -1295,8 +1295,8 @@
         "p1": "Peněženku Monero, kterou máte pod kontrolou. Připojte ji pomocí primární adresy a soukromého klíče pro prohlížení (bez e-mailu a hesla) a potom vytvářejte platební výzvy, platební odkazy nebo terminály v panelu, případně použijte API."
       },
       "email": {
-        "q": "Vyžadujete e-mail nebo osobní údaje?",
-        "p1": "Ne. E-mail ani osobní údaje nevyžadujeme. Identifikátorem pro přístup je vaše primární adresa ve spojení se soukromým klíčem pro prohlížení."
+        "q": "Vyžaduje XMR Checkout ověření totožnosti (KYC)?",
+        "p1": "K připojení peněženky obchodníka XMR Checkout nevyžaduje ověření totožnosti, doklady totožnosti ani e-mail. Připojte peněženku pomocí primární adresy Monero a soukromého klíče pro prohlížení. Zákazníci mohou platit z vlastní peněženky Monero bez zakládání účtu v XMR Checkout nebo předkládání dokladů totožnosti."
       },
       "cost": {
         "q": "Kolik XMR Checkout stojí?",

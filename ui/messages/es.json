@@ -1074,7 +1074,7 @@
     "demoQ": "¿Exploras la demostración?",
     "demoA": "Todos los pagos son simulados. No hace falta conectar una billetera.",
     "readyQ": "¿Listo para aceptar pagos?",
-    "readyA": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización.",
+    "readyA": "Conecta tu billetera con tu dirección principal y tu clave privada de visualización. No necesitas verificación de identidad (KYC) ni correo electrónico.",
     "processKicker": "Pago del cliente",
     "processTitle": "Ofrece a tus clientes una forma clara de pagar",
     "step1": "Crea y comparte una factura",
@@ -1271,8 +1271,8 @@
         "p1": "Una billetera de Monero que controles. Conéctala con su dirección principal y su clave privada de visualización (sin correo ni contraseña) y luego crea facturas, enlaces de pago o terminales en el panel, o usa la API."
       },
       "email": {
-        "q": "¿Piden correo electrónico o datos personales?",
-        "p1": "No. No pedimos correo electrónico ni datos personales. Tu dirección principal es el identificador de acceso, junto con tu clave privada de visualización."
+        "q": "¿XMR Checkout exige verificación de identidad (KYC)?",
+        "p1": "Para conectar la billetera de un comercio, XMR Checkout no exige verificación de identidad, documentos de identidad ni correo electrónico. Conéctala con tu dirección principal de Monero y tu clave privada de visualización. Los compradores pueden pagar desde su propia billetera de Monero sin crear una cuenta en XMR Checkout ni presentar documentos de identidad."
       },
       "cost": {
         "q": "¿Cuánto cuesta XMR Checkout?",

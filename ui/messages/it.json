@@ -1074,7 +1074,7 @@
     "demoQ": "Stai esplorando la demo?",
     "demoA": "Tutti i pagamenti sono simulati. Non serve collegare un portafoglio.",
     "readyQ": "Pronto ad accettare pagamenti?",
-    "readyA": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata.",
+    "readyA": "Collega il tuo portafoglio con il tuo indirizzo principale e la tua chiave di visualizzazione privata. Non servono la verifica dell’identità (KYC) né un indirizzo email.",
     "processKicker": "Pagamento del cliente",
     "processTitle": "Offri ai clienti un modo chiaro per pagare",
     "step1": "Crea e condividi una richiesta di pagamento",
@@ -1271,8 +1271,8 @@
         "p1": "Un portafoglio Monero che controlli tu. Collegalo con il suo indirizzo principale e la sua chiave di visualizzazione privata (senza email né password), poi crea richieste di pagamento, link di pagamento o terminali dalla dashboard, oppure usa l'API."
       },
       "email": {
-        "q": "Richiedete email o dati personali?",
-        "p1": "No. Non richiediamo email né dati personali. Il tuo indirizzo principale è l'identificativo per l'accesso, insieme alla tua chiave di visualizzazione privata."
+        "q": "XMR Checkout richiede la verifica dell’identità (KYC)?",
+        "p1": "Per collegare il portafoglio di un esercente, XMR Checkout non richiede la verifica dell’identità, documenti d’identità o un indirizzo email. Collega il portafoglio con il tuo indirizzo Monero principale e la tua chiave di visualizzazione privata. I clienti possono pagare dal proprio portafoglio Monero senza creare un account XMR Checkout né presentare documenti d’identità."
       },
       "cost": {
         "q": "Quanto costa XMR Checkout?",

@@ -1074,7 +1074,7 @@
     "demoQ": "Exploring the demo?",
     "demoA": "All payments are simulated. No wallet connection is needed.",
     "readyQ": "Ready to accept payments?",
-    "readyA": "Connect your wallet using your primary address and private view key.",
+    "readyA": "Connect your wallet using your primary address and private view key. No KYC or email required.",
     "processKicker": "Customer checkout",
     "processTitle": "Give customers a clear way to pay",
     "step1": "Create and share an invoice",
@@ -1271,8 +1271,8 @@
         "p1": "A Monero wallet you control. Connect it with its primary address and private view key (no email or password), then create invoices, payment links or terminals in the dashboard, or use the API."
       },
       "email": {
-        "q": "Do you require email or personal information?",
-        "p1": "No. We do not require email or personal information. Your primary address is the identifier for access, paired with your private view key."
+        "q": "Does XMR Checkout require KYC?",
+        "p1": "XMR Checkout requires no identity verification, identity documents, or email to connect a merchant wallet. Connect with your primary Monero address and private view key. Buyers can pay from their own Monero wallet without creating an XMR Checkout account or submitting identity documents."
       },
       "cost": {
         "q": "What does XMR Checkout cost?",

@@ -874,15 +874,12 @@ export default async function DocsPage() {
             { href: "#fiat-inputs", label: t("docs.navFiat") },
             { href: "#concepts", label: t("docs.navConcepts") },
             { href: "#api-reference", label: t("docs.apiReference") },
-          ].map((item, index) => (
+          ].map((item) => (
             <a
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+              className="inline-flex min-h-11 shrink-0 items-center rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
               key={item.href}
               href={item.href}
             >
-              <span className="font-mono text-xs text-ink-soft">
-                0{index + 1}
-              </span>
               {item.label}
             </a>
           ))}

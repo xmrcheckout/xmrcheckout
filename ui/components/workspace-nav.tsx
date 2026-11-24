@@ -3,7 +3,6 @@ import Link from "next/link";
 export type WorkspaceNavItem = {
   value: string;
   href: string;
-  index?: string;
   label: string;
   detail: string;
 };
@@ -17,7 +16,6 @@ type WorkspaceNavProps = {
   footerTitle?: string;
   footerDescription?: string;
   mobileColumns?: 2 | 3;
-  showIndexes?: boolean;
 };
 
 export default function WorkspaceNav({
@@ -29,7 +27,6 @@ export default function WorkspaceNav({
   footerTitle,
   footerDescription,
   mobileColumns = 3,
-  showIndexes = true,
 }: WorkspaceNavProps) {
   const orderedItems = [...items.filter(item => item.value === "overview"), ...items.filter(item => item.value !== "overview")];
   const mobileGridClass =
@@ -54,25 +51,13 @@ export default function WorkspaceNav({
             <Link
               key={item.value}
               aria-current={isActive ? "page" : undefined}
-              className={`group flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 ${
+              className={`group flex min-w-0 items-center rounded-xl border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50 focus-visible:ring-offset-2 ${
                 isActive
                   ? "border-ink bg-ink text-cream shadow-[0_8px_18px_rgba(16,18,23,0.14)]"
                   : "border-stroke bg-cream/60 text-ink hover:border-ink/40 hover:bg-white/80"
               }`}
               href={item.href}
             >
-              {showIndexes && item.index ? (
-                <span
-                  className={`hidden h-8 w-8 shrink-0 place-items-center rounded-lg border font-mono text-xs font-semibold sm:grid ${
-                    isActive
-                      ? "border-cream/25 bg-cream/10 text-cream"
-                      : "border-clay/40 bg-clay/10 text-ink"
-                  }`}
-                  aria-hidden="true"
-                >
-                  {item.index}
-                </span>
-              ) : null}
               <span className="min-w-0">
                 <span className="block truncate text-xs font-semibold sm:text-sm">
                   {item.label}

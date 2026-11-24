@@ -42,35 +42,29 @@ type InvoiceStatus = (typeof invoiceStatuses)[number];
 
 const tabDetails = (t: T): Record<
   TourTab,
-  { index: string; label: string; detail: string }
+  { label: string; detail: string }
 > => ({
   overview: {
-    index: "01",
     label: t("dashboard.page.navOverview"),
     detail: t("tour.navOverviewDetail"),
   },
   invoices: {
-    index: "02",
     label: t("dashboard.page.navInvoices"),
     detail: t("tour.navInvoicesDetail"),
   },
   invoice: {
-    index: "03",
     label: t("demo.invoice.view"),
     detail: t("tour.navInvoiceDetail"),
   },
   "payment-links": {
-    index: "04",
     label: t("dashboard.page.navPaymentLinks"),
     detail: t("dashboard.page.navPaymentLinksDetail"),
   },
   terminals: {
-    index: "05",
     label: t("dashboard.page.navTerminals"),
     detail: t("dashboard.page.navTerminalsDetail"),
   },
   webhooks: {
-    index: "06",
     label: t("dashboard.page.navWebhooks"),
     detail: t("tour.navWebhooksDetail"),
   },

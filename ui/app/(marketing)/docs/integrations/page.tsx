@@ -7,7 +7,6 @@ import PageIntroBand from "../../../../components/page-intro-band";
 import CopyCodeBlock from "../../../../components/copy-code-block";
 import { rich } from "../../../../lib/i18n/rich";
 import { getI18n } from "../../../../lib/i18n/server";
-import type { T } from "../../../../lib/i18n/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, t } = await getI18n();
@@ -33,23 +32,15 @@ const sectionCardClass =
 function RecipeHeader({
   children,
   id,
-  index,
   title,
-  t,
 }: {
   children: ReactNode;
   id: string;
-  index: string;
   title: string;
-  t: T;
 }) {
   return (
     <header className="max-w-[54rem]">
-      <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-        <span className="h-2.5 w-2.5 rounded-full bg-clay" aria-hidden="true" />
-        {t("docs.integrations.recipe", { index })}
-      </p>
-      <h2 className="mt-1 font-sans text-2xl font-semibold" id={`${id}-title`}>
+      <h2 className="font-sans text-2xl font-semibold" id={`${id}-title`}>
         {title}
       </h2>
       <div className="mt-1 text-ink-soft">{children}</div>
@@ -100,15 +91,12 @@ export default async function IntegrationsPage() {
             { href: "#php", label: "PHP" },
             { href: "#python", label: "Python" },
             { href: "#go", label: "Go" },
-          ].map((item, index) => (
+          ].map((item) => (
             <a
               key={item.href}
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
+              className="inline-flex min-h-11 shrink-0 items-center rounded-xl border border-transparent px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-stroke hover:bg-white/70 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/50"
               href={item.href}
             >
-              <span className="font-mono text-xs text-ink-soft">
-                0{index + 1}
-              </span>
               {item.label}
             </a>
           ))}
@@ -222,11 +210,7 @@ export default async function IntegrationsPage() {
           className="mt-12 grid scroll-mt-24 gap-6 border-t border-stroke pt-8"
           aria-labelledby="btcpay-title"
         >
-          <RecipeHeader t={t}
-            id="btcpay"
-            index="01"
-            title={t("docs.btcpayTitle")}
-          >
+          <RecipeHeader id="btcpay" title={t("docs.btcpayTitle")}>
             <p className="text-ink-soft">
               {t("docs.integrations.btcpayIntro")}
             </p>
@@ -304,7 +288,7 @@ curl -sS "$XMRCHECKOUT_BTCPAY_URL/stores" \\
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="curl-title"
         >
-          <RecipeHeader t={t} id="curl" index="02" title="curl">
+          <RecipeHeader id="curl" title="curl">
             <p className="text-ink-soft">
               {t("docs.integrations.curlIntro")}
             </p>
@@ -363,7 +347,7 @@ curl -sS "$XMRCHECKOUT_API_BASE_URL/public/invoice/$INVOICE_ID"`}</code>
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="node-title"
         >
-          <RecipeHeader t={t} id="node" index="03" title="Node.js">
+          <RecipeHeader id="node" title="Node.js">
             <p className="text-ink-soft">
               {rich(t("docs.integrations.nodeIntro"), { code: mono })}
             </p>
@@ -447,7 +431,7 @@ app.listen(3001, () => {
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="php-title"
         >
-          <RecipeHeader t={t} id="php" index="04" title="PHP">
+          <RecipeHeader id="php" title="PHP">
             <p className="text-ink-soft">
               {t("docs.integrations.phpIntro")}
             </p>
@@ -530,7 +514,7 @@ http_response_code(204);`}</code>
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="python-title"
         >
-          <RecipeHeader t={t} id="python" index="05" title="Python">
+          <RecipeHeader id="python" title="Python">
             <p className="text-ink-soft">
               {rich(t("docs.integrations.pythonIntro"), { code: mono })}
             </p>
@@ -603,7 +587,7 @@ async def xmrcheckout_webhook(payload: dict, x_webhook_secret: str | None = Head
           className="mt-12 grid scroll-mt-24 gap-8 border-t border-stroke pt-8"
           aria-labelledby="go-title"
         >
-          <RecipeHeader t={t} id="go" index="06" title="Go">
+          <RecipeHeader id="go" title="Go">
             <p className="text-ink-soft">
               {rich(t("docs.integrations.goIntro"), { code: mono })}
             </p>

@@ -547,7 +547,6 @@ export default async function DashboardPage({
           ariaLabel={t("dashboard.page.sections")}
           items={dashboardNavItems(t)}
           mobileColumns={2}
-          showIndexes={false}
         />
 
         <div className="min-w-0">
